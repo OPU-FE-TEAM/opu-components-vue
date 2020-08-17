@@ -1,0 +1,120 @@
+
+
+
+// 表单项下边距
+$formItemMarginBottom: 19px;
+
+// 只读模式下的输入框样式
+@mixin readonlyInput{
+    color:14px;
+    background: #fff;
+    border: none;
+    border-bottom: 1px solid #d9d9d9;
+    cursor: initial;
+} 
+
+.data-form{
+    .data-form-item-wrapper{
+        display: flex;
+        
+        .data-form-item-content{
+            flex:1;
+            min-width: 130px;
+        }
+        &.left{
+            text-align: left;
+        }
+        &.center{
+            text-align: center;
+        }
+        &.right{
+            text-align: right;
+        }
+        .ant-calendar-picker{
+            width: 100%!important;
+        }
+    }
+    .ant-form-item{
+        margin-bottom: $formItemMarginBottom;
+        display: flex;
+        .ant-form-item-label > label::after,
+        .ant-form-item-required::before{
+            display: none;
+        }
+
+        .data-form-item-title{
+            width: 100px;
+            text-align: right;
+            &.colon:after {
+                content: ':';
+                margin: 0 8px 0 2px;
+                position: relative;
+                top: -0.5px;
+            }
+    
+            &.required:before {
+                display: inline-block;
+                margin-right: 4px;
+                content: '*';
+                font-family: SimSun;
+                line-height: 1;
+                font-size: 14px;
+                color: #f5222d;
+            }
+        }
+        .ant-form-item-control-wrapper{
+            flex:1;
+        }
+    }
+    .ant-form-item-with-help{
+        margin-bottom: 0;
+        .ant-form-explain{
+            // text-align: right;
+        }
+    }
+    .data-form-buttons{
+        .ant-btn+.ant-btn{
+            margin-left: 10px;
+        }
+    }
+    &.grid{
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+    &.flex{
+        display: flex;
+        flex-wrap:wrap;
+    }
+    &.vertical{
+        .data-form-item-wrapper{
+            display: block;
+            .data-form-item-title{
+                text-align: left;
+            }
+        }
+    }
+  
+    .ant-select-selection-selected-value{
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        margin-top: -10px;
+        overflow: hidden;
+        line-height: 20px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    &.readonly{
+        .ant-input[disabled],
+        .ant-select-disabled .ant-select-selection{
+            @include readonlyInput;
+        }
+        .ant-select-arrow{
+            display: none;
+        }
+    }
+}

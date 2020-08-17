@@ -1,0 +1,12 @@
+.data-table{
+    .head-toolbar{
+        .vxe-button--wrapper{
+            & > .ant-btn {
+                margin-right: 10px;
+            }
+            & > .ant-btn-group {
+                margin-right: 10px;
+            }
+        }
+    }
+}
