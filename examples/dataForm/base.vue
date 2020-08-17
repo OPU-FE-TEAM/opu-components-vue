@@ -9,6 +9,7 @@
           :items="items"
           :onOptionsAllLoad="onOptionsAllLoad"
           :onOptionsLoadBefore="onOptionsLoadBefore"
+          :onButtonActionClick="onButtonClick"
           @submit="onSubmit" 
         >
             <template slot="itemSlot" slot-scope="text,updateValue">
@@ -465,13 +466,15 @@ export default {
                             children: [
                                 { 
                                     props: { 
-                                        'html-type': 'submit', 
+                                        // 'html-type': 'submit',
+                                        action:"submit", 
                                         content: '提交', 
                                         type: 'primary' 
                                     }
                                 }, {
                                     props: { 
-                                        'html-type': 'reset', 
+                                        // 'html-type': 'reset', 
+                                        action:"reset", 
                                         content: '重置' 
                                     },
                                     on:{
@@ -480,6 +483,13 @@ export default {
                                             return false
                                         }
                                     }
+                                },
+                                {
+                                    props: { 
+                                        action:"gaoji", 
+                                        content: '自定义action' 
+                                    },
+                                   
                                 },
                                 {
                                     props: { 
@@ -579,6 +589,9 @@ export default {
         },
         onOptionsLoadBefore(list){
             console.log('请求前回调',list);
+        },
+        onButtonClick(action){
+            console.log(666,action);
         }
     }
 }

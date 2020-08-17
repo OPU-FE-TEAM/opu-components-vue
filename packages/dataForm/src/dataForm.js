@@ -171,7 +171,7 @@ function renderItemTitle(item,h,_vm){
 
 // 渲染input表单项
 function renderItemInput(item,h,_vm){
-  const { $slots,$scopedSlots,readonly }=_vm;
+  const { $slots,$scopedSlots,readonly,onButtonClick }=_vm;
   const vDecorator = [item.field];
   if (item.option) {
     vDecorator.push(item.option);
@@ -233,9 +233,22 @@ function renderItemInput(item,h,_vm){
       props
     );
   }else{
+    
+    
     // 根据name渲染组件
+    const renderName = item.itemRender && item.itemRender.name?`a-${item.itemRender.name}`:'a-input';
+    if (renderName === "a-buttons") {
+      if (props.props) {
+        props.props.itemClick = onButtonClick
+      }else{
+        props.props={
+          itemClick:onButtonClick
+        }
+      }
+     
+    }
     inputDom = h(
-      item.itemRender && item.itemRender.name?`a-${item.itemRender.name}`:'a-input',
+      renderName,
       props
     );
   }
@@ -424,6 +437,11 @@ export default {
       onOptionsLoadBefore:{
         type:Function,
         default:()=>{}
+      },
+      // 渲染的按钮buttons，action 按钮点击时触发
+      onButtonActionClick:{
+        type:Function,
+        default:()=>{}
       }
       
     },
@@ -507,7 +525,16 @@ export default {
       },
       // 设置表单值
       setData(values){
-        this.form.setFieldsValue(values);
+        const { items }=this
+        // 过滤掉formitems未定义的字段
+        const formFields = items.map(item => item.field);
+        let formData = {};
+        for (const key in values) {
+          if (formFields.includes(key)) {
+            formData[key] = values[key];
+          }
+        }
+        this.form.setFieldsValue(formData);
       },
       // 校验并获取一组输入域的值
       validateFields(fields) {
@@ -571,6 +598,10 @@ export default {
             this.$emit("submit",json)
           }
         });
+      },
+      // 重置
+      onReset(){
+
       },
       // 设置字段获得焦点
       setFieldFocus(field){
@@ -636,6 +667,21 @@ export default {
         }
         this.setData(json)
       },
+      // 渲染的按钮点击事件
+      onButtonClick(action){
+        const { onSubmit,onReset,onButtonActionClick }=this;
+        switch (action) {
+          case "submit":
+            onSubmit()
+            break;
+          case "reset":
+            onReset()
+            break;
+          default:
+            onButtonActionClick && onButtonActionClick(action)
+            break;
+        }
+      }
     },
     render (h) {
       const { form,$slots,layout,colspan,readonly,onSubmit } = this

@@ -2,6 +2,7 @@
     <div>
         <DataTable 
          border
+         resizable
           show-overflow
           keep-source
           ref="xGrid"
@@ -12,11 +13,23 @@
           :headToolbar="headToolbar"
           :proxy-config="proxyConfig"
           :pager-config="pagerConfig"
+          highlight-hover-row
+          highlight-current-row
+          @current-change="currentChangeEvent"
          
         >
        
 
         </DataTable>
+
+        <vxe-toolbar
+          custom
+          print
+          ref="xToolbar">
+          <template v-slot:tools>
+              <vxe-button type="text" icon="vxe-icon--funnel" class="tool-btn"></vxe-button>
+          </template>
+        </vxe-toolbar>
     </div>
 </template>
 
@@ -24,8 +37,6 @@
 // import {utils} from '../../index'
 
 function getData(arr) {
-  console.log(arr);
-
   return new Promise(resolve => {
         setTimeout(() => {
           const size = arr.pageSize?arr.pageSize: 20;
@@ -47,8 +58,41 @@ function getData(arr) {
           resolve(json);
         }, 500);
       });
-    
 }
+
+// function getColumns(arr) {
+//   return new Promise(resolve => {
+//         setTimeout(() => {
+//           const list = [
+//             {
+//               id:1,
+//               title:"Name",
+//               field:"name"
+//             },
+//             {
+//               id:2,
+//               title:"Sex",
+//               field:"sex"
+//             },
+//             {
+//               id:3,
+//               title:"Age",
+//               field:"age"
+//             }
+//           ];
+//           const json = {
+//             // data: [...list],
+//             // total: 100
+//             code:0,
+//             data:{
+//               data:[...list],
+//               total:100
+//             }
+//           };
+//           resolve(json);
+//         }, 500);
+//       });
+// }
 
 export default {
     components:{
@@ -83,9 +127,12 @@ export default {
                 },
                 [
                   {
-                    name: "编辑",
-                    key: "edit",
-                    icon: "edit"
+                    name: "获取高亮行",
+                    key: "getCurrentRecord",
+                    icon: "edit",
+                    on:{
+                      click:this.getCurrentRecord
+                    }
                   },
                   {
                     name: "作废",
@@ -116,97 +163,117 @@ export default {
               ],
               searchConfig:{
                 layout:"inline",
-                titleWidth:70,
+                titleWidth:"auto",
+                // foldingLayout:"flex",
+                
                 on:{
                   submit:(values)=>{
                     console.log(values);
                   },
                 },
-                items: [
-                  { field: 'name', title: '名称',option:{initialValue:555}, itemRender: { name: 'input', props: { placeholder: '请输入名称' } } },
-                  { field: 'sex', title: '性别', itemRender: { name: 'select', props: {placeholder: '请选择性别',showSearch:true, defaultField:"isSelected", valueField:"id", labelField:"name", param:{code:"aa"}} } },
-                  { colon:false,titleWidth:0,itemRender: { name: 'buttons',props:{ children: [{ props: { 'html-type': 'submit', content: '查询', type: 'primary' } }, { props: { 'html-type': 'reset', content: '重置' } }]} } }
-                ]
-              },
-            },
-                pagerConfig: { 
-                  pageSize: 20,
-                  layouts:['PrevJump', 'PrevPage', 'Number', 'NextPage', 'NextJump', 'Sizes', 'FullJump', 'Total'],
-                  perfect:true,
-                  // props:{
-                  //   pageSize:'size',
-                  //   currentPage:'pageIndex'
-                  // }
-                },
-                proxyConfig: {
-                  seq: true, // 启用动态序号代理
-                  sort: true, // 启用排序代理
-                  filter: true, // 启用筛选代理
-                  form: true, // 启用表单代理
-                  props: {
-                    result: "data.data",
-                    total: "data.total",
-                    list:"data.data",
-                  },
-                  
-                  ajax: {
-                    query: getData
+                advancedSearchModal:{
+                  props:{
+                    width:800,
+                    title:"高级搜索1"
                   }
                 },
-
-              
-              tablePage: {
-                total: 0,
-                currentPage: 1,
-                pageSize: 10,
-                align: 'left',
-                pageSizes: [10, 20, 50, 100, 200, 500],
-                layouts: ['Sizes', 'PrevJump', 'PrevPage', 'Number', 'NextPage', 'NextJump', 'FullJump', 'Total'],
-                perfect: true
+                advancedSearchForm:{
+                  props:{
+                    layout:"flex",
+                    colspan:2
+                  }
+                },
+                items: [
+                  { field: 'name', title: '名称', itemRender: { name: 'input', props: { placeholder: '请输入名称' } } },
+                  { field: 'sex', title: '性别', itemRender: { name: 'select', props: {placeholder: '请选择性别',showSearch:true, defaultField:"isSelected", valueField:"id", labelField:"name", param:{code:"aa"}} } },
+                  { field: 'age', title: '年龄',folding:true, itemRender: { name: 'number', props: { placeholder: '请输入年龄' } } },
+                  { colon:false,titleWidth:0,folding:false,itemRender: {
+                     name: 'buttons',
+                     props:{
+                       children: [
+                         { props: { action: 'submit', content: '查询', type: 'primary' } },
+                         { props: { action: 'reset', content: '重置' } }, 
+                         { props: { action: 'advancedQuery', content: '高级查询' } }
+                        ]} } }
+                ]
               },
-              tableColumn: [
-                { type: 'checkbox', width: 60 },
-                { type: 'seq', title: 'Number', width: 80 },
-                { field: 'name', title: 'Name', minWidth: 140, editRender: { name: 'AInput' } },
-                // { field: 'age', title: 'InputNumber', width: 160, editRender: { name: 'InputNumber', props: { max: 35, min: 18 } } },
-                // { field: 'sex', title: 'Select', width: 140, editRender: { name: 'Select', options: [] } },
-                // { field: 'sex2', title: 'Select', width: 140, editRender: { name: 'Select', optionGroups: [], props: { clearable: true } } },
-                // { field: 'region', title: 'Cascader', width: 200, editRender: { name: 'Cascader', props: { data: [] } } },
-                // { field: 'date', title: 'DatePicker', width: 200, editRender: { name: 'DatePicker', props: { type: 'date', format: 'yyyy/MM/dd' } } },
-                // { field: 'date1', title: 'TimePicker', width: 200, editRender: { name: 'TimePicker', props: { type: 'time' } } },
-                // { field: 'flag', title: 'iSwitch', width: 100, cellRender: { name: 'iSwitch' } },
-                // { field: 'rate', title: 'Rate', width: 200, cellRender: { name: 'Rate' } }
-              ],
-              tableData: []
+              tools:{
+                import:true,
+                custom:true,
+                setColumns:{
+                  button:{
+                    props:{
+                      shape:"circle",
+                      icon:"setting"
+                    },
+                    style:{
+                      marginRight:'10px'
+                    }
+                  }
+                }
+              }
+            },
+            pagerConfig: { 
+              pageSize: 1000,
+              layouts:['PrevJump', 'PrevPage', 'Number', 'NextPage', 'NextJump', 'Sizes', 'FullJump', 'Total'],
+              perfect:true,
+              // props:{
+              //   pageSize:'size',
+              //   currentPage:'pageIndex'
+              // }
+            },
+            proxyConfig: {
+              seq: true, // 启用动态序号代理
+              sort: true, // 启用排序代理
+              filter: true, // 启用筛选代理
+              form: true, // 启用表单代理
+              props: {
+                result: "data.data",
+                total: "data.total",
+                list:"data.data",
+              },
+              
+              ajax: {
+                query: getData
+              }
+            },
+            proxyColumn:{
+
+            },
+            tableColumn: [
+              { type: 'checkbox', width: 60 },
+              { type: 'seq', title: 'Number', width: 80 },
+              { field: 'name', title: 'Name', minWidth: 140, editRender: { name: 'AInput' } },
+            ],
+            tableData: []
         }
     },  
     created() {
         // this.findList()
+         this.$nextTick(() => {
+              // 手动将表格和工具栏进行关联
+              this.$refs.xGrid.connect(this.$refs.xToolbar)
+            })
     },
     methods:{
-       findList () {
-              // 模拟后台接口
-              this.loading = true
-              getData({
-                  pageIndex:this.tablePage.currentPage,
-                  pageSize:this.tablePage.pageSize,
-              }).then((res) => {
-                this.tableData = res.data
-                this.tablePage.total = res.total
-                this.loading = false
-              }).catch(() => {
-                this.loading = false
-              })
-            },
-            searchEvent () {
-              this.tablePage.currentPage = 1
-              this.findList()
-            },
-            handlePageChange ({ currentPage, pageSize }) {
-              this.tablePage.currentPage = currentPage
-              this.tablePage.pageSize = pageSize
-              this.findList()
-            }
+       
+        searchEvent () {
+          this.tablePage.currentPage = 1
+          this.findList()
+        },
+        handlePageChange ({ currentPage, pageSize }) {
+          this.tablePage.currentPage = currentPage
+          this.tablePage.pageSize = pageSize
+          this.findList()
+        },
+        currentChangeEvent ({ row }) {
+          console.log('行选中事件',row)
+        },
+        getCurrentRecord(){
+          const grid = this.$refs.xGrid;
+          const row = grid.getCurrentRecord()
+          console.log(6666,row);
+        }
     }
 }
 </script>

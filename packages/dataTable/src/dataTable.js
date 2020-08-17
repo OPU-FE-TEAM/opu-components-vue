@@ -6,15 +6,25 @@ import {DataForm} from '../../dataForm'
 import config from '../conf'
 
 const tablePropKeys = Object.keys(Table.props)
+const methods = {}
+Object.keys(Table.methods).forEach(name => {
+  methods[name] = function (...args) {
+    return this.$refs.dataGrid && this.$refs.dataGrid[name](...args)
+  }
+})
 
+// 渲染头部搜索表单
 function renderHeadSearch(searchConfig,h,_vm){
-  const { onSearchSubmit }=_vm
+  const { onSearchSubmit,onButtonActionClick }=_vm
+  const items = searchConfig.items.filter(item=>!item.folding)
   let form = h(
     'data-form',
     {
       ref:"headSearch",
       props:{
-        ...searchConfig
+        ...searchConfig,
+        items,
+        onButtonActionClick:onButtonActionClick
       },
       on:{
         ...searchConfig.on,
@@ -33,10 +43,77 @@ function renderHeadSearch(searchConfig,h,_vm){
     ]
   )
 }
+// 渲染高级查询窗口
+function renderAdvancedSearch(searchConfig,h,_vm){
+  const { onSearchSubmit,advancedVisible,onAdvancedcancel,onAdvancedSubmit }=_vm
+  const items = searchConfig.items.filter(item=>item.folding!==false)
+  const formProps = searchConfig.advancedSearchForm && searchConfig.advancedSearchForm.props?searchConfig.advancedSearchForm.props:{}
+  let form = h(
+    'data-form',
+    {
+      ref:"advancedSearch",
+      props:{
+        ...formProps,
+        items,
+        layout:searchConfig.foldingLayout?searchConfig.foldingLayout:"flex"
+      },
+      class:'advanced-search-form',
+      on:{
+        ...searchConfig.on,
+        submit:onSearchSubmit
+      }
+    }
+  );
+
+  const modalProps=searchConfig.advancedSearchModal && searchConfig.advancedSearchModal.props?searchConfig.advancedSearchModal.props:{}
+
+  return h(
+    'a-modal',
+    {
+      ...searchConfig.advancedSearchModal,
+      props:{
+        ...modalProps,
+        title:modalProps.title?modalProps.title:"高级搜索",
+        visible:advancedVisible
+      },
+      on:{
+        cancel:onAdvancedcancel,
+        ok:onAdvancedSubmit
+      },
+      class:'advanced-search-modal'
+    },
+    [
+      form
+    ]
+  )
+}
+
+// 渲染设置表头窗口
+function renderColumnsModal(setColumns,h,_vm) {
+  const { setColumnsVisible,onSetColumnsCancel }=_vm
+  const modalProps=setColumns.modal && setColumns.modal.props?setColumns.modal.props:{}
+
+  return h(
+    'a-modal',
+    {
+      props:{
+        ...modalProps,
+        title:modalProps.title?modalProps.title:"设置表头",
+        visible:setColumnsVisible
+      },
+      on:{
+        cancel:onSetColumnsCancel
+      },
+      class:'advanced-search-modal'
+    },
+    [
+      "form"
+    ]
+  )
+}
 
 function renderButton(item,h,hasDropdown){
   const { name,icon,disabled,code,on }=item;
-  console.log('disabled',disabled);
 
   let iconContent = "";
   if (icon) {
@@ -137,11 +214,13 @@ function renderButtons(buttons,h){
 }
 
 function renderHeadToolbar(h,_vm){
-  const { headToolbar }=_vm
+  const { headToolbar,$nextTick,$refs,showSetColumns }=_vm
   if (!headToolbar) {
     return false
   }
   const headToolbarProps = {
+    ref:"headToolbar",
+    props:{},
     class:'head-toolbar',
     scopedSlots:{}
   }
@@ -152,19 +231,63 @@ function renderHeadToolbar(h,_vm){
       return buttons
     }
   }
+  let advancedSearch="";
   // 渲染头部搜索表单
   if (headToolbar.searchConfig) {
-    // const searchForm = renderHeadSearch(headToolbar.searchConfig,h);
     headToolbarProps.scopedSlots.tools = ()=>{
       return renderHeadSearch(headToolbar.searchConfig,h,_vm)
     }
+    advancedSearch = renderAdvancedSearch(headToolbar.searchConfig,h,_vm)
   }
-  
+
+  // 渲染头部工具
+  let setColumnsModal = ""
+  if (headToolbar.tools) {
+    headToolbarProps.props={
+      ...headToolbar.tools
+    }
+    // 自定义的 setColumns 
+    if (headToolbar.tools.setColumns) {
+      const buttonProps = headToolbar.tools.setColumns.button && headToolbar.tools.setColumns.button.props?headToolbar.tools.setColumns.button.props:{}
+      headToolbarProps.scopedSlots.tools=()=>{
+          return h(
+            "a-button",
+            {
+              ...headToolbar.tools.setColumns.button,
+              props:{
+                circle:true,
+                icon:"setting",
+                ...buttonProps,
+              },
+              class:"tool-btn-setcolumns",
+              on:{
+                click:showSetColumns
+              }
+            }
+          )
+        }
+        setColumnsModal=renderColumnsModal(headToolbar.tools.setColumns,h,_vm)
+    }
+    $nextTick(()=>{
+      $refs.dataGrid.connect($refs.headToolbar)
+    })
+  }
   return h(
-    'vxe-toolbar',
-    headToolbarProps,
-    []
+    "div",
+    {
+      class:"head-toolbar-box"
+    },
+    [
+      h(
+        'vxe-toolbar',
+        headToolbarProps,
+        []
+      ),
+      advancedSearch,
+      setColumnsModal
+    ]
   )
+
 }
 
 export default {
@@ -186,7 +309,10 @@ export default {
   },
   data () {
     return {
-      
+      tableColumns:[],
+      advancedVisible:false,
+      setColumnsVisible:false,
+      searchData:{}
     }
   },
   computed: {
@@ -198,12 +324,13 @@ export default {
       return rest
     },
     tableProps(){
-      const { $listeners,$scopedSlots,tableExtendProps,handleTableQuery }=this
+      const { $listeners,$scopedSlots,tableExtendProps,handleTableQuery,tableColumns }=this
       const propsData =this.$options.propsData
       const props = Object.assign({}, tableExtendProps)
       Object.assign(props, {
         props:{
           ...propsData,
+          columns:tableColumns
         }
       })
       const ons = {}
@@ -231,6 +358,10 @@ export default {
     }
   },
   created () {
+    const { columns }=this
+    if (columns && columns.length) {
+      this.tableColumns = columns
+    }
   },
   mounted () {
     
@@ -241,19 +372,20 @@ export default {
   destroyed () {
   },
   methods:{
+    ...methods,
     onSearchSubmit(values){
-      console.log(values);
+      this.searchData = values;
       this.$refs.dataGrid.commitProxy('reload')
     },
+    // 处理调用 proxyConfig.ajax 的query查询方法前处理请求参数
     handleTableQuery(arr){
-      console.log(arr);
-      const { headToolbar,pagerConfig } = this;
+      const { pagerConfig,searchData } = this;
       // 头部搜索表单数据
-      let headSearchFormData = {}
-      if (headToolbar && headToolbar.searchConfig && headToolbar.searchConfig.items) {
-        const headSearchForm = this.$refs.headSearch;
-        headSearchFormData = headSearchForm.getData();
-      }
+      // let headSearchFormData = {}
+      // if (headToolbar && headToolbar.searchConfig && headToolbar.searchConfig.items) {
+      //   const headSearchForm = this.$refs.headSearch;
+      //   headSearchFormData = headSearchForm.getData();
+      // }
       // 分页参数
       let pageData = {};
       if (pagerConfig && arr.page) {
@@ -265,12 +397,51 @@ export default {
       }
 
       const json = {
-        ...headSearchFormData,
+        ...searchData,
         ...pageData
       }
       console.log(json);
       return json
-    }
+    },
+    onButtonActionClick(action){
+      console.log(action);
+      const {searchData}=this
+      if (action === "advancedQuery") {
+        // 显示高级查询
+        this.advancedVisible=true;
+        this.$nextTick(()=>{
+
+          this.$refs.advancedSearch.setData(searchData)
+        })
+      }
+    },
+    async onAdvancedSubmit(){
+      const { $refs,onAdvancedcancel }=this
+      try {
+        const values = await $refs.advancedSearch.validateFields();
+        //同步值到headform
+        const headSearchForm = this.$refs.headSearch;
+        headSearchForm.setData(values);
+        // reload
+        this.searchData = values;
+        $refs.dataGrid.commitProxy('reload')
+        // cancel
+        onAdvancedcancel()
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onAdvancedcancel(){
+      this.advancedVisible=false
+    },
+    showSetColumns(e){
+      const toolbar = this.$refs.headToolbar;
+      this.setColumnsVisible=true
+      console.log(e,toolbar);
+    },
+    onSetColumnsCancel(){
+      this.setColumnsVisible=false
+    },
   },
   render (h) {
     const { tableProps }=this
