@@ -1,9 +1,12 @@
-// import moduleName from 'vxe-table/packages/table'
+
+import Vue from "vue";
 import 'vxe-table/lib/index.css'
 import utils from '../../utils'
 import {Table} from 'vxe-table'
 import {DataForm} from '../../dataForm'
 import config from '../conf'
+import SetColums from './setColums'
+// import checkbox from "ant-design-vue/lib/checkbox";
 
 const tablePropKeys = Object.keys(Table.props)
 const methods = {}
@@ -90,24 +93,34 @@ function renderAdvancedSearch(searchConfig,h,_vm){
 
 // 渲染设置表头窗口
 function renderColumnsModal(setColumns,h,_vm) {
-  const { setColumnsVisible,onSetColumnsCancel }=_vm
+  const { setColumnsVisible,onSetColumnsCancel,setColumnsOpt,onSetColumnsSubmit }=_vm
   const modalProps=setColumns.modal && setColumns.modal.props?setColumns.modal.props:{}
 
   return h(
     'a-modal',
     {
       props:{
-        ...modalProps,
         title:modalProps.title?modalProps.title:"设置表头",
-        visible:setColumnsVisible
+        width:1000,
+        ...modalProps,
+        visible:setColumnsVisible,
       },
       on:{
-        cancel:onSetColumnsCancel
+        cancel:onSetColumnsCancel,
+        ok:onSetColumnsSubmit
       },
       class:'advanced-search-modal'
     },
     [
-      "form"
+      h(
+        "SetColums",
+        {
+          ref:"setColumsTable",
+          props:{
+            option:setColumnsOpt
+          }
+        }
+      )
     ]
   )
 }
@@ -290,10 +303,12 @@ function renderHeadToolbar(h,_vm){
 
 }
 
+
 export default {
   name: 'DataTable',
   components: {
-    DataForm
+    DataForm,
+    SetColums
   },
   props: {
     ...Table.props,
@@ -324,13 +339,24 @@ export default {
       return rest
     },
     tableProps(){
-      const { $listeners,$scopedSlots,tableExtendProps,handleTableQuery,tableColumns }=this
+      const { $listeners,$scopedSlots,tableExtendProps,handleTableQuery,tableColumns,renderCheckbox }=this
       const propsData =this.$options.propsData
       const props = Object.assign({}, tableExtendProps)
+
+      const columns = tableColumns.map(item=>{
+        if (item.editRender && item.editRender.name && item.editRender.name==="ACheckbox") {
+          item.slots={
+            default:"a_checkbox"
+          }
+          $scopedSlots['a_checkbox']=renderCheckbox
+        }
+        return item;
+      })
+
       Object.assign(props, {
         props:{
           ...propsData,
-          columns:tableColumns
+          columns:columns
         }
       })
       const ons = {}
@@ -355,6 +381,9 @@ export default {
       props.ref = 'dataGrid'
       props.scopedSlots = $scopedSlots
       return props
+    },
+    setColumnsOpt(){
+      return this.headToolbar && this.headToolbar.tools && this.headToolbar.tools.setColumns?this.headToolbar.tools.setColumns:{}
     }
   },
   created () {
@@ -435,19 +464,53 @@ export default {
       this.advancedVisible=false
     },
     showSetColumns(e){
+      // const {setColumnsOpt}=this
+
       const toolbar = this.$refs.headToolbar;
-      this.setColumnsVisible=true
+      this.setColumnsVisible=true;
+      // 获取表头数据
+      // if (setColumnsOpt.api && setColumnsOpt.api.get) {
+        
+      // }
+
+
       console.log(e,toolbar);
     },
     onSetColumnsCancel(){
       this.setColumnsVisible=false
     },
+    onSetColumnsSubmit(){
+      const table = this.$refs.setColumsTable;
+      const data = table.getData()
+      console.log(data);
+    },
+    // 渲染ACheckbox编辑组件
+    renderCheckbox(scope){
+      const vm = new Vue();
+      const h = vm.$createElement;
+      return h(
+        "a-checkbox",
+        {
+          props:{
+            checked:scope.row[scope.column.property]
+          },  
+          on:{
+            input(val){
+              scope.row[scope.column.property]=val
+            }
+          }
+        }
+      )
+
+    }
   },
   render (h) {
     const { tableProps }=this
       // tableProps.scopedSlots.toolbar = ()=>{
       //   return headSearch;
       // }
+      // tableProps.props.columns= handleColumns(tableProps.props.columns,h)
+      
 
     return h(
       'div', 
