@@ -1,7 +1,7 @@
 // 默认主题
-import './styles/index.scss'
+import "./styles/index.scss";
 // 默认安装全部模块
-import OpuComponents from './packages/opu'
+import InitComponents from "./packages/init";
 
-export * from './packages/opu'
-export default OpuComponents
+export * from "./packages/init";
+export default InitComponents;

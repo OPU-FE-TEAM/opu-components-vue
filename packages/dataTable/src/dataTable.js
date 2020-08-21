@@ -6,7 +6,7 @@ import {Table} from 'vxe-table'
 import {DataForm} from '../../dataForm'
 import config from '../conf'
 import SetColums from './setColums'
-// import checkbox from "ant-design-vue/lib/checkbox";
+
 
 const tablePropKeys = Object.keys(Table.props)
 const methods = {}
@@ -29,6 +29,7 @@ function renderHeadSearch(searchConfig,h,_vm){
         items,
         onButtonActionClick:onButtonActionClick
       },
+      class:"head-search-form",
       on:{
         ...searchConfig.on,
         submit:onSearchSubmit
@@ -36,15 +37,7 @@ function renderHeadSearch(searchConfig,h,_vm){
     }
   );
 
-  return h(
-    'div',
-    {
-      class:'head-search-form'
-    },
-    [
-      form
-    ]
-  )
+  return form
 }
 // 渲染高级查询窗口
 function renderAdvancedSearch(searchConfig,h,_vm){
@@ -93,38 +86,30 @@ function renderAdvancedSearch(searchConfig,h,_vm){
 
 // 渲染设置表头窗口
 function renderColumnsModal(setColumns,h,_vm) {
-  const { setColumnsVisible,onSetColumnsCancel,setColumnsOpt,onSetColumnsSubmit }=_vm
-  const modalProps=setColumns.modal && setColumns.modal.props?setColumns.modal.props:{}
-
-  return h(
-    'a-modal',
-    {
-      props:{
-        title:modalProps.title?modalProps.title:"设置表头",
-        width:1000,
-        ...modalProps,
-        visible:setColumnsVisible,
-      },
-      on:{
-        cancel:onSetColumnsCancel,
-        ok:onSetColumnsSubmit
-      },
-      class:'advanced-search-modal'
-    },
-    [
-      h(
+    const {reload}=_vm
+    if (!(setColumns.proxyConfig && 
+          setColumns.proxyConfig.get && 
+          setColumns.proxyConfig.get.api && 
+          setColumns.proxyConfig.submit && 
+          setColumns.proxyConfig.submit.api
+        )) {
+      throw new Error('Please Config proxyConfig the get and submit!');
+    }
+    return h(
         "SetColums",
         {
-          ref:"setColumsTable",
+          ref:"setColumsModal",
           props:{
-            option:setColumnsOpt
+            option:setColumns
+          },
+          on:{
+            submit:reload
           }
         }
       )
-    ]
-  )
 }
 
+// 渲染工具栏按钮
 function renderButton(item,h,hasDropdown){
   const { name,icon,disabled,code,on }=item;
 
@@ -172,7 +157,7 @@ function renderButton(item,h,hasDropdown){
     ]
   )
 }
-
+// 渲染工具栏按钮组
 function renderButtons(buttons,h){
   return buttons ? buttons.map(item => {
     if (Object.prototype.toString.call(item) === "[object Array]") {
@@ -226,8 +211,9 @@ function renderButtons(buttons,h){
   }):[]
 }
 
+// 渲染头部工具栏
 function renderHeadToolbar(h,_vm){
-  const { headToolbar,$nextTick,$refs,showSetColumns }=_vm
+  const { headToolbar,$nextTick,$refs,showSetColumns,setColumns }=_vm
   if (!headToolbar) {
     return false
   }
@@ -245,11 +231,10 @@ function renderHeadToolbar(h,_vm){
     }
   }
   let advancedSearch="";
+  let headSearchTools = ""
   // 渲染头部搜索表单
   if (headToolbar.searchConfig) {
-    headToolbarProps.scopedSlots.tools = ()=>{
-      return renderHeadSearch(headToolbar.searchConfig,h,_vm)
-    }
+    headSearchTools = renderHeadSearch(headToolbar.searchConfig,h,_vm)
     advancedSearch = renderAdvancedSearch(headToolbar.searchConfig,h,_vm)
   }
 
@@ -262,28 +247,47 @@ function renderHeadToolbar(h,_vm){
     // 自定义的 setColumns 
     if (headToolbar.tools.setColumns) {
       const buttonProps = headToolbar.tools.setColumns.button && headToolbar.tools.setColumns.button.props?headToolbar.tools.setColumns.button.props:{}
-      headToolbarProps.scopedSlots.tools=()=>{
-          return h(
-            "a-button",
-            {
-              ...headToolbar.tools.setColumns.button,
-              props:{
-                circle:true,
-                icon:"setting",
-                ...buttonProps,
-              },
-              class:"tool-btn-setcolumns",
-              on:{
-                click:showSetColumns
-              }
+      const setColumnsBtn =h(
+          "a-button",
+          {
+            ...headToolbar.tools.setColumns.button,
+            props:{
+              circle:true,
+              icon:"setting",
+              ...buttonProps,
+            },
+            class:"tool-btn-setcolumns",
+            on:{
+              click:showSetColumns
             }
+          }
+        )
+      if (headSearchTools) {
+        headToolbarProps.scopedSlots.tools = ()=>{
+          return h(
+            "div",
+            {
+              style:{display:"flex"}
+            },
+            [
+              headSearchTools,
+              setColumnsBtn
+            ]
           )
         }
+      }else{
+        headToolbarProps.scopedSlots.tools = ()=>{ return setColumnsBtn}
+      }
+      if (!setColumns) {
         setColumnsModal=renderColumnsModal(headToolbar.tools.setColumns,h,_vm)
+      }
     }
     $nextTick(()=>{
       $refs.dataGrid.connect($refs.headToolbar)
     })
+  }
+  if (!headToolbarProps.scopedSlots.tools && headSearchTools) {
+    headToolbarProps.scopedSlots.tools=()=>{return headSearchTools}
   }
   return h(
     "div",
@@ -319,14 +323,14 @@ export default {
     formConfig: [Boolean, Object],
     zoomConfig: Object,
     searchConfig:Object,
-    headToolbar:Object
+    headToolbar:Object,
+    setColumns:Object
 
   },
   data () {
     return {
       tableColumns:[],
       advancedVisible:false,
-      setColumnsVisible:false,
       searchData:{}
     }
   },
@@ -382,9 +386,6 @@ export default {
       props.scopedSlots = $scopedSlots
       return props
     },
-    setColumnsOpt(){
-      return this.headToolbar && this.headToolbar.tools && this.headToolbar.tools.setColumns?this.headToolbar.tools.setColumns:{}
-    }
   },
   created () {
     const { columns }=this
@@ -402,6 +403,9 @@ export default {
   },
   methods:{
     ...methods,
+    reload(){
+      this.$refs.dataGrid.commitProxy('reload')
+    },
     onSearchSubmit(values){
       this.searchData = values;
       this.$refs.dataGrid.commitProxy('reload')
@@ -429,11 +433,9 @@ export default {
         ...searchData,
         ...pageData
       }
-      console.log(json);
       return json
     },
     onButtonActionClick(action){
-      console.log(action);
       const {searchData}=this
       if (action === "advancedQuery") {
         // 显示高级查询
@@ -444,10 +446,9 @@ export default {
         })
       }
     },
-    async onAdvancedSubmit(){
+    onAdvancedSubmit(){
       const { $refs,onAdvancedcancel }=this
-      try {
-        const values = await $refs.advancedSearch.validateFields();
+      $refs.advancedSearch.validateFields().then(values=>{
         //同步值到headform
         const headSearchForm = this.$refs.headSearch;
         headSearchForm.setData(values);
@@ -456,33 +457,17 @@ export default {
         $refs.dataGrid.commitProxy('reload')
         // cancel
         onAdvancedcancel()
-      } catch (error) {
-        console.log(error);
-      }
+      })
+      
     },
+
     onAdvancedcancel(){
       this.advancedVisible=false
     },
-    showSetColumns(e){
-      // const {setColumnsOpt}=this
-
-      const toolbar = this.$refs.headToolbar;
-      this.setColumnsVisible=true;
-      // 获取表头数据
-      // if (setColumnsOpt.api && setColumnsOpt.api.get) {
-        
-      // }
-
-
-      console.log(e,toolbar);
-    },
-    onSetColumnsCancel(){
-      this.setColumnsVisible=false
-    },
-    onSetColumnsSubmit(){
-      const table = this.$refs.setColumsTable;
-      const data = table.getData()
-      console.log(data);
+    // 显示表头设置窗口
+    showSetColumns(){
+      // const toolbar = this.$refs.headToolbar;
+      this.$refs.setColumsModal.show()
     },
     // 渲染ACheckbox编辑组件
     renderCheckbox(scope){
@@ -505,12 +490,15 @@ export default {
     }
   },
   render (h) {
-    const { tableProps }=this
+    const { tableProps,setColumns }=this
       // tableProps.scopedSlots.toolbar = ()=>{
       //   return headSearch;
       // }
       // tableProps.props.columns= handleColumns(tableProps.props.columns,h)
-      
+      const nodes = [];
+      if (setColumns) {
+        nodes.push(renderColumnsModal(setColumns,h,this))
+      }
 
     return h(
       'div', 
@@ -524,8 +512,7 @@ export default {
           tableProps,
           
         ),
-        
-      ]
+      ].concat(nodes)
     );
       
   },

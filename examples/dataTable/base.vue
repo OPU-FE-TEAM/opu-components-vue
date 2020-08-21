@@ -16,21 +16,17 @@
           highlight-hover-row
           highlight-current-row
           @current-change="currentChangeEvent"
+          :setColumns="setColumns"
          
         >
        
 
         </DataTable>
 
-        <vxe-toolbar
-          custom
-          print
-          ref="xToolbar">
-          <template v-slot:tools>
-              <vxe-button type="text" icon="vxe-icon--funnel" class="tool-btn"></vxe-button>
-          </template>
-        </vxe-toolbar>
+      
         <a-button @click="getData">获取数据</a-button>
+        <a-button @click="showSetColumns">设置表头</a-button>
+
     </div>
 </template>
 
@@ -223,14 +219,54 @@ export default {
                       param:{ code:"aaa"},
                       dataField:"data.data"
                     },
+                    submit:{
+                      api:getColumns,
+                      before:(values)=>{
+                        console.log("before",values);
+                        return values
+                      },
+                      after:(res)=>{
+                        console.log("after",res);
+                      }
+                    }
                   }
                 }
               }
             },
+            setColumns:{
+              modal:{
+                props:{
+                  title:"自定义标题"
+                }
+              },
+              proxyConfig:{
+                get:{
+                  api:getColumns,
+                  param:{ code:"aaa"},
+                  dataField:"data.data"
+                },
+                submit:{
+                  api:getColumns,
+                  before:(values)=>{
+                    console.log("before",values);
+                    return values
+                  },
+                  after:(res)=>{
+                    console.log("after",res);
+                  }
+                }
+              }
+            },
+
             pagerConfig: { 
               pageSize: 10,
               layouts:['PrevJump', 'PrevPage', 'Number', 'NextPage', 'NextJump', 'Sizes', 'FullJump', 'Total'],
               perfect:true,
+              slots:{
+                left:()=>{
+                  return "666"
+                }
+              }
               // props:{
               //   pageSize:'size',
               //   currentPage:'pageIndex'
@@ -268,10 +304,7 @@ export default {
     },  
     created() {
         // this.findList()
-         this.$nextTick(() => {
-              // 手动将表格和工具栏进行关联
-              this.$refs.xGrid.connect(this.$refs.xToolbar)
-            })
+         
     },
     methods:{
        
@@ -296,6 +329,11 @@ export default {
           const grid = this.$refs.xGrid;
           const data =grid.getData()
           console.log(data);
+        },
+        showSetColumns(){
+          const grid = this.$refs.xGrid;
+          grid.showSetColumns()
+
         }
     }
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>demo</title>
+    <link rel="stylesheet" href="../lib/opu.css">
+</head>
+<body>
+    <div id="app">
+        <div>
+            <data-form 
+            layout="grid" 
+            :colspan="3" 
+            :titleWidth="100" 
+            :items="items"
+            >
+            </data-form>
+            <div>{{text}}</div>
+            <my-name></my-name>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="../lib/index.js"></script>
+    <script>
+        console.log(Vue.use,opu)
+        var a={
+            b:1
+        }
+        Vue.component('my-name', { 
+            template: '<h3>888</h3>'
+        })
+
+        new Vue({
+            el: '#app',
+            components: {
+                DataForm:opu.DataForm
+            },
+            data() {
+                return {
+                    text:55555,
+                    items:[
+                        {
+                            field:"id",
+                            type:"hidden"
+                        },
+                        { 
+                            field: 'name', 
+                            title: '名称', 
+                            extra:"aaa",
+                            itemRender: { 
+                                name: 'input', 
+                                props: { 
+                                    placeholder: '请输入名称',
+                                },
+                            } 
+                        },
+                    ]
+                }
+            },
+        })
+        // Vue.use(a)
+    </script>
+</body>
+</html>

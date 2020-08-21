@@ -8,8 +8,13 @@
                 margin-right: 10px;
             }
         }
+        .head-search-form{
+            display: inline-block;
+        }
         .tool-btn-setcolumns{
-            // margin-right: 10px;
+            top: 2px;
+            width: 34px;
+            height: 34px;
         }
     }
     
@@ -25,11 +30,11 @@
     }
 }
 
-.sortable-tree-demo .drag-btn {
+.columns-table .drag-btn {
     cursor: move;
     font-size: 12px;
   }
-  .sortable-tree-demo .vxe-body--row.sortable-ghost,
-  .sortable-tree-demo .vxe-body--row.sortable-chosen {
+  .columns-table .vxe-body--row.sortable-ghost,
+  .columns-table .vxe-body--row.sortable-chosen {
     background-color: #dfecfb;
   }

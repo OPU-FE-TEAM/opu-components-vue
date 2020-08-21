@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
 /dist
-/lib
+
+
 # local env files
 .env.local
 .env.*.local
@@ -20,4 +21,3 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
-*.tgz
