@@ -16,6 +16,9 @@ $formItemMarginBottom: 19px;
 .data-form{
     .data-form-item-wrapper{
         display: flex;
+        .data-form-scopedSlots{
+            width: 100%;
+        }
         
         .data-form-item-content{
             flex:1;
@@ -30,13 +33,21 @@ $formItemMarginBottom: 19px;
         &.right{
             text-align: right;
         }
-        .ant-calendar-picker{
+        .ant-calendar-picker,
+        .ant-input-number{
             width: 100%!important;
         }
     }
+    .ant-form-item-children{
+        display: block;
+    }
+    
     .ant-form-item{
         margin-bottom: $formItemMarginBottom;
         display: flex;
+        .ant-form-item-label{
+            line-height: 32px;
+        }
         .ant-form-item-label > label::after,
         .ant-form-item-required::before{
             display: none;
@@ -68,9 +79,6 @@ $formItemMarginBottom: 19px;
     }
     .ant-form-item-with-help{
         margin-bottom: 0;
-        .ant-form-explain{
-            // text-align: right;
-        }
     }
     .data-form-buttons{
         .ant-btn+.ant-btn{
@@ -93,7 +101,11 @@ $formItemMarginBottom: 19px;
                 text-align: left;
             }
         }
+        .ant-form-item-children{
+            display: inline-block;
+        }
     }
+    
   
     .ant-select-selection-selected-value{
         position: absolute;
@@ -110,7 +122,8 @@ $formItemMarginBottom: 19px;
 
     &.readonly{
         .ant-input[disabled],
-        .ant-select-disabled .ant-select-selection{
+        .ant-select-disabled .ant-select-selection,
+        .ant-input-number-disabled{
             @include readonlyInput;
         }
         .ant-select-arrow{
@@ -118,3 +131,30 @@ $formItemMarginBottom: 19px;
         }
     }
 }
+
+.date-range-split {
+    display: flex;
+    .item {
+      flex: 1;
+    }
+    .fh {
+      padding: 0 5px;
+      font-size: 14px;
+      line-height: 32px;
+    }
+    .ant-calendar-picker{
+      min-width: auto!important;
+    }
+  }
+
+  @media (max-width: 575px){
+      .data-form{
+        .ant-form-item-label{
+            line-height: 39px;
+        }
+        .ant-form-item-control-wrapper, .ant-form-item-label{
+            display: inline-block; 
+            width: auto; 
+        }
+      }
+  }

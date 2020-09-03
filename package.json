@@ -1,6 +1,6 @@
 {
   "name": "opu-components-vue",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -17,9 +17,9 @@
     "styles"
   ],
   "main": "lib/opu.js",
-  "style": "lib/index.css",
-  "unpkg": "lib/index.min.js",
-  "jsdelivr": "lib/index.min.js",
+  "style": "lib/opu.css",
+  "unpkg": "lib/opu.min.js",
+  "jsdelivr": "lib/opu.min.js",
   "dependencies": {
     "ant-design-vue": "^1.6.4",
     "core-js": "^3.6.5",
@@ -65,7 +65,9 @@
     "opu-table",
     "vue table",
     "opu-form",
-    "vue form"
+    "vue form",
+    "antd form",
+    "antd table"
   ],
   "author": {
     "name": "OPU FE",
