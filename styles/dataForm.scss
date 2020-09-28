@@ -6,7 +6,7 @@ $formItemMarginBottom: 19px;
 
 // 只读模式下的输入框样式
 @mixin readonlyInput{
-    color:14px;
+    color:rgba(0, 0, 0, 0.85);
     background: #fff;
     border: none;
     border-bottom: 1px solid #d9d9d9;
@@ -22,7 +22,12 @@ $formItemMarginBottom: 19px;
         
         .data-form-item-content{
             flex:1;
-            min-width: 130px;
+            &>div{
+                min-width: 130px;
+            }
+            &>.data-form-buttons{
+                min-width: initial;
+            }
         }
         &.left{
             text-align: left;
@@ -56,6 +61,7 @@ $formItemMarginBottom: 19px;
         .data-form-item-title{
             width: 100px;
             text-align: right;
+            line-height: 40px;
             &.colon:after {
                 content: ':';
                 margin: 0 8px 0 2px;
@@ -123,6 +129,8 @@ $formItemMarginBottom: 19px;
     &.readonly{
         .ant-input[disabled],
         .ant-select-disabled .ant-select-selection,
+        .ant-input-disabled,
+        .ant-cascader-picker-disabled,
         .ant-input-number-disabled{
             @include readonlyInput;
         }

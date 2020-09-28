@@ -1,0 +1,121 @@
+// import utils from "../../utils";
+import config from "../conf";
+import { DataForm } from "../../dataForm";
+
+export default {
+  name: "FormModal",
+  components: {
+    DataForm
+  },
+  props: {
+    form: {
+      type: Object,
+      required: true
+    },
+    modal: Object
+  },
+  data() {
+    return {
+      visible: false,
+      loading: false,
+      confirmLoading: false,
+      readonly: false,
+      title: ""
+    };
+  },
+  computed: {
+    modalOpt() {
+      const { modal } = this;
+      return modal && modal.props
+        ? { ...config.modal.props, ...modal.props }
+        : config.modal.props;
+    },
+    formOpt() {
+      const { form } = this;
+      return form && form.props
+        ? { ...config.form.props, ...form.props }
+        : config.form.props;
+    }
+  },
+
+  methods: {
+    show(callback) {
+      this.loading = true;
+      this.visible = true;
+      this.confirmLoading = true;
+      this.$nextTick(callback);
+    },
+    setLoading(flag) {
+      this.loading = flag;
+      this.confirmLoading = flag;
+    },
+    setFormData(data) {
+      this.$refs.form && this.$refs.form.setData(data);
+      this.loading = false;
+      this.confirmLoading = false;
+    },
+    onCancel() {
+      this.visible = false;
+      this.$emit("cancel");
+    },
+    onSubmit() {
+      this.$refs.form.validateFields().then(values => {
+        this.$emit("submit", values);
+        this.visible = false;
+      });
+    },
+    setReadonly(flag) {
+      this.readonly = flag;
+    },
+    setTitle(title) {
+      this.title = title;
+    }
+  },
+  render(h) {
+    const {
+      modalOpt,
+      formOpt,
+      visible,
+      onSubmit,
+      onCancel,
+      loading,
+      confirmLoading,
+      $scopedSlots,
+      readonly,
+      title
+    } = this;
+    //TODO 自动以footer 增加 loading状态
+    const modalProps = {
+      props: {
+        width: 800,
+        ...modalOpt,
+        title: title ? title : modalOpt.title,
+        confirmLoading: confirmLoading,
+        visible: visible
+      },
+      on: {
+        cancel: onCancel,
+        ok: onSubmit
+      },
+      class: "crud-table-form-modal"
+    };
+    if (readonly) {
+      modalProps.props.okButtonProps = {
+        style: { display: "none" }
+      };
+    }
+
+    const formProps = {
+      ref: "form",
+      props: {
+        ...formOpt,
+        readonly
+      },
+      class: "crud-table-form",
+      scopedSlots: $scopedSlots
+    };
+    return h("a-modal", modalProps, [
+      h("a-spin", { props: { spinning: loading } }, [h("data-form", formProps)])
+    ]);
+  }
+};

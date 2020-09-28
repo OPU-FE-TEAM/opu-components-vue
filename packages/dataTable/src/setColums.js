@@ -1,6 +1,7 @@
 import Vue from "vue";
 import utils from "../../utils";
 import Sortable from "sortablejs";
+import config from "../conf";
 
 export default {
   name: "SetColumns",
@@ -8,31 +9,47 @@ export default {
   props: {
     option: {
       type: Object,
-      required: true
-    }
+      default: () => {}
+    },
+    columns: Array
   },
   data() {
     return {
       visible: false,
-      columns: []
+      tableData: []
     };
   },
   computed: {
-    getOpt() {
+    query() {
       const { option } = this;
-      return option.proxyConfig && option.proxyConfig.get
-        ? option.proxyConfig.get
-        : {};
+      return option.proxyConfig &&
+        option.proxyConfig.ajax &&
+        option.proxyConfig.ajax.query
+        ? option.proxyConfig.ajax.query
+        : null;
     },
-    submitOpt() {
+    propsConfig() {
       const { option } = this;
-      return option.proxyConfig && option.proxyConfig.submit
-        ? option.proxyConfig.submit
-        : {};
+      return option.proxyConfig && option.proxyConfig.props
+        ? {
+            ...config.setColumns.proxyConfig.props,
+            ...option.proxyConfig.props
+          }
+        : config.setColumns.proxyConfig.props;
+    },
+    submit() {
+      const { option } = this;
+      return option.proxyConfig &&
+        option.proxyConfig.ajax &&
+        option.proxyConfig.ajax.submit
+        ? option.proxyConfig.ajax.submit
+        : null;
     },
     modalOpt() {
       const { option } = this;
-      return option.modal ? option.modal : {};
+      return option.modal && option.modal.props
+        ? { ...config.setColumns.modal.props, ...option.modal.props }
+        : config.setColumns.modal.props;
     }
   },
 
@@ -44,20 +61,39 @@ export default {
   methods: {
     show() {
       this.visible = true;
-      const { getOpt } = this;
-      if (getOpt.api) {
+      const { query, columns, handelColumns } = this;
+      if (query) {
         this.fetchColumns();
+      } else {
+        this.tableData = handelColumns(utils.clone(columns));
+        this.treeDrop();
       }
     },
+    handelColumns(data) {
+      return data
+        ? data.map(item => {
+            if (item.show !== false) {
+              item.show = true;
+            }
+            if (!item.defaultTitle) {
+              item.defaultTitle = item.title;
+            }
+            if (!item.fixed) {
+              item.fixed = "";
+            }
+            return item;
+          })
+        : [];
+    },
     fetchColumns() {
-      const { getOpt } = this;
-      const json = {
-        ...getOpt.param
-      };
-      getOpt.api(json).then(res => {
-        const dataField = getOpt.dataField ? getOpt.dataField : "data";
-        const data = utils.getObjData(dataField, res);
-        this.columns = data;
+      const { query, propsConfig, handelColumns } = this;
+      // const json = {
+      //   ...getOpt.param
+      // };
+      query().then(res => {
+        // const dataField = getOpt.dataField ? getOpt.dataField : "data";
+        const data = utils.getObjData(propsConfig.list, res);
+        this.tableData = handelColumns(data);
         this.treeDrop();
       });
     },
@@ -75,7 +111,7 @@ export default {
               let targetTrElem = item;
               let wrapperElem = targetTrElem.parentNode;
               let prevTrElem = targetTrElem.previousElementSibling;
-              let tableTreeData = this.columns;
+              let tableTreeData = this.tableData;
               let selfRow = xTable.getRowNode(targetTrElem).item;
               let selfNode = utils.findTree(
                 tableTreeData,
@@ -164,30 +200,30 @@ export default {
       this.visible = false;
     },
     onSubmit() {
-      const { submitOpt, getOpt } = this;
+      const { submit } = this;
       const data = this.getData();
-      if (submitOpt.api) {
-        let json = {
-          ...getOpt.param,
-          data: data.tableData
-        };
-        const callbackRes = submitOpt.before && submitOpt.before(json);
-        if (callbackRes === false) {
-          return false;
-        } else if (callbackRes) {
-          json = callbackRes;
+      const { tableData } = data;
+
+      const newTableData = tableData.map(item => {
+        if (!(item.fixed === "left" || item.fixed === "right")) {
+          delete item.fixed;
         }
-        submitOpt.api(json).then(res => {
+        return item;
+      });
+      if (submit) {
+        submit(newTableData).then(() => {
           this.visible = false;
-          submitOpt.after && submitOpt.after(res);
-          this.$emit("submit", res);
+          this.$emit("submit");
         });
+      } else {
+        this.visible = false;
+        this.$emit("submit", newTableData);
       }
     }
   },
   render(h) {
     const {
-      columns,
+      tableData,
       renderShowEdit,
       modalOpt,
       visible,
@@ -211,9 +247,14 @@ export default {
           }
         }
       },
-      { field: "title", title: "默认标题", align: "center", treeNode: true },
       {
-        field: "name",
+        field: "defaultTitle",
+        title: "默认标题",
+        align: "center",
+        treeNode: true
+      },
+      {
+        field: "title",
         title: "显示标题",
         align: "center",
         editRender: { name: "AInput" }
@@ -244,14 +285,14 @@ export default {
         slots: { default: "show_default" }
       },
       {
-        field: "freeze",
+        field: "fixed",
         title: "固定",
         align: "center",
         editRender: {
           name: "ASelect",
           options: [
+            { label: "不固定", value: "" },
             { label: "靠左", value: "left" },
-            { label: "居中", value: "center" },
             { label: "靠右", value: "right" }
           ]
         }
@@ -267,7 +308,7 @@ export default {
       {
         props: {
           title: modalProps.title ? modalProps.title : "设置表头",
-          width: 1000,
+          width: 800,
           ...modalProps,
           visible: visible
         },
@@ -287,7 +328,7 @@ export default {
               border: true,
               rowKey: true,
               columns: tableColumn,
-              data: columns,
+              data: tableData,
               treeConfig: { children: "children" },
               editConfig: { trigger: "click", mode: "row" },
               checkboxConfig: { checkStrictly: true }

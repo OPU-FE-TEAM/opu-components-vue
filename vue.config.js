@@ -4,6 +4,7 @@ function resolve(dir) {
 }
 
 module.exports = {
+  productionSourceMap: false,
   // 将entry指向examples
   pages: {
     index: {
@@ -15,16 +16,4 @@ module.exports = {
   devServer: {
     port: 3001
   }
-  // 为packages目录添加babel-loader处理
-  //   chainWebpack: config => {
-  //     config.module
-  //       .rule("js")
-  //       .include.add(resolve("packages"))
-  //       .end()
-  //       .use("babel")
-  //       .loader("babel-loader")
-  //       .tap(options => {
-  //         return options;
-  //       });
-  //   }
 };

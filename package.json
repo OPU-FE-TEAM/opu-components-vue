@@ -1,6 +1,6 @@
 {
   "name": "opu-components-vue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -16,7 +16,7 @@
     "packages",
     "styles"
   ],
-  "main": "lib/opu.js",
+  "main": "lib/index.js",
   "style": "lib/opu.css",
   "unpkg": "lib/opu.min.js",
   "jsdelivr": "lib/opu.min.js",

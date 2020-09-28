@@ -9,19 +9,27 @@
       height="460"
       :loading="loading"
       :data="tableData"
-      :columns="tableColumn"
       :headToolbar="headToolbar"
       :proxy-config="proxyConfig"
       :pager-config="pagerConfig"
       highlight-hover-row
       highlight-current-row
       @current-change="currentChangeEvent"
-      :setColumns="setColumns"
+      :setcolumns-config="setColumns"
+      :columns="tableColumn"
+      :edit-config="{ trigger: 'click', mode: 'row' }"
     >
+      <template v-slot:operate="{ row }">
+        <a-button @click="editRow(row)">编辑</a-button>
+      </template>
+      <template v-slot:switch="{ row }">
+        <a-switch v-model="row.switch"></a-switch>
+      </template>
     </DataTable>
 
     <a-button @click="getData">获取数据</a-button>
-    <a-button @click="showSetColumns">设置表头</a-button>
+    <a-button @click="$refs.xGrid.showSetColumns()">设置表头</a-button>
+    <a-button @click="updateColumns">更新表头</a-button>
   </div>
 </template>
 
@@ -31,13 +39,17 @@
 function getData(arr) {
   return new Promise(resolve => {
     setTimeout(() => {
+      console.log(arr);
       const size = arr.pageSize ? arr.pageSize : 20;
       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
       const list = Array.from({ length: size }, (_, key) => ({
         id: key,
         name: `name_${pageIndex}_${key}`,
         checkbox: key < 3 ? true : false,
-        checkbox1: key === 5 ? true : false
+        checkbox1: key === 5 ? true : false,
+        select: "",
+        select1: "",
+        switch: false
       }));
       const json = {
         // data: [...list],
@@ -54,22 +66,26 @@ function getData(arr) {
   });
 }
 
-function getColumns() {
+function getColumns(arr) {
   return new Promise(resolve => {
     setTimeout(() => {
+      const code = arr && arr.code ? arr.code : "";
       const list = [
         {
+          field: "name"
+        },
+        {
           id: "1",
-          title: "基本信息",
+          title: "基本信息" + code,
+          field: "base",
           children: [
             {
               id: "1-1",
-              field: "name",
-              title: "Name",
+              field: "name1",
+              title: "Name1",
               width: 100,
               align: "left",
-              show: true,
-              freeze: "left"
+              show: true
             },
             {
               title: "其他信息",
@@ -81,8 +97,7 @@ function getColumns() {
                   title: "Rate",
                   width: 100,
                   align: "left",
-                  show: true,
-                  freeze: "left"
+                  show: true
                 },
                 {
                   id: "1-2-2",
@@ -90,8 +105,7 @@ function getColumns() {
                   title: "Age",
                   width: 100,
                   align: "left",
-                  show: true,
-                  freeze: "left"
+                  show: true
                 }
               ]
             },
@@ -101,8 +115,7 @@ function getColumns() {
               title: "Sex",
               width: 100,
               align: "left",
-              show: true,
-              freeze: "left"
+              show: false
             }
           ]
         },
@@ -112,8 +125,7 @@ function getColumns() {
           title: "Address",
           width: 100,
           align: "left",
-          show: true,
-          freeze: "left"
+          show: true
         },
         {
           id: "3",
@@ -121,8 +133,7 @@ function getColumns() {
           title: "Area",
           width: 100,
           align: "left",
-          show: true,
-          freeze: "left"
+          show: false
         },
         {
           id: "4",
@@ -130,8 +141,7 @@ function getColumns() {
           title: "City",
           width: 100,
           align: "left",
-          show: true,
-          freeze: "left"
+          show: true
         }
       ];
       const json = {
@@ -145,6 +155,33 @@ function getColumns() {
       };
       resolve(json);
     }, 500);
+  });
+}
+
+function getSelectData(param) {
+  console.log("mock: getSelectData param", param);
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const data = [
+        {
+          id: 1,
+          name: "男1"
+        },
+        {
+          id: 2,
+          name: "女2"
+        }
+      ];
+      const json = {
+        code: 0,
+        data: {
+          data: data,
+          total: 100
+        }
+      };
+      console.log("mock: getSelectData return", json);
+      resolve(json);
+    });
   });
 }
 
@@ -236,7 +273,7 @@ export default {
             ]
           }
         ],
-        searchConfig: {
+        search: {
           layout: "inline",
           titleWidth: "auto",
           // foldingLayout:"flex",
@@ -263,7 +300,7 @@ export default {
               field: "name",
               title: "名称",
               itemRender: {
-                name: "input",
+                name: "a-input",
                 props: { placeholder: "请输入名称" }
               }
             },
@@ -271,7 +308,7 @@ export default {
               field: "sex",
               title: "性别",
               itemRender: {
-                name: "select",
+                name: "a-select",
                 props: {
                   placeholder: "请选择性别",
                   showSearch: true,
@@ -287,7 +324,7 @@ export default {
               title: "年龄",
               folding: true,
               itemRender: {
-                name: "number",
+                name: "a-input-number",
                 props: { placeholder: "请输入年龄" }
               }
             },
@@ -317,59 +354,35 @@ export default {
         tools: {
           import: true,
           custom: true,
-          setColumns: {
-            button: {
-              props: {
-                shape: "circle",
-                icon: "setting"
-              },
-              style: {
-                marginRight: "10px"
-              }
-            },
-            proxyConfig: {
-              get: {
-                api: getColumns,
-                param: { code: "aaa" },
-                dataField: "data.data"
-              },
-              submit: {
-                api: getColumns,
-                before: values => {
-                  console.log("before", values);
-                  return values;
-                },
-                after: res => {
-                  console.log("after", res);
-                }
-              }
-            }
-          }
+          // setColumns: true,
+          export: true,
+          print: true,
+          refresh: true
         }
       },
       setColumns: {
-        modal: {
-          props: {
-            title: "自定义标题"
-          }
-        },
-        proxyConfig: {
-          get: {
-            api: getColumns,
-            param: { code: "aaa" },
-            dataField: "data.data"
-          },
-          submit: {
-            api: getColumns,
-            before: values => {
-              console.log("before", values);
-              return values;
-            },
-            after: res => {
-              console.log("after", res);
-            }
-          }
-        }
+        // modal: {
+        //   props: {
+        //     title: "自定义标题"
+        //   }
+        // },
+        // proxyConfig: {
+        //   props: {},
+        //   ajax: {
+        //     query: json => {
+        //       return new Promise(resolve => {
+        //         console.log(json);
+        //         getColumns({
+        //           ...json,
+        //           code: "aaaa"
+        //         }).then(res => {
+        //           resolve(res);
+        //         });
+        //       });
+        //     },
+        //     submit: getColumns
+        //   }
+        // }
       },
 
       pagerConfig: {
@@ -381,8 +394,8 @@ export default {
           "NextPage",
           "NextJump",
           "Sizes",
-          "FullJump",
-          "Total"
+          "FullJump"
+          // "Total"
         ],
         perfect: true,
         slots: {
@@ -396,24 +409,44 @@ export default {
         // }
       },
       proxyConfig: {
-        seq: true, // 启用动态序号代理
-        sort: true, // 启用排序代理
-        filter: true, // 启用筛选代理
-        form: true, // 启用表单代理
-        props: {
-          result: "data.data",
-          total: "data.total",
-          list: "data.data"
-        },
+        // seq: true, // 启用动态序号代理
+        // sort: true, // 启用排序代理
+        // filter: true, // 启用筛选代理
+        // form: true, // 启用表单代理
+        // props: {
+        //   result: "data.data",
+        //   total: "data.total",
+        //   list: "data.data"
+        // },
 
         ajax: {
           query: getData
         }
       },
-      proxyColumn: {},
+      proxyColumns: {
+        // props: {
+        //   list: "data.data",
+        //   show: "show",
+        //   align: "align",
+        //   fixed: "freeze"
+        // },
+        ajax: {
+          query: json => {
+            return new Promise(resolve => {
+              console.log(json);
+              getColumns({
+                ...json,
+                code: "aaaa"
+              }).then(res => {
+                resolve(res);
+              });
+            });
+          }
+        }
+      },
       tableColumn: [
-        { type: "checkbox", width: 60 },
-        { type: "seq", title: "Number", width: 80 },
+        { type: "checkbox", colIndex: 0, width: 60, fixed: "" },
+        { type: "seq", title: "Number", colIndex: 1, width: 80 },
         {
           field: "name",
           title: "Name",
@@ -427,19 +460,61 @@ export default {
           editRender: { name: "ACheckbox" }
         },
         {
-          field: "checkbox1",
-          title: "Checkbox1",
-          minWidth: 140,
-          editRender: { name: "ACheckbox" }
-        }
+          field: "select",
+          title: "下拉框",
+          editRender: {
+            name: "ASelect",
+            options: [
+              { value: 1, label: "男" },
+              { value: 2, label: "女" }
+            ]
+          }
+        },
+        {
+          field: "select1",
+          title: "下拉框请求下拉数据",
+          editRender: {
+            name: "ASelect",
+            options: [],
+            optionProps: {
+              value: "id",
+              label: "name"
+            }
+          }
+        },
+        {
+          field: "cascader",
+          title: "级联选择",
+          editRender: {
+            name: "ACascader",
+            props: {
+              options: []
+            }
+          }
+        },
+        {
+          title: "开关",
+          width: 100,
+          slots: { default: "switch", edit: "switch" }
+        },
+        { title: "操作", width: 200, slots: { default: "operate" } }
       ],
       tableData: []
     };
   },
   created() {
     // this.findList()
+    this.fetchSelectData();
   },
   methods: {
+    fetchSelectData() {
+      getSelectData().then(res => {
+        if (this.$refs.xGrid) {
+          const column = this.$refs.xGrid.getColumnByField("select1");
+          column.editRender.options = res.data.data;
+        }
+      });
+    },
     searchEvent() {
       this.tablePage.currentPage = 1;
       this.findList();
@@ -465,6 +540,28 @@ export default {
     showSetColumns() {
       const grid = this.$refs.xGrid;
       grid.showSetColumns();
+    },
+    updateColumns() {
+      this.tableColumn = [
+        { type: "checkbox", colIndex: 0, width: 60 },
+        { type: "seq", title: "Number", colIndex: 1, width: 80 },
+        {
+          field: "code",
+          title: "Code",
+          minWidth: 140,
+          editRender: { name: "AInput" }
+        },
+        {
+          field: "checkbox",
+          title: "Checkbox",
+          minWidth: 140,
+          editRender: { name: "ACheckbox" }
+        }
+      ];
+    },
+    editRow(row) {
+      const str = JSON.stringify(row);
+      console.log(str);
     }
   }
 };

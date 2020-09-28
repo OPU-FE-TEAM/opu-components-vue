@@ -1,8 +1,9 @@
 import DataTable from "./dataTable";
 import DataForm from "./dataForm";
+import CrudTable from "./crudTable";
 
 // 按需加载的组件
-const components = [DataForm, DataTable];
+const components = [DataForm, DataTable, CrudTable];
 
 // 默认安装
 function install(Vue) {
@@ -18,6 +19,7 @@ if (typeof window !== "undefined" && window.Vue && window.Vue.use) {
 
 export * from "./dataForm";
 export * from "./dataTable";
+export * from "./crudTable";
 export { default as utils } from "./utils";
 
 export default {
