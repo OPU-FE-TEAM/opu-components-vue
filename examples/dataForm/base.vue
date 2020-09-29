@@ -4,8 +4,6 @@
       ref="dataForm"
       layout="grid"
       :colspan="2"
-      :titleWidth="200"
-      :titleColon="false"
       :readonly="readonly"
       :items="items"
       :onOptionsAllLoad="onOptionsAllLoad"

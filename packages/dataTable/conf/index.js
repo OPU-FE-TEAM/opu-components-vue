@@ -1,4 +1,8 @@
 const GlobalConfig = {
+  props: {
+    border: true,
+    resizable: true
+  },
   pagerConfig: {
     pageSize: 20,
     layouts: [

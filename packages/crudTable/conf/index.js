@@ -11,7 +11,10 @@ const GlobalConfig = {
       titleWidth: 100
     }
   },
-  table: {},
+  table: {
+    border: true,
+    resizable: true
+  },
   proxyConfig: {
     add: {
       modalTitle: "新增",
@@ -44,7 +47,6 @@ const GlobalConfig = {
       }
     }
   },
-
   permissions: []
 };
 

@@ -494,6 +494,7 @@ export default {
 
       Object.assign(props, {
         props: {
+          ...config.props,
           ...propsData,
           proxyConfig: proxyConfigOpt,
           columns: columns

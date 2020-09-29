@@ -62,6 +62,12 @@ $formItemMarginBottom: 19px;
             width: 100px;
             text-align: right;
             line-height: 40px;
+            &.left{
+                text-align: left;  
+            }
+            &.center{
+                text-align: center;  
+            }
             &.colon:after {
                 content: ':';
                 margin: 0 8px 0 2px;

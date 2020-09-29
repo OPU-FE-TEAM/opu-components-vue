@@ -128,6 +128,7 @@ export default {
       const permissionsArr = permissions ? permissions : config.permissions;
       const props = {
         props: {
+          ...config.table,
           ...table.props,
           data: tableData,
           columns: table.props.columns

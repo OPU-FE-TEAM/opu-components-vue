@@ -1,12 +1,10 @@
 <template>
   <div>
     <DataTable
-      border
-      resizable
       show-overflow
       keep-source
       ref="xGrid"
-      height="460"
+      height="760"
       :loading="loading"
       :data="tableData"
       :headToolbar="headToolbar"

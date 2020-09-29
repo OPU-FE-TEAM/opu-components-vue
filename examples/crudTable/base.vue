@@ -424,7 +424,7 @@ export default {
             //   // refresh: true
             // }
           },
-          height: 460,
+          height: 660,
           proxyConfig: {
             seq: true, // 启用动态序号代理
             sort: true, // 启用排序代理

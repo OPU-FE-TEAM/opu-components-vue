@@ -134,7 +134,7 @@ function handeUnifyApiGetOptions(unifyList, optionsApiList, _vm) {
 
 // 渲染标题
 function renderItemTitle(item, h, _vm) {
-  const { titleColon, titleWidth } = _vm;
+  const { titleColon, titleWidth, titleAlign } = _vm;
   //是否必填
   let isRequired = false;
   if (item.option && item.option.rules && item.option.rules.length) {
@@ -163,6 +163,7 @@ function renderItemTitle(item, h, _vm) {
     {
       class: [
         "data-form-item-title",
+        titleAlign,
         { colon: item.colon === false ? item.colon : titleColon },
         { required: isRequired }
       ],
@@ -391,49 +392,35 @@ export default {
     // 布局，'horizontal'|'vertical'|'inline'|'grid'|'flex'
     layout: {
       type: String,
-      default: "grid"
+      default: config.layout
     },
 
     // grid、flex布局时的列数
     colspan: {
       type: Number,
-      default: 1
+      default: config.colspan
     },
     // 是否只读
     readonly: {
       type: Boolean,
       default: false
     },
-    // 尺寸
-    size: {
-      type: String,
-      default: "small"
-    },
     // 所有项的标题对齐方式
     titleAlign: {
       type: String,
-      default: "right"
+      default: config.titleAlign
     },
     // 所有项的标题宽度
     titleWidth: {
       type: [String, Number],
-      default: 100
+      default: config.titleWidth
     },
     // 是否显示标题冒号
     titleColon: {
       type: Boolean,
-      default: true
+      default: config.titleColon
     },
-    // 是否显示必填字段的红色星号
-    // titleAsterisk: {
-    //   type: Boolean,
-    //   default: true
-    // },
-    // // 是否加载中
-    // loading: {
-    //   type: Boolean,
-    //   default: false
-    // },
+
     // 可选数据全部请求完后回调
     onOptionsAllLoad: {
       type: Function,
