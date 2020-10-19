@@ -144,6 +144,9 @@ $formItemMarginBottom: 19px;
             display: none;
         }
     }
+    .input_readonly[disabled]{
+        @include readonlyInput;
+    }
 }
 
 .date-range-split {

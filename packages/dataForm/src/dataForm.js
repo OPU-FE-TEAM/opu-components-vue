@@ -197,7 +197,19 @@ function renderItemInput(item, h, _vm) {
   };
 
   // 只读
-  if (readonly) {
+  if (
+    readonly ||
+    (item.itemRender && item.itemRender.props && item.itemRender.props.readonly)
+  ) {
+    if (props.class) {
+      if (utils.isArray(props.class)) {
+        props.class.push("input_readonly");
+      } else if (utils.isString(props.class)) {
+        props.class = `${props.class} input_readonly`;
+      }
+    } else {
+      props.class = ["input_readonly"];
+    }
     if (props.props) {
       props.props.disabled = true;
       props.props.placeholder = null;
@@ -248,7 +260,9 @@ function renderItemInput(item, h, _vm) {
   } else {
     // 根据name渲染组件
     const renderName =
-      item.itemRender && item.itemRender.name
+      item.itemRender &&
+      item.itemRender.name &&
+      item.itemRender.name !== "hidden"
         ? `${item.itemRender.name}`
         : "a-input";
     if (renderName === "buttons") {
@@ -259,6 +273,7 @@ function renderItemInput(item, h, _vm) {
           itemClick: onButtonClick
         };
       }
+      props.props.items = item.itemRender.items;
     }
     inputDom = h(renderName, props);
   }
@@ -322,7 +337,7 @@ function renderItems(h, _vm) {
               }
             ]
           });
-        } else if (item.type === "hidden") {
+        } else if (item.itemRender && item.itemRender.name === "hidden") {
           formItemContent = [renderItemContent(item, h, _vm)];
           formItemProps.style["display"] = "none";
         } else {

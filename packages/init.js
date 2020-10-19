@@ -1,9 +1,19 @@
 import DataTable from "./dataTable";
 import DataForm from "./dataForm";
 import CrudTable from "./crudTable";
+import Cell from "./cell";
+import PageWraper from "./pageWraper";
 
+const cellGroup = Cell.Group;
 // 按需加载的组件
-const components = [DataForm, DataTable, CrudTable];
+const components = [
+  DataForm,
+  DataTable,
+  CrudTable,
+  Cell,
+  cellGroup,
+  PageWraper
+];
 
 // 默认安装
 function install(Vue) {
@@ -20,6 +30,9 @@ if (typeof window !== "undefined" && window.Vue && window.Vue.use) {
 export * from "./dataForm";
 export * from "./dataTable";
 export * from "./crudTable";
+export * from "./cell";
+export * from "./pageWraper";
+
 export { default as utils } from "./utils";
 
 export default {

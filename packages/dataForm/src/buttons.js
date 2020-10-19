@@ -1,8 +1,8 @@
-function renderButtons(children, h, _vm) {
+function renderButtons(items, h, _vm) {
   const { onClick } = _vm;
 
-  return children
-    ? children.map((item, index) => {
+  return items
+    ? items.map((item, index) => {
         let buttonText =
           item.props && item.props.content ? item.props.content : "";
         if (buttonText && typeof buttonText === "function") {
@@ -30,7 +30,7 @@ export default {
   name: "DataForm",
   components: {},
   props: {
-    children: {
+    items: {
       type: Array,
       default: () => []
     },
@@ -48,13 +48,13 @@ export default {
     }
   },
   render(h) {
-    const { children } = this;
+    const { items } = this;
     return h(
       "div",
       {
         class: "data-form-buttons"
       },
-      [].concat(renderButtons(children, h, this))
+      [].concat(renderButtons(items, h, this))
     );
   }
 };

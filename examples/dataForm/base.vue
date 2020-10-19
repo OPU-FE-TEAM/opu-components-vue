@@ -74,15 +74,19 @@ export default {
       items: [
         {
           field: "id",
-          type: "hidden"
+          itemRender: {
+            name: "hidden"
+          }
         },
         {
           field: "name",
           title: "名称",
           extra: "aaa",
+          option: { initialValue: "555666" },
           itemRender: {
             name: "a-input",
             props: {
+              readonly: true,
               placeholder: "请输入名称"
               // disabled:true
             },
@@ -98,6 +102,7 @@ export default {
           field: "name1",
           title: "名称2",
           extra: "aaa",
+          option: { initialValue: 333 },
           itemRender: {
             name: "a-input",
             props: {
@@ -480,50 +485,48 @@ export default {
         },
         {
           align: "left",
-          colspan: 1,
+          colspan: 2,
           colon: false,
           // titleWidth:0,
           itemRender: {
             name: "buttons",
-            props: {
-              children: [
-                {
-                  props: {
-                    // 'html-type': 'submit',
-                    action: "submit",
-                    content: "提交",
-                    type: "primary"
-                  }
+            items: [
+              {
+                props: {
+                  // 'html-type': 'submit',
+                  action: "submit",
+                  content: "提交",
+                  type: "primary"
+                }
+              },
+              {
+                props: {
+                  // 'html-type': 'reset',
+                  action: "reset",
+                  content: "重置"
                 },
-                {
-                  props: {
-                    // 'html-type': 'reset',
-                    action: "reset",
-                    content: "重置"
-                  },
-                  on: {
-                    click: () => {
-                      console.log("click");
-                      return false;
-                    }
-                  }
-                },
-                {
-                  props: {
-                    action: "gaoji",
-                    content: "自定义action"
-                  }
-                },
-                {
-                  props: {
-                    content: "设置表单值"
-                  },
-                  on: {
-                    click: this.setFormData
+                on: {
+                  click: () => {
+                    console.log("click");
+                    return false;
                   }
                 }
-              ]
-            }
+              },
+              {
+                props: {
+                  action: "gaoji",
+                  content: "自定义action"
+                }
+              },
+              {
+                props: {
+                  content: "设置表单值"
+                },
+                on: {
+                  click: this.setFormData
+                }
+              }
+            ]
           }
         }
       ]

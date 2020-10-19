@@ -425,7 +425,6 @@ export default {
   },
   render(h) {
     const { tableProps, modal, form } = this;
-
     return h(
       "div",
       {
