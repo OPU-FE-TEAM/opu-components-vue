@@ -49,6 +49,33 @@ import { utils } from "../../index";
 //         }, 500);
 //     });
 // }
+function getData(arr) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log(arr);
+      const size = arr.pageSize ? arr.pageSize : 20;
+      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+      const list = Array.from({ length: size }, (_, key) => ({
+        id: key,
+        name: `name_${pageIndex}_${key}`,
+        sex: key < 3 ? 1 : 2,
+        age: key
+      }));
+      const json = {
+        // data: [...list],
+        // total: 100
+        code: 0,
+        data: {
+          data: [...list],
+          total: 100
+        }
+      };
+      console.log(json);
+      resolve(json);
+    }, 500);
+  });
+}
+
 function getCheckboxData() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -76,6 +103,46 @@ export default {
           field: "id",
           itemRender: {
             name: "hidden"
+          }
+        },
+        {
+          field: "pulldown",
+          title: "下拉面板",
+          itemRender: {
+            name: "pulldown-table",
+            props: {
+              table: {
+                props: {
+                  columns: [
+                    { type: "checkbox", width: 50 },
+                    { type: "seq", title: "Number", width: 80 },
+                    {
+                      field: "name",
+                      title: "Name",
+                      width: 200
+                    },
+                    {
+                      field: "sex",
+                      title: "Sex",
+                      width: 200
+                    },
+                    {
+                      field: "age",
+                      title: "Age",
+                      width: 200
+                    }
+                  ],
+                  height: 300,
+                  highlightHoverRow: true,
+                  highlightCurrentRow: true,
+                  proxyConfig: {
+                    ajax: {
+                      query: getData
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         {
@@ -558,7 +625,11 @@ export default {
         renderContent: "888",
         inputslot: "669888",
         id: 66,
-        aaabbbccc: "aaa666"
+        aaabbbccc: "aaa666",
+        pulldown: {
+          id: 5,
+          name: "name_1_5"
+        }
       });
     },
     setItems() {

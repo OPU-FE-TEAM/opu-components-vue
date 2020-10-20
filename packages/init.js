@@ -3,6 +3,7 @@ import DataForm from "./dataForm";
 import CrudTable from "./crudTable";
 import Cell from "./cell";
 import PageWraper from "./pageWraper";
+import PulldownTable from "./pulldownTable";
 
 const cellGroup = Cell.Group;
 // 按需加载的组件
@@ -12,7 +13,8 @@ const components = [
   CrudTable,
   Cell,
   cellGroup,
-  PageWraper
+  PageWraper,
+  PulldownTable
 ];
 
 // 默认安装
@@ -32,6 +34,7 @@ export * from "./dataTable";
 export * from "./crudTable";
 export * from "./cell";
 export * from "./pageWraper";
+export * from "./pulldownTable";
 
 export { default as utils } from "./utils";
 

@@ -472,7 +472,9 @@ export default {
         tableColumns,
         renderCheckbox,
         pagerConfigOpt,
-        proxyConfigOpt
+        proxyConfigOpt,
+        renderPulldownTable,
+        renderPulldownTableView
       } = this;
       const propsData = this.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
@@ -488,6 +490,18 @@ export default {
             edit: "a_checkbox"
           };
           this.$scopedSlots["a_checkbox"] = renderCheckbox;
+        }
+        if (
+          item.editRender &&
+          item.editRender.name &&
+          item.editRender.name === "pulldownTable"
+        ) {
+          item.slots = {
+            default: "pulldownTableView",
+            edit: "pulldownTable"
+          };
+          this.$scopedSlots["pulldownTableView"] = renderPulldownTableView;
+          this.$scopedSlots["pulldownTable"] = renderPulldownTable;
         }
         return item;
       });
@@ -625,7 +639,9 @@ export default {
       if (data) {
         this.backupColumns = utils.clone(data);
         const configProps =
-          proxyColumns.props && utils.isObject(proxyColumns.props)
+          proxyColumns &&
+          proxyColumns.props &&
+          utils.isObject(proxyColumns.props)
             ? { ...config.proxyColumns.props, ...proxyColumns.props }
             : config.proxyColumns.props;
         this.tableColumns = data.filter(p => p[configProps.show] !== false);
@@ -648,6 +664,55 @@ export default {
         }
       });
     },
+    // 渲染下拉面板显示组件
+    renderPulldownTableView(scope) {
+      const vm = new Vue();
+      const h = vm.$createElement;
+      const value = scope.row[scope.column.property];
+      const currentColumn = this.tableColumns[scope.columnIndex];
+      const taxtField =
+        currentColumn.editRender.props &&
+        currentColumn.editRender.props.textField
+          ? currentColumn.editRender.props.textField
+          : "name";
+      let text = "";
+      if (value && utils.isArray(value)) {
+        text = value.map(p => p[taxtField]).join(",");
+      } else if (value && utils.isObject(value)) {
+        text = value[taxtField];
+      } else if (value) {
+        text = value;
+      }
+      return h("div", {}, [text]);
+    },
+    // 渲染下拉面板组件
+    renderPulldownTable(scope) {
+      // const { handlePulldownTableChange } = this;
+      const vm = new Vue();
+      const h = vm.$createElement;
+      const currentColumn = this.tableColumns[scope.columnIndex];
+      return h("pulldownTable", {
+        props: {
+          ...currentColumn.editRender.props
+        },
+        on: {
+          change(val) {
+            scope.row[scope.column.property] = val;
+            if (
+              currentColumn.editRender.on &&
+              currentColumn.editRender.on.change
+            ) {
+              currentColumn.editRender.on.change(val);
+            }
+          }
+        }
+      });
+    },
+    // 下拉面板change
+    // handlePulldownTableChange(value) {
+    //   console.log(value);
+    //   scope.row[scope.column.property] = value
+    // },
     // api获取表头
     fetchColumns(opt) {
       const { columns } = this;

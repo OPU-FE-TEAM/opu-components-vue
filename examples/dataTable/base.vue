@@ -47,7 +47,8 @@ function getData(arr) {
         checkbox1: key === 5 ? true : false,
         select: "",
         select1: "",
-        switch: false
+        switch: false,
+        pulldownTable: ""
       }));
       const json = {
         // data: [...list],
@@ -445,6 +446,55 @@ export default {
       tableColumn: [
         { type: "checkbox", colIndex: 0, width: 60, fixed: "" },
         { type: "seq", title: "Number", colIndex: 1, width: 80 },
+        {
+          field: "pulldownTable",
+          title: "下拉面板",
+          minWidth: 140,
+          editRender: {
+            name: "pulldownTable",
+            props: {
+              valueField: "id",
+              textField: "name",
+              table: {
+                props: {
+                  size: "mini",
+                  columns: [
+                    { type: "checkbox", width: 50 },
+                    { type: "seq", title: "Number", width: 80 },
+                    {
+                      field: "name",
+                      title: "Name",
+                      width: 200
+                    },
+                    {
+                      field: "sex",
+                      title: "Sex",
+                      width: 200
+                    },
+                    {
+                      field: "age",
+                      title: "Age",
+                      width: 200
+                    }
+                  ],
+                  height: 300,
+                  highlightHoverRow: true,
+                  highlightCurrentRow: true,
+                  proxyConfig: {
+                    ajax: {
+                      query: getData
+                    }
+                  }
+                }
+              }
+            },
+            on: {
+              change: val => {
+                console.log("490", val);
+              }
+            }
+          }
+        },
         {
           field: "name",
           title: "Name",

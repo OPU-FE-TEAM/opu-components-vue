@@ -8,7 +8,14 @@ const sass = require("gulp-sass");
 const cleanCSS = require("gulp-clean-css");
 const prefixer = require("gulp-autoprefixer");
 
-const components = ["dataForm", "dataTable", "crudTable", "cell", "pageWraper"];
+const components = [
+  "dataForm",
+  "dataTable",
+  "crudTable",
+  "cell",
+  "pageWraper",
+  "pulldownTable"
+];
 
 gulp.task("build_modules", () => {
   return gulp
