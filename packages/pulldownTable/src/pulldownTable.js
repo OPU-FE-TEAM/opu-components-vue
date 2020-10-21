@@ -81,6 +81,7 @@ export default {
       });
       props.ref = "pulldownTable";
       props.scopedSlots = $scopedSlots;
+      props.class = "pulldown";
       return props;
     },
     tableProps() {
@@ -126,7 +127,6 @@ export default {
   },
 
   methods: {
-    // onChange(value) {},
     onTableRowSelect({ row }) {
       this.selectValue = row;
       this.$emit("change", this.selectValue);
@@ -213,8 +213,8 @@ export default {
     }
   },
   render(h) {
-    const { tableProps } = this;
-    return h("vxe-pulldown", { ref: "pulldownTable" }, [
+    const { tableProps, pulldownProps } = this;
+    return h("vxe-pulldown", pulldownProps, [
       renderInput(h, this),
       h("data-table", {
         ...tableProps,

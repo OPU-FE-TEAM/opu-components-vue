@@ -58,6 +58,7 @@ export default {
       if (this.tabs && this.tabs.change) {
         this.tabs.change(key);
       }
+      this.$emit("tabChange", key);
     },
     updateQueryStringParameter(uri, key, value) {
       if (!value) {
