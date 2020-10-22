@@ -1,15 +1,27 @@
 <template>
   <div>
-    <cell-group title="group" border>
-      <cell title="aaa" value="bbb" label="aaaddddvvv">
-        <!-- <img
-          slot="thumb"
-          style="width:120px"
-          src="http://47.107.190.6:8899/storage/images/20200826/fd2ca402119ce11252d03ef2a1b1b4dd.jpg"
-          alt=""
-        /> -->
-      </cell>
-      <cell title="b443" value="bb22b" label="aaaddd33432dvvv"> </cell>
-    </cell-group>
+    <div class="container">
+      <cellGroup title="标题">
+        <cell title="单元格" value="内容" />
+        <cell
+          title="单元格"
+          value="内容"
+          label="这是描述"
+          thumb="https://img.yzcdn.cn/vant/ipad.jpeg"
+        />
+        <cell title="单元格" value="内容" is-link />
+      </cellGroup>
+      <cellGroup title="没有边框" :border="false">
+        <cell title="单元格" value="内容" :border="false" />
+        <cell
+          title="单元格"
+          value="内容"
+          label="这是描述"
+          thumb="https://img.yzcdn.cn/vant/ipad.jpeg"
+          :border="false"
+        />
+        <cell title="单元格" value="内容" is-link />
+      </cellGroup>
+    </div>
   </div>
 </template>

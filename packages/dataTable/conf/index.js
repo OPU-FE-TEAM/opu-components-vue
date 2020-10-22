@@ -4,7 +4,8 @@ const GlobalConfig = {
     resizable: true
   },
   pagerConfig: {
-    pageSize: 20,
+    pageIndex: 1, //分页初始值
+    pageSize: 30,
     layouts: [
       "PrevJump",
       "PrevPage",

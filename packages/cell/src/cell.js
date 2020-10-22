@@ -14,24 +14,46 @@ export default {
       type: String,
       default: ""
     },
-    thumb: {}
-    // isLink: {
-    //   type: Boolean
-    // }
+    thumb: {
+      type: String,
+      default: null
+    },
+    size: {
+      type: [String, Number],
+      default: 80
+    },
+    isLink: {
+      type: Boolean,
+      default: false
+    },
+    border: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {};
   },
   methods: {
     leftRender(h) {
-      let { $slots: slots, thumb } = this;
+      let { $slots: slots, thumb, size } = this;
       thumb = slots.thumb
         ? slots.thumb
         : thumb
         ? h("img", { attrs: { src: thumb } })
         : "";
       if (thumb) {
-        return h("div", { class: "left thumb" }, [thumb]);
+        return h(
+          "div",
+          {
+            class: "left thumb",
+            style: {
+              width: size + "px",
+              height: size + "px"
+            }
+          },
+          [thumb]
+        );
       }
     },
     titleRender(h) {
@@ -72,11 +94,29 @@ export default {
           [label]
         );
       }
+    },
+    linkRender(h) {
+      let { isLink } = this;
+      if (isLink) {
+        return h("a-icon", {
+          props: {
+            type: "right"
+          },
+          class: "link"
+        });
+      }
     }
   },
   render(h) {
-    const { leftRender, titleRender, valueRender, labelRender } = this;
-    return h("div", { class: "cell" }, [
+    const {
+      leftRender,
+      titleRender,
+      valueRender,
+      linkRender,
+      labelRender,
+      border
+    } = this;
+    return h("div", { class: ["cell", { "cell-border": border }] }, [
       leftRender(h),
       h(
         "div",
@@ -84,7 +124,11 @@ export default {
           class: "right"
         },
         [
-          h("div", { class: "header" }, [titleRender(h), valueRender(h)]),
+          h("div", { class: "header" }, [
+            titleRender(h),
+            valueRender(h),
+            linkRender(h)
+          ]),
           labelRender(h)
         ]
       )

@@ -5,7 +5,7 @@ import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
 Vue.use(Antd);
 
-import opuCompontents, { DataForm } from "../index";
+import opuCompontents, { DataForm, DataTable } from "../index";
 Vue.use(opuCompontents);
 // Vue.use(DataForm);
 import utils from "../packages/utils";
@@ -37,17 +37,11 @@ function getSelectData(arr) {
 DataForm.setup({
   fieldsOptionsApi: getSelectData
 });
-// DataTable.setup({
-//   pagerConfig: {
-//     pageSize: 20,
-//     layouts:['PrevJump', 'PrevPage', 'Number', 'NextPage', 'NextJump', 'Sizes', 'FullJump', 'Total'],
-//     perfect:true,
-//     props:{
-//       pageSize:'size',
-//       currentPage:'page'
-//     }
-//   },
-// })
+DataTable.setup({
+  pagerConfig: {
+    pageIndex: 0
+  }
+});
 
 Vue.config.productionTip = false;
 

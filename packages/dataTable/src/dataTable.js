@@ -539,11 +539,7 @@ export default {
         };
       }
       // 默认添加分页
-      if (
-        !props.props.pagerConfig &&
-        props.props.pagerConfig !== false &&
-        hasAjax
-      ) {
+      if (props.props.pagerConfig !== false && hasAjax) {
         props.props.pagerConfig = pagerConfigOpt;
       }
       props.on = ons;
@@ -588,7 +584,14 @@ export default {
       let pageData = {};
       if (pagerConfigOpt && arr.page) {
         const currentPageField = pagerConfigOpt.props.currentPage;
-        pageData[currentPageField] = arr.page.currentPage;
+        if (pagerConfigOpt.pageIndex === 0) {
+          pageData[currentPageField] = arr.page.currentPage - 1;
+        } else if (pagerConfigOpt.pageIndex) {
+          pageData[currentPageField] =
+            arr.page.currentPage - 1 + pagerConfigOpt.pageIndex;
+        } else {
+          pageData[currentPageField] = arr.page.currentPage;
+        }
 
         const pageSizeField = pagerConfigOpt.props.pageSize;
         pageData[pageSizeField] = arr.page.pageSize;
@@ -738,7 +741,6 @@ export default {
   },
   render(h) {
     const { tableProps, headToolbar, setcolumnsConfig } = this;
-
     const nodes = [];
     if (
       (headToolbar && headToolbar.tools && headToolbar.tools.setColumns) ||

@@ -385,23 +385,24 @@ export default {
       },
 
       pagerConfig: {
-        pageSize: 10,
-        layouts: [
-          "PrevJump",
-          "PrevPage",
-          "Number",
-          "NextPage",
-          "NextJump",
-          "Sizes",
-          "FullJump"
-          // "Total"
-        ],
-        perfect: true,
-        slots: {
-          left: () => {
-            return "666";
-          }
-        }
+        pageIndex: 0
+        // pageSize: 10,
+        // layouts: [
+        //   "PrevJump",
+        //   "PrevPage",
+        //   "Number",
+        //   "NextPage",
+        //   "NextJump",
+        //   "Sizes",
+        //   "FullJump"
+        //   // "Total"
+        // ],
+        // perfect: true,
+        // slots: {
+        //   left: () => {
+        //     return "666";
+        //   }
+        // }
         // props:{
         //   pageSize:'size',
         //   currentPage:'pageIndex'

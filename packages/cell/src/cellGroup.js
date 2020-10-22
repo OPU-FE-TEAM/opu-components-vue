@@ -19,14 +19,22 @@ export default {
   created() {},
   methods: {},
   render(h) {
-    const { $slots: slots, title } = this;
-    const groupDom = h("div", { class: "cell-group" }, slots.default);
+    const { $slots: slots, title, border } = this;
+    const groupDom = h(
+      "div",
+      {
+        class: { "cell-group": true, "group-border": border }
+      },
+      slots.default
+    );
     if (title || slots.title) {
       return h("div", [
         h(
           "div",
           {
-            class: "group-title"
+            class: {
+              "group-title": true
+            }
           },
           [slots.title ? slots.title : title]
         ),
