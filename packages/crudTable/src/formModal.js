@@ -1,4 +1,4 @@
-// import utils from "../../utils";
+import utils from "../../utils";
 import config from "../conf";
 import { DataForm } from "../../dataForm";
 
@@ -20,7 +20,8 @@ export default {
       loading: false,
       confirmLoading: false,
       readonly: false,
-      title: ""
+      title: "",
+      items: []
     };
   },
   computed: {
@@ -37,7 +38,9 @@ export default {
         : config.form.props;
     }
   },
-
+  created() {
+    this.items = utils.clone(this.formOpt.items, true);
+  },
   methods: {
     show(callback) {
       this.loading = true;
@@ -69,6 +72,9 @@ export default {
     },
     setTitle(title) {
       this.title = title;
+    },
+    setItems(items) {
+      this.items = items;
     }
   },
   render(h) {
@@ -82,7 +88,8 @@ export default {
       confirmLoading,
       $scopedSlots,
       readonly,
-      title
+      title,
+      items
     } = this;
     //TODO 自动以footer 增加 loading状态
     const modalProps = {
@@ -109,6 +116,7 @@ export default {
       ref: "form",
       props: {
         ...formOpt,
+        items,
         readonly
       },
       class: "crud-table-form",

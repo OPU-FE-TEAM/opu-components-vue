@@ -35,7 +35,9 @@ function getSelectData(arr) {
 }
 
 DataForm.setup({
-  fieldsOptionsApi: getSelectData
+  getSelectOptions: {
+    api: getSelectData
+  }
 });
 DataTable.setup({
   pagerConfig: {

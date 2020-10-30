@@ -474,7 +474,8 @@ export default {
         pagerConfigOpt,
         proxyConfigOpt,
         renderPulldownTable,
-        renderPulldownTableView
+        renderPulldownTableView,
+        renderSwitch
       } = this;
       const propsData = this.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
@@ -490,8 +491,17 @@ export default {
             edit: "a_checkbox"
           };
           this.$scopedSlots["a_checkbox"] = renderCheckbox;
-        }
-        if (
+        } else if (
+          item.editRender &&
+          item.editRender.name &&
+          item.editRender.name === "ASwitch"
+        ) {
+          item.slots = {
+            default: "a_switch",
+            edit: "a_switch"
+          };
+          this.$scopedSlots["a_switch"] = renderSwitch;
+        } else if (
           item.editRender &&
           item.editRender.name &&
           item.editRender.name === "pulldownTable"
@@ -656,13 +666,44 @@ export default {
     renderCheckbox(scope) {
       const vm = new Vue();
       const h = vm.$createElement;
+      const currentColumn = this.tableColumns[scope.columnIndex];
       return h("a-checkbox", {
         props: {
+          ...currentColumn.editRender.props,
           checked: scope.row[scope.column.property]
         },
         on: {
           input(val) {
             scope.row[scope.column.property] = val;
+            if (
+              currentColumn.editRender.on &&
+              currentColumn.editRender.on.change
+            ) {
+              currentColumn.editRender.on.change(scope);
+            }
+          }
+        }
+      });
+    },
+    // 渲染ASwitch编辑组件
+    renderSwitch(scope) {
+      const vm = new Vue();
+      const h = vm.$createElement;
+      const currentColumn = this.tableColumns[scope.columnIndex];
+      return h("a-switch", {
+        props: {
+          ...currentColumn.editRender.props,
+          checked: scope.row[scope.column.property]
+        },
+        on: {
+          change(val) {
+            scope.row[scope.column.property] = val;
+            if (
+              currentColumn.editRender.on &&
+              currentColumn.editRender.on.change
+            ) {
+              currentColumn.editRender.on.change(scope);
+            }
           }
         }
       });
@@ -705,17 +746,12 @@ export default {
               currentColumn.editRender.on &&
               currentColumn.editRender.on.change
             ) {
-              currentColumn.editRender.on.change(val);
+              currentColumn.editRender.on.change(scope);
             }
           }
         }
       });
     },
-    // 下拉面板change
-    // handlePulldownTableChange(value) {
-    //   console.log(value);
-    //   scope.row[scope.column.property] = value
-    // },
     // api获取表头
     fetchColumns(opt) {
       const { columns } = this;

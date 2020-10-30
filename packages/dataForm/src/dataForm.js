@@ -74,10 +74,16 @@ const fetchItemPropsOptionsApiList = async function(list, _vm) {
           });
         } else {
           // 字段单独配置api的可选数据的处理
+          //TODO
+          let vF = "";
+          let lF = "";
+          vF = valueField ? valueField : config.getSelectOptions.valueField;
+          lF = labelField ? labelField : config.getSelectOptions.labelField;
+          // }
           const options = handleItemPropsOptions({
             options: itemData,
-            valueField,
-            labelField
+            valueField: vF,
+            labelField: lF
           });
           json[field] = options;
         }
@@ -95,17 +101,24 @@ const fetchItemPropsOptionsApiList = async function(list, _vm) {
 
 // 处理统一请求可选数据的请求
 function handeUnifyApiGetOptions(unifyList, optionsApiList, _vm) {
-  const { fieldsOptionsApi } = _vm;
+  const { getSelectOptions } = _vm;
   // 处理同一请求参数
   const json = {};
   let fields = [];
   unifyList.map(item => {
     const { param, valueField, labelField, dataField } = item.itemRender.props;
+    let vF = valueField;
+    let lF = labelField;
+    let dF = dataField ? dataField : config.getSelectOptions.dataField;
+    // if (["a-select", "a-checkbox-group"].includes(item.itemRender.name)) {
+    vF = valueField ? valueField : config.getSelectOptions.valueField;
+    lF = labelField ? labelField : config.getSelectOptions.labelField;
+    // }
     fields.push({
       field: item.field,
-      valueField,
-      labelField,
-      dataField,
+      valueField: vF,
+      labelField: lF,
+      dataField: dF,
       param
     });
     for (const key in param) {
@@ -118,12 +131,13 @@ function handeUnifyApiGetOptions(unifyList, optionsApiList, _vm) {
       }
     }
   });
-  const unifyApi = fieldsOptionsApi
-    ? fieldsOptionsApi
-    : config.fieldsOptionsApi;
+  const unifyApi =
+    getSelectOptions && getSelectOptions.api
+      ? getSelectOptions.api
+      : config.getSelectOptions.api;
   if (unifyApi) {
     optionsApiList.push({
-      api: fieldsOptionsApi ? fieldsOptionsApi : config.fieldsOptionsApi,
+      api: unifyApi,
       param: json,
       fields
     });
@@ -516,7 +530,25 @@ export default {
           item.itemRender.props &&
           item.itemRender.props.options
         ) {
-          const options = handleItemPropsOptions(item.itemRender.props);
+          let vF = "";
+          let lF = "";
+          vF = item.itemRender.props.valueField
+            ? item.itemRender.props.valueField
+            : config.getSelectOptions.valueField;
+          lF = item.itemRender.props.labelField
+            ? item.itemRender.props.labelField
+            : config.getSelectOptions.labelField;
+          let arr = {
+            ...item.itemRender.props
+          };
+          if (!["a-cascader"].includes(item.itemRender.name)) {
+            arr = {
+              ...item.itemRender.props,
+              valueField: vF,
+              labelField: lF
+            };
+          }
+          const options = handleItemPropsOptions(arr);
           item.itemRender.props.options = options;
         } else if (
           item.itemRender &&

@@ -208,8 +208,8 @@ export default {
               placeholder: "请选择性别",
               showSearch: true,
               defaultField: "isSelected",
-              valueField: "id",
-              labelField: "name",
+              // valueField: "id",
+              // labelField: "name",
               dataField: "aa",
               // api:getSelectData,
               param: {
@@ -231,14 +231,13 @@ export default {
         },
         {
           field: "selected",
-          title: "下拉框",
+          title: "下拉框-全局接口获取",
           itemRender: {
             name: "a-select",
             props: {
-              valueField: "id",
-              labelField: "name",
+              // valueField: "id",
+              // labelField: "name",
               dataField: "bb",
-              // api:getSelectData,
               param: {
                 code: "bb"
               }
@@ -285,8 +284,8 @@ export default {
             name: "a-checkbox-group",
             props: {
               api: getCheckboxData,
-              valueField: "id",
-              labelField: "name",
+              // valueField: "id",
+              // labelField: "name",
               defaultField: "isSelected"
               // options: [
               //     { label: 'Apple', value: 'Apple' },
@@ -303,9 +302,9 @@ export default {
             name: "a-radio-group",
             props: {
               options: [
-                { label: "Apple", value: "Apple" },
-                { label: "Pear", value: "Pear" },
-                { label: "Orange", value: "Orange" }
+                { id: "Apple", name: "Apple" },
+                { id: "Pear", name: "Pear" },
+                { id: "Orange", name: "Orange" }
               ]
             }
           }

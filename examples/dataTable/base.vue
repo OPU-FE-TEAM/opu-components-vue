@@ -20,9 +20,6 @@
       <template v-slot:operate="{ row }">
         <a-button @click="editRow(row)">编辑</a-button>
       </template>
-      <template v-slot:switch="{ row }">
-        <a-switch v-model="row.switch"></a-switch>
-      </template>
     </DataTable>
 
     <a-button @click="getData">获取数据</a-button>
@@ -490,8 +487,8 @@ export default {
               }
             },
             on: {
-              change: val => {
-                console.log("490", val);
+              change: ({ row }) => {
+                console.log("490", row.pulldownTable);
               }
             }
           }
@@ -506,7 +503,14 @@ export default {
           field: "checkbox",
           title: "Checkbox",
           minWidth: 140,
-          editRender: { name: "ACheckbox" }
+          editRender: {
+            name: "ACheckbox",
+            on: {
+              change: ({ row }) => {
+                console.log(row.checkbox);
+              }
+            }
+          }
         },
         {
           field: "select",
@@ -542,9 +546,18 @@ export default {
           }
         },
         {
+          field: "switch",
           title: "开关",
           width: 100,
-          slots: { default: "switch", edit: "switch" }
+          editRender: {
+            name: "ASwitch",
+            on: {
+              change: ({ row }) => {
+                console.log(row.checkbox);
+              }
+            }
+          }
+          // slots: { default: "switch", edit: "switch" }
         },
         { title: "操作", width: 200, slots: { default: "operate" } }
       ],

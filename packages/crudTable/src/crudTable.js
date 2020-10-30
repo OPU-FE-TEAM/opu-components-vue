@@ -236,7 +236,8 @@ export default {
         del,
         view,
         permissions,
-        proxyConfigOpt
+        proxyConfigOpt,
+        $scopedSlots
       } = this;
       const vm = new Vue();
       const h = vm.$createElement;
@@ -332,10 +333,25 @@ export default {
         );
       }
 
-      return h("div", { class: "crud-table-row-actions" }, buttons);
+      //前置插槽
+      let rowActionBefore = "";
+      if ($scopedSlots.rowActionBefore) {
+        rowActionBefore = $scopedSlots.rowActionBefore(scope);
+      }
+      //后置插槽
+      let rowActionAfter = "";
+      if ($scopedSlots.rowActionAfter) {
+        rowActionAfter = $scopedSlots.rowActionAfter(scope);
+      }
+
+      return h("div", { class: "crud-table-row-actions" }, [
+        rowActionBefore,
+        buttons,
+        rowActionAfter
+      ]);
     },
     add() {
-      const { proxyConfig, proxyConfigOpt } = this;
+      const { proxyConfig, proxyConfigOpt, filterFormItems } = this;
       const addButtonProps = proxyConfigOpt.add.props;
       let openCallback = "";
       if (proxyConfig && proxyConfig.add && proxyConfig.add.open) {
@@ -346,6 +362,7 @@ export default {
           openCallback = openRes;
         }
       }
+      this.currentAction = "add";
       const formModal = this.$refs.formModal;
       formModal.setReadonly(false);
       formModal.setTitle(
@@ -353,12 +370,12 @@ export default {
           ? proxyConfig.add.modalTitle
           : addButtonProps.name
       );
+      formModal.setItems(filterFormItems(this.currentAction));
       formModal.show(openCallback);
       formModal.setLoading(false);
-      this.currentAction = "add";
     },
     edit(row) {
-      const { proxyConfig, proxyConfigOpt } = this;
+      const { proxyConfig, proxyConfigOpt, filterFormItems } = this;
       const editButtonProps = proxyConfigOpt.edit.props;
 
       let openCallback = "";
@@ -370,12 +387,14 @@ export default {
           openCallback = openRes;
         }
       }
+      this.currentAction = "edit";
       const formModal = this.$refs.formModal;
       formModal.setTitle(
         proxyConfig.edit.modalTitle
           ? proxyConfig.edit.modalTitle
           : editButtonProps.name
       );
+      formModal.setItems(filterFormItems(this.currentAction));
       formModal.setReadonly(false);
       formModal.show(openCallback);
       if (proxyConfig && proxyConfig.edit && proxyConfig.edit.query) {
@@ -385,15 +404,13 @@ export default {
       } else {
         formModal.setFormData(row);
       }
-
-      this.currentAction = "edit";
     },
     del(row) {
       this.currentAction = "del";
       this.onFormModalSubmit(row);
     },
     view(row) {
-      const { proxyConfig, proxyConfigOpt } = this;
+      const { proxyConfig, proxyConfigOpt, filterFormItems } = this;
       const viewButtonProps = proxyConfigOpt.view.props;
       let openCallback = "";
       if (proxyConfig && proxyConfig.view && proxyConfig.view.open) {
@@ -404,6 +421,7 @@ export default {
           openCallback = openRes;
         }
       }
+      this.currentAction = "view";
       const formModal = this.$refs.formModal;
       formModal.setReadonly(true);
       formModal.setTitle(
@@ -411,6 +429,7 @@ export default {
           ? proxyConfig.view.modalTitle
           : viewButtonProps.name
       );
+      formModal.setItems(filterFormItems(this.currentAction));
       formModal.show(openCallback);
       if (proxyConfig && proxyConfig.view && proxyConfig.view.query) {
         proxyConfig.view.query(row).then(res => {
@@ -419,8 +438,16 @@ export default {
       } else {
         formModal.setFormData(row);
       }
-
-      this.currentAction = "view";
+    },
+    filterFormItems(type) {
+      const { form } = this;
+      const items = form.props.items.filter(item => {
+        if (item.filter && !item.filter.includes(type)) {
+          return false;
+        }
+        return true;
+      });
+      return items;
     }
   },
   render(h) {

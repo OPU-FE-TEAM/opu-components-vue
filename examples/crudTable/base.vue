@@ -8,10 +8,12 @@
       :table="table"
       :permissions="permissions"
     >
-      <!-- <template v-slot:rowAction="{ row }">
-        <a-button>编辑{{ row.id }}</a-button>
-        <a-button>删除</a-button>
-      </template> -->
+      <template v-slot:rowActionBefore="{ row }">
+        <a-button>前置插槽{{ row.id }}</a-button>
+      </template>
+      <template v-slot:rowActionAfter="{ row }">
+        <a-button>后置插槽{{ row.id }}</a-button>
+      </template>
       <template slot="formSlot">
         666
       </template>
@@ -232,11 +234,14 @@ export default {
           items: [
             {
               field: "id",
-              type: "hidden"
+              itemRender: {
+                name: "hidden"
+              }
             },
             {
               field: "name",
               title: "名称",
+              filter: ["add", "edit"],
               itemRender: {
                 name: "a-input",
                 props: {
@@ -248,6 +253,7 @@ export default {
             {
               field: "sex",
               title: "性别",
+              filter: ["edit"],
               itemRender: {
                 name: "a-select",
                 props: {
