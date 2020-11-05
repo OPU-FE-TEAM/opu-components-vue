@@ -80,12 +80,10 @@ export default {
       } else {
         props.props.options = optionsData;
       }
-      console.log(renderName, optionsData);
       return props;
     }
   },
   created() {
-    // console.log(this.api, this.param, this.renderName);
     if (this.api || this.param) {
       this.fetchOptionsData();
     }
@@ -113,9 +111,6 @@ export default {
   },
   render(h) {
     const { renderName, componentProps } = this;
-    // console.log(componentProps);
-    // const props = {};
-    // const contentDom = [customRender(value, this.updateValue)];
     return h(
       renderName,
       {
