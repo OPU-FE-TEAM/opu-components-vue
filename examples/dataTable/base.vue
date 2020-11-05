@@ -308,9 +308,11 @@ export default {
                 props: {
                   placeholder: "请选择性别",
                   showSearch: true,
+                  api: getSelectData,
                   defaultField: "isSelected",
                   valueField: "id",
                   labelField: "name",
+                  dataField: "data.data",
                   param: { code: "aa" }
                 }
               }

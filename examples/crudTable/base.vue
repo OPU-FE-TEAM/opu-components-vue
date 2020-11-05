@@ -105,7 +105,8 @@ function saveData() {
     setTimeout(() => {
       const json = {
         code: 0,
-        data: ""
+        data: "",
+        message: "啦啦啦"
       };
       resolve(json);
     }, 500);
@@ -131,11 +132,11 @@ export default {
   components: {},
   data() {
     return {
-      permissions: ["add", "edit"],
+      permissions: ["add"],
       proxyConfig: {
         add: {
           modalTitle: "新增会员",
-          permission: ["add"],
+
           props: {
             icon: "file-add",
             name: "新增1"
@@ -162,7 +163,8 @@ export default {
         },
         edit: {
           modalTitle: "编辑会员",
-          permission: ["edit"],
+          // permission: ["edit"],
+
           props: {
             icon: "edit"
           },
@@ -213,18 +215,27 @@ export default {
           }
         },
         view: {
+          queryDataField: "data",
+          permission: ({ row }) => {
+            console.log(row);
+            if (row.id == 1) {
+              return true;
+            }
+            return false;
+          },
           // trigger: ["click", "button"], // click=单机行，dblclick=双击行，button 生成查看按钮
-          query: values => {
-            // 自行处理请求前
-            return new Promise(resolve => {
-              getInfo({
-                ...values
-              }).then(res => {
-                // 自行处理请求后,返回数据对象
-                resolve(res.data);
-              });
-            });
-          }
+          query: getInfo
+          // query: values => {
+          //   // 自行处理请求前
+          //   return new Promise(resolve => {
+          //     getInfo({
+          //       ...values
+          //     }).then(res => {
+          //       // 自行处理请求后,返回数据对象
+          //       resolve(res.data);
+          //     });
+          //   });
+          // }
         }
       },
       form: {
@@ -430,7 +441,8 @@ export default {
             //   // refresh: true
             // }
           },
-          height: 660,
+          height: 600,
+          size: "mini",
           proxyConfig: {
             seq: true, // 启用动态序号代理
             sort: true, // 启用排序代理

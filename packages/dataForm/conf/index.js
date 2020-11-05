@@ -9,8 +9,8 @@ const GlobalConfig = {
     // 可选数据的请求的配置
     api: null,
     valueField: "id",
-    labelField: "name"
-    // dataField: "data"
+    labelField: "name",
+    dataField: "data"
   }
 };
 

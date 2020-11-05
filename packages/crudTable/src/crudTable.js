@@ -209,7 +209,6 @@ export default {
       }
     },
     onFormModalSubmit(values) {
-      console.log(values);
       const { proxyConfig, currentAction } = this;
       if (
         proxyConfig &&
@@ -217,13 +216,20 @@ export default {
         proxyConfig[currentAction].submit
       ) {
         proxyConfig[currentAction].submit(values).then(res => {
-          console.log(res);
+          const responseMsgField = proxyConfig[currentAction].responseMsgField
+            ? proxyConfig[currentAction].responseMsgField
+            : config.proxyConfig[currentAction].responseMsgField;
+          const resMsg = responseMsgField
+            ? utils.getObjData(responseMsgField, res)
+            : "";
+          const msg = resMsg ? resMsg : "操作成功";
+          this.$message.success(msg);
           this.reloadTable();
         });
       }
     },
     onFormModalCancel() {
-      console.log(2);
+      // console.log(2);
     },
     reloadTable() {
       this.$refs.table.reload();
@@ -251,12 +257,16 @@ export default {
       ) {
         const viewButtonProps = proxyConfigOpt.view.props;
         if (
-          proxyConfig.view.permission &&
+          utils.isArray(proxyConfig.view.permission) &&
           !utils.hasEquaValueArray(permissionsArr, proxyConfig.view.permission)
         ) {
           // 无权限
           viewButtonProps.disabled = true;
+        } else if (utils.isFunction(proxyConfig.view.permission)) {
+          const res = proxyConfig.view.permission(scope);
+          viewButtonProps.disabled = !res;
         }
+
         buttons.push(
           h(
             "a-button",
@@ -399,7 +409,15 @@ export default {
       formModal.show(openCallback);
       if (proxyConfig && proxyConfig.edit && proxyConfig.edit.query) {
         proxyConfig.edit.query(row).then(res => {
-          formModal.setFormData(res);
+          let data = res;
+          const queryDataField =
+            proxyConfig.edit.queryDataField != undefined
+              ? proxyConfig.edit.queryDataField
+              : config.proxyConfig.edit.queryDataField;
+          if (queryDataField) {
+            data = utils.getObjData(queryDataField, res);
+          }
+          formModal.setFormData(data);
         });
       } else {
         formModal.setFormData(row);
@@ -433,7 +451,15 @@ export default {
       formModal.show(openCallback);
       if (proxyConfig && proxyConfig.view && proxyConfig.view.query) {
         proxyConfig.view.query(row).then(res => {
-          formModal.setFormData(res);
+          let data = res;
+          const queryDataField =
+            proxyConfig.view.queryDataField != undefined
+              ? proxyConfig.view.queryDataField
+              : config.proxyConfig.view.queryDataField;
+          if (queryDataField) {
+            data = utils.getObjData(queryDataField, res);
+          }
+          formModal.setFormData(data);
         });
       } else {
         formModal.setFormData(row);
@@ -451,13 +477,25 @@ export default {
     }
   },
   render(h) {
-    const { tableProps, modal, form } = this;
+    const { tableProps, modal, form, table } = this;
+    const tableHeight = table.height ? table.height : "auto";
     return h(
       "div",
       {
         class: "crud-table"
       },
-      [renderFormModal(modal, form, h, this), h("data-table", tableProps, "")]
+      [
+        renderFormModal(modal, form, h, this),
+        h(
+          "div",
+          {
+            style: {
+              height: tableHeight
+            }
+          },
+          [h("data-table", tableProps, "")]
+        )
+      ]
     );
   }
 };

@@ -22,11 +22,13 @@ $formItemMarginBottom: 19px;
         
         .data-form-item-content{
             flex:1;
-            &>div{
-                min-width: 130px;
-            }
+            display: flex;
             &>.data-form-buttons{
                 min-width: initial;
+            }
+            &>.data-form-item-input{
+                min-width: 130px;
+                flex: 1;
             }
         }
         &.left{

@@ -10,7 +10,7 @@
 import utils from "../../utils";
 
 export default {
-  name: "DataForm",
+  name: "Upload",
   components: {},
   props: {
     name: String,

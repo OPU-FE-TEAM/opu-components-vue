@@ -2,6 +2,14 @@ import utils from "../../utils";
 import inputs from "./index";
 import config from "../conf";
 
+// let is = false;
+const optionsComponents = [
+  "a-select",
+  "a-radio-group",
+  "a-checkbox-group",
+  "a-cascader",
+  "a-tree-select"
+];
 // 回车跳转下一个focus
 function nextItemFocus(item, _vm) {
   const { enterToNextItemFocusList, setFieldFocus } = _vm;
@@ -10,139 +18,6 @@ function nextItemFocus(item, _vm) {
     const nextField = enterToNextItemFocusList[fieldIndex + 1];
     setFieldFocus(nextField);
   }
-}
-
-// 处理表单项的可选数据结构为 antd所需的
-function handleItemPropsOptions(props) {
-  const { options, valueField, labelField } = props;
-  if (valueField || labelField) {
-    const cloneOptions = utils.clone(options);
-    return cloneOptions.map(item => {
-      if (valueField) {
-        item.value = item[valueField];
-      }
-      if (labelField) {
-        item.label = item[labelField];
-      }
-      return item;
-    });
-  }
-  return options;
-}
-
-// 请求表单项可选数据
-const fetchItemPropsOptionsApiList = async function(list, _vm) {
-  const { setFieldsOptions, onOptionsAllLoad, onOptionsLoadBefore } = _vm;
-  if (onOptionsLoadBefore) {
-    const beforeRes = onOptionsLoadBefore(list);
-    if (beforeRes === false) {
-      return false;
-    } else if (beforeRes) {
-      list = beforeRes;
-    }
-  }
-  let promises = list.map(item => {
-    const { api, param } = item;
-    return api(param);
-  });
-  Promise.all(promises)
-    .then(res => {
-      let json = {};
-      list.forEach((item, index) => {
-        const { field, valueField, labelField, fields, dataField } = item;
-        const itemData = utils.getObjData(dataField, res[index]);
-        if (fields && fields.length) {
-          // 统一请求可选数据 赋值到指定字段的处理
-          fields.forEach(element => {
-            const data = utils.getObjData(element.dataField, itemData);
-            if (utils.isArray(data)) {
-              json[element.field] = handleItemPropsOptions({
-                options: data,
-                valueField: element.valueField,
-                labelField: element.labelField
-              });
-            }
-            // for (const key in element.param) {
-            //   if (element.param[key] && itemData) {
-            //     json[element.field] = handleItemPropsOptions({
-            //       options: itemData,
-            //       valueField: element.valueField,
-            //       labelField: element.labelField
-            //     });
-            //   }
-            // }
-          });
-        } else {
-          // 字段单独配置api的可选数据的处理
-          //TODO
-          let vF = "";
-          let lF = "";
-          vF = valueField ? valueField : config.getSelectOptions.valueField;
-          lF = labelField ? labelField : config.getSelectOptions.labelField;
-          // }
-          const options = handleItemPropsOptions({
-            options: itemData,
-            valueField: vF,
-            labelField: lF
-          });
-          json[field] = options;
-        }
-      });
-      if (onOptionsAllLoad) {
-        const onLoadRes = onOptionsAllLoad(json);
-        if (onLoadRes) {
-          json = onLoadRes;
-        }
-      }
-      setFieldsOptions(json);
-    })
-    .catch(() => {});
-};
-
-// 处理统一请求可选数据的请求
-function handeUnifyApiGetOptions(unifyList, optionsApiList, _vm) {
-  const { getSelectOptions } = _vm;
-  // 处理同一请求参数
-  const json = {};
-  let fields = [];
-  unifyList.map(item => {
-    const { param, valueField, labelField, dataField } = item.itemRender.props;
-    let vF = valueField;
-    let lF = labelField;
-    let dF = dataField ? dataField : config.getSelectOptions.dataField;
-    // if (["a-select", "a-checkbox-group"].includes(item.itemRender.name)) {
-    vF = valueField ? valueField : config.getSelectOptions.valueField;
-    lF = labelField ? labelField : config.getSelectOptions.labelField;
-    // }
-    fields.push({
-      field: item.field,
-      valueField: vF,
-      labelField: lF,
-      dataField: dF,
-      param
-    });
-    for (const key in param) {
-      if (json[key] && utils.isArray(json[key])) {
-        json[key].push(param[key]);
-      } else if (json[key] && !utils.isArray(json[key])) {
-        json[key] = [json[key], param[key]];
-      } else {
-        json[key] = param[key];
-      }
-    }
-  });
-  const unifyApi =
-    getSelectOptions && getSelectOptions.api
-      ? getSelectOptions.api
-      : config.getSelectOptions.api;
-  if (unifyApi) {
-    optionsApiList.push({
-      api: unifyApi,
-      param: json,
-      fields
-    });
-  }
-  fetchItemPropsOptionsApiList(optionsApiList, _vm);
 }
 
 // 渲染标题
@@ -272,7 +147,7 @@ function renderItemInput(item, h, _vm) {
     inputDom = h("a-customRender", props);
   } else {
     // 根据name渲染组件
-    const renderName =
+    let renderName =
       item.itemRender &&
       item.itemRender.name &&
       item.itemRender.name !== "hidden"
@@ -287,7 +162,12 @@ function renderItemInput(item, h, _vm) {
         };
       }
       props.props.items = item.itemRender.items;
+    } else if (optionsComponents.includes(renderName)) {
+      // 有可选数据的组件
+      props.props.renderName = renderName;
+      renderName = "options-component";
     }
+
     inputDom = h(renderName, props);
   }
 
@@ -297,13 +177,38 @@ function renderItemInput(item, h, _vm) {
 // 渲染每个表单项内容
 function renderItemContent(item, h, _vm) {
   const { titleWidth } = _vm;
+  const before = item.itemRender.before ? item.itemRender.before() : "";
+  const after = item.itemRender.after ? item.itemRender.after() : "";
+
   return h(
     "div",
     {
       style: { width: titleWidth },
       class: "data-form-item-content"
     },
-    [renderItemInput(item, h, _vm)]
+    [
+      h(
+        "div",
+        {
+          class: "data-form-item-before"
+        },
+        [before]
+      ),
+      h(
+        "div",
+        {
+          class: "data-form-item-input"
+        },
+        [renderItemInput(item, h, _vm)]
+      ),
+      h(
+        "div",
+        {
+          class: "data-form-item-after"
+        },
+        [after]
+      )
+    ]
   );
 }
 
@@ -520,67 +425,7 @@ export default {
   },
   methods: {
     cloneItems(items) {
-      const clone = utils.clone(items, true);
-      const getItemPropsOptionsApiList = [];
-      const unifyApiGetOptions = [];
-      const data = clone.map(item => {
-        // 处理可选数据
-        if (
-          item.itemRender &&
-          item.itemRender.props &&
-          item.itemRender.props.options
-        ) {
-          let vF = "";
-          let lF = "";
-          vF = item.itemRender.props.valueField
-            ? item.itemRender.props.valueField
-            : config.getSelectOptions.valueField;
-          lF = item.itemRender.props.labelField
-            ? item.itemRender.props.labelField
-            : config.getSelectOptions.labelField;
-          let arr = {
-            ...item.itemRender.props
-          };
-          if (!["a-cascader"].includes(item.itemRender.name)) {
-            arr = {
-              ...item.itemRender.props,
-              valueField: vF,
-              labelField: lF
-            };
-          }
-          const options = handleItemPropsOptions(arr);
-          item.itemRender.props.options = options;
-        } else if (
-          item.itemRender &&
-          item.itemRender.props &&
-          item.itemRender.props.api
-        ) {
-          getItemPropsOptionsApiList.push({
-            field: item.field,
-            api: item.itemRender.props.api,
-            valueField: item.itemRender.props.valueField,
-            labelField: item.itemRender.props.labelField,
-            param: item.itemRender.props.param
-          });
-        } else if (
-          item.itemRender &&
-          item.itemRender.props &&
-          item.itemRender.props.param &&
-          !item.itemRender.props.api
-        ) {
-          unifyApiGetOptions.push(item);
-        }
-        return item;
-      });
-      if (unifyApiGetOptions.length) {
-        handeUnifyApiGetOptions(
-          unifyApiGetOptions,
-          getItemPropsOptionsApiList,
-          this
-        );
-      } else if (getItemPropsOptionsApiList.length) {
-        fetchItemPropsOptionsApiList(getItemPropsOptionsApiList, this);
-      }
+      const data = utils.clone(items, true);
       this.itemsOptions = data;
     },
     // 获取表单数据，不验证
@@ -708,10 +553,14 @@ export default {
           } else {
             formData[key] = "";
           }
-          if (item.itemRender.props.name === "a-tree-select") {
-            item.itemRender.props.treeData = options;
-          } else {
-            item.itemRender.props.options = options;
+          // if (item.itemRender.props.name === "a-tree-select") {
+          //   item.itemRender.props.treeData = options;
+          // } else {
+          //   item.itemRender.props.options = options;
+          // }
+          const input = "input_" + item.field;
+          if (input && input.setOptionsData) {
+            input.setOptionsData(options);
           }
         }
       }

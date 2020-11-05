@@ -90,6 +90,51 @@ function getCheckboxData() {
   });
 }
 
+function getTreeData() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const data = [
+        {
+          value: "zhejiang",
+          label: "Zhejiang",
+          children: [
+            {
+              value: "hangzhou",
+              label: "Hangzhou",
+              children: [
+                {
+                  value: "xihu",
+                  label: "West Lake"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          value: "jiangsu",
+          label: "Jiangsu",
+          children: [
+            {
+              value: "nanjing",
+              label: "Nanjing",
+              children: [
+                {
+                  value: "zhonghuamen",
+                  label: "Zhong Hua Men"
+                }
+              ]
+            }
+          ]
+        }
+      ];
+      resolve({
+        code: 0,
+        data: data
+      });
+    }, 500);
+  });
+}
+
 export default {
   components: {
     // DataForm
@@ -152,6 +197,7 @@ export default {
           option: { initialValue: "555666" },
           itemRender: {
             name: "a-input",
+
             props: {
               readonly: true,
               placeholder: "请输入名称"
@@ -191,16 +237,22 @@ export default {
           },
           titleWidth: "150px",
           itemRender: {
-            name: "a-input"
+            name: "a-input",
+            before: () => {
+              return 555;
+            },
+            after: () => {
+              return 666;
+            }
           }
         },
         {
           field: "sex",
           title: "性别",
           hasFeedback: true,
-          option: {
-            rules: [{ required: true, message: "请输入名称!" }]
-          },
+          // option: {
+          //   rules: [{ required: true, message: "请输入名称!" }]
+          // },
 
           itemRender: {
             name: "a-select",
@@ -301,11 +353,19 @@ export default {
           itemRender: {
             name: "a-radio-group",
             props: {
-              options: [
-                { id: "Apple", name: "Apple" },
-                { id: "Pear", name: "Pear" },
-                { id: "Orange", name: "Orange" }
-              ]
+              // api: getCheckboxData
+              dataField: "cc",
+              param: {
+                code: "cc"
+              }
+              // options: [
+              //   { id: "Apple", name: "Apple" },
+              //   { id: "Pear", name: "Pear" },
+              //   { id: "Orange", name: "Orange" }
+              // ]
+            },
+            on: {
+              change: this.onRadioChange
             }
           }
         },
@@ -315,7 +375,8 @@ export default {
           itemRender: {
             name: "a-date-picker",
             props: {
-              showTime: true
+              showTime: true,
+              api: getCheckboxData
             }
           }
         },
@@ -385,40 +446,9 @@ export default {
           itemRender: {
             name: "a-cascader",
             props: {
-              options: [
-                {
-                  value: "zhejiang",
-                  label: "Zhejiang",
-                  children: [
-                    {
-                      value: "hangzhou",
-                      label: "Hangzhou",
-                      children: [
-                        {
-                          value: "xihu",
-                          label: "West Lake"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  value: "jiangsu",
-                  label: "Jiangsu",
-                  children: [
-                    {
-                      value: "nanjing",
-                      label: "Nanjing",
-                      children: [
-                        {
-                          value: "zhonghuamen",
-                          label: "Zhong Hua Men"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
+              api: getTreeData,
+              valueField: "value",
+              labelField: "label"
             }
           }
         },
@@ -636,7 +666,7 @@ export default {
         title: "动态项" + this.key,
         field: "key" + this.key,
         itemRender: {
-          name: "input",
+          name: "a-input",
           props: {
             placeholder: "请输入名称"
           }
@@ -693,6 +723,10 @@ export default {
     },
     onButtonClick(action) {
       console.log(666, action);
+    },
+    onRadioChange(e) {
+      console.log(e);
+      // this.setItems();
     }
   }
 };
