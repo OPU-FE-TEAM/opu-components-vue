@@ -36,7 +36,7 @@ export default {
     },
     table: Object,
     proxyConfig: Object,
-    permissions: Boolean
+    permissions: [Boolean, Array]
   },
   computed: {
     proxyConfigOpt() {
@@ -374,6 +374,9 @@ export default {
       }
       this.currentAction = "add";
       const formModal = this.$refs.formModal;
+      if (!formModal) {
+        return false;
+      }
       formModal.setReadonly(false);
       formModal.setTitle(
         proxyConfig.add.modalTitle
@@ -390,7 +393,7 @@ export default {
 
       let openCallback = "";
       if (proxyConfig && proxyConfig.edit && proxyConfig.edit.open) {
-        const openRes = proxyConfig.edit.open();
+        const openRes = proxyConfig.edit.open(row);
         if (openRes === false) {
           return false;
         } else if (openRes && utils.isFunction(openRes)) {
@@ -399,6 +402,9 @@ export default {
       }
       this.currentAction = "edit";
       const formModal = this.$refs.formModal;
+      if (!formModal) {
+        return false;
+      }
       formModal.setTitle(
         proxyConfig.edit.modalTitle
           ? proxyConfig.edit.modalTitle
@@ -432,7 +438,7 @@ export default {
       const viewButtonProps = proxyConfigOpt.view.props;
       let openCallback = "";
       if (proxyConfig && proxyConfig.view && proxyConfig.view.open) {
-        const openRes = proxyConfig.view.open();
+        const openRes = proxyConfig.view.open(row);
         if (openRes === false) {
           return false;
         } else if (openRes && utils.isFunction(openRes)) {
@@ -441,6 +447,9 @@ export default {
       }
       this.currentAction = "view";
       const formModal = this.$refs.formModal;
+      if (!formModal) {
+        return false;
+      }
       formModal.setReadonly(true);
       formModal.setTitle(
         proxyConfig.view.modalTitle
@@ -477,25 +486,18 @@ export default {
     }
   },
   render(h) {
-    const { tableProps, modal, form, table } = this;
-    const tableHeight = table.height ? table.height : "auto";
+    const { tableProps, modal, form } = this;
+    // const tableHeight = table.height ? table.height : "auto";
+    let formDom = "";
+    if (modal && form) {
+      formDom = renderFormModal(modal, form, h, this);
+    }
     return h(
       "div",
       {
         class: "crud-table"
       },
-      [
-        renderFormModal(modal, form, h, this),
-        h(
-          "div",
-          {
-            style: {
-              height: tableHeight
-            }
-          },
-          [h("data-table", tableProps, "")]
-        )
-      ]
+      [formDom, [h("data-table", tableProps, "")]]
     );
   }
 };

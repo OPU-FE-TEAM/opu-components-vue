@@ -4,7 +4,8 @@
       show-overflow
       keep-source
       ref="xGrid"
-      height="760"
+      height="auto"
+      tableHeight="calc(100vh - 100px)"
       :loading="loading"
       :data="tableData"
       :headToolbar="headToolbar"

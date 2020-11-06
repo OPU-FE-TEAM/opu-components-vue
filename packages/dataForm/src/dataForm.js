@@ -80,11 +80,18 @@ const fetchItemPropsOptionsApiList = async function(list, _vm) {
         if (fields && fields.length) {
           // 统一请求可选数据 赋值到指定字段的处理
           fields.forEach(element => {
-            json[element.field] = itemData;
+            const optionsData = handlefieldOptionsDataField(
+              element.field,
+              itemData,
+              _vm
+            );
+            json[element.field] = optionsData;
           });
         } else {
           // 字段单独配置api的可选数据的处理
-          json[field] = itemData;
+          const optionsData = handlefieldOptionsDataField(field, itemData, _vm);
+          json[field] = optionsData;
+          // json[field] = itemData;
         }
       });
       if (onOptionsAllLoad) {
@@ -93,11 +100,25 @@ const fetchItemPropsOptionsApiList = async function(list, _vm) {
           json = onLoadRes;
         }
       }
-      console.log(json);
-      setFieldsOptions(json, true, true);
+      setFieldsOptions(json);
     })
     .catch(() => {});
 };
+
+function handlefieldOptionsDataField(field, json, _vm) {
+  const { itemsOptions } = _vm;
+  const fieldItem = itemsOptions.find(p => p.field === field);
+  let optionData = json;
+  if (fieldItem && fieldItem.itemRender && fieldItem.itemRender.props) {
+    const itemProps = fieldItem.itemRender.props;
+    const df =
+      itemProps.dataField != undefined
+        ? itemProps.dataField
+        : config.getSelectOptions.dataField;
+    optionData = utils.getObjData(df, json);
+  }
+  return optionData;
+}
 
 // 渲染标题
 function renderItemTitle(item, h, _vm) {
@@ -663,37 +684,44 @@ export default {
       }
     },
     // 设置一组字段的options数据
-    setFieldsOptions(data, hasCancelFormData, hasHandleDataField) {
-      const formData = {};
+    setFieldsOptions(data) {
+      const formData = this.getData();
       for (const key in data) {
         const options = data[key];
         const item = this.itemsOptions.find(p => p.field === key);
         if (item && item.itemRender && item.itemRender.props) {
           const itemProps = item.itemRender.props;
-          if (item.itemRender.name === "a-checkbox-group") {
-            formData[key] = [];
-          } else {
-            formData[key] = "";
-          }
-          let optionData = options;
-          if (hasHandleDataField) {
-            const df =
-              itemProps.dataField != undefined
-                ? itemProps.dataField
-                : config.getSelectOptions.dataField;
-            optionData = utils.getObjData(df, options);
-          }
           const inputRef = "input_" + item.field;
           const input = this.$refs[inputRef];
           if (input && input.setOptionsData) {
-            input.setOptionsData(optionData);
+            input.setOptionsData(options);
+          }
+          if (formData[key]) {
+            const vF =
+              itemProps.valueField != undefined
+                ? itemProps.valueField
+                : config.getSelectOptions.valueField;
+            if (utils.isArray(formData[key])) {
+              // 数组的值
+              const arrValue = [];
+              for (let i = 0; i < options.length; i++) {
+                const el = options[i];
+                if (formData[key].includes(el[vF])) {
+                  arrValue.push(el[vF]);
+                }
+              }
+              formData[key] = arrValue;
+            } else {
+              const valueRow = options.find(p => p[vF] == formData[key]);
+              if (!valueRow) {
+                formData[key] = "";
+              }
+            }
           }
         }
       }
-      if (hasCancelFormData) {
-        // 清除赋值字段的值
-        this.setData(formData);
-      }
+      // 清除赋值字段的值
+      this.setData(formData);
     },
 
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部

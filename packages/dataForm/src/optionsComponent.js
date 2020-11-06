@@ -129,6 +129,7 @@ export default {
       const { valueField, labelField } = this;
       const options = handleItemPropsOptions(data, valueField, labelField);
       this.optionsData = options;
+      return options;
     },
     getOptionsData() {
       return this.optionsData;

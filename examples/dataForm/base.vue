@@ -632,8 +632,12 @@ export default {
       ]
     };
   },
+  created() {},
   mounted() {
-    this.setFieldsOptionsDefaultValues();
+    // this.setFieldsOptionsDefaultValues();
+    this.$refs.dataForm.setData({
+      checkboxGroup: [2, 3]
+    });
   },
   methods: {
     getData() {

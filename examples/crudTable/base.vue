@@ -220,7 +220,6 @@ export default {
         view: {
           queryDataField: "data",
           permission: ({ row }) => {
-            console.log(row);
             if (row.id == 1) {
               return true;
             }
@@ -444,7 +443,8 @@ export default {
             //   // refresh: true
             // }
           },
-          height: 600,
+          height: "auto",
+          tableHeight: "800px",
           size: "mini",
           proxyConfig: {
             seq: true, // 启用动态序号代理

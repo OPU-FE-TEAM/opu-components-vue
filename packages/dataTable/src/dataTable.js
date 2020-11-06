@@ -371,7 +371,11 @@ export default {
     searchConfig: Object,
     headToolbar: Object,
     setcolumnsConfig: Object,
-    proxyColumns: Object
+    proxyColumns: Object,
+    tableHeight: {
+      type: String,
+      default: "auto"
+    }
   },
   watch: {
     columns(val) {
@@ -776,7 +780,7 @@ export default {
     }
   },
   render(h) {
-    const { tableProps, headToolbar, setcolumnsConfig } = this;
+    const { tableProps, headToolbar, setcolumnsConfig, tableHeight } = this;
     const nodes = [];
     if (
       (headToolbar && headToolbar.tools && headToolbar.tools.setColumns) ||
@@ -789,7 +793,18 @@ export default {
       {
         class: "data-table"
       },
-      [renderHeadToolbar(h, this), h("vxe-grid", tableProps)].concat(nodes)
+      [
+        renderHeadToolbar(h, this),
+        h(
+          "div",
+          {
+            style: {
+              height: tableHeight
+            }
+          },
+          [h("vxe-grid", tableProps)]
+        )
+      ].concat(nodes)
     );
   }
 };
