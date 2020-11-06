@@ -4,23 +4,19 @@ import config from "../conf";
 
 // 处理表单项的可选数据结构为 antd所需的
 function handleItemPropsOptions(options, valueField, labelField) {
-  // const { options, valueField, labelField } = props;
-  if ((valueField || labelField) && options && utils.isArray(options)) {
+  const vF = valueField ? valueField : config.getSelectOptions.valueField;
+  const lF = labelField ? labelField : config.getSelectOptions.labelField;
+  if (options && utils.isArray(options)) {
     const cloneOptions = utils.clone(options);
     return cloneOptions.map(item => {
-      if (valueField) {
-        item.value = item[valueField];
+      if (vF) {
+        item.value = item[vF];
       }
-      // debugger;
-      if (labelField) {
-        item.label = item[labelField];
+      if (lF) {
+        item.label = item[lF];
       }
       if (item.children && item.children.length) {
-        item.children = handleItemPropsOptions(
-          item.children,
-          valueField,
-          labelField
-        );
+        item.children = handleItemPropsOptions(item.children, vF, lF);
       }
       return item;
     });
@@ -44,7 +40,8 @@ export default {
     value: [Number, String, Object, Array],
     valueField: String,
     labelField: String,
-    dataField: String
+    dataField: String,
+    options: Array
   },
   model: {
     prop: "value",
@@ -83,12 +80,37 @@ export default {
       return props;
     }
   },
+  // watch: {
+  //   api() {
+  //     this.init();
+  //   },
+  //   param() {
+  //     this.init();
+  //   }
+  // },
   created() {
-    if (this.api || this.param) {
-      this.fetchOptionsData();
-    }
+    this.init();
   },
   methods: {
+    init() {
+      const {
+        api,
+        param,
+        valueField,
+        labelField,
+        // fetchOptionsData,
+        options
+      } = this;
+      if (api || param) {
+        // fetchOptionsData();
+      } else if (options && options.length) {
+        this.optionsData = handleItemPropsOptions(
+          options,
+          valueField,
+          labelField
+        );
+      }
+    },
     updateValue(value) {
       this.$emit("update", value);
       this.$emit("change", value);
@@ -97,16 +119,19 @@ export default {
       const { dataField, valueField, labelField, param, api } = this;
       const fetchApi = api ? api : config.getSelectOptions.api;
       fetchApi(param).then(res => {
-        const vF = valueField ? valueField : config.getSelectOptions.valueField;
-        const lF = labelField ? labelField : config.getSelectOptions.labelField;
         const dF = dataField ? dataField : config.getSelectOptions.dataField;
         const data = utils.getObjData(dF, res);
-        const options = handleItemPropsOptions(data, vF, lF);
+        const options = handleItemPropsOptions(data, valueField, labelField);
         this.optionsData = options;
       });
     },
     setOptionsData(data) {
-      this.optionsData = data;
+      const { valueField, labelField } = this;
+      const options = handleItemPropsOptions(data, valueField, labelField);
+      this.optionsData = options;
+    },
+    getOptionsData() {
+      return this.optionsData;
     }
   },
   render(h) {

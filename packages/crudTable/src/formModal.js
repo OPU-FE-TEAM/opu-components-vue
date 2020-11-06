@@ -46,7 +46,14 @@ export default {
       this.loading = true;
       this.visible = true;
       this.confirmLoading = true;
-      this.$nextTick(callback);
+      this.$nextTick(() => {
+        if (callback) {
+          const res = callback();
+          if (res) {
+            this.setFormData(res);
+          }
+        }
+      });
     },
     setLoading(flag) {
       this.loading = flag;

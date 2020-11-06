@@ -36,7 +36,7 @@ export default {
     },
     table: Object,
     proxyConfig: Object,
-    permissions: Array
+    permissions: Boolean
   },
   computed: {
     proxyConfigOpt() {

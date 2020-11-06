@@ -20,6 +20,85 @@ function nextItemFocus(item, _vm) {
   }
 }
 
+// 处理统一请求可选数据的请求
+function handeUnifyApiGetOptions(unifyList, optionsApiList, _vm) {
+  const { getSelectOptions } = _vm;
+  // 处理同一请求参数
+  const json = {};
+  let fields = [];
+  unifyList.map(item => {
+    const { param } = item.itemRender.props;
+    fields.push({
+      field: item.field,
+      param
+    });
+    for (const key in param) {
+      if (json[key] && utils.isArray(json[key])) {
+        json[key].push(param[key]);
+      } else if (json[key] && !utils.isArray(json[key])) {
+        json[key] = [json[key], param[key]];
+      } else {
+        json[key] = param[key];
+      }
+    }
+  });
+  const unifyApi =
+    getSelectOptions && getSelectOptions.api
+      ? getSelectOptions.api
+      : config.getSelectOptions.api;
+  if (unifyApi) {
+    optionsApiList.push({
+      api: unifyApi,
+      param: json,
+      fields
+    });
+  }
+  fetchItemPropsOptionsApiList(optionsApiList, _vm);
+}
+
+// 请求表单项可选数据
+const fetchItemPropsOptionsApiList = async function(list, _vm) {
+  const { setFieldsOptions, onOptionsAllLoad, onOptionsLoadBefore } = _vm;
+  if (onOptionsLoadBefore) {
+    const beforeRes = onOptionsLoadBefore(list);
+    if (beforeRes === false) {
+      return false;
+    } else if (beforeRes) {
+      list = beforeRes;
+    }
+  }
+  let promises = list.map(item => {
+    const { api, param } = item;
+    return api(param);
+  });
+  Promise.all(promises)
+    .then(res => {
+      let json = {};
+      list.forEach((item, index) => {
+        const { field, fields } = item;
+        const itemData = res[index];
+        if (fields && fields.length) {
+          // 统一请求可选数据 赋值到指定字段的处理
+          fields.forEach(element => {
+            json[element.field] = itemData;
+          });
+        } else {
+          // 字段单独配置api的可选数据的处理
+          json[field] = itemData;
+        }
+      });
+      if (onOptionsAllLoad) {
+        const onLoadRes = onOptionsAllLoad(json);
+        if (onLoadRes) {
+          json = onLoadRes;
+        }
+      }
+      console.log(json);
+      setFieldsOptions(json, true, true);
+    })
+    .catch(() => {});
+};
+
 // 渲染标题
 function renderItemTitle(item, h, _vm) {
   const { titleColon, titleWidth, titleAlign } = _vm;
@@ -313,8 +392,6 @@ export default {
   name: "DataForm",
   components: {
     ...inputs
-    // [Form.name]: Form,
-    // [Form.Item.name]: Form.Item
   },
   props: {
     // 表单内容
@@ -364,16 +441,12 @@ export default {
       type: Function,
       default: () => {}
     },
-    // 渲染的按钮buttons，action 按钮点击时触发
-    // onButtonActionClick: {
-    //   type: Function,
-    //   default: () => {}
-    // },
     // 获取数据时是否清除空值字段值
     filterNullValues: {
       type: [Boolean, String],
       default: ""
-    }
+    },
+    getSelectOptions: Object
   },
   data() {
     return {
@@ -425,7 +498,55 @@ export default {
   },
   methods: {
     cloneItems(items) {
-      const data = utils.clone(items, true);
+      const clone = utils.clone(items, true);
+      const getItemPropsOptionsApiList = [];
+      const unifyApiGetOptions = [];
+      // 处理可选数据
+      const data = clone.map(item => {
+        const oldItem = this.itemsOptions.find(p => p.field === item.field);
+        if (
+          oldItem &&
+          oldItem.itemRender &&
+          oldItem.itemRender.props &&
+          item.itemRender &&
+          item.itemRender.props &&
+          oldItem.itemRender.props.api === item.itemRender.props.api &&
+          utils.isEqual(
+            oldItem.itemRender.props.param,
+            item.itemRender.props.param
+          )
+        ) {
+          return item;
+        }
+        if (
+          item.itemRender &&
+          item.itemRender.props &&
+          item.itemRender.props.api
+        ) {
+          getItemPropsOptionsApiList.push({
+            field: item.field,
+            api: item.itemRender.props.api,
+            param: item.itemRender.props.param
+          });
+        } else if (
+          item.itemRender &&
+          item.itemRender.props &&
+          item.itemRender.props.param &&
+          !item.itemRender.props.api
+        ) {
+          unifyApiGetOptions.push(item);
+        }
+        return item;
+      });
+      if (unifyApiGetOptions.length) {
+        handeUnifyApiGetOptions(
+          unifyApiGetOptions,
+          getItemPropsOptionsApiList,
+          this
+        );
+      } else if (getItemPropsOptionsApiList.length) {
+        fetchItemPropsOptionsApiList(getItemPropsOptionsApiList, this);
+      }
       this.itemsOptions = data;
     },
     // 获取表单数据，不验证
@@ -542,31 +663,39 @@ export default {
       }
     },
     // 设置一组字段的options数据
-    setFieldsOptions(data) {
+    setFieldsOptions(data, hasCancelFormData, hasHandleDataField) {
       const formData = {};
       for (const key in data) {
         const options = data[key];
         const item = this.itemsOptions.find(p => p.field === key);
         if (item && item.itemRender && item.itemRender.props) {
+          const itemProps = item.itemRender.props;
           if (item.itemRender.name === "a-checkbox-group") {
             formData[key] = [];
           } else {
             formData[key] = "";
           }
-          // if (item.itemRender.props.name === "a-tree-select") {
-          //   item.itemRender.props.treeData = options;
-          // } else {
-          //   item.itemRender.props.options = options;
-          // }
-          const input = "input_" + item.field;
+          let optionData = options;
+          if (hasHandleDataField) {
+            const df =
+              itemProps.dataField != undefined
+                ? itemProps.dataField
+                : config.getSelectOptions.dataField;
+            optionData = utils.getObjData(df, options);
+          }
+          const inputRef = "input_" + item.field;
+          const input = this.$refs[inputRef];
           if (input && input.setOptionsData) {
-            input.setOptionsData(options);
+            input.setOptionsData(optionData);
           }
         }
       }
-      // 清除赋值字段的值
-      this.setData(formData);
+      if (hasCancelFormData) {
+        // 清除赋值字段的值
+        this.setData(formData);
+      }
     },
+
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}) {
       const formData = {};
@@ -575,38 +704,42 @@ export default {
           item &&
           item.itemRender &&
           item.itemRender.props &&
-          item.itemRender.props.options &&
           ((fields.length && fields.includes(item.field)) ||
             fields.length === 0)
         ) {
           const defaultKey = item.itemRender.props.defaultField
             ? item.itemRender.props.defaultField
-            : "default";
+            : config.getSelectOptions.defaultField;
           const valueField = item.itemRender.props.valueField
             ? item.itemRender.props.valueField
-            : "id";
-          const defaultValue = item.itemRender.props.options
-            .map(p => {
-              if (p[defaultKey]) {
-                return p[valueField];
+            : config.getSelectOptions.valueField;
+          const inputRef = "input_" + item.field;
+          const input = this.$refs[inputRef];
+          if (input && input.getOptionsData) {
+            const options = input.getOptionsData();
+            const defaultValue = options
+              .map(p => {
+                if (p[defaultKey]) {
+                  return p[valueField];
+                }
+                return "";
+              })
+              .filter(p => p !== "");
+            if (defaultValue.length) {
+              const valueArrayTypes = [
+                "a-checkbox-group",
+                "a-radio-group",
+                "a-select"
+              ];
+              let value = defaultValue;
+              if (
+                !valueArrayTypes.includes(item.itemRender.name) &&
+                defaultValue.length === 1
+              ) {
+                value = defaultValue[0];
               }
-              return "";
-            })
-            .filter(p => p !== "");
-          if (defaultValue.length) {
-            const valueArrayTypes = [
-              "a-checkbox-group",
-              "a-radio-group",
-              "a-select"
-            ];
-            let value = defaultValue;
-            if (
-              !valueArrayTypes.includes(item.itemRender.name) &&
-              defaultValue.length === 1
-            ) {
-              value = defaultValue[0];
+              formData[item.field] = value;
             }
-            formData[item.field] = value;
           }
         }
       });

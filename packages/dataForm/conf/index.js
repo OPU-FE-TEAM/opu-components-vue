@@ -10,7 +10,8 @@ const GlobalConfig = {
     api: null,
     valueField: "id",
     labelField: "name",
-    dataField: "data"
+    dataField: "data",
+    defaultField: "default"
   }
 };
 

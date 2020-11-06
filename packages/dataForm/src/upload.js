@@ -103,7 +103,6 @@ export default {
     let buttonContent = "上传文件";
     if (buttonText && utils.isFunction(buttonText)) {
       buttonContent = [buttonText()];
-      console.log(buttonContent);
     } else if (buttonText) {
       buttonContent = buttonText;
     }

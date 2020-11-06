@@ -145,6 +145,9 @@ export default {
             console.log("打开前");
             return () => {
               console.log("打开后");
+              return {
+                name: "789456"
+              };
             };
           },
           submit: values => {

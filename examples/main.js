@@ -18,6 +18,7 @@ function getSelectData(arr) {
         arr.code.map(item => {
           const list = Array.from({ length: 5 }, (_, key) => ({
             id: key,
+            default: key == 2 ? true : false,
             name: `${item}_${key}`
           }));
           json[item] = list;
@@ -25,6 +26,7 @@ function getSelectData(arr) {
       } else if (arr.code) {
         const list = Array.from({ length: 5 }, (_, key) => ({
           id: key,
+          default: key == 2 ? true : false,
           name: `${arr.code}_${key}8888888888888888888`
         }));
         json[arr.code] = list;
