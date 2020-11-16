@@ -22,6 +22,7 @@ function renderHeadSearch(searchConfig, h, _vm) {
     ref: "headSearch",
     props: {
       ...searchConfig,
+      submitButtonProps: false,
       items
       // onButtonActionClick: onButtonActionClick
     },
@@ -371,11 +372,11 @@ export default {
     searchConfig: Object,
     headToolbar: Object,
     setcolumnsConfig: Object,
-    proxyColumns: Object,
-    tableHeight: {
-      type: String,
-      default: "auto"
-    }
+    proxyColumns: Object
+    // tableHeight: {
+    //   type: String,
+    //   default: "auto"
+    // }
   },
   watch: {
     columns(val) {
@@ -388,7 +389,8 @@ export default {
       backupColumns: [],
       tableColumns: [],
       advancedVisible: false,
-      searchData: {}
+      searchData: {},
+      tableHeight: ""
     };
   },
   computed: {
@@ -479,7 +481,8 @@ export default {
         proxyConfigOpt,
         renderPulldownTable,
         renderPulldownTableView,
-        renderSwitch
+        renderSwitch,
+        height
       } = this;
       const propsData = this.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
@@ -528,6 +531,9 @@ export default {
           columns: columns
         }
       });
+      if (height && utils.isString(height) && height.indexOf("calc") > -1) {
+        props.props.height = "auto";
+      }
       const ons = {};
       utils.each($listeners, (cb, type) => {
         ons[type] = (...args) => {
@@ -780,13 +786,17 @@ export default {
     }
   },
   render(h) {
-    const { tableProps, headToolbar, setcolumnsConfig, tableHeight } = this;
+    const { tableProps, headToolbar, setcolumnsConfig, height } = this;
     const nodes = [];
     if (
       (headToolbar && headToolbar.tools && headToolbar.tools.setColumns) ||
       setcolumnsConfig
     ) {
       nodes.push(renderColumnsModal(h, this));
+    }
+    let tableHeight = "";
+    if (height && utils.isString(height) && height.indexOf("calc") > -1) {
+      tableHeight = height;
     }
     return h(
       "div",

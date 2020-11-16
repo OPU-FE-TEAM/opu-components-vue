@@ -23,12 +23,16 @@ $formItemMarginBottom: 19px;
         .data-form-item-content{
             flex:1;
             display: flex;
-            &>.data-form-buttons{
-                min-width: initial;
-            }
+            
             &>.data-form-item-input{
-                min-width: 130px;
+                
                 flex: 1;
+                &>div{
+                    min-width: 130px;
+                }
+                &>.data-form-buttons{
+                    min-width: initial;
+                }
             }
         }
         &.left{
@@ -100,6 +104,21 @@ $formItemMarginBottom: 19px;
             margin-left: 10px;
         }
     }
+
+    .ant-select-selection-selected-value{
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        margin-top: -10px;
+        overflow: hidden;
+        line-height: 20px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+
     &.grid{
         display: grid;
         grid-template-columns: 1fr;
@@ -120,20 +139,14 @@ $formItemMarginBottom: 19px;
             display: inline-block;
         }
     }
+    &.inline{
+        .data-form-buttons{
+            display: inline-block;
+        }
+    }
     
   
-    .ant-select-selection-selected-value{
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 20px;
-        margin-top: -10px;
-        overflow: hidden;
-        line-height: 20px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
+    
 
     &.readonly{
         .ant-input[disabled],

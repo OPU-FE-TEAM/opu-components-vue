@@ -8,8 +8,10 @@
       :items="items"
       :onOptionsAllLoad="onOptionsAllLoad"
       :onOptionsLoadBefore="onOptionsLoadBefore"
+      :cancelButtonProps="false"
       @buttonActionClick="onButtonClick"
       @submit="onSubmit"
+      :loading="loading"
     >
       <template slot="itemSlot" slot-scope="text, updateValue, field">
         全插槽内容:{{ text }}{{ field }}
@@ -28,6 +30,9 @@
     <button @click="setSelectData">更新select可选值</button>
     <button @click="setFieldsOptionsDefaultValues">
       设置表单下拉数据默认值
+    </button>
+    <button @click="setFormData">
+      设置表单值
     </button>
   </div>
 </template>
@@ -143,6 +148,7 @@ export default {
     return {
       key: 1,
       readonly: false,
+      loading: false,
       items: [
         {
           field: "id",
@@ -289,6 +295,7 @@ export default {
             props: {
               // valueField: "id",
               // labelField: "name",
+              mode: "multiple",
               dataField: "bb",
               param: {
                 code: "bb"
@@ -312,14 +319,14 @@ export default {
         //     name: "a-textarea"
         //   }
         // },
-        // {
-        //   field: "number",
-        //   title: "数字",
-        //   width: "200px",
-        //   itemRender: {
-        //     name: "a-input-number"
-        //   }
-        // },
+        {
+          field: "number",
+          title: "数字",
+          // width: "200px",
+          itemRender: {
+            name: "a-input-number"
+          }
+        },
         // {
         //   field: "checkbox",
         //   title: "复选框",
@@ -372,7 +379,7 @@ export default {
               change: this.onRadioChange
             }
           }
-        },
+        }
         // {
         //   field: "date",
         //   title: "日期选择",
@@ -583,52 +590,52 @@ export default {
         //     }
         //   }
         // },
-        {
-          align: "left",
-          colspan: 2,
-          colon: false,
-          // titleWidth:0,
-          itemRender: {
-            name: "buttons",
-            items: [
-              {
-                props: {
-                  // 'html-type': 'submit',
-                  action: "submit",
-                  content: "提交",
-                  type: "primary"
-                }
-              },
-              {
-                props: {
-                  // 'html-type': 'reset',
-                  action: "reset",
-                  content: "重置"
-                },
-                on: {
-                  click: () => {
-                    console.log("click");
-                    return false;
-                  }
-                }
-              },
-              {
-                props: {
-                  action: "gaoji",
-                  content: "自定义action"
-                }
-              },
-              {
-                props: {
-                  content: "设置表单值"
-                },
-                on: {
-                  click: this.setFormData
-                }
-              }
-            ]
-          }
-        }
+        // {
+        //   align: "left",
+        //   colspan: 2,
+        //   colon: false,
+        //   // titleWidth:0,
+        //   itemRender: {
+        //     name: "buttons",
+        //     items: [
+        //       {
+        //         props: {
+        //           // 'html-type': 'submit',
+        //           action: "submit",
+        //           content: "提交",
+        //           type: "primary"
+        //         }
+        //       },
+        //       {
+        //         props: {
+        //           // 'html-type': 'reset',
+        //           action: "reset",
+        //           content: "重置"
+        //         },
+        //         on: {
+        //           click: () => {
+        //             console.log("click");
+        //             return false;
+        //           }
+        //         }
+        //       },
+        //       {
+        //         props: {
+        //           action: "gaoji",
+        //           content: "自定义action"
+        //         }
+        //       },
+        //       {
+        //         props: {
+        //           content: "设置表单值"
+        //         },
+        //         on: {
+        //           click: this.setFormData
+        //         }
+        //       }
+        //     ]
+        //   }
+        // }
       ]
     };
   },
@@ -655,6 +662,11 @@ export default {
     },
     onSubmit(values) {
       console.log(values);
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+        // this.$refs.dataForm.setLoading(false);
+      }, 3000);
     },
     setFormData() {
       this.$refs.dataForm.setData({
@@ -666,7 +678,11 @@ export default {
         pulldown: {
           id: 5,
           name: "name_1_5"
-        }
+        },
+        number: 0,
+        selected: 2,
+        sex: "1",
+        radioGroup: 3
       });
     },
     setItems() {

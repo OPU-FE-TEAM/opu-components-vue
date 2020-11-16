@@ -4,8 +4,7 @@
       show-overflow
       keep-source
       ref="xGrid"
-      height="auto"
-      tableHeight="calc(100vh - 100px)"
+      height="calc(100vh - 100px)"
       :loading="loading"
       :data="tableData"
       :headToolbar="headToolbar"
@@ -333,19 +332,17 @@ export default {
               folding: false,
               itemRender: {
                 name: "buttons",
-                props: {
-                  children: [
-                    {
-                      props: {
-                        action: "submit",
-                        content: "查询",
-                        type: "primary"
-                      }
-                    },
-                    { props: { action: "reset", content: "重置" } },
-                    { props: { action: "advancedQuery", content: "高级查询" } }
-                  ]
-                }
+                items: [
+                  {
+                    props: {
+                      action: "submit",
+                      content: "查询",
+                      type: "primary"
+                    }
+                  },
+                  { props: { action: "reset", content: "重置" } },
+                  { props: { action: "advancedQuery", content: "高级查询" } }
+                ]
               }
             }
           ]

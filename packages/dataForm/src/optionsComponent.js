@@ -10,7 +10,7 @@ function handleItemPropsOptions(options, valueField, labelField) {
     const cloneOptions = utils.clone(options);
     return cloneOptions.map(item => {
       if (vF) {
-        item.value = item[vF];
+        item.value = item[vF] + "";
       }
       if (lF) {
         item.label = item[lF];
@@ -41,7 +41,8 @@ export default {
     valueField: String,
     labelField: String,
     dataField: String,
-    options: Array
+    options: Array,
+    componentPropsData: Object
   },
   model: {
     prop: "value",
@@ -54,7 +55,14 @@ export default {
   },
   computed: {
     componentProps() {
-      const { $listeners, $options, optionsData, renderName } = this;
+      const {
+        $listeners,
+        $options,
+        optionsData,
+        renderName,
+        componentPropsData,
+        value
+      } = this;
       const propsData = $options.propsData;
 
       const ons = {};
@@ -63,9 +71,17 @@ export default {
           this.$emit(type, ...args);
         };
       });
+      let currentValue = value;
+      if (value && utils.isNumber(value)) {
+        currentValue = value + "";
+      } else if (value && utils.isArray(value)) {
+        currentValue = value.map(p => p + "");
+      }
       const props = {
         props: {
-          ...propsData
+          ...componentPropsData,
+          ...propsData,
+          value: currentValue
         },
         on: {
           ...ons,
@@ -93,17 +109,8 @@ export default {
   },
   methods: {
     init() {
-      const {
-        api,
-        param,
-        valueField,
-        labelField,
-        // fetchOptionsData,
-        options
-      } = this;
-      if (api || param) {
-        // fetchOptionsData();
-      } else if (options && options.length) {
+      const { valueField, labelField, options } = this;
+      if (options && options.length) {
         this.optionsData = handleItemPropsOptions(
           options,
           valueField,
@@ -115,16 +122,7 @@ export default {
       this.$emit("update", value);
       this.$emit("change", value);
     },
-    fetchOptionsData() {
-      const { dataField, valueField, labelField, param, api } = this;
-      const fetchApi = api ? api : config.getSelectOptions.api;
-      fetchApi(param).then(res => {
-        const dF = dataField ? dataField : config.getSelectOptions.dataField;
-        const data = utils.getObjData(dF, res);
-        const options = handleItemPropsOptions(data, valueField, labelField);
-        this.optionsData = options;
-      });
-    },
+
     setOptionsData(data) {
       const { valueField, labelField } = this;
       const options = handleItemPropsOptions(data, valueField, labelField);

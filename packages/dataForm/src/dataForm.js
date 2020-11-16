@@ -1,6 +1,7 @@
 import utils from "../../utils";
 import inputs from "./index";
 import config from "../conf";
+// import { Button } from "ant-design-vue";
 
 // let is = false;
 const optionsComponents = [
@@ -264,6 +265,7 @@ function renderItemInput(item, h, _vm) {
       props.props.items = item.itemRender.items;
     } else if (optionsComponents.includes(renderName)) {
       // 有可选数据的组件
+      props.props.componentPropsData = props.props;
       props.props.renderName = renderName;
       renderName = "options-component";
     }
@@ -321,7 +323,10 @@ function renderItems(h, _vm) {
     colspan,
     $scopedSlots,
     focusItemTypes
+    // $listeners,
+    // submitButtonProps
   } = _vm;
+
   return itemsOptions
     ? itemsOptions.map(item => {
         const formItemProps = {
@@ -409,6 +414,81 @@ function renderItems(h, _vm) {
     : [];
 }
 
+// 渲染提交等操作按钮
+function renderActionButtons(h, _vm) {
+  const {
+    $listeners,
+    submitButtonProps,
+    cancelButtonProps,
+    loading,
+    onSubmit,
+    resetFields,
+    titleWidth,
+    layout
+  } = _vm;
+
+  if ($listeners && $listeners.submit && submitButtonProps !== false) {
+    // 添加提交按钮
+    const submitText =
+      submitButtonProps && submitButtonProps.content
+        ? submitButtonProps.content
+        : config.submitButtonProps.content;
+    const cancelText =
+      cancelButtonProps && cancelButtonProps.content
+        ? cancelButtonProps.content
+        : config.cancelButtonProps.content;
+
+    const submitButton = h(
+      "a-button",
+      {
+        props: {
+          ...config.submitButtonProps,
+          ...submitButtonProps,
+          loading: loading
+        },
+        on: {
+          click: onSubmit
+        }
+      },
+      [submitText]
+    );
+    let cancelButton = "";
+    if (cancelButtonProps !== false) {
+      cancelButton = h(
+        "a-button",
+        {
+          props: {
+            ...config.cancelButtonProps,
+            ...cancelButtonProps
+          },
+          on: {
+            click: resetFields
+          }
+        },
+        [cancelText]
+      );
+    }
+    let titleWidthStr = 0;
+    if (layout != "inline") {
+      if (utils.isNumber(titleWidth)) {
+        titleWidthStr = `${titleWidth}px`;
+      } else {
+        titleWidthStr = titleWidth;
+      }
+    }
+    return h(
+      "div",
+      {
+        class: "data-form-buttons",
+        style: {
+          marginLeft: titleWidthStr
+        }
+      },
+      [submitButton, cancelButton]
+    );
+  }
+}
+
 export default {
   name: "DataForm",
   components: {
@@ -467,12 +547,25 @@ export default {
       type: [Boolean, String],
       default: ""
     },
-    getSelectOptions: Object
+    getSelectOptions: Object,
+    submitButtonProps: {
+      type: [Boolean, Object],
+      default: () => {}
+    },
+    cancelButtonProps: {
+      type: [Boolean, Object],
+      default: () => {}
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
       form: this.$form.createForm(this),
       itemsOptions: [],
+      // loading: false,
       // 支持回车活动焦点的组件
       focusItemTypes: [
         "input",
@@ -568,6 +661,7 @@ export default {
       } else if (getItemPropsOptionsApiList.length) {
         fetchItemPropsOptionsApiList(getItemPropsOptionsApiList, this);
       }
+
       this.itemsOptions = data;
     },
     // 获取表单数据，不验证
@@ -661,6 +755,7 @@ export default {
       if (e) {
         e.preventDefault();
       }
+      // this.loading = true;
       this.form.validateFields((err, values) => {
         if (!err) {
           let json = {
@@ -822,7 +917,7 @@ export default {
     }
   },
   render(h) {
-    const { form, $slots, layout, colspan, readonly, onSubmit } = this;
+    const { form, layout, colspan, readonly, onSubmit } = this;
     // ant design form的layout属性
     const antdLayouts = ["horizontal", "vertical", "inline"];
     // form表单的参数
@@ -848,10 +943,9 @@ export default {
       formProps.style["grid-template-columns"] = formColnumStyle;
     }
 
-    return h(
-      "a-form",
-      formProps,
-      [].concat($slots.default || renderItems(h, this))
-    );
+    return h("a-form", formProps, [
+      renderItems(h, this),
+      renderActionButtons(h, this)
+    ]);
   }
 };

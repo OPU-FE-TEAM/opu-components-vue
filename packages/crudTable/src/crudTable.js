@@ -487,7 +487,6 @@ export default {
   },
   render(h) {
     const { tableProps, modal, form } = this;
-    // const tableHeight = table.height ? table.height : "auto";
     let formDom = "";
     if (modal && form) {
       formDom = renderFormModal(modal, form, h, this);
