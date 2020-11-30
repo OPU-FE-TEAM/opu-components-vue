@@ -220,20 +220,19 @@ export default {
         {
           field: "name1",
           title: "名称2",
-          extra: "aaa",
           option: { initialValue: 333 },
           itemRender: {
             name: "a-input",
             props: {
-              placeholder: "请输入名称",
-              disabled: true
-            },
-            on: {
-              // change:(val)=>{
-              //     const form=this.$refs.dataForm.getData();
-              //     console.log(val,form);
-              // }
+              placeholder: "请输入名称"
             }
+          }
+        },
+        {
+          field: "name3",
+          title: "名称3",
+          itemRender: {
+            name: "a-input"
           }
         },
         {
@@ -319,14 +318,7 @@ export default {
         //     name: "a-textarea"
         //   }
         // },
-        {
-          field: "number",
-          title: "数字",
-          // width: "200px",
-          itemRender: {
-            name: "a-input-number"
-          }
-        },
+
         // {
         //   field: "checkbox",
         //   title: "复选框",
@@ -379,18 +371,42 @@ export default {
               change: this.onRadioChange
             }
           }
-        }
-        // {
-        //   field: "date",
-        //   title: "日期选择",
-        //   itemRender: {
-        //     name: "a-date-picker",
-        //     props: {
-        //       showTime: true
-        //       // api: getCheckboxData
-        //     }
-        //   }
-        // },
+        },
+        {
+          field: "number",
+          title: "数字",
+          // width: "200px",
+          itemRender: {
+            name: "a-input-number"
+          }
+        },
+        {
+          field: "date",
+          title: "日期选择",
+          itemRender: {
+            name: "a-date-picker",
+            props: {
+              showTime: true,
+              format: "YYYY/MM/DD HH:mm:ss"
+              // api: getCheckboxData
+            }
+          }
+        },
+        {
+          field: "time",
+          title: "时间",
+          itemRender: {
+            name: "a-time-picker"
+          }
+        },
+        {
+          field: "number2",
+          title: "数字2",
+          // width: "200px",
+          itemRender: {
+            name: "a-input-number"
+          }
+        },
         // {
         //   field: "month",
         //   title: "月份选择",
@@ -415,16 +431,16 @@ export default {
         //     }
         //   }
         // },
-        // {
-        //   field: "ARangePickerSplit",
-        //   title: "日期范围拆分",
-        //   itemRender: {
-        //     name: "a-range-picker-split",
-        //     props: {
-        //       // showTime: { format: "HH:mm" }
-        //     }
-        //   }
-        // },
+        {
+          field: "ARangePickerSplit",
+          title: "日期范围拆分",
+          itemRender: {
+            name: "a-range-picker-split",
+            props: {
+              // showTime: { format: "HH:mm" }
+            }
+          }
+        }
         // {
         //   field: "switch",
         //   title: "开关",

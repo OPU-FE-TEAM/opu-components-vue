@@ -1,6 +1,8 @@
+/**
+ * 有下拉数据的输入组件
+ */
 import utils from "../../utils";
 import config from "../conf";
-// const valueArrayTypes = ["a-checkbox-group", "a-radio-group", "a-select"];
 
 // 处理表单项的可选数据结构为 antd所需的
 function handleItemPropsOptions(options, valueField, labelField) {
@@ -31,11 +33,6 @@ export default {
     renderName: {
       type: String,
       default: "a-input"
-    },
-    api: Function,
-    param: {
-      type: Object,
-      default: () => {}
     },
     value: [Number, String, Object, Array],
     valueField: String,
@@ -96,14 +93,6 @@ export default {
       return props;
     }
   },
-  // watch: {
-  //   api() {
-  //     this.init();
-  //   },
-  //   param() {
-  //     this.init();
-  //   }
-  // },
   created() {
     this.init();
   },
@@ -131,6 +120,17 @@ export default {
     },
     getOptionsData() {
       return this.optionsData;
+    },
+    focus() {
+      // const that = this;
+      const input = this.$refs.inputComponent;
+      input.focus();
+      const el = input.$el;
+      // select获得输入焦点，弹出下拉面板
+      const box = el.getElementsByClassName("ant-select-selection__rendered");
+      if (box && box.length) {
+        box[0].click();
+      }
     }
   },
   render(h) {
@@ -138,6 +138,7 @@ export default {
     return h(
       renderName,
       {
+        ref: "inputComponent",
         props: {
           ...componentProps.props
         },

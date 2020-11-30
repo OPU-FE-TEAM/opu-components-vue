@@ -2,8 +2,7 @@ import utils from "../../utils";
 import inputs from "./index";
 import config from "../conf";
 // import { Button } from "ant-design-vue";
-
-// let is = false;
+const baseComponents = ["a-date-picker"];
 const optionsComponents = [
   "a-select",
   "a-radio-group",
@@ -268,6 +267,21 @@ function renderItemInput(item, h, _vm) {
       props.props.componentPropsData = props.props;
       props.props.renderName = renderName;
       renderName = "options-component";
+    } else if (baseComponents.includes(renderName)) {
+      props.props.componentPropsData = props.props;
+      props.props.renderName = renderName;
+      renderName = "base-component";
+      if (props.on && utils.isObject(props.on)) {
+        props.on.inputPressEnter = () => {
+          nextItemFocus(item, _vm);
+        };
+      } else {
+        props.on = {
+          inputPressEnter: () => {
+            nextItemFocus(item, _vm);
+          }
+        };
+      }
     }
 
     inputDom = h(renderName, props);
@@ -398,10 +412,10 @@ function renderItems(h, _vm) {
           focusItemTypes.includes(item.itemRender.name) &&
           item.itemRender.name !== "textarea"
         ) {
-          wrapperProps.on.keydown = e => {
+          wrapperProps.on.keyup = e => {
             const { keyCode } = e;
+            e.stopPropagation();
             if (keyCode === 13) {
-              e.preventDefault();
               nextItemFocus(item, _vm);
             }
           };
@@ -568,17 +582,17 @@ export default {
       // loading: false,
       // 支持回车活动焦点的组件
       focusItemTypes: [
-        "input",
-        "password",
-        "number",
-        "select",
-        "datePicker",
-        "monthPicker",
-        "weekPicker",
-        "rangePicker",
-        "cascader",
-        "treeSelect",
-        "textarea"
+        "a-input",
+        "a-password",
+        "a-input-number",
+        "a-select",
+        "a-date-picker",
+        "a-month-picker",
+        "a-week-picker",
+        "a-range-picker",
+        "a-cascader",
+        "a-tree-select",
+        "a-textarea"
       ]
     };
   },

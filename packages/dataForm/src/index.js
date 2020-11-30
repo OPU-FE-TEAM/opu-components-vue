@@ -5,6 +5,7 @@ import AUpload from "./upload";
 import ARangePickerSplit from "./rangePickerSplit";
 import ATest from "./test";
 import OptionsComponent from "./optionsComponent";
+import BaseComponent from "./baseComponent";
 
 export default {
   Buttons,
@@ -13,5 +14,6 @@ export default {
   AUpload,
   ARangePickerSplit,
   ATest,
-  OptionsComponent
+  OptionsComponent,
+  BaseComponent
 };

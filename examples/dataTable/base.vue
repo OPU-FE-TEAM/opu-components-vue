@@ -9,7 +9,7 @@
       :data="tableData"
       :headToolbar="headToolbar"
       :proxy-config="proxyConfig"
-      :pager-config="pagerConfig"
+      :pager-config="false"
       highlight-hover-row
       highlight-current-row
       @current-change="currentChangeEvent"
