@@ -11,6 +11,9 @@ function handleItemPropsOptions(options, valueField, labelField) {
   if (options && utils.isArray(options)) {
     const cloneOptions = utils.clone(options);
     return cloneOptions.map(item => {
+      if (!utils.isObject(item)) {
+        return item;
+      }
       if (vF) {
         item.value = item[vF] + "";
       }
@@ -125,12 +128,12 @@ export default {
       // const that = this;
       const input = this.$refs.inputComponent;
       input.focus();
-      const el = input.$el;
-      // select获得输入焦点，弹出下拉面板
-      const box = el.getElementsByClassName("ant-select-selection__rendered");
-      if (box && box.length) {
-        box[0].click();
-      }
+      // const el = input.$el;
+      // // select获得输入焦点，弹出下拉面板
+      // const box = el.getElementsByClassName("ant-select-selection__rendered");
+      // if (box && box.length) {
+      //   box[0].click();
+      // }
     }
   },
   render(h) {

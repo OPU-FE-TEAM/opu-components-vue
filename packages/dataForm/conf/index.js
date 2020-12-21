@@ -5,20 +5,46 @@ const GlobalConfig = {
   titleAlign: "right", // 所有项的标题对齐方式，left,center,right
   titleColon: true, // 是否显示所有项标题后的冒号
   filterNullValues: true, //获取数据时是否清除空值字段值
+  // 提交按钮的props参数
   submitButtonProps: {
     type: "primary",
     content: "提交"
   },
+  // 重置按钮的props参数
   cancelButtonProps: {
-    content: "取消"
+    content: "重置"
   },
+  // 展开/收起按钮的props参数
+  foldingButtonProps: {
+    openText: "展开",
+    hideText: "收起",
+    openIcon: "down",
+    hideIcon: "up",
+    type: "link"
+  },
+  // 可选数据的请求的配置
   getSelectOptions: {
-    // 可选数据的请求的配置
     api: null,
-    valueField: "id",
-    labelField: "name",
+    valueField: "value",
+    labelField: "label",
     dataField: "data",
     defaultField: "default"
+  },
+  // 各个表单项默认的props
+  defaultProps: {
+    // input: {
+    //   placeholder: "请输入",
+    //   allowClear: true
+    // },
+    // inputNumber: {
+    //   placeholder: "请输入数字",
+    //   allowClear: true
+    // },
+    // select: {
+    //   showSearch: true,
+    //   placeholder: "请选择",
+    //   allowClear: true
+    // }
   }
 };
 

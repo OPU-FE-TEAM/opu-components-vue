@@ -21,7 +21,10 @@ export default {
     },
     defaultTab: {
       type: String
-    }
+    },
+    title: String,
+    desc: String,
+    extra: String
   },
   data() {
     return {
@@ -83,6 +86,30 @@ export default {
           bodyStyle: bodyStyle
         }
       };
+      const title = this.$slots.title ? this.$slots.title : this.title;
+      const desc = this.$slots.desc ? this.$slots.desc : this.desc;
+      const extra = this.$slots.extra ? this.$slots.extra : this.extra;
+      if (title || desc) {
+        let titleDom = "";
+        let descDom = "";
+        if (title) {
+          titleDom = <div class="title">{title}</div>;
+        }
+        if (desc) {
+          descDom = <div class="desc">{desc}</div>;
+        }
+        cardOption.props.title = () => {
+          return (
+            <div class="card-title-wraper">
+              {titleDom}
+              {descDom}
+            </div>
+          );
+        };
+      }
+      if (extra) {
+        cardOption.props.extra = extra;
+      }
       let cardContent = this.$slots.default;
       if (this.tabs) {
         cardOption.props.tabList = this.tabs.items.map(tab => {
@@ -101,14 +128,17 @@ export default {
         };
       }
 
-      content = h(
-        "a-card",
-        {
-          ...cardOption
-        },
-        cardContent
-      );
+      content = h("div", { class: "page-wraper-content" }, [
+        h(
+          "a-card",
+          {
+            ...cardOption
+          },
+          [h("div", { class: "page-wraper-card__content" }, cardContent)]
+        )
+      ]);
     }
+
     return <div class="page-wraper">{content}</div>;
   }
 };

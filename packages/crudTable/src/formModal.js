@@ -65,14 +65,19 @@ export default {
       this.confirmLoading = false;
     },
     onCancel() {
+      this.confirmLoading = false;
       this.visible = false;
       this.$emit("cancel");
     },
     onSubmit() {
+      this.confirmLoading = true;
       this.$refs.form.validateFields().then(values => {
         this.$emit("submit", values);
-        this.visible = false;
+        // this.visible = false;
       });
+    },
+    setConfirmLoading(flag) {
+      this.confirmLoading = flag;
     },
     setReadonly(flag) {
       this.readonly = flag;

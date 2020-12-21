@@ -46,7 +46,8 @@ $formItemMarginBottom: 19px;
         }
         .ant-calendar-picker,
         .vxe-pulldown,
-        .ant-input-number{
+        .ant-input-number,
+        .ant-time-picker{
             width: 100%!important;
         }
     }
@@ -143,6 +144,9 @@ $formItemMarginBottom: 19px;
         .data-form-buttons{
             display: inline-block;
         }
+        .ant-form-item{
+            display: inline-block;
+        }
     }
     
   
@@ -178,7 +182,13 @@ $formItemMarginBottom: 19px;
     .ant-calendar-picker{
       min-width: auto!important;
     }
+    
   }
+
+  .ant-calendar-date.outside{
+    background-color: #fafafa;
+    width: auto;
+}
 
   @media (max-width: 575px){
       .data-form{

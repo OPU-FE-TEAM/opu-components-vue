@@ -1,15 +1,9 @@
 import utils from "../../utils";
 import inputs from "./index";
 import config from "../conf";
+import enquire from "enquire.js";
 // import { Button } from "ant-design-vue";
-const baseComponents = ["a-date-picker"];
-const optionsComponents = [
-  "a-select",
-  "a-radio-group",
-  "a-checkbox-group",
-  "a-cascader",
-  "a-tree-select"
-];
+const optionsComponents = ["a-radio-group", "a-checkbox-group", "a-cascader"];
 // 回车跳转下一个focus
 function nextItemFocus(item, _vm) {
   const { enterToNextItemFocusList, setFieldFocus } = _vm;
@@ -253,6 +247,18 @@ function renderItemInput(item, h, _vm) {
       item.itemRender.name !== "hidden"
         ? `${item.itemRender.name}`
         : "a-input";
+    if (renderName.indexOf("a-") > -1) {
+      let configKey = "";
+      configKey = renderName.split("a-")[1];
+      configKey = utils.lineToUpperCase(configKey, "-");
+      const configProps = config.defaultProps[configKey]
+        ? config.defaultProps[configKey]
+        : {};
+      props.props = {
+        ...configProps,
+        ...props.props
+      };
+    }
     if (renderName === "buttons") {
       if (props.props) {
         props.props.itemClick = onButtonClick;
@@ -262,15 +268,11 @@ function renderItemInput(item, h, _vm) {
         };
       }
       props.props.items = item.itemRender.items;
-    } else if (optionsComponents.includes(renderName)) {
+    } else if (renderName == "a-select") {
       // 有可选数据的组件
-      props.props.componentPropsData = props.props;
-      props.props.renderName = renderName;
-      renderName = "options-component";
-    } else if (baseComponents.includes(renderName)) {
-      props.props.componentPropsData = props.props;
-      props.props.renderName = renderName;
-      renderName = "base-component";
+      renderName = "opu-select";
+    } else if (renderName === "a-date-picker") {
+      renderName = "opu-date-picker";
       if (props.on && utils.isObject(props.on)) {
         props.on.inputPressEnter = () => {
           nextItemFocus(item, _vm);
@@ -282,6 +284,42 @@ function renderItemInput(item, h, _vm) {
           }
         };
       }
+    } else if (renderName === "a-time-picker") {
+      renderName = "opu-time-picker";
+      if (props.on && utils.isObject(props.on)) {
+        props.on.inputPressEnter = () => {
+          nextItemFocus(item, _vm);
+        };
+      } else {
+        props.on = {
+          inputPressEnter: () => {
+            nextItemFocus(item, _vm);
+          }
+        };
+      }
+    } else if (renderName === "a-range-picker-split") {
+      if (props.on && utils.isObject(props.on)) {
+        props.on.inputPressEnter = () => {
+          nextItemFocus(item, _vm);
+        };
+      } else {
+        props.on = {
+          inputPressEnter: () => {
+            nextItemFocus(item, _vm);
+          }
+        };
+      }
+    } else if (renderName === "a-switch") {
+      renderName = "opu-switch";
+    } else if (renderName === "a-checkbox") {
+      renderName = "opu-checkbox";
+    } else if (renderName === "a-tree-select") {
+      renderName = "opu-tree-select";
+    } else if (optionsComponents.includes(renderName)) {
+      // 有可选数据的组件
+      props.props.componentPropsData = props.props;
+      props.props.renderName = renderName;
+      renderName = "options-component";
     }
 
     inputDom = h(renderName, props);
@@ -334,7 +372,7 @@ function renderItems(h, _vm) {
     itemsOptions,
     $slots,
     layout,
-    colspan,
+    currentColspan,
     $scopedSlots,
     focusItemTypes
     // $listeners,
@@ -393,7 +431,7 @@ function renderItems(h, _vm) {
           }
         } else if (layout === "flex") {
           // 当flex模式下的宽度
-          const colWidth = 100 / colspan;
+          const colWidth = 100 / currentColspan;
           if (item.width) {
             formItemProps.style["width"] = item.width;
           } else if (item.colspan && item.colspan > 1) {
@@ -434,11 +472,16 @@ function renderActionButtons(h, _vm) {
     $listeners,
     submitButtonProps,
     cancelButtonProps,
+    foldingButtonProps,
     loading,
     onSubmit,
     resetFields,
     titleWidth,
-    layout
+    layout,
+    expand,
+    onExpandClick,
+    items,
+    currentColspan
   } = _vm;
 
   if ($listeners && $listeners.submit && submitButtonProps !== false) {
@@ -476,13 +519,55 @@ function renderActionButtons(h, _vm) {
             ...cancelButtonProps
           },
           on: {
-            click: resetFields
+            click: () => {
+              resetFields();
+            }
           }
         },
         [cancelText]
       );
     }
+
+    // 渲染展开/收起按钮
+    const hasFolding = items.findIndex(p => p.folding) > -1;
+    let foldingButton = "";
+    if (hasFolding && foldingButtonProps !== false) {
+      const openText =
+        foldingButtonProps && foldingButtonProps.openText
+          ? foldingButtonProps.openText
+          : config.foldingButtonProps.openText;
+      const hideText =
+        foldingButtonProps && foldingButtonProps.hideText
+          ? foldingButtonProps.hideText
+          : config.foldingButtonProps.hideText;
+
+      const openIcon =
+        foldingButtonProps && foldingButtonProps.openIcon
+          ? foldingButtonProps.openIcon
+          : config.foldingButtonProps.openIcon;
+      const hideIcon =
+        foldingButtonProps && foldingButtonProps.hideIcon
+          ? foldingButtonProps.hideIcon
+          : config.foldingButtonProps.hideIcon;
+
+      const foldingText = expand ? hideText : openText;
+      const foldingIcon = expand ? hideIcon : openIcon;
+      foldingButton = h(
+        "a-button",
+        {
+          props: {
+            ...config.foldingButtonProps,
+            ...foldingButtonProps
+          },
+          on: {
+            click: onExpandClick
+          }
+        },
+        [foldingText, h("a-icon", { props: { type: foldingIcon } })]
+      );
+    }
     let titleWidthStr = 0;
+    let buttonStyle = {};
     if (layout != "inline") {
       if (utils.isNumber(titleWidth)) {
         titleWidthStr = `${titleWidth}px`;
@@ -490,18 +575,34 @@ function renderActionButtons(h, _vm) {
         titleWidthStr = titleWidth;
       }
     }
+    if (layout === "grid" && currentColspan && currentColspan > 1) {
+      buttonStyle["gridColumn"] = "span " + currentColspan;
+    } else if (layout === "flex") {
+      buttonStyle["width"] = `100%`;
+    }
     return h(
       "div",
       {
         class: "data-form-buttons",
         style: {
+          ...buttonStyle,
           marginLeft: titleWidthStr
         }
       },
-      [submitButton, cancelButton]
+      [submitButton, cancelButton, foldingButton]
     );
   }
 }
+
+// 响应式
+const responsiveMap = {
+  xs: "(max-width: 575px)",
+  sm: "(min-width: 576px)",
+  md: "(min-width: 768px)",
+  lg: "(min-width: 992px)",
+  xl: "(min-width: 1200px)",
+  xxl: "(min-width: 1600px)"
+};
 
 export default {
   name: "DataForm",
@@ -522,7 +623,7 @@ export default {
 
     // grid、flex布局时的列数
     colspan: {
-      type: Number,
+      type: [Number, Object],
       default: config.colspan
     },
     // 是否只读
@@ -570,6 +671,10 @@ export default {
       type: [Boolean, Object],
       default: () => {}
     },
+    foldingButtonProps: {
+      type: [Boolean, Object],
+      default: () => {}
+    },
     loading: {
       type: Boolean,
       default: false
@@ -579,6 +684,8 @@ export default {
     return {
       form: this.$form.createForm(this),
       itemsOptions: [],
+      expand: false, //折叠展开
+      currentColspan: 1,
       // loading: false,
       // 支持回车活动焦点的组件
       focusItemTypes: [
@@ -587,12 +694,14 @@ export default {
         "a-input-number",
         "a-select",
         "a-date-picker",
+        "a-time-picker",
         "a-month-picker",
         "a-week-picker",
         "a-range-picker",
         "a-cascader",
         "a-tree-select",
-        "a-textarea"
+        "a-textarea",
+        "a-range-picker-split"
       ]
     };
   },
@@ -619,18 +728,57 @@ export default {
   watch: {
     items(items) {
       this.cloneItems(items);
+    },
+    colspan(val) {
+      this.currentColspan = val;
     }
   },
   created() {
+    this.currentColspan = this.colspan;
     this.cloneItems(this.items);
+  },
+  mounted() {
+    const that = this;
+    if (utils.isObject(this.colspan)) {
+      this.$nextTick(() => {
+        const keys = Object.keys(responsiveMap);
+        keys.map(screen =>
+          enquire.register(responsiveMap[screen], {
+            match: () => {
+              that.currentColspan = that.colspan[screen];
+            },
+            unmatch: () => {
+              const keyIndex = keys.findIndex(p => p === screen);
+              if (keyIndex > 0) {
+                const newKeyIndex = keyIndex - 1;
+                that.currentColspan = that.colspan[keys[newKeyIndex]];
+              }
+            },
+            // Keep a empty destory to avoid triggering unmatch when unregister
+            destroy() {}
+          })
+        );
+      });
+    }
+  },
+  beforeDestroy() {
+    Object.keys(responsiveMap).map(screen =>
+      enquire.unregister(responsiveMap[screen])
+    );
   },
   methods: {
     cloneItems(items) {
+      const { expand } = this;
       const clone = utils.clone(items, true);
       const getItemPropsOptionsApiList = [];
       const unifyApiGetOptions = [];
-      // 处理可选数据
-      const data = clone.map(item => {
+      let cloneData = [];
+      if (!expand) {
+        cloneData = clone.filter(p => !p.folding);
+      } else {
+        cloneData = clone;
+      }
+      const data = cloneData.map(item => {
         const oldItem = this.itemsOptions.find(p => p.field === item.field);
         if (
           oldItem &&
@@ -928,10 +1076,19 @@ export default {
     // 设置一组输入控件的值与错误状态。
     setFields(fields) {
       return this.form.setFields(fields);
+    },
+    // 展开、关闭折叠
+    setExpand(flag) {
+      this.expand = flag;
+      this.cloneItems(this.items);
+    },
+    onExpandClick() {
+      const expand = !this.expand;
+      this.setExpand(expand);
     }
   },
   render(h) {
-    const { form, layout, colspan, readonly, onSubmit } = this;
+    const { form, layout, currentColspan, readonly, onSubmit } = this;
     // ant design form的layout属性
     const antdLayouts = ["horizontal", "vertical", "inline"];
     // form表单的参数
@@ -951,7 +1108,7 @@ export default {
     }
     if (layout === "grid") {
       let formColnumStyle = "";
-      for (let i = 0; i < colspan; i++) {
+      for (let i = 0; i < currentColspan; i++) {
         formColnumStyle += " 1fr";
       }
       formProps.style["grid-template-columns"] = formColnumStyle;

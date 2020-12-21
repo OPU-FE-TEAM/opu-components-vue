@@ -38,7 +38,9 @@ function getSelectData(arr) {
 
 DataForm.setup({
   getSelectOptions: {
-    api: getSelectData
+    api: getSelectData,
+    valueField: "id",
+    labelField: "name"
   }
 });
 DataTable.setup({

@@ -48,8 +48,10 @@ $lightGray:#ebedf0;
     line-height: 24px;
     background-color: $white;
     display: flex;
+    
     &:active {
       background-color: #f2f3f5;
+      
     }
     .left {
       margin-right: 8px;
@@ -63,12 +65,18 @@ $lightGray:#ebedf0;
       }
     }
     .right {
-      flex: 1;
+      flex:1;
       .header {
         display: flex;
-        flex: 1;
         .title {
           flex: 1;
+          display: flex;
+          overflow:hidden;
+          text-overflow:ellipsis;
+          display:-webkit-box;
+          -webkit-box-orient:vertical;
+          -webkit-line-clamp:1; 
+          word-break:break-all;  
         }
         .value {
           position: relative;
@@ -88,6 +96,7 @@ $lightGray:#ebedf0;
       .label {
         margin-top: 4px;
         line-height: 18px;
+        overflow:hidden;
       }
     }
     &.cell-border:not(:last-child):after {

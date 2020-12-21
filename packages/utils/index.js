@@ -70,6 +70,20 @@ XEUtils.mixin({
       previouslyFocusedElement.focus();
     }
     return isSuccess;
+  },
+  // 将指定字符（下划线）转换为首字母小写驼峰
+  lineToUpperCase(str, sign = "_") {
+    const arr = str.split(sign);
+    let newStr = "";
+    if (arr && arr.length) {
+      for (let i = 0; i < arr.length; i++) {
+        const p = arr[i];
+        newStr += i > 0 ? p.replace(p[0], p[0].toUpperCase()) : p;
+      }
+    } else {
+      newStr = str;
+    }
+    return newStr;
   }
 });
 

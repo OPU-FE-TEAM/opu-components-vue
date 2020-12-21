@@ -3,9 +3,15 @@ import ACustomRender from "./customRender";
 import AScopedSlots from "./scopedSlots";
 import AUpload from "./upload";
 import ARangePickerSplit from "./rangePickerSplit";
-import ATest from "./test";
+// import ATest from "./test";
 import OptionsComponent from "./optionsComponent";
-import BaseComponent from "./baseComponent";
+import OpuDatePicker from "./datePicker";
+import OpuTimePicker from "./timePicker";
+
+import OpuSelect from "./select";
+import OpuSwitch from "./switch";
+import OpuCheckbox from "./checkbox";
+import OpuTreeSelect from "./treeSelect";
 
 export default {
   Buttons,
@@ -13,7 +19,11 @@ export default {
   AScopedSlots,
   AUpload,
   ARangePickerSplit,
-  ATest,
+  OpuSelect,
   OptionsComponent,
-  BaseComponent
+  OpuDatePicker,
+  OpuTimePicker,
+  OpuSwitch,
+  OpuCheckbox,
+  OpuTreeSelect
 };

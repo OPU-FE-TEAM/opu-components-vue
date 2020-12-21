@@ -177,7 +177,6 @@ export default {
     },
     // 快捷键上下切换选中行
     onInputKeyUp({ key }) {
-      //   console.log(key);
       const { $refs, onInputEnter, valueField } = this;
       if (key == "Enter") {
         onInputEnter();

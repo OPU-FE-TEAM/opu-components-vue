@@ -1,14 +1,22 @@
 import { DatePickerProps } from "ant-design-vue/lib/date-picker/interface";
 import utils from "../../utils";
+import OpuDatePicker from "./datePicker";
+import moment from "moment";
 
 export default {
   name: "ARangePickerSplit",
-  components: {},
+  components: { OpuDatePicker },
   props: {
     ...DatePickerProps(),
     value: [Number, String, Object, Array],
     min: [String, Object],
-    max: [String, Object]
+    max: [String, Object],
+    // 是否限制开始于结束日期选择
+    hasLimit: {
+      type: Boolean,
+      required: false,
+      default: true
+    }
   },
   model: {
     prop: "value",
@@ -39,7 +47,6 @@ export default {
   },
   watch: {
     value(val) {
-      console.log(val);
       if (val && val.length) {
         this.minDate = val[0];
       }
@@ -55,30 +62,24 @@ export default {
     if (this.value && this.value.length > 1) {
       this.maxDate = this.value[1];
     }
-
-    // this.min = this.min ? this.min : "";
-    // this.max = this.max ? this.max : "";
   },
   methods: {
     onChange() {
-      // this.cvalue = value;
-
       let value = [this.minDate, this.maxDate];
-      // if (this.minDate) {
-      //   value.push(this.minDate);
-      // }
-      // if (this.maxDate) {
-      //   value.push(this.maxDate);
-      // }
-
       this.$emit("updata", value);
       this.$emit("change", value);
     },
     onStartChange(e) {
+      if (this.maxDate && moment(this.maxDate).isBefore(e)) {
+        this.maxDate = e;
+      }
       this.minDate = e;
       this.onChange();
     },
     onEndChange(e) {
+      if (this.minDate && !moment(this.minDate).isBefore(e)) {
+        this.minDate = e;
+      }
       this.maxDate = e;
       this.onChange();
     },
@@ -95,18 +96,20 @@ export default {
       } else if (this.min || this.max) {
         return current < this.min || current > this.max;
       }
+    },
+    focus() {
+      this.$refs.startDatePicker.focus();
     }
   },
-  render() {
+  render(h) {
+    const { hasLimit } = this;
     const propsData = utils.clone(this.$options.propsData);
     delete propsData.value;
     const start = {
+      ref: "startDatePicker",
       props: {
         ...propsData,
-        allowClear: false,
-        disabledDate: e => {
-          return this.startDisabledDate(e);
-        }
+        allowClear: false
       },
       style: {
         width: "100%"
@@ -114,6 +117,11 @@ export default {
       on: {
         change: e => {
           this.onStartChange(e);
+        },
+        inputPressEnter: () => {
+          setTimeout(() => {
+            this.$refs.endDatePicker.focus();
+          }, 100);
         }
       }
     };
@@ -122,12 +130,10 @@ export default {
       start.props.value = this.startValue;
     }
     const end = {
+      ref: "endDatePicker",
       props: {
         ...propsData,
-        allowClear: false,
-        disabledDate: e => {
-          return this.endDisabledDate(e);
-        }
+        allowClear: false
       },
       style: {
         width: "100%"
@@ -135,21 +141,73 @@ export default {
       on: {
         change: e => {
           this.onEndChange(e);
+        },
+        inputPressEnter: () => {
+          this.$emit("inputPressEnter");
         }
       }
     };
     if (this.endValue) {
       end.props.value = this.endValue;
     }
+    // 限制
+    if (hasLimit) {
+      start.props.disabledDate = e => {
+        return this.startDisabledDate(e);
+      };
+      end.props.disabledDate = e => {
+        return this.endDisabledDate(e);
+      };
+    } else {
+      start.scopedSlots = {
+        dateRender: current => {
+          let outside = false;
+          if (this.maxDate && current) {
+            outside =
+              current > this.maxDate || (this.min && current < this.min);
+          } else if (this.min || this.max) {
+            outside = current < this.min || current > this.max;
+          }
+          const dateClass = outside ? "outside" : "";
+          return h(
+            "div",
+            {
+              class: ["ant-calendar-date", dateClass]
+            },
+            [current.date()]
+          );
+        }
+      };
+
+      end.scopedSlots = {
+        dateRender: current => {
+          let outside = false;
+          if (this.minDate && current) {
+            outside =
+              current < this.minDate || (this.max && current > this.max);
+          } else if (this.min || this.max) {
+            outside = current < this.min || current > this.max;
+          }
+          const dateClass = outside ? "outside" : "";
+          return h(
+            "div",
+            {
+              class: ["ant-calendar-date", dateClass]
+            },
+            [current.date()]
+          );
+        }
+      };
+    }
 
     return (
       <div class="date-range-split">
         <div class="item">
-          <a-date-picker {...start} />
+          <opu-date-picker {...start} />
         </div>
         <div class="fh"> - </div>
         <div class="item">
-          <a-date-picker {...end} />
+          <opu-date-picker {...end} />
         </div>
       </div>
     );

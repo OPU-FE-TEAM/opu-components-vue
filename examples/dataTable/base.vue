@@ -9,22 +9,28 @@
       :data="tableData"
       :headToolbar="headToolbar"
       :proxy-config="proxyConfig"
-      :pager-config="false"
       highlight-hover-row
       highlight-current-row
       @current-change="currentChangeEvent"
       :setcolumns-config="setColumns"
       :columns="tableColumn"
       :edit-config="{ trigger: 'click', mode: 'row' }"
+      :searchConfig="search"
     >
       <template v-slot:operate="{ row }">
         <a-button @click="editRow(row)">编辑</a-button>
       </template>
+      <!-- <template slot="headToolbar_buttons">
+        <a-button @click="onAdd">自定义新增按钮</a-button>
+        <a-button :disabled="delDisabled">自定义按钮2</a-button>
+      </template> -->
     </DataTable>
 
     <a-button @click="getData">获取数据</a-button>
     <a-button @click="$refs.xGrid.showSetColumns()">设置表头</a-button>
     <a-button @click="updateColumns">更新表头</a-button>
+    <a-button @click="setSearchData">设置搜索表单数据</a-button>
+    <a-button @click="getSearchData">获取搜索表单数据</a-button>
   </div>
 </template>
 
@@ -53,7 +59,7 @@ function getData(arr) {
         code: 0,
         data: {
           data: [...list],
-          total: 100
+          total: 10000
         }
       };
       console.log(json);
@@ -219,7 +225,59 @@ export default {
           }
         ]
       },
-
+      search: {
+        submitButtonProps: {
+          content: "查询"
+        },
+        cancelButtonProps: {
+          content: "重置"
+        },
+        colspan: 2,
+        style: {
+          maxWidth: "600px"
+        },
+        on: {
+          submit: values => {
+            console.log(values);
+          }
+        },
+        items: [
+          {
+            field: "name",
+            title: "名称",
+            itemRender: {
+              name: "a-input",
+              props: { placeholder: "请输入名称" }
+            }
+          },
+          {
+            field: "sex",
+            title: "性别",
+            itemRender: {
+              name: "a-select",
+              props: {
+                placeholder: "请选择性别",
+                showSearch: true,
+                api: getSelectData,
+                defaultField: "isSelected",
+                valueField: "id",
+                labelField: "name",
+                dataField: "data.data",
+                param: { code: "aa" }
+              }
+            }
+          },
+          {
+            field: "age",
+            title: "年龄",
+            folding: true,
+            itemRender: {
+              name: "a-input-number",
+              props: { placeholder: "请输入年龄" }
+            }
+          }
+        ]
+      },
       headToolbar: {
         buttons: [
           {
@@ -246,7 +304,7 @@ export default {
               name: "作废",
               key: "del",
               icon: "delete",
-              disabled: true
+              disabled: this.delDisabled
             }
           ],
           {
@@ -272,25 +330,35 @@ export default {
         search: {
           layout: "inline",
           titleWidth: "auto",
+          // position: "left",
+
           // foldingLayout:"flex",
+          submitButtonProps: {
+            content: "查询"
+          },
+          cancelButtonProps: false,
+          colspan: 2,
 
           on: {
-            submit: values => {
-              console.log(values);
-            }
+            // submit: values => {
+            //   console.log(values);
+            // }
           },
-          advancedSearchModal: {
-            props: {
-              width: 800,
-              title: "高级搜索1"
-            }
-          },
-          advancedSearchForm: {
-            props: {
-              layout: "flex",
-              colspan: 2
-            }
-          },
+          // advancedSearchButtonProps: {
+          //   content: "高级"
+          // },
+          // advancedSearchModal: {
+          //   props: {
+          //     width: 800,
+          //     title: "高级搜索1"
+          //   }
+          // },
+          // advancedSearchForm: {
+          //   props: {
+          //     layout: "grid",
+          //     colspan: 2
+          //   }
+          // },
           items: [
             {
               field: "name",
@@ -327,24 +395,35 @@ export default {
               }
             },
             {
-              colon: false,
-              titleWidth: 0,
+              field: "key",
+              title: "关键词",
               folding: false,
               itemRender: {
-                name: "buttons",
-                items: [
-                  {
-                    props: {
-                      action: "submit",
-                      content: "查询",
-                      type: "primary"
-                    }
-                  },
-                  { props: { action: "reset", content: "重置" } },
-                  { props: { action: "advancedQuery", content: "高级查询" } }
-                ]
+                name: "a-input"
               }
             }
+            // {
+            //   colon: false,
+            //   // titleWidth: 0,
+            //   // folding: false,
+            //   colspan: 2,
+            //   // align: "center",
+            //   title: "",
+            //   itemRender: {
+            //     name: "buttons",
+            //     items: [
+            //       {
+            //         props: {
+            //           action: "submit",
+            //           content: "查询",
+            //           type: "primary"
+            //         }
+            //       },
+            //       { props: { action: "reset", content: "重置" } }
+            //       // { props: { action: "advancedQuery", content: "高级查询" } }
+            //     ]
+            //   }
+            // }
           ]
         },
         tools: {
@@ -442,7 +521,7 @@ export default {
         }
       },
       tableColumn: [
-        { type: "checkbox", colIndex: 0, width: 60, fixed: "" },
+        { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         { type: "seq", title: "Number", colIndex: 1, width: 80 },
         {
           field: "pulldownTable",
@@ -496,13 +575,13 @@ export default {
         {
           field: "name",
           title: "Name",
-          minWidth: 140,
+          width: 140,
           editRender: { name: "AInput" }
         },
         {
           field: "checkbox",
           title: "Checkbox",
-          minWidth: 140,
+          width: 140,
           editRender: {
             name: "ACheckbox",
             on: {
@@ -515,6 +594,7 @@ export default {
         {
           field: "select",
           title: "下拉框",
+          width: 140,
           editRender: {
             name: "ASelect",
             options: [
@@ -526,6 +606,7 @@ export default {
         {
           field: "select1",
           title: "下拉框请求下拉数据",
+          width: 140,
           editRender: {
             name: "ASelect",
             options: [],
@@ -538,6 +619,7 @@ export default {
         {
           field: "cascader",
           title: "级联选择",
+          width: 140,
           editRender: {
             name: "ACascader",
             props: {
@@ -561,7 +643,8 @@ export default {
         },
         { title: "操作", width: 200, slots: { default: "operate" } }
       ],
-      tableData: []
+      tableData: [],
+      delDisabled: false
     };
   },
   created() {
@@ -588,6 +671,8 @@ export default {
     },
     currentChangeEvent({ row }) {
       console.log("行选中事件", row);
+      this.delDisabled = !this.delDisabled;
+      this.headToolbar = { ...this.headToolbar };
     },
     getCurrentRecord() {
       const grid = this.$refs.xGrid;
@@ -624,6 +709,18 @@ export default {
     editRow(row) {
       const str = JSON.stringify(row);
       console.log(str);
+    },
+    onAdd() {},
+    setSearchData() {
+      const grid = this.$refs.xGrid;
+      grid.setSearchData({
+        name: "aaa"
+      });
+    },
+    getSearchData() {
+      const grid = this.$refs.xGrid;
+      const values = grid.getSearchData();
+      console.log(values);
     }
   }
 };

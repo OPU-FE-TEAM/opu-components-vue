@@ -5,7 +5,7 @@ const GlobalConfig = {
   },
   pagerConfig: {
     pageIndex: 1, //分页初始值
-    pageSize: 30,
+    pageSize: 10000,
     layouts: [
       "PrevJump",
       "PrevPage",

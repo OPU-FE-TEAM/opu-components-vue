@@ -17,11 +17,16 @@
       <template slot="formSlot">
         666
       </template>
-      <template slot="formInputSlot">
-        999
+      <template v-slot:formInputSlot="value">
+        {{ value }}
+        <a-input v-model="aaa"></a-input>
       </template>
       <template slot="searchFormSlot">
         101010
+      </template>
+      <template slot="headToolbar_buttons">
+        <a-button @click="onAdd" type="primary">自定义新增按钮</a-button>
+        <a-button :disabled="delDisabled">自定义按钮2</a-button>
       </template>
     </crud-table>
   </div>
@@ -125,14 +130,16 @@ function getInfo() {
         }
       };
       resolve(json);
-    }, 2000);
+    }, 10);
   });
 }
 export default {
   components: {},
   data() {
     return {
+      delDisabled: false,
       permissions: ["add"],
+      aaa: 123,
       proxyConfig: {
         add: {
           modalTitle: "新增会员",
@@ -143,30 +150,43 @@ export default {
           },
           open: () => {
             console.log("打开前");
-            return () => {
-              console.log("打开后");
-              return {
-                name: "789456"
-              };
-            };
+            this.aaa = 222;
+
+            // return () => {
+            //   console.log("打开后");
+            //   return {
+            //     name: "789456"
+            //   };
+            // };
           },
+          // submit: saveData
           submit: values => {
             // 可自行处理请求前
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
               saveData({
                 ...values,
                 code: "aaaa"
-              }).then(res => {
-                // 自行处理请求后
-                console.log("成功了");
-                resolve(res);
-              });
+              })
+                .then(res => {
+                  // 自行处理请求后
+                  console.log("成功了");
+                  resolve(res);
+                })
+                .catch(() => {
+                  reject();
+                });
             });
           }
         },
         edit: {
           modalTitle: "编辑会员",
           // permission: ["edit"],
+          // permission: ({ row }) => {
+          //   if (row.id == 2) {
+          //     return true;
+          //   }
+          //   return false;
+          // },
 
           props: {
             icon: "edit"
@@ -177,33 +197,47 @@ export default {
               console.log("打开后");
             };
           },
-          query: values => {
-            // 自行处理请求前
-            return new Promise(resolve => {
-              getInfo({
-                ...values
-              }).then(res => {
-                // 自行处理请求后,返回数据对象
-                resolve(res.data);
-              });
-            });
-          },
-          submit: values => {
-            // 自行处理请求前
-            return new Promise(resolve => {
-              saveData({
-                ...values
-              }).then(res => {
-                // 自行处理请求后
-                resolve(res);
-              });
-            });
-          }
+          // query: values => {
+          //   // 自行处理请求前
+          //   this.aaa = 5555;
+          //   return new Promise(resolve => {
+          //     getInfo({
+          //       ...values
+          //     }).then(res => {
+          //       // 自行处理请求后,返回数据对象
+
+          //       resolve(res.data);
+          //     });
+          //   });
+          // },
+          submit: saveData
+          // submit: values => {
+          //   // 自行处理请求前
+          //   return new Promise((resolve, reject) => {
+          //     saveData({
+          //       ...values
+          //     })
+          //       .then(res => {
+          //         // 自行处理请求后
+          //         resolve(res);
+          //       })
+          //       .catch(() => {
+          //         debugger;
+          //         reject();
+          //       });
+          //   });
+          // }
         },
         del: {
           props: {
             icon: "delete",
             name: "delete"
+          },
+          permission: ({ row }) => {
+            if (row.id == 3) {
+              return true;
+            }
+            return false;
           },
           submit: values => {
             // 自行处理请求前
@@ -303,6 +337,9 @@ export default {
               title: "插槽",
               itemRender: {
                 slot: "formInputSlot"
+                // customRender: () => {
+                //   return <a-input value={this.aaa} />;
+                // }
               }
             }
           ]
@@ -317,6 +354,7 @@ export default {
       },
       table: {
         props: {
+          editConfig: { trigger: "click", mode: "cell" },
           columns: [
             { type: "seq", title: "Number", width: 80 },
             {
@@ -329,7 +367,17 @@ export default {
             },
             {
               field: "age",
-              title: "Age"
+              title: "Age",
+              width: 200,
+              editRender: {
+                name: "AInputNumber"
+                // on: {
+                //   // blur: this.onTableSortBlur,
+                //   blur: e => {
+                //     console.log(e);
+                //   }
+                // }
+              }
             },
             {
               field: "id",
@@ -442,7 +490,7 @@ export default {
             // }
           },
           height: "calc(100vh - 100px)",
-          size: "mini",
+          // size: "mini",
           proxyConfig: {
             seq: true, // 启用动态序号代理
             sort: true, // 启用排序代理
@@ -482,6 +530,11 @@ export default {
               }
             }
           }
+        },
+        on: {
+          "edit-closed": e => {
+            console.log(e);
+          }
         }
       }
     };
@@ -492,6 +545,9 @@ export default {
   methods: {
     onChange() {
       debugger;
+    },
+    onAdd() {
+      this.$refs.crudTable.add();
     }
   }
 };

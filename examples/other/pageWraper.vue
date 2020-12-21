@@ -1,6 +1,9 @@
 <template>
   <div style="background:#ddd;">
     <page-wraper
+      title="我的页面"
+      desc="这个页面6666啦啦啦"
+      extra="666"
       :tabs="tabs"
       :updateUrl="true"
       :defaultTab="currentTab"
@@ -11,6 +14,10 @@
     </page-wraper>
 
     <page-wraper>
+      <div>页面内容</div>
+    </page-wraper>
+
+    <page-wraper title="我的页面" desc="这个页面6666啦啦啦">
       <div>页面内容</div>
     </page-wraper>
   </div>

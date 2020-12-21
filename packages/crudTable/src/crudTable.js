@@ -134,6 +134,7 @@ export default {
           columns: table.props.columns
         },
         on: {
+          ...table.on,
           toobarButtonClick: onToobarButtonClick
         }
       };
@@ -215,22 +216,28 @@ export default {
         proxyConfig[currentAction] &&
         proxyConfig[currentAction].submit
       ) {
-        proxyConfig[currentAction].submit(values).then(res => {
-          const responseMsgField = proxyConfig[currentAction].responseMsgField
-            ? proxyConfig[currentAction].responseMsgField
-            : config.proxyConfig[currentAction].responseMsgField;
-          const resMsg = responseMsgField
-            ? utils.getObjData(responseMsgField, res)
-            : "";
-          const msg = resMsg ? resMsg : "操作成功";
-          this.$message.success(msg);
-          this.reloadTable();
-        });
+        const formModal = this.$refs.formModal;
+        console.log(proxyConfig[currentAction].submit);
+        proxyConfig[currentAction]
+          .submit(values)
+          .then(res => {
+            formModal.onCancel();
+            const responseMsgField = proxyConfig[currentAction].responseMsgField
+              ? proxyConfig[currentAction].responseMsgField
+              : config.proxyConfig[currentAction].responseMsgField;
+            const resMsg = responseMsgField
+              ? utils.getObjData(responseMsgField, res)
+              : "";
+            const msg = resMsg ? resMsg : "操作成功";
+            this.$message.success(msg);
+            this.reloadTable();
+          })
+          .catch(() => {
+            formModal.setConfirmLoading(false);
+          });
       }
     },
-    onFormModalCancel() {
-      // console.log(2);
-    },
+    onFormModalCancel() {},
     reloadTable() {
       this.$refs.table.reload();
     },
@@ -286,11 +293,14 @@ export default {
       if (proxyConfig && proxyConfig.edit) {
         const editButtonProps = proxyConfigOpt.edit.props;
         if (
-          proxyConfig.edit.permission &&
+          utils.isArray(proxyConfig.edit.permission) &&
           !utils.hasEquaValueArray(permissionsArr, proxyConfig.edit.permission)
         ) {
           // 无权限
           editButtonProps.disabled = true;
+        } else if (utils.isFunction(proxyConfig.edit.permission)) {
+          const res = proxyConfig.edit.permission(scope);
+          editButtonProps.disabled = !res;
         }
         buttons.push(
           h(
@@ -311,36 +321,51 @@ export default {
       if (proxyConfig && proxyConfig.del) {
         const delButtonProps = proxyConfigOpt.del.props;
         if (
-          proxyConfig.del.permission &&
+          utils.isArray(proxyConfig.del.permission) &&
           !utils.hasEquaValueArray(permissionsArr, proxyConfig.del.permission)
         ) {
           // 无权限
           delButtonProps.disabled = true;
+        } else if (utils.isFunction(proxyConfig.del.permission)) {
+          const res = proxyConfig.del.permission(scope);
+          delButtonProps.disabled = !res;
         }
-        buttons.push(
-          h(
-            "a-popconfirm",
-            {
-              props: {
-                title: proxyConfigOpt.del.popconfirmTitle
+        if (delButtonProps.disabled) {
+          buttons.push(
+            h(
+              "a-button",
+              {
+                props: delButtonProps
               },
-              on: {
-                confirm: () => {
-                  del(scope.row);
-                }
-              }
-            },
-            [
-              h(
-                "a-button",
-                {
-                  props: delButtonProps
+              delButtonProps.name ? delButtonProps.name : "删除"
+            )
+          );
+        } else {
+          buttons.push(
+            h(
+              "a-popconfirm",
+              {
+                props: {
+                  title: proxyConfigOpt.del.popconfirmTitle
                 },
-                delButtonProps.name ? delButtonProps.name : "删除"
-              )
-            ]
-          )
-        );
+                on: {
+                  confirm: () => {
+                    del(scope.row);
+                  }
+                }
+              },
+              [
+                h(
+                  "a-button",
+                  {
+                    props: delButtonProps
+                  },
+                  delButtonProps.name ? delButtonProps.name : "删除"
+                )
+              ]
+            )
+          );
+        }
       }
 
       //前置插槽
@@ -366,6 +391,7 @@ export default {
       let openCallback = "";
       if (proxyConfig && proxyConfig.add && proxyConfig.add.open) {
         const openRes = proxyConfig.add.open();
+
         if (openRes === false) {
           return false;
         } else if (openRes && utils.isFunction(openRes)) {
@@ -426,7 +452,9 @@ export default {
           formModal.setFormData(data);
         });
       } else {
-        formModal.setFormData(row);
+        setTimeout(() => {
+          formModal.setFormData(row);
+        }, 100);
       }
     },
     del(row) {
@@ -483,20 +511,27 @@ export default {
         return true;
       });
       return items;
+    },
+    getTableData() {
+      return this.$refs.table.getData();
     }
   },
   render(h) {
-    const { tableProps, modal, form } = this;
+    const { tableProps, modal, form, $slots } = this;
     let formDom = "";
     if (modal && form) {
       formDom = renderFormModal(modal, form, h, this);
     }
+    const slots = Object.keys($slots).map(name => (
+      <template slot={name}>{$slots[name]}</template>
+    ));
+
     return h(
       "div",
       {
         class: "crud-table"
       },
-      [formDom, [h("data-table", tableProps, "")]]
+      [formDom, [h("data-table", { ...tableProps }, slots)]]
     );
   }
 };

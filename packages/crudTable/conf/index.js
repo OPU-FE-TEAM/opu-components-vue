@@ -28,8 +28,8 @@ const GlobalConfig = {
       queryDataField: "",
       responseMsgField: "message",
       props: {
-        name: "编辑",
-        size: "small"
+        name: "编辑"
+        // size: "small"
       }
     },
     del: {
@@ -38,7 +38,7 @@ const GlobalConfig = {
       responseMsgField: "message",
       props: {
         name: "删除",
-        size: "small",
+        // size: "small",
         type: "danger"
       }
     },
@@ -47,8 +47,8 @@ const GlobalConfig = {
       queryDataField: "",
       trigger: ["dblclick", "button"], // click=单机行，dblclick=双击行，button 生成查看按钮
       props: {
-        name: "查看",
-        size: "small"
+        name: "查看"
+        // size: "small"
       }
     }
   },

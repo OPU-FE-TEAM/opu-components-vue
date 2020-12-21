@@ -1,3 +1,32 @@
 .page-wraper {
-  padding: 10px;
+
+  .card-title-wraper{
+    .title{
+      margin-bottom: 6px;
+        padding-right: 12px;
+        color: rgba(0,0,0,.85);
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 32px;
+    }
+    .desc{
+      font-size: 15px;
+      color:#555;
+    }
+  }
+  &-content{
+    // padding:10px;
+    &>.ant-card{
+      &>.ant-card-body{
+        background: #f1f1f1;
+      }
+      .ant-card-head-wrapper{
+        align-items: initial;
+      }
+    }
+    .page-wraper-card__content{
+      background: #fff;
+      padding:10px;
+    }
+  }
 }

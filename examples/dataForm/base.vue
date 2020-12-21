@@ -3,14 +3,14 @@
     <DataForm
       ref="dataForm"
       layout="grid"
-      :colspan="2"
+      :colspan="colspan"
       :readonly="readonly"
       :items="items"
       :onOptionsAllLoad="onOptionsAllLoad"
       :onOptionsLoadBefore="onOptionsLoadBefore"
-      :cancelButtonProps="false"
       @buttonActionClick="onButtonClick"
       @submit="onSubmit"
+      :foldingButtonProps="false"
       :loading="loading"
     >
       <template slot="itemSlot" slot-scope="text, updateValue, field">
@@ -34,12 +34,19 @@
     <button @click="setFormData">
       设置表单值
     </button>
+    <button @click="setExpand">
+      展开/收起
+    </button>
+    <button @click="setColspan">
+      设置列数
+    </button>
   </div>
 </template>
 
 <script>
 // import {DataForm} from '../../packages/index'
 // console.log(DataForm);
+// import moment from "moment";
 import { utils } from "../../index";
 
 // function getSelectData() {
@@ -81,77 +88,86 @@ function getData(arr) {
   });
 }
 
-function getCheckboxData() {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const data = Array.from({ length: 5 }, (_, key) => ({
-        id: key,
-        name: `check${key}`
-      }));
-      data[3].isSelected = true;
-      data[2].isSelected = true;
-      resolve(data);
-    }, 500);
-  });
-}
-
-// function getTreeData() {
+// function getCheckboxData() {
 //   return new Promise(resolve => {
 //     setTimeout(() => {
-//       const data = [
-//         {
-//           value: "zhejiang",
-//           label: "Zhejiang",
-//           children: [
-//             {
-//               value: "hangzhou",
-//               label: "Hangzhou",
-//               children: [
-//                 {
-//                   value: "xihu",
-//                   label: "West Lake"
-//                 }
-//               ]
-//             }
-//           ]
-//         },
-//         {
-//           value: "jiangsu",
-//           label: "Jiangsu",
-//           children: [
-//             {
-//               value: "nanjing",
-//               label: "Nanjing",
-//               children: [
-//                 {
-//                   value: "zhonghuamen",
-//                   label: "Zhong Hua Men"
-//                 }
-//               ]
-//             }
-//           ]
-//         }
-//       ];
-//       resolve({
-//         code: 0,
-//         data: data
-//       });
+//       const data = Array.from({ length: 5 }, (_, key) => ({
+//         id: key,
+//         name: `check${key}`
+//       }));
+//       data[3].isSelected = true;
+//       data[2].isSelected = true;
+//       resolve(data);
 //     }, 500);
 //   });
 // }
+
+function getTreeData() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const data = [
+        {
+          value: "zhejiang",
+          label: "Zhejiang",
+          children: [
+            {
+              value: "hangzhou",
+              label: "Hangzhou",
+              children: [
+                {
+                  value: "xihu",
+                  label: "West Lake"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          value: "jiangsu",
+          label: "Jiangsu",
+          children: [
+            {
+              value: "nanjing",
+              label: "Nanjing",
+              children: [
+                {
+                  value: "zhonghuamen",
+                  label: "Zhong Hua Men"
+                }
+              ]
+            }
+          ]
+        }
+      ];
+      resolve({
+        code: 0,
+        data: data
+      });
+    }, 500);
+  });
+}
 
 export default {
   components: {
     // DataForm
   },
   data() {
+    const that = this;
     return {
       key: 1,
       readonly: false,
       loading: false,
+      expand: false,
+      colspan: 3,
       items: [
         {
           field: "id",
+          itemRender: {
+            name: "hidden"
+          }
+        },
+        {
+          field: "sexName",
           itemRender: {
             name: "hidden"
           }
@@ -254,7 +270,7 @@ export default {
         {
           field: "sex",
           title: "性别",
-          hasFeedback: true,
+          // hasFeedback: true,
           // option: {
           //   rules: [{ required: true, message: "请输入名称!" }]
           // },
@@ -262,12 +278,16 @@ export default {
           itemRender: {
             name: "a-select",
             props: {
+              size: "small",
+              // mode: "combobox",
               placeholder: "请选择性别",
-              showSearch: true,
+              // showSearch: true,
+
               defaultField: "isSelected",
-              // valueField: "id",
+              // valueField: "name",
               // labelField: "name",
               dataField: "aa",
+              // labelInValue: true,
               // api:getSelectData,
               param: {
                 code: "aa"
@@ -283,6 +303,14 @@ export default {
               //         isSelected:true
               //     }
               // ]
+            },
+            on: {
+              change(val, row) {
+                console.log(val, row);
+                that.$refs.dataForm.setData({
+                  sexName: row.label
+                });
+              }
             }
           }
         },
@@ -319,28 +347,32 @@ export default {
         //   }
         // },
 
-        // {
-        //   field: "checkbox",
-        //   title: "复选框",
-        //   width: "200px",
-        //   option: { valuePropName: "checked" },
-        //   itemRender: {
-        //     name: "a-checkbox"
-        //   }
-        // },
+        {
+          field: "checkbox",
+          title: "复选框",
+          width: "200px",
+          option: { valuePropName: "checked", initialValue: "on" },
+          itemRender: {
+            name: "a-checkbox",
+            props: {
+              trueValue: "on",
+              falseValue: "off"
+            }
+          }
+        },
         {
           field: "checkboxGroup",
           title: "复选框组",
           itemRender: {
             name: "a-checkbox-group",
             props: {
-              api: getCheckboxData,
+              // api: getCheckboxData,
               valueField: "id",
               labelField: "name",
-              dataField: "",
+              dataField: "dda",
               defaultField: "isSelected",
               param: {
-                code: "dd"
+                code: "dda"
               }
               // options: [
               //   { label: "Apple", value: "Apple" },
@@ -356,11 +388,12 @@ export default {
           itemRender: {
             name: "a-radio-group",
             props: {
-              api: getCheckboxData,
-              dataField: "",
-              param: {
-                code: "cc"
-              }
+              // api: getCheckboxData,
+              // dataField: "",
+              // param: {
+              //   code: "cc"
+              // }
+              options: ["Apple", "Pear", "Orange"]
               // options: [
               //   { id: "Apple", name: "Apple" },
               //   { id: "Pear", name: "Pear" },
@@ -386,8 +419,10 @@ export default {
           itemRender: {
             name: "a-date-picker",
             props: {
-              showTime: true,
-              format: "YYYY/MM/DD HH:mm:ss"
+              // min: moment(),
+              // max: moment().add(10, "day")
+              // showTime: true,
+              // format: "YYYY-MM-DD HH:mm:ss"
               // api: getCheckboxData
             }
           }
@@ -402,6 +437,7 @@ export default {
         {
           field: "number2",
           title: "数字2",
+          folding: true,
           // width: "200px",
           itemRender: {
             name: "a-input-number"
@@ -434,21 +470,39 @@ export default {
         {
           field: "ARangePickerSplit",
           title: "日期范围拆分",
+          folding: true,
           itemRender: {
             name: "a-range-picker-split",
             props: {
+              hasLimit: false
               // showTime: { format: "HH:mm" }
             }
           }
-        }
-        // {
-        //   field: "switch",
-        //   title: "开关",
-        //   option: { valuePropName: "checked" },
-        //   itemRender: {
-        //     name: "a-switch"
-        //   }
-        // },
+        },
+
+        {
+          field: "number3",
+          title: "数字3",
+          folding: true,
+          // width: "200px",
+          itemRender: {
+            name: "a-input-number"
+          }
+        },
+        {
+          field: "switch",
+          title: "开关",
+          option: { valuePropName: "checked" },
+          folding: true,
+          itemRender: {
+            name: "a-switch",
+            props: {
+              // size: "small"
+              trueValue: 1,
+              falseValue: 0
+            }
+          }
+        },
         // {
         //   field: "rate",
         //   title: "评分",
@@ -467,54 +521,55 @@ export default {
         //     }
         //   }
         // },
-        // // {
-        // //   field: "cascader",
-        // //   title: "级联选择",
-        // //   itemRender: {
-        // //     name: "a-cascader",
-        // //     props: {
-        // //       api: getTreeData,
-        // //       valueField: "value",
-        // //       labelField: "label"
-        // //     }
-        // //   }
-        // // },
-        // {
-        //   field: "treeelect",
-        //   title: "树形选择器",
-        //   itemRender: {
-        //     name: "a-tree-select",
-        //     props: {
-        //       treeData: [
-        //         {
-        //           title: "Node1",
-        //           value: "0-0",
-        //           key: "0-0",
-        //           children: [
-        //             {
-        //               value: "0-0-1",
-        //               key: "0-0-1",
-        //               scopedSlots: {
-        //                 // custom title
-        //                 title: "title"
-        //               }
-        //             },
-        //             {
-        //               title: "Child Node2",
-        //               value: "0-0-2",
-        //               key: "0-0-2"
-        //             }
-        //           ]
-        //         },
-        //         {
-        //           title: "Node2",
-        //           value: "0-1",
-        //           key: "0-1"
-        //         }
-        //       ]
-        //     }
-        //   }
-        // },
+        {
+          field: "cascader",
+          title: "级联选择",
+          itemRender: {
+            name: "a-cascader",
+            props: {
+              api: getTreeData,
+              valueField: "value",
+              labelField: "label"
+            }
+          }
+        },
+        {
+          field: "treeelect",
+          title: "树形选择器",
+          itemRender: {
+            name: "a-tree-select",
+            props: {
+              api: getTreeData
+              // treeData: [
+              //   {
+              //     title: "Node1",
+              //     value: "0-0",
+              //     key: "0-0",
+              //     children: [
+              //       {
+              //         value: "0-0-1",
+              //         key: "0-0-1",
+              //         scopedSlots: {
+              //           // custom title
+              //           title: "title"
+              //         }
+              //       },
+              //       {
+              //         title: "Child Node2",
+              //         value: "0-0-2",
+              //         key: "0-0-2"
+              //       }
+              //     ]
+              //   },
+              //   {
+              //     title: "Node2",
+              //     value: "0-1",
+              //     key: "0-1"
+              //   }
+              // ]
+            }
+          }
+        }
         // {
         //   field: "upload",
         //   title: "单选上传",
@@ -698,7 +753,8 @@ export default {
         number: 0,
         selected: 2,
         sex: "1",
-        radioGroup: 3
+        radioGroup: 3,
+        switch: 1
       });
     },
     setItems() {
@@ -771,6 +827,13 @@ export default {
     onRadioChange(e) {
       console.log(e);
       // this.setItems();
+    },
+    setExpand() {
+      this.expand = !this.expand;
+      this.$refs.dataForm.setExpand(this.expand);
+    },
+    setColspan() {
+      this.colspan = 3;
     }
   }
 };
