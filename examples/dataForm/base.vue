@@ -269,7 +269,7 @@ export default {
         },
         {
           field: "sex",
-          title: "性别",
+          title: "性别22",
           // hasFeedback: true,
           // option: {
           //   rules: [{ required: true, message: "请输入名称!" }]
@@ -279,7 +279,7 @@ export default {
             name: "a-select",
             props: {
               size: "small",
-              // mode: "combobox",
+              mode: "combobox",
               placeholder: "请选择性别",
               // showSearch: true,
 

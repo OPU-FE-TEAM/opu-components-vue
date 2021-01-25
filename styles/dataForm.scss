@@ -59,7 +59,7 @@ $formItemMarginBottom: 19px;
         margin-bottom: $formItemMarginBottom;
         display: flex;
         .ant-form-item-label{
-            line-height: 32px;
+            line-height: 40px;
         }
         .ant-form-item-label > label::after,
         .ant-form-item-required::before{
@@ -69,7 +69,7 @@ $formItemMarginBottom: 19px;
         .data-form-item-title{
             width: 100px;
             text-align: right;
-            line-height: 40px;
+            line-height: 32px;
             &.left{
                 text-align: left;  
             }
@@ -101,6 +101,7 @@ $formItemMarginBottom: 19px;
         margin-bottom: 0;
     }
     .data-form-buttons{
+        line-height: 40px;
         .ant-btn+.ant-btn{
             margin-left: 10px;
         }
@@ -143,6 +144,7 @@ $formItemMarginBottom: 19px;
     &.inline{
         .data-form-buttons{
             display: inline-block;
+            
         }
         .ant-form-item{
             display: inline-block;

@@ -163,6 +163,7 @@ export default {
       ) {
         const addButtonProps = proxyConfigOpt.add.props;
         if (
+          proxyConfig.add &&
           proxyConfig.add.permission &&
           !utils.hasEquaValueArray(permissionsArr, proxyConfig.add.permission)
         ) {
@@ -217,7 +218,6 @@ export default {
         proxyConfig[currentAction].submit
       ) {
         const formModal = this.$refs.formModal;
-        console.log(proxyConfig[currentAction].submit);
         proxyConfig[currentAction]
           .submit(values)
           .then(res => {
@@ -238,8 +238,8 @@ export default {
       }
     },
     onFormModalCancel() {},
-    reloadTable() {
-      this.$refs.table.reload();
+    reloadTable(params) {
+      this.$refs.table.reload(params);
     },
     // 渲染自动生成操作行的插槽
     renderRowAction(scope) {
@@ -514,6 +514,9 @@ export default {
     },
     getTableData() {
       return this.$refs.table.getData();
+    },
+    getRefs() {
+      return this.$refs;
     }
   },
   render(h) {

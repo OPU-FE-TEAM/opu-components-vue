@@ -14,7 +14,7 @@
       @current-change="currentChangeEvent"
       :setcolumns-config="setColumns"
       :columns="tableColumn"
-      :edit-config="{ trigger: 'click', mode: 'row' }"
+      :edit-config="{ trigger: 'click', mode: 'cell' }"
       :searchConfig="search"
     >
       <template v-slot:operate="{ row }">
@@ -31,6 +31,7 @@
     <a-button @click="updateColumns">更新表头</a-button>
     <a-button @click="setSearchData">设置搜索表单数据</a-button>
     <a-button @click="getSearchData">获取搜索表单数据</a-button>
+    <a-button @click="toSearch">搜索</a-button>
   </div>
 </template>
 
@@ -628,6 +629,23 @@ export default {
           }
         },
         {
+          field: "datePicker",
+          title: "日期选择",
+          width: 140,
+          editRender: {
+            name: "ADatePicker",
+            props: {}
+          }
+        },
+        {
+          field: "timePicker",
+          title: "时间选择",
+          width: 200,
+          editRender: {
+            name: "ATimePicker"
+          }
+        },
+        {
           field: "switch",
           title: "开关",
           width: 100,
@@ -721,6 +739,13 @@ export default {
       const grid = this.$refs.xGrid;
       const values = grid.getSearchData();
       console.log(values);
+    },
+    toSearch() {
+      const grid = this.$refs.xGrid;
+      grid.reload({
+        a: 1,
+        b: 2
+      });
     }
   }
 };

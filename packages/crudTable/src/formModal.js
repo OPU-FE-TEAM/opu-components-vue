@@ -71,10 +71,14 @@ export default {
     },
     onSubmit() {
       this.confirmLoading = true;
-      this.$refs.form.validateFields().then(values => {
-        this.$emit("submit", values);
-        // this.visible = false;
-      });
+      this.$refs.form
+        .validateFields()
+        .then(values => {
+          this.$emit("submit", values);
+        })
+        .catch(() => {
+          this.confirmLoading = false;
+        });
     },
     setConfirmLoading(flag) {
       this.confirmLoading = flag;

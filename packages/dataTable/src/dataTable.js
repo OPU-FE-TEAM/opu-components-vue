@@ -680,9 +680,12 @@ export default {
   destroyed() {},
   methods: {
     ...methods,
-    reload() {
+    reload(params) {
       const { proxyConfig } = this;
       if (proxyConfig && proxyConfig.ajax && proxyConfig.ajax.query) {
+        if (params) {
+          this.searchData = { ...this.searchData, ...params };
+        }
         this.$refs.dataGrid.commitProxy("reload");
       }
     },

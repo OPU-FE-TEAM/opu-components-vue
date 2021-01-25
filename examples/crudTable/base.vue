@@ -27,6 +27,7 @@
       <template slot="headToolbar_buttons">
         <a-button @click="onAdd" type="primary">自定义新增按钮</a-button>
         <a-button :disabled="delDisabled">自定义按钮2</a-button>
+        <a-button @click="toSearch">搜索</a-button>
       </template>
     </crud-table>
   </div>
@@ -289,6 +290,9 @@ export default {
               field: "name",
               title: "名称",
               filter: ["add", "edit"],
+              option: {
+                rules: [{ required: true, message: "请输入!" }]
+              },
               itemRender: {
                 name: "a-input",
                 props: {
@@ -399,11 +403,11 @@ export default {
               titleWidth: "auto",
               // foldingLayout:"flex",
 
-              on: {
-                submit: values => {
-                  console.log(values);
-                }
-              },
+              // on: {
+              //   submit: values => {
+              //     console.log(values);
+              //   }
+              // },
               advancedSearchModal: {
                 props: {
                   width: 800,
@@ -548,6 +552,14 @@ export default {
     },
     onAdd() {
       this.$refs.crudTable.add();
+    },
+    toSearch() {
+      // this.$refs.crudTable.reloadTable({
+      //   a: 2,
+      //   b: 3,
+      //   c: 4
+      // });
+      console.log(this.$refs.crudTable.getRefs());
     }
   }
 };
