@@ -5,8 +5,14 @@ import enquire from "enquire.js";
 // import { Button } from "ant-design-vue";
 const optionsComponents = ["a-radio-group", "a-checkbox-group", "a-cascader"];
 // 回车跳转下一个focus
-function nextItemFocus(item, _vm) {
+function nextItemFocus(item, _vm, e = {}) {
   const { enterToNextItemFocusList, setFieldFocus } = _vm;
+  if (item.itemRender && item.itemRender.on && item.itemRender.on.enter) {
+    const enterRes = item.itemRender.on.enter(e);
+    if (enterRes == false) {
+      return;
+    }
+  }
   const fieldIndex = enterToNextItemFocusList.indexOf(item.field);
   if (fieldIndex > -1 && fieldIndex < enterToNextItemFocusList.length - 1) {
     const nextField = enterToNextItemFocusList[fieldIndex + 1];
@@ -274,38 +280,38 @@ function renderItemInput(item, h, _vm) {
     } else if (renderName === "a-date-picker") {
       renderName = "opu-date-picker";
       if (props.on && utils.isObject(props.on)) {
-        props.on.inputPressEnter = () => {
-          nextItemFocus(item, _vm);
+        props.on.inputPressEnter = e => {
+          nextItemFocus(item, _vm, e);
         };
       } else {
         props.on = {
-          inputPressEnter: () => {
-            nextItemFocus(item, _vm);
+          inputPressEnter: e => {
+            nextItemFocus(item, _vm, e);
           }
         };
       }
     } else if (renderName === "a-time-picker") {
       renderName = "opu-time-picker";
       if (props.on && utils.isObject(props.on)) {
-        props.on.inputPressEnter = () => {
-          nextItemFocus(item, _vm);
+        props.on.inputPressEnter = e => {
+          nextItemFocus(item, _vm, e);
         };
       } else {
         props.on = {
-          inputPressEnter: () => {
-            nextItemFocus(item, _vm);
+          inputPressEnter: e => {
+            nextItemFocus(item, _vm, e);
           }
         };
       }
     } else if (renderName === "a-range-picker-split") {
       if (props.on && utils.isObject(props.on)) {
-        props.on.inputPressEnter = () => {
-          nextItemFocus(item, _vm);
+        props.on.inputPressEnter = e => {
+          nextItemFocus(item, _vm, e);
         };
       } else {
         props.on = {
-          inputPressEnter: () => {
-            nextItemFocus(item, _vm);
+          inputPressEnter: e => {
+            nextItemFocus(item, _vm, e);
           }
         };
       }
@@ -331,8 +337,10 @@ function renderItemInput(item, h, _vm) {
 // 渲染每个表单项内容
 function renderItemContent(item, h, _vm) {
   const { titleWidth } = _vm;
-  const before = item.itemRender.before ? item.itemRender.before() : "";
-  const after = item.itemRender.after ? item.itemRender.after() : "";
+  const before =
+    item.itemRender && item.itemRender.before ? item.itemRender.before() : "";
+  const after =
+    item.itemRender && item.itemRender.after ? item.itemRender.after() : "";
 
   return h(
     "div",
@@ -446,15 +454,14 @@ function renderItems(h, _vm) {
           on: {}
         };
         if (
-          item.itemRender &&
-          focusItemTypes.includes(item.itemRender.name) &&
-          item.itemRender.name !== "textarea"
+          (item.itemRender && focusItemTypes.includes(item.itemRender.name)) ||
+          !(item.itemRender && item.itemRender.name)
         ) {
           wrapperProps.on.keyup = e => {
             const { keyCode } = e;
             e.stopPropagation();
             if (keyCode === 13) {
-              nextItemFocus(item, _vm);
+              nextItemFocus(item, _vm, e);
             }
           };
         }
@@ -678,6 +685,11 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    // 自动获得焦点，string时为指定获得焦点的字段
+    autoFocus: {
+      type: [Boolean, String],
+      default: false
     }
   },
   data() {
@@ -686,7 +698,6 @@ export default {
       itemsOptions: [],
       expand: false, //折叠展开
       currentColspan: 1,
-      // loading: false,
       // 支持回车活动焦点的组件
       focusItemTypes: [
         "a-input",
@@ -713,10 +724,16 @@ export default {
           if (
             item.itemRender &&
             this.focusItemTypes.includes(item.itemRender.name) &&
-            ((item.itemRender.props &&
-              item.itemRender.props.disabled !== true) ||
+            (!(
+              item.itemRender.props &&
+              (item.itemRender.props.disabled == true ||
+                item.itemRender.props.readonly == true)
+            ) ||
               !item.itemRender.props)
           ) {
+            // 可获得焦点的组件
+            return item.field;
+          } else if (!(item.itemRender && item.itemRender.name)) {
             // 可获得焦点的组件
             return item.field;
           }
@@ -739,6 +756,7 @@ export default {
   },
   mounted() {
     const that = this;
+    // 响应式布局
     if (utils.isObject(this.colspan)) {
       this.$nextTick(() => {
         const keys = Object.keys(responsiveMap);
@@ -758,6 +776,15 @@ export default {
             destroy() {}
           })
         );
+      });
+    }
+    if (this.autoFocus && this.enterToNextItemFocusList.length) {
+      this.$nextTick(() => {
+        if (typeof this.autoFocus === "string") {
+          this.setFieldFocus(this.autoFocus);
+        } else {
+          this.setFieldFocus(this.enterToNextItemFocusList[0]);
+        }
       });
     }
   },

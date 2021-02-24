@@ -279,6 +279,7 @@ export default {
         props: {
           colspan: 2,
           titleWidth: 100,
+          autoFocus: "age",
           items: [
             {
               field: "id",
@@ -298,6 +299,22 @@ export default {
                 props: {
                   placeholder: "请输入名称"
                   // disabled:true
+                }
+              }
+            },
+            {
+              field: "selected",
+              title: "下拉框-全局接口获取",
+              itemRender: {
+                name: "a-select",
+                props: {
+                  // valueField: "id",
+                  // labelField: "name",
+                  mode: "multiple",
+                  dataField: "bb",
+                  param: {
+                    code: "bb"
+                  }
                 }
               }
             },

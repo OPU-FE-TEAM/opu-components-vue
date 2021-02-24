@@ -12,6 +12,7 @@
       @submit="onSubmit"
       :foldingButtonProps="false"
       :loading="loading"
+      autoFocus="name3"
     >
       <template slot="itemSlot" slot-scope="text, updateValue, field">
         全插槽内容:{{ text }}{{ field }}
@@ -246,10 +247,24 @@ export default {
         },
         {
           field: "name3",
-          title: "名称3",
+          title: "名称3"
+        },
+        {
+          field: "name66",
+          title: "名称66",
           itemRender: {
-            name: "a-input"
+            name: "a-textarea",
+            on: {
+              enter: () => {
+                return false;
+              }
+            }
           }
+        },
+        {
+          field: "name4",
+          title: "名称4",
+          itemRender: {}
         },
         {
           field: "mytitle",
@@ -279,14 +294,14 @@ export default {
             name: "a-select",
             props: {
               size: "small",
-              mode: "combobox",
+              // mode: "combobox",
               placeholder: "请选择性别",
               // showSearch: true,
 
-              defaultField: "isSelected",
+              // defaultField: "isSelected",
               // valueField: "name",
               // labelField: "name",
-              dataField: "aa",
+              // dataField: "aa",
               // labelInValue: true,
               // api:getSelectData,
               param: {
@@ -569,7 +584,7 @@ export default {
               // ]
             }
           }
-        }
+        },
         // {
         //   field: "upload",
         //   title: "单选上传",
@@ -589,28 +604,31 @@ export default {
         //     }
         //   }
         // },
-        // {
-        //   field: "imageUpload",
-        //   title: "图片上传",
-        //   itemRender: {
-        //     name: "a-upload",
-
-        //     props: {
-        //       name: "file",
-        //       action: "http://www.vote.com/api/upload/image",
-        //       listType: "picture-card",
-        //       multiple: true,
-        //       buttonText: "+选择图片",
-        //       responseUrlField: "data.url",
-        //       maxSize: 300
-        //     },
-        //     on: {
-        //       change: e => {
-        //         console.log(e);
-        //       }
-        //     }
-        //   }
-        // },
+        {
+          field: "imageUpload",
+          title: "图片上传",
+          itemRender: {
+            name: "a-upload",
+            props: {
+              name: "file",
+              action:
+                "http://www.opu.com.cn:17025/api/Admin/AdminCommon/UploadImage",
+              listType: "picture-card",
+              multiple: true,
+              buttonText: "+选择图片",
+              responseUrlField: "data.url",
+              // maxSize: 300,
+              headers: {
+                Authorization: "a4f32e99de2b481ba91117b805b910aa"
+              }
+            },
+            on: {
+              change: e => {
+                console.log(e);
+              }
+            }
+          }
+        },
         // {
         //   field: "imageUpload1",
         //   title: "拖拽上传",
@@ -637,21 +655,21 @@ export default {
         //   }
         // },
 
-        // {
-        //   field: "slot",
-        //   title: "item插槽",
-        //   option: {
-        //     initialValue: 555
-        //   },
-        //   slot: "itemSlot"
-        // },
-        // {
-        //   field: "inputslot",
-        //   title: "input插槽",
-        //   itemRender: {
-        //     slot: "inputSlot"
-        //   }
-        // },
+        {
+          field: "slot",
+          title: "item插槽",
+          option: {
+            initialValue: 555
+          },
+          slot: "itemSlot"
+        },
+        {
+          field: "inputslot",
+          title: "input插槽",
+          itemRender: {
+            slot: "inputSlot"
+          }
+        }
         // {
         //   field: "renderContent",
         //   title: "自定义内容",

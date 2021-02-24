@@ -83,7 +83,7 @@ export default {
           inputDom.addEventListener("keyup", function(e) {
             if (e.key === "Enter") {
               e.stopPropagation();
-              that.$emit("inputPressEnter");
+              that.$emit("inputPressEnter", e);
             }
           });
           inputDom.oninput = function(e) {

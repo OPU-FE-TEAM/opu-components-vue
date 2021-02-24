@@ -59,7 +59,6 @@ export default {
       return this.hasAccept(info, true);
     },
     onChange(info) {
-      // if (this.hasAccept(info.file)) {
       this.$emit("update", info);
       this.$emit("change", info);
       // }

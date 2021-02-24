@@ -12,6 +12,7 @@
       highlight-hover-row
       highlight-current-row
       @current-change="currentChangeEvent"
+      @cell-click="onCellClick"
       :setcolumns-config="setColumns"
       :columns="tableColumn"
       :edit-config="{ trigger: 'click', mode: 'cell' }"
@@ -662,7 +663,8 @@ export default {
         { title: "操作", width: 200, slots: { default: "operate" } }
       ],
       tableData: [],
-      delDisabled: false
+      delDisabled: false,
+      currentRow: {}
     };
   },
   created() {
@@ -689,8 +691,15 @@ export default {
     },
     currentChangeEvent({ row }) {
       console.log("行选中事件", row);
-      this.delDisabled = !this.delDisabled;
-      this.headToolbar = { ...this.headToolbar };
+      // this.delDisabled = !this.delDisabled;
+      // const headToolbar = this.headToolbar;
+      // headToolbar.buttons[1][1].disabled = this.delDisabled;
+      // this.headToolbar = { ...headToolbar };
+      // console.log(this.headToolbar);
+      // const that = this;
+      // setTimeout(() => {
+      //   that.currentRow = row;
+      // }, 10);
     },
     getCurrentRecord() {
       const grid = this.$refs.xGrid;
@@ -746,6 +755,14 @@ export default {
         a: 1,
         b: 2
       });
+    },
+    onCellClick(e) {
+      console.log(e);
+      // if (this.currentRow._XID && e.row._XID === this.currentRow._XID) {
+      //   const grid = this.$refs.xGrid;
+      //   grid.clearCurrentRow();
+      //   this.currentRow = {};
+      // }
     }
   }
 };

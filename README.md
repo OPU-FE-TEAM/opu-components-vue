@@ -1,29 +1,7 @@
-# vue-npm-template
+# opu-components-vue
 
-## Project setup
-```
-npm install
-```
+基于vue的常用组件库
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 文档地址
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+[opu-components-vue](http://opu.hg-code.com/solution/Info?id=15)

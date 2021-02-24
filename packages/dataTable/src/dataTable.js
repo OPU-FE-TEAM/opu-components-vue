@@ -470,7 +470,9 @@ export default {
     searchConfig: Object,
     headToolbar: Object,
     setcolumnsConfig: Object,
-    proxyColumns: Object
+    proxyColumns: Object,
+    // 高亮行是否可反选
+    highlightCurrentUnselect: Boolean
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -488,7 +490,8 @@ export default {
       tableColumns: [],
       advancedVisible: false,
       searchData: {},
-      tableHeight: ""
+      tableHeight: "",
+      currentRow: {}
     };
   },
   computed: {
@@ -580,7 +583,10 @@ export default {
         renderPulldownTable,
         renderPulldownTableView,
         renderSwitch,
-        height
+        height,
+        highlightCurrentUnselect,
+        onCurrentRowCellClick,
+        onCurrentRowChange
       } = this;
       const propsData = this.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
@@ -659,6 +665,12 @@ export default {
       // 默认添加分页
       if (props.props.pagerConfig !== false && hasAjax) {
         props.props.pagerConfig = pagerConfigOpt;
+      }
+
+      //高亮行反选
+      if (highlightCurrentUnselect) {
+        ons["cell-click"] = onCurrentRowCellClick;
+        ons["current-change"] = onCurrentRowChange;
       }
       props.on = ons;
       props.ref = "dataGrid";
@@ -899,6 +911,23 @@ export default {
     // 获取搜索表单的值
     getSearchData() {
       return this.searchData;
+    },
+    // 允许反选高亮行时接管，高亮行选中事件
+    onCurrentRowChange(e) {
+      const that = this;
+      setTimeout(() => {
+        that.currentRow = e.row;
+      }, 10);
+      this.$emit("current-change", e);
+    },
+    // 允许反选高亮行时接管，单元格点击事件
+    onCurrentRowCellClick(e) {
+      if (this.currentRow._XID && e.row._XID === this.currentRow._XID) {
+        this.$refs.dataGrid.clearCurrentRow();
+        this.currentRow = {};
+        this.$emit("current-change", { ...e, row: null });
+      }
+      this.$emit("cell-click", e);
     }
   },
   render(h) {

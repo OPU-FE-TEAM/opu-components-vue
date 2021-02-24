@@ -77,7 +77,7 @@ export default {
             if (e.key === "Enter") {
               e.stopPropagation();
               that.isOpen = false;
-              that.$emit("inputPressEnter");
+              that.$emit("inputPressEnter", e);
             }
           });
           input[0].oninput = function(e) {

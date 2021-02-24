@@ -142,8 +142,8 @@ export default {
         change: e => {
           this.onEndChange(e);
         },
-        inputPressEnter: () => {
-          this.$emit("inputPressEnter");
+        inputPressEnter: e => {
+          this.$emit("inputPressEnter", e);
         }
       }
     };
