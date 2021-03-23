@@ -121,7 +121,6 @@ export default {
       }
 
       props.props.options = optionsData;
-      console.log(optionsData);
 
       return props;
     }
@@ -133,7 +132,6 @@ export default {
     init() {
       const { options } = this;
       if (options && options.length) {
-        console.log(this.vF);
         this.optionsData = handleItemPropsOptions(options, this);
       }
     },

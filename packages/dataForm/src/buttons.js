@@ -16,8 +16,8 @@ function renderButtons(items, h, _vm) {
         if (item.props.action) {
           props.on = {
             ...item.on,
-            click: () => {
-              onClick(item);
+            click: e => {
+              onClick(item,e);
             }
           };
         }
@@ -40,10 +40,10 @@ export default {
     }
   },
   methods: {
-    onClick(item) {
+    onClick(item,e) {
       const { itemClick } = this;
       if (item && item.props && item.props.action) {
-        itemClick && itemClick(item.props.action);
+        itemClick && itemClick(item.props.action,e);
       }
     }
   },

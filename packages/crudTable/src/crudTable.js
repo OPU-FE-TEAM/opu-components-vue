@@ -308,8 +308,8 @@ export default {
             {
               props: editButtonProps,
               on: {
-                click: () => {
-                  edit(scope.row);
+                click: e => {
+                  edit(scope.row, e);
                 }
               }
             },
@@ -385,7 +385,8 @@ export default {
         rowActionAfter
       ]);
     },
-    add() {
+    add(e) {
+      if(e)e.target.blur();
       const { proxyConfig, proxyConfigOpt, filterFormItems } = this;
       const addButtonProps = proxyConfigOpt.add.props;
       let openCallback = "";
@@ -413,7 +414,8 @@ export default {
       formModal.show(openCallback);
       formModal.setLoading(false);
     },
-    edit(row) {
+    edit(row, e) {
+      if(e)e.target.blur();
       const { proxyConfig, proxyConfigOpt, filterFormItems } = this;
       const editButtonProps = proxyConfigOpt.edit.props;
 

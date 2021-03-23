@@ -737,9 +737,10 @@ export default {
 
       return json;
     },
-    onButtonActionClick(action) {
+    onButtonActionClick(action,e) {
       const { searchData } = this;
       if (action === "advancedQuery") {
+        if(e)e.target.blur();
         // 显示高级查询
         this.advancedVisible = true;
         this.$nextTick(() => {

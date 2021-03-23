@@ -47,7 +47,6 @@ export default {
   created() {},
   methods: {
     onTabsChange(tab) {
-      console.log(tab);
       this.currentTab = tab;
     }
   }
