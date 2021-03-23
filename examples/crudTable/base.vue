@@ -24,12 +24,12 @@
       <template slot="searchFormSlot">
         101010
       </template>
-      <template slot="headToolbar_buttons">
+      <!-- <template slot="headToolbar_buttons">
         <a-button @click="onAdd" type="primary">自定义新增按钮</a-button>
         <a-button :disabled="delDisabled">自定义按钮2</a-button>
         <a-button @click="toSearch">搜索</a-button>
         <a-button @click="reload">刷新</a-button>
-      </template>
+      </template> -->
     </crud-table>
   </div>
 </template>
@@ -409,14 +409,20 @@ export default {
             }
           ],
           headToolbar: {
-            // buttons: [
-            //   {
-            //     name: "新单",
-            //     code: "add",
-            //     icon: "file-add",
-            //     type: "primary"
-            //   }
-            // ],
+            buttons: [
+              {
+                name: "新增",
+                code: "add",
+                type: "primary",
+                action: "add"
+              }
+              // {
+              //   name: "新单",
+              //   code: "add",
+              //   icon: "file-add",
+              //   type: "primary"
+              // }
+            ],
             search: {
               layout: "inline",
               titleWidth: "auto",

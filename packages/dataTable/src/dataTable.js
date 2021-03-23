@@ -196,6 +196,7 @@ function renderButton(item, h, hasDropdown, _vm) {
     });
   }
   const onClick = e => {
+    if (e) e.target.blur();
     onToobarButtonClick(code);
     if (on && on.click) {
       on.click(e);
@@ -737,10 +738,10 @@ export default {
 
       return json;
     },
-    onButtonActionClick(action,e) {
+    onButtonActionClick(action, e) {
       const { searchData } = this;
       if (action === "advancedQuery") {
-        if(e)e.target.blur();
+        if (e) e.target.blur();
         // 显示高级查询
         this.advancedVisible = true;
         this.$nextTick(() => {

@@ -1065,7 +1065,7 @@ export default {
       this.setData(json);
     },
     // 渲染的按钮点击事件
-    onButtonClick(action,e) {
+    onButtonClick(action, e) {
       const { onSubmit, resetFields } = this;
       switch (action) {
         case "submit":
@@ -1077,7 +1077,7 @@ export default {
         default:
           break;
       }
-      this.$emit("buttonActionClick", action,e);
+      this.$emit("buttonActionClick", action, e);
     },
     // 获取某个输入控件的 Error
     getFieldError(field) {

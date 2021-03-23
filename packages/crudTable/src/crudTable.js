@@ -386,7 +386,7 @@ export default {
       ]);
     },
     add(e) {
-      if(e)e.target.blur();
+      if (e) e.target.blur();
       const { proxyConfig, proxyConfigOpt, filterFormItems } = this;
       const addButtonProps = proxyConfigOpt.add.props;
       let openCallback = "";
@@ -415,7 +415,7 @@ export default {
       formModal.setLoading(false);
     },
     edit(row, e) {
-      if(e)e.target.blur();
+      if (e) e.target.blur();
       const { proxyConfig, proxyConfigOpt, filterFormItems } = this;
       const editButtonProps = proxyConfigOpt.edit.props;
 
