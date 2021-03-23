@@ -415,13 +415,17 @@ export default {
                 code: "add",
                 type: "primary",
                 action: "add"
+              },
+              {
+                name: "同步HIS信息",
+                code: "his",
+                type: "primary",
+                on: {
+                  click: () => {
+                    console.log(123);
+                  }
+                }
               }
-              // {
-              //   name: "新单",
-              //   code: "add",
-              //   icon: "file-add",
-              //   type: "primary"
-              // }
             ],
             search: {
               layout: "inline",
