@@ -393,6 +393,7 @@ function renderItems(h, _vm) {
           key: item.field,
           props: item,
           style: {},
+          class: item.class,
           scopedSlots: {}
         };
 
@@ -780,11 +781,13 @@ export default {
     }
     if (this.autoFocus && this.enterToNextItemFocusList.length) {
       this.$nextTick(() => {
-        if (typeof this.autoFocus === "string") {
-          this.setFieldFocus(this.autoFocus);
-        } else {
-          this.setFieldFocus(this.enterToNextItemFocusList[0]);
-        }
+        setTimeout(() => {
+          if (typeof this.autoFocus === "string") {
+            this.setFieldFocus(this.autoFocus);
+          } else {
+            this.setFieldFocus(this.enterToNextItemFocusList[0]);
+          }
+        }, 400);
       });
     }
   },
@@ -1121,6 +1124,7 @@ export default {
     // form表单的参数
     const formProps = {
       props: {
+        ...config.props,
         form: form,
         layout: antdLayouts.includes(layout) ? layout : null
       },
@@ -1140,7 +1144,6 @@ export default {
       }
       formProps.style["grid-template-columns"] = formColnumStyle;
     }
-
     return h("a-form", formProps, [
       renderItems(h, this),
       renderActionButtons(h, this)

@@ -121,6 +121,7 @@ export default {
       }
 
       props.props.options = optionsData;
+      console.log(optionsData);
 
       return props;
     }
@@ -130,13 +131,10 @@ export default {
   },
   methods: {
     init() {
-      const { valueField, labelField, options } = this;
+      const { options } = this;
       if (options && options.length) {
-        this.optionsData = handleItemPropsOptions(
-          options,
-          valueField,
-          labelField
-        );
+        console.log(this.vF);
+        this.optionsData = handleItemPropsOptions(options, this);
       }
     },
     updateValue(value) {

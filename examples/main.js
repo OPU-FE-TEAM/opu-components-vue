@@ -41,6 +41,9 @@ DataForm.setup({
     api: getSelectData,
     valueField: "id",
     labelField: "name"
+  },
+  props: {
+    selfUpdate: true
   }
 });
 DataTable.setup({

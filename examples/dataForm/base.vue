@@ -41,6 +41,10 @@
     <button @click="setColspan">
       设置列数
     </button>
+    <modelTable ref="modelTable" />
+    <button @click="showModelTable">
+      显示弹窗表格
+    </button>
   </div>
 </template>
 
@@ -48,6 +52,7 @@
 // import {DataForm} from '../../packages/index'
 // console.log(DataForm);
 // import moment from "moment";
+import modelTable from "../other/modelTable";
 import { utils } from "../../index";
 
 // function getSelectData() {
@@ -151,6 +156,7 @@ function getTreeData() {
 export default {
   components: {
     // DataForm
+    modelTable
   },
   data() {
     const that = this;
@@ -247,7 +253,8 @@ export default {
         },
         {
           field: "name3",
-          title: "名称3"
+          title: "名称3",
+          class: "abcd"
         },
         {
           field: "name66",
@@ -299,25 +306,25 @@ export default {
               // showSearch: true,
 
               // defaultField: "isSelected",
-              // valueField: "name",
-              // labelField: "name",
+              valueField: "id",
+              labelField: "text",
               // dataField: "aa",
               // labelInValue: true,
               // api:getSelectData,
-              param: {
-                code: "aa"
-              }
-              // options:[
-              //     {
-              //         id:1,
-              //         name:"男"
-              //     },
-              //     {
-              //         id:2,
-              //         name:"女",
-              //         isSelected:true
-              //     }
-              // ]
+              // param: {
+              //   code: "aa"
+              // }
+              options: [
+                {
+                  id: 1,
+                  text: "男"
+                },
+                {
+                  id: 2,
+                  text: "女",
+                  isSelected: true
+                }
+              ]
             },
             on: {
               change(val, row) {
@@ -852,6 +859,9 @@ export default {
     },
     setColspan() {
       this.colspan = 3;
+    },
+    showModelTable() {
+      this.$refs.modelTable.show();
     }
   }
 };

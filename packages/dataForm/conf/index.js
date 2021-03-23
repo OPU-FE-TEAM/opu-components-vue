@@ -1,4 +1,5 @@
 const GlobalConfig = {
+  props: {},
   layout: "grid", // 默认布局
   colspan: 1, // grid、flex 布局下默认列数
   titleWidth: 120, // 所有项的标题宽度

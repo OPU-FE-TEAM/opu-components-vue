@@ -33,6 +33,7 @@
     <a-button @click="setSearchData">设置搜索表单数据</a-button>
     <a-button @click="getSearchData">获取搜索表单数据</a-button>
     <a-button @click="toSearch">搜索</a-button>
+    <a-button @click="reload">刷新</a-button>
   </div>
 </template>
 
@@ -496,7 +497,7 @@ export default {
         //   total: "data.total",
         //   list: "data.data"
         // },
-
+        autoLoad: false,
         ajax: {
           query: getData
         }
@@ -763,6 +764,10 @@ export default {
       //   grid.clearCurrentRow();
       //   this.currentRow = {};
       // }
+    },
+    reload() {
+      const grid = this.$refs.xGrid;
+      grid.reload();
     }
   }
 };

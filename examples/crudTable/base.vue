@@ -28,6 +28,7 @@
         <a-button @click="onAdd" type="primary">自定义新增按钮</a-button>
         <a-button :disabled="delDisabled">自定义按钮2</a-button>
         <a-button @click="toSearch">搜索</a-button>
+        <a-button @click="reload">刷新</a-button>
       </template>
     </crud-table>
   </div>
@@ -163,6 +164,7 @@ export default {
           // submit: saveData
           submit: values => {
             // 可自行处理请求前
+            console.log(values);
             return new Promise((resolve, reject) => {
               saveData({
                 ...values,
@@ -279,12 +281,35 @@ export default {
         props: {
           colspan: 2,
           titleWidth: 100,
-          autoFocus: "age",
+          autoFocus: true,
           items: [
             {
               field: "id",
               itemRender: {
                 name: "hidden"
+              }
+            },
+            {
+              field: "sex",
+              title: "性别",
+              itemRender: {
+                name: "a-select",
+                props: {
+                  valueField: "id",
+                  labelField: "text",
+                  // dataField: "aa"
+                  options: [
+                    {
+                      id: 1,
+                      text: "男"
+                    },
+                    {
+                      id: 2,
+                      text: "女",
+                      isSelected: true
+                    }
+                  ]
+                }
               }
             },
             {
@@ -318,30 +343,7 @@ export default {
                 }
               }
             },
-            {
-              field: "sex",
-              title: "性别",
-              filter: ["edit"],
-              itemRender: {
-                name: "a-select",
-                props: {
-                  valueField: "id",
-                  labelField: "name",
-                  dataField: "aa",
-                  options: [
-                    {
-                      id: 1,
-                      name: "男"
-                    },
-                    {
-                      id: 2,
-                      name: "女",
-                      isSelected: true
-                    }
-                  ]
-                }
-              }
-            },
+
             {
               field: "age",
               title: "年龄",
@@ -512,6 +514,8 @@ export default {
           },
           height: "calc(100vh - 100px)",
           // size: "mini",
+          pagerConfig: false,
+
           proxyConfig: {
             seq: true, // 启用动态序号代理
             sort: true, // 启用排序代理
@@ -522,9 +526,19 @@ export default {
               total: "data.total",
               list: "data.data"
             },
+            // autoLoad: false,
 
             ajax: {
-              query: getData
+              query: values => {
+                console.log(values);
+                return new Promise(resolve => {
+                  getData({
+                    ...values
+                  }).then(res => {
+                    resolve(res);
+                  });
+                });
+              }
             }
           },
           setcolumnsConfig: {
@@ -577,6 +591,10 @@ export default {
       //   c: 4
       // });
       console.log(this.$refs.crudTable.getRefs());
+    },
+    reload() {
+      this.aaa = 456;
+      this.$refs.crudTable.reloadTable();
     }
   }
 };

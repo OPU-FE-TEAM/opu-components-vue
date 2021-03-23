@@ -25,7 +25,7 @@ $formItemMarginBottom: 19px;
             display: flex;
             
             &>.data-form-item-input{
-                
+                // line-height: 0;
                 flex: 1;
                 &>div{
                     min-width: 130px;

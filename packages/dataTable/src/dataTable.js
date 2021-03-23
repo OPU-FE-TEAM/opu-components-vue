@@ -631,7 +631,7 @@ export default {
         props: {
           ...config.props,
           ...propsData,
-          proxyConfig: proxyConfigOpt,
+          proxyConfig: utils.clone(proxyConfigOpt, true),
           columns: columns
         }
       });
@@ -645,13 +645,8 @@ export default {
         };
       });
       let hasAjax = false;
-      if (
-        props.props.proxyConfig &&
-        props.props.proxyConfig.ajax &&
-        props.props.proxyConfig.ajax.query
-      ) {
+      if (proxyConfigOpt && proxyConfigOpt.ajax && proxyConfigOpt.ajax.query) {
         hasAjax = true;
-        const query = props.props.proxyConfig.ajax.query;
         props.props.proxyConfig.ajax.query = arr => {
           const json = handleTableQuery(arr);
           if (json === false) {
@@ -659,7 +654,7 @@ export default {
           } else if (json) {
             arr = json;
           }
-          return query(arr);
+          return proxyConfigOpt.ajax.query(arr);
         };
       }
       // 默认添加分页
@@ -729,12 +724,17 @@ export default {
 
         const pageSizeField = pagerConfigOpt.props.pageSize;
         pageData[pageSizeField] = arr.page.pageSize;
+      } else if (arr && arr.$grid) {
+        pageData = {};
+      } else {
+        pageData = arr;
       }
 
       const json = {
         ...searchData,
         ...pageData
       };
+
       return json;
     },
     onButtonActionClick(action) {
