@@ -84,6 +84,20 @@ XEUtils.mixin({
       newStr = str;
     }
     return newStr;
+  },
+  // 树形结构转为数组
+  treeTransArray(tree, key = "children") {
+    return [].concat(
+      ...tree.map(item => {
+        if (item[key] && item[key].length) {
+          const currentItem = XEUtils.clone(item, true);
+          delete currentItem[key];
+          return [].concat(currentItem, XEUtils.treeTransArray(item[key], key));
+        } else {
+          return item;
+        }
+      })
+    );
   }
 });
 

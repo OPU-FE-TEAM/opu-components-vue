@@ -42,24 +42,32 @@ export default {
     this.items = utils.clone(this.formOpt.items, true);
   },
   methods: {
-    show(callback) {
+    show(callback, actionType) {
       this.loading = true;
       this.visible = true;
       this.confirmLoading = true;
       this.$nextTick(() => {
+        let res = "";
         if (callback) {
-          const res = callback();
+          res = callback();
           if (res) {
             this.setFormData(res);
           }
         }
+        if (actionType === "add" && !res) {
+          this.loadOptionsData();
+        }
       });
+    },
+    loadOptionsData(data) {
+      this.$refs.form && this.$refs.form.loadOptionsData(data);
     },
     setLoading(flag) {
       this.loading = flag;
       this.confirmLoading = flag;
     },
     setFormData(data) {
+      this.loadOptionsData(data);
       this.$refs.form && this.$refs.form.setData(data);
       this.loading = false;
       this.confirmLoading = false;

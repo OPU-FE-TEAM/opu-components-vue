@@ -3,8 +3,8 @@ import utils from "../../utils";
 import config from "../conf";
 
 // 处理表单项的可选数据结构为 antd所需的
-function handleItemPropsOptions(options, _vm) {
-  const { vF, lF } = _vm;
+function handleItemPropsOptions(options, _vm, pValue = "") {
+  const { vF, lF, childrenField } = _vm;
   if (options && utils.isArray(options)) {
     const cloneOptions = utils.clone(options);
     return cloneOptions.map(item => {
@@ -14,8 +14,15 @@ function handleItemPropsOptions(options, _vm) {
       if (lF) {
         item.label = item[lF];
       }
-      if (item.children && item.children.length) {
-        item.children = handleItemPropsOptions(item.children, _vm);
+      if (pValue) {
+        item._pValue = pValue;
+      }
+      if (item[childrenField] && item[childrenField].length) {
+        item[childrenField] = handleItemPropsOptions(
+          item[childrenField],
+          _vm,
+          item.value
+        );
       }
       return item;
     });
@@ -36,7 +43,8 @@ export default {
     searchFields: {
       type: Array,
       default: () => []
-    }
+    },
+    childrenField: String
   },
   model: {
     prop: "value",
@@ -44,7 +52,8 @@ export default {
   },
   data() {
     return {
-      optionsData: []
+      optionsData: [],
+      hasGroup: false
     };
   },
   computed: {
@@ -136,15 +145,18 @@ export default {
       }
     },
     updateValue(value) {
-      const { vF, optionsData } = this;
-      // const vF = valueField ? valueField : config.getSelectOptions.valueField;
-      const row = optionsData.find(p => p[vF] == value);
-      this.$emit("update", value, row);
-      this.$emit("change", value, row);
+      const { vF, optionsData, childrenField } = this;
+      const optionsList = utils.treeTransArray(optionsData, childrenField);
+      const row = optionsList.find(p => p[vF] == value);
+      let pRow = "";
+      if (row && row._pValue) {
+        pRow = optionsList.find(p => p[vF] == row._pValue);
+      }
+      this.$emit("update", value, row, pRow);
+      this.$emit("change", value, row, pRow);
     },
 
     setOptionsData(data) {
-      // const { valueField, labelField } = this;
       const options = handleItemPropsOptions(data, this);
       this.optionsData = options;
       return options;
@@ -161,10 +173,37 @@ export default {
       if (box && box.length) {
         box[0].click();
       }
+    },
+    renderOptGroup(h) {
+      const { childrenField, optionsData } = this;
+      if (this.childrenField) {
+        return optionsData.map(group => {
+          let options = "";
+          if (group[childrenField] && group[childrenField].length) {
+            options = group[childrenField].map(p => {
+              return h("a-select-option", { props: { value: p.value } }, [
+                p.label
+              ]);
+            });
+            return h("a-select-opt-group", { props: { label: group.label } }, [
+              options
+            ]);
+          }
+          return h("a-select-option", { props: { value: group.value } }, [
+            group.label
+          ]);
+        });
+      }
+      return "";
     }
   },
   render(h) {
-    const { componentProps } = this;
+    const { componentProps, renderOptGroup } = this;
+    const optGroup = renderOptGroup(h);
+    if (optGroup) {
+      componentProps.props.options = null;
+    }
+
     return h(
       "a-select",
       {
@@ -176,7 +215,7 @@ export default {
           ...componentProps.on
         }
       },
-      []
+      [optGroup]
     );
   }
 };

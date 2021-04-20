@@ -19,6 +19,8 @@ const GlobalConfig = {
     add: {
       modalTitle: "新增",
       responseMsgField: "message",
+      successMsgCode: "",
+      responseCodeField: "",
       props: {
         name: "新增"
       }

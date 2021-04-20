@@ -128,7 +128,8 @@ function getInfo() {
           id: 1,
           name: "张三",
           sex: 1,
-          age: 20
+          age: 20,
+          selected: "9998"
         }
       };
       resolve(json);
@@ -150,17 +151,18 @@ export default {
             icon: "file-add",
             name: "新增1"
           },
-          open: () => {
-            console.log("打开前");
-            this.aaa = 222;
+          // open: () => {
+          //   console.log("打开前");
+          //   this.aaa = 222;
 
-            // return () => {
-            //   console.log("打开后");
-            //   return {
-            //     name: "789456"
-            //   };
-            // };
-          },
+          //   return () => {
+          //     console.log("打开后");
+          //     return {
+          //       name: "789456",
+          //       selected: "66666"
+          //     };
+          //   };
+          // },
           // submit: saveData
           submit: values => {
             // 可自行处理请求前
@@ -200,19 +202,19 @@ export default {
               console.log("打开后");
             };
           },
-          // query: values => {
-          //   // 自行处理请求前
-          //   this.aaa = 5555;
-          //   return new Promise(resolve => {
-          //     getInfo({
-          //       ...values
-          //     }).then(res => {
-          //       // 自行处理请求后,返回数据对象
-
-          //       resolve(res.data);
-          //     });
-          //   });
-          // },
+          query: values => {
+            // 自行处理请求前
+            this.aaa = 5555;
+            return new Promise(resolve => {
+              getInfo({
+                ...values
+              }).then(res => {
+                // 自行处理请求后,返回数据对象
+                console.log(res.data);
+                resolve(res.data);
+              });
+            });
+          },
           submit: saveData
           // submit: values => {
           //   // 自行处理请求前
@@ -373,6 +375,9 @@ export default {
           // footer: () => {
           //   return <div>666</div>;
           // }
+        },
+        on: {
+          cancel() {}
         }
       },
       table: {

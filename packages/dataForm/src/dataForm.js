@@ -2,6 +2,8 @@ import utils from "../../utils";
 import inputs from "./index";
 import config from "../conf";
 import enquire from "enquire.js";
+import actionModal from "./actionModal";
+
 // import { Button } from "ant-design-vue";
 const optionsComponents = ["a-radio-group", "a-checkbox-group", "a-cascader"];
 // 回车跳转下一个focus
@@ -21,13 +23,18 @@ function nextItemFocus(item, _vm, e = {}) {
 }
 
 // 处理统一请求可选数据的请求
-function handeUnifyApiGetOptions(unifyList, optionsApiList, _vm) {
+function handeUnifyApiGetOptions(
+  unifyList,
+  optionsApiList,
+  _vm,
+  formData = {}
+) {
   const { getSelectOptions } = _vm;
   // 处理同一请求参数
   const json = {};
   let fields = [];
   unifyList.map(item => {
-    const { param } = item.itemRender.props;
+    const { param, autoLoadOptionsId } = item.itemRender.props;
     fields.push({
       field: item.field,
       param
@@ -41,7 +48,18 @@ function handeUnifyApiGetOptions(unifyList, optionsApiList, _vm) {
         json[key] = param[key];
       }
     }
+    // 添加表单字段参数
+    if (
+      formData &&
+      formData[item.field] &&
+      config.getSelectOptions &&
+      config.getSelectOptions.loadOptionsIdField &&
+      autoLoadOptionsId !== false
+    ) {
+      json[config.getSelectOptions.loadOptionsIdField] = formData[item.field];
+    }
   });
+
   const unifyApi =
     getSelectOptions && getSelectOptions.api
       ? getSelectOptions.api
@@ -53,11 +71,11 @@ function handeUnifyApiGetOptions(unifyList, optionsApiList, _vm) {
       fields
     });
   }
-  fetchItemPropsOptionsApiList(optionsApiList, _vm);
+  fetchItemPropsOptionsApiList(optionsApiList, _vm, formData);
 }
 
 // 请求表单项可选数据
-const fetchItemPropsOptionsApiList = async function(list, _vm) {
+const fetchItemPropsOptionsApiList = async function(list, _vm, formData) {
   const { setFieldsOptions, onOptionsAllLoad, onOptionsLoadBefore } = _vm;
   if (onOptionsLoadBefore) {
     const beforeRes = onOptionsLoadBefore(list);
@@ -69,6 +87,17 @@ const fetchItemPropsOptionsApiList = async function(list, _vm) {
   }
   let promises = list.map(item => {
     const { api, param } = item;
+    // 添加表单字段参数
+    if (
+      item.field &&
+      formData &&
+      formData[item.field] &&
+      config.getSelectOptions &&
+      config.getSelectOptions.loadOptionsIdField &&
+      ((item.props && item.props.autoLoadOptionsId !== false) || !item.props)
+    ) {
+      param[config.getSelectOptions.loadOptionsIdField] = formData[item.field];
+    }
     return api(param);
   });
   Promise.all(promises)
@@ -146,6 +175,20 @@ function renderItemTitle(item, h, _vm) {
   if (utils.isNumber(titleWidthStr)) {
     titleWidthStr = `${titleWidthStr}px`;
   }
+  // tooltip
+  let tooltip = "";
+  if (item.tooltip) {
+    tooltip = h(
+      "a-tooltip",
+      { props: { title: item.tooltip }, style: { marginLeft: "5px" } },
+      [
+        h("a-icon", {
+          props: { type: "question-circle" },
+          style: { color: "#999" }
+        })
+      ]
+    );
+  }
   return h(
     "div",
     {
@@ -159,7 +202,7 @@ function renderItemTitle(item, h, _vm) {
         width: titleWidthStr
       }
     },
-    titleText
+    [titleText, tooltip]
   );
 }
 
@@ -336,11 +379,49 @@ function renderItemInput(item, h, _vm) {
 
 // 渲染每个表单项内容
 function renderItemContent(item, h, _vm) {
-  const { titleWidth } = _vm;
+  const { titleWidth, $scopedSlots } = _vm;
   const before =
     item.itemRender && item.itemRender.before ? item.itemRender.before() : "";
-  const after =
+  let after =
     item.itemRender && item.itemRender.after ? item.itemRender.after() : "";
+  if (item.actions && item.actions.length) {
+    after = item.actions.map(p => {
+      let actionButton = "";
+      if (utils.isFunction(p.button)) {
+        actionButton = p.button();
+      } else {
+        const buttonProps =
+          p.button && p.button.props ? utils.clone(p.button.props) : {};
+        const buttonContent = buttonProps.content ? buttonProps.content : "";
+        const buttonOn = {
+          click: e => {
+            if (p.button && p.button.on && p.button.on.click) {
+              const onClickRes = p.button.on.click(e);
+              if (onClickRes === false) {
+                return false;
+              }
+            }
+            if (p.modal) {
+              const modalProps = p.modal && p.modal.props ? p.modal.props : {};
+              actionModal({
+                modalProps: { ...modalProps },
+                content: p.modal.content,
+                form: p.modal.form,
+                slots: $scopedSlots
+              });
+            }
+          }
+        };
+
+        actionButton = h(
+          "a-button",
+          { ...{ props: { ...buttonProps }, on: { ...buttonOn } } },
+          [buttonContent]
+        );
+      }
+      return actionButton;
+    });
+  }
 
   return h(
     "div",
@@ -691,6 +772,14 @@ export default {
     autoFocus: {
       type: [Boolean, String],
       default: false
+    },
+    autoLoadOptionsData: {
+      type: [Boolean, String],
+      default: ""
+    },
+    isPartRequest: {
+      type: [Boolean, String],
+      default: ""
     }
   },
   data() {
@@ -714,7 +803,10 @@ export default {
         "a-tree-select",
         "a-textarea",
         "a-range-picker-split"
-      ]
+      ],
+      unifyApiGetOptions: [],
+      getItemPropsOptionsApiList: [],
+      config: config
     };
   },
   computed: {
@@ -753,6 +845,9 @@ export default {
   },
   created() {
     this.currentColspan = this.colspan;
+    // for (const key in config) {
+    //   this[key] = config[key];
+    // }
     this.cloneItems(this.items);
   },
   mounted() {
@@ -798,7 +893,7 @@ export default {
   },
   methods: {
     cloneItems(items) {
-      const { expand } = this;
+      const { expand, autoLoadOptionsData, isPartRequest } = this;
       const clone = utils.clone(items, true);
       const getItemPropsOptionsApiList = [];
       const unifyApiGetOptions = [];
@@ -808,6 +903,10 @@ export default {
       } else {
         cloneData = clone;
       }
+      const isFormPartRequest =
+        isPartRequest !== ""
+          ? isPartRequest
+          : config.getSelectOptions.isPartRequest;
       const data = cloneData.map(item => {
         const oldItem = this.itemsOptions.find(p => p.field === item.field);
         if (
@@ -827,34 +926,59 @@ export default {
         if (
           item.itemRender &&
           item.itemRender.props &&
-          item.itemRender.props.api
+          (item.itemRender.props.api ||
+            (item.itemRender.props.param && isFormPartRequest === true))
         ) {
+          if (!item.itemRender.props.api) {
+            item.itemRender.props.api = config.getSelectOptions.api;
+          }
           getItemPropsOptionsApiList.push({
             field: item.field,
             api: item.itemRender.props.api,
-            param: item.itemRender.props.param
+            param: item.itemRender.props.param,
+            props: item.itemRender.props
           });
         } else if (
           item.itemRender &&
           item.itemRender.props &&
           item.itemRender.props.param &&
-          !item.itemRender.props.api
+          !item.itemRender.props.api &&
+          isFormPartRequest !== true
         ) {
           unifyApiGetOptions.push(item);
         }
         return item;
       });
+      this.unifyApiGetOptions = unifyApiGetOptions;
+      this.getItemPropsOptionsApiList = getItemPropsOptionsApiList;
+
+      const isAutoLoadOptionsData =
+        (autoLoadOptionsData === true || autoLoadOptionsData === false) &&
+        autoLoadOptionsData !== config.getSelectOptions.autoLoadOptionsData
+          ? autoLoadOptionsData
+          : config.getSelectOptions.autoLoadOptionsData;
+      if (isAutoLoadOptionsData) {
+        this.loadOptionsData();
+      }
+
+      this.itemsOptions = data;
+    },
+    loadOptionsData(formData = {}) {
+      const { unifyApiGetOptions, getItemPropsOptionsApiList } = this;
       if (unifyApiGetOptions.length) {
         handeUnifyApiGetOptions(
           unifyApiGetOptions,
           getItemPropsOptionsApiList,
-          this
+          this,
+          formData
         );
       } else if (getItemPropsOptionsApiList.length) {
-        fetchItemPropsOptionsApiList(getItemPropsOptionsApiList, this);
+        fetchItemPropsOptionsApiList(
+          getItemPropsOptionsApiList,
+          this,
+          formData
+        );
       }
-
-      this.itemsOptions = data;
     },
     // 获取表单数据，不验证
     getData() {
@@ -961,6 +1085,7 @@ export default {
     // 重置
     resetFields(fields) {
       this.form.resetFields(fields);
+      this.$emit("reset", fields);
     },
     // 设置字段获得焦点
     setFieldFocus(field) {
@@ -1115,6 +1240,30 @@ export default {
     onExpandClick() {
       const expand = !this.expand;
       this.setExpand(expand);
+    },
+    // 加载表单项的下拉数据
+    loadItemOptionsData(field, params) {
+      const formItem = this.itemsOptions.find(p => p.field === field);
+      if (
+        formItem &&
+        formItem.itemRender &&
+        formItem.itemRender.props &&
+        (formItem.itemRender.props.api || formItem.itemRender.props.param)
+      ) {
+        let api = "";
+        if (formItem.itemRender.props.api) {
+          api = formItem.itemRender.props.api;
+        } else {
+          api = config.getSelectOptions.api;
+        }
+        api({
+          ...formItem.itemRender.props.param,
+          ...params
+        }).then(res => {
+          const optionsData = handlefieldOptionsDataField(field, res, this);
+          this.setFieldsOptions({ [field]: optionsData });
+        });
+      }
     }
   },
   render(h) {

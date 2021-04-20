@@ -155,11 +155,8 @@ export default {
       }
       // 不存在新增按钮，自动生成
       if (
-        !(
-          props.props.headToolbar &&
-          props.props.headToolbar.buttons &&
-          proxyConfig.add
-        )
+        !(props.props.headToolbar && props.props.headToolbar.buttons) &&
+        proxyConfig.add
       ) {
         const addButtonProps = proxyConfigOpt.add.props;
         if (
@@ -221,23 +218,47 @@ export default {
         proxyConfig[currentAction]
           .submit(values)
           .then(res => {
-            formModal.onCancel();
-            const responseMsgField = proxyConfig[currentAction].responseMsgField
-              ? proxyConfig[currentAction].responseMsgField
-              : config.proxyConfig[currentAction].responseMsgField;
-            const resMsg = responseMsgField
-              ? utils.getObjData(responseMsgField, res)
-              : "";
-            const msg = resMsg ? resMsg : "操作成功";
-            this.$message.success(msg);
+            formModal && formModal.onCancel();
+            const successMsgCode = proxyConfig[currentAction].successMsgCode
+              ? proxyConfig[currentAction].successMsgCode
+              : config.proxyConfig[currentAction].successMsgCode;
+            const responseCodeField = proxyConfig[currentAction]
+              .responseCodeField
+              ? proxyConfig[currentAction].responseCodeField
+              : config.proxyConfig[currentAction].responseCodeField;
+            if ((successMsgCode || successMsgCode == 0) && responseCodeField) {
+              const resCode = responseCodeField
+                ? utils.getObjData(responseCodeField, res)
+                : "";
+              if (resCode === successMsgCode) {
+                this.formModalSubmitMessage(res);
+              }
+            } else {
+              this.formModalSubmitMessage(res);
+            }
             this.reloadTable();
           })
           .catch(() => {
-            formModal.setConfirmLoading(false);
+            formModal && formModal.setConfirmLoading(false);
           });
       }
     },
-    onFormModalCancel() {},
+    formModalSubmitMessage(res) {
+      const { proxyConfig, currentAction } = this;
+      const responseMsgField = proxyConfig[currentAction].responseMsgField
+        ? proxyConfig[currentAction].responseMsgField
+        : config.proxyConfig[currentAction].responseMsgField;
+      const resMsg = responseMsgField
+        ? utils.getObjData(responseMsgField, res)
+        : "";
+      const msg = resMsg ? resMsg : "操作成功";
+      this.$message.success(msg);
+    },
+    onFormModalCancel() {
+      if (this.modal.on && this.modal.on.cancel) {
+        this.modal.on.cancel();
+      }
+    },
     reloadTable(params) {
       this.$refs.table.reload(params);
     },
@@ -411,7 +432,8 @@ export default {
           : addButtonProps.name
       );
       formModal.setItems(filterFormItems(this.currentAction));
-      formModal.show(openCallback);
+      formModal.show(openCallback, this.currentAction);
+      formModal.loadOptionsData();
       formModal.setLoading(false);
     },
     edit(row, e) {
@@ -440,7 +462,7 @@ export default {
       );
       formModal.setItems(filterFormItems(this.currentAction));
       formModal.setReadonly(false);
-      formModal.show(openCallback);
+      formModal.show(openCallback, this.currentAction);
       if (proxyConfig && proxyConfig.edit && proxyConfig.edit.query) {
         proxyConfig.edit.query(row).then(res => {
           let data = res;
@@ -487,7 +509,7 @@ export default {
           : viewButtonProps.name
       );
       formModal.setItems(filterFormItems(this.currentAction));
-      formModal.show(openCallback);
+      formModal.show(openCallback, this.currentAction);
       if (proxyConfig && proxyConfig.view && proxyConfig.view.query) {
         proxyConfig.view.query(row).then(res => {
           let data = res;

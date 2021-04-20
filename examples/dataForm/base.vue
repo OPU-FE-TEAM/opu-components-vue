@@ -22,6 +22,10 @@
         {{ text }}{{ field }}
         <a @click="updateValue('77777')">改变值</a>
       </template>
+      <template slot="addSlot" slot-scope="text">
+        {{ text }}
+        22222
+      </template>
     </DataForm>
     <button @click="getData">提交</button>
     <button @click="validateFields">校验并获取值</button>
@@ -45,6 +49,9 @@
     <button @click="showModelTable">
       显示弹窗表格
     </button>
+    <button @click="loadOptionsData">
+      手动获取下拉数据
+    </button>
   </div>
 </template>
 
@@ -67,91 +74,91 @@ import { utils } from "../../index";
 //         }, 500);
 //     });
 // }
-function getData(arr) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      console.log(arr);
-      const size = arr.pageSize ? arr.pageSize : 20;
-      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
-      const list = Array.from({ length: size }, (_, key) => ({
-        id: key,
-        name: `name_${pageIndex}_${key}`,
-        sex: key < 3 ? 1 : 2,
-        age: key
-      }));
-      const json = {
-        // data: [...list],
-        // total: 100
-        code: 0,
-        data: {
-          data: [...list],
-          total: 100
-        }
-      };
-      console.log(json);
-      resolve(json);
-    }, 500);
-  });
-}
-
-// function getCheckboxData() {
+// function getData(arr) {
 //   return new Promise(resolve => {
 //     setTimeout(() => {
-//       const data = Array.from({ length: 5 }, (_, key) => ({
+//       console.log(arr);
+//       const size = arr.pageSize ? arr.pageSize : 20;
+//       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+//       const list = Array.from({ length: size }, (_, key) => ({
 //         id: key,
-//         name: `check${key}`
+//         name: `name_${pageIndex}_${key}`,
+//         sex: key < 3 ? 1 : 2,
+//         age: key
 //       }));
-//       data[3].isSelected = true;
-//       data[2].isSelected = true;
-//       resolve(data);
+//       const json = {
+//         // data: [...list],
+//         // total: 100
+//         code: 0,
+//         data: {
+//           data: [...list],
+//           total: 100
+//         }
+//       };
+//       console.log(json);
+//       resolve(json);
 //     }, 500);
 //   });
 // }
 
-function getTreeData() {
+function getCheckboxData() {
   return new Promise(resolve => {
     setTimeout(() => {
-      const data = [
-        {
-          value: "zhejiang",
-          label: "Zhejiang",
-          children: [
-            {
-              value: "hangzhou",
-              label: "Hangzhou",
-              children: [
-                {
-                  value: "xihu",
-                  label: "West Lake"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          value: "jiangsu",
-          label: "Jiangsu",
-          children: [
-            {
-              value: "nanjing",
-              label: "Nanjing",
-              children: [
-                {
-                  value: "zhonghuamen",
-                  label: "Zhong Hua Men"
-                }
-              ]
-            }
-          ]
-        }
-      ];
-      resolve({
-        code: 0,
-        data: data
-      });
+      const data = Array.from({ length: 5 }, (_, key) => ({
+        id: key,
+        name: `check${key}`
+      }));
+      data[3].isSelected = true;
+      data[2].isSelected = true;
+      resolve(data);
     }, 500);
   });
 }
+
+// function getTreeData() {
+//   return new Promise(resolve => {
+//     setTimeout(() => {
+//       const data = [
+//         {
+//           value: "zhejiang",
+//           label: "Zhejiang",
+//           children: [
+//             {
+//               value: "hangzhou",
+//               label: "Hangzhou",
+//               children: [
+//                 {
+//                   value: "xihu",
+//                   label: "West Lake"
+//                 }
+//               ]
+//             }
+//           ]
+//         },
+//         {
+//           value: "jiangsu",
+//           label: "Jiangsu",
+//           children: [
+//             {
+//               value: "nanjing",
+//               label: "Nanjing",
+//               children: [
+//                 {
+//                   value: "zhonghuamen",
+//                   label: "Zhong Hua Men"
+//                 }
+//               ]
+//             }
+//           ]
+//         }
+//       ];
+//       resolve({
+//         code: 0,
+//         data: data
+//       });
+//     }, 500);
+//   });
+// }
 
 export default {
   components: {
@@ -179,56 +186,102 @@ export default {
             name: "hidden"
           }
         },
-        {
-          field: "pulldown",
-          title: "下拉面板",
-          itemRender: {
-            name: "pulldown-table",
-            props: {
-              table: {
-                props: {
-                  columns: [
-                    { type: "checkbox", width: 50 },
-                    { type: "seq", title: "Number", width: 80 },
-                    {
-                      field: "name",
-                      title: "Name",
-                      width: 200
-                    },
-                    {
-                      field: "sex",
-                      title: "Sex",
-                      width: 200
-                    },
-                    {
-                      field: "age",
-                      title: "Age",
-                      width: 200
-                    }
-                  ],
-                  height: 300,
-                  highlightHoverRow: true,
-                  highlightCurrentRow: true,
-                  proxyConfig: {
-                    ajax: {
-                      query: getData
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        // {
+        //   field: "pulldown",
+        //   title: "下拉面板",
+        //   itemRender: {
+        //     name: "pulldown-table",
+        //     props: {
+        //       table: {
+        //         props: {
+        //           columns: [
+        //             { type: "checkbox", width: 50 },
+        //             { type: "seq", title: "Number", width: 80 },
+        //             {
+        //               field: "name",
+        //               title: "Name",
+        //               width: 200
+        //             },
+        //             {
+        //               field: "sex",
+        //               title: "Sex",
+        //               width: 200
+        //             },
+        //             {
+        //               field: "age",
+        //               title: "Age",
+        //               width: 200
+        //             }
+        //           ],
+        //           height: 300,
+        //           highlightHoverRow: true,
+        //           highlightCurrentRow: true,
+        //           proxyConfig: {
+        //             ajax: {
+        //               query: getData
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // },
         {
           field: "name",
           title: "名称",
           extra: "aaa",
           option: { initialValue: "555666" },
+          actions: [
+            {
+              button: {
+                props: {
+                  icon: "plus"
+                },
+                on: {
+                  click: () => {
+                    console.log("plus click");
+                  }
+                }
+              },
+              modal: {
+                props: {
+                  title: "窗口"
+                },
+                content: () => {
+                  return 666;
+                },
+                form: {
+                  props: {
+                    items: [
+                      {
+                        title: "姓名",
+                        field: "name"
+                      },
+                      {
+                        title: "年龄",
+                        field: "age"
+                      },
+                      {
+                        title: "插槽",
+                        itemRender: {
+                          slot: "addSlot"
+                        }
+                      }
+                    ]
+                  },
+                  on: {
+                    submit: values => {
+                      console.log(values);
+                    }
+                  }
+                }
+              }
+            }
+          ],
           itemRender: {
             name: "a-input",
 
             props: {
-              readonly: true,
               placeholder: "请输入名称"
               // disabled:true
             },
@@ -240,58 +293,59 @@ export default {
             }
           }
         },
-        {
-          field: "name1",
-          title: "名称2",
-          option: { initialValue: 333 },
-          itemRender: {
-            name: "a-input",
-            props: {
-              placeholder: "请输入名称"
-            }
-          }
-        },
-        {
-          field: "name3",
-          title: "名称3",
-          class: "abcd"
-        },
-        {
-          field: "name66",
-          title: "名称66",
-          itemRender: {
-            name: "a-textarea",
-            on: {
-              enter: () => {
-                return false;
-              }
-            }
-          }
-        },
-        {
-          field: "name4",
-          title: "名称4",
-          itemRender: {}
-        },
-        {
-          field: "mytitle",
-          title: () => {
-            return "自定义标题6";
-          },
-          titleWidth: "150px",
-          itemRender: {
-            name: "a-input",
-            before: () => {
-              return 555;
-            },
-            after: () => {
-              return 666;
-            }
-          }
-        },
+        // {
+        //   field: "name1",
+        //   title: "名称2",
+        //   option: { initialValue: 333 },
+        //   itemRender: {
+        //     name: "a-input",
+        //     props: {
+        //       placeholder: "请输入名称"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "name3",
+        //   title: "名称3",
+        //   class: "abcd"
+        // },
+        // {
+        //   field: "name66",
+        //   title: "名称66",
+        //   itemRender: {
+        //     name: "a-textarea",
+        //     on: {
+        //       enter: () => {
+        //         return false;
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "name4",
+        //   title: "名称4",
+        //   itemRender: {}
+        // },
+        // {
+        //   field: "mytitle",
+        //   title: () => {
+        //     return "自定义标题6";
+        //   },
+        //   titleWidth: "150px",
+        //   itemRender: {
+        //     name: "a-input",
+        //     before: () => {
+        //       return 555;
+        //     },
+        //     after: () => {
+        //       return 666;
+        //     }
+        //   }
+        // },
         {
           field: "sex",
           title: "性别22",
+          tooltip: "一个友好的提示",
           // hasFeedback: true,
           // option: {
           //   rules: [{ required: true, message: "请输入名称!" }]
@@ -342,12 +396,89 @@ export default {
           itemRender: {
             name: "a-select",
             props: {
-              // valueField: "id",
-              // labelField: "name",
+              // autoLoadOptionsId: false,
+              valueField: "id",
+              labelField: "name",
               mode: "multiple",
               dataField: "bb",
               param: {
                 code: "bb"
+              }
+            }
+          }
+        },
+        {
+          field: "selected3",
+          title: "下拉框-全局接口获取3",
+          actions: [
+            {
+              button: {
+                props: {
+                  icon: "reload"
+                },
+                on: {
+                  click: () => {
+                    that.$refs.dataForm.loadItemOptionsData("selected3");
+                  }
+                }
+              }
+            }
+          ],
+          itemRender: {
+            name: "a-select",
+            props: {
+              // autoLoadOptionsId: false,
+              valueField: "id",
+              labelField: "name",
+              mode: "multiple",
+              dataField: "cc",
+              param: {
+                code: "cc"
+              }
+            }
+          }
+        },
+        {
+          field: "selectGroup",
+          title: "分组下拉",
+          itemRender: {
+            name: "a-select",
+            props: {
+              valueField: "id",
+              labelField: "text",
+              childrenField: "children",
+              options: [
+                {
+                  id: 1,
+                  text: "男",
+                  children: [
+                    { id: 11, text: "0-10岁" },
+                    { id: 12, text: "11-20岁" },
+                    { id: 13, text: "21-30岁" }
+                  ]
+                },
+                {
+                  id: 2,
+                  text: "女",
+                  isSelected: true,
+                  children: [
+                    { id: 21, text: "0-10岁" },
+                    { id: 22, text: "11-20岁" },
+                    { id: 23, text: "21-30岁" }
+                  ]
+                },
+                {
+                  id: 3,
+                  text: "未知"
+                }
+              ]
+            },
+            on: {
+              change(val, row, pRow) {
+                console.log(val, row, pRow);
+                that.$refs.dataForm.setData({
+                  sexName: row.label
+                });
               }
             }
           }
@@ -369,29 +500,29 @@ export default {
         //   }
         // },
 
-        {
-          field: "checkbox",
-          title: "复选框",
-          width: "200px",
-          option: { valuePropName: "checked", initialValue: "on" },
-          itemRender: {
-            name: "a-checkbox",
-            props: {
-              trueValue: "on",
-              falseValue: "off"
-            }
-          }
-        },
+        // {
+        //   field: "checkbox",
+        //   title: "复选框",
+        //   width: "200px",
+        //   option: { valuePropName: "checked", initialValue: "on" },
+        //   itemRender: {
+        //     name: "a-checkbox",
+        //     props: {
+        //       trueValue: "on",
+        //       falseValue: "off"
+        //     }
+        //   }
+        // },
         {
           field: "checkboxGroup",
           title: "复选框组",
           itemRender: {
             name: "a-checkbox-group",
             props: {
-              // api: getCheckboxData,
+              api: getCheckboxData,
               valueField: "id",
               labelField: "name",
-              dataField: "dda",
+              dataField: "",
               defaultField: "isSelected",
               param: {
                 code: "dda"
@@ -403,68 +534,68 @@ export default {
               // ]
             }
           }
-        },
-        {
-          field: "radioGroup",
-          title: "单选框组",
-          itemRender: {
-            name: "a-radio-group",
-            props: {
-              // api: getCheckboxData,
-              // dataField: "",
-              // param: {
-              //   code: "cc"
-              // }
-              options: ["Apple", "Pear", "Orange"]
-              // options: [
-              //   { id: "Apple", name: "Apple" },
-              //   { id: "Pear", name: "Pear" },
-              //   { id: "Orange", name: "Orange" }
-              // ]
-            },
-            on: {
-              change: this.onRadioChange
-            }
-          }
-        },
-        {
-          field: "number",
-          title: "数字",
-          // width: "200px",
-          itemRender: {
-            name: "a-input-number"
-          }
-        },
-        {
-          field: "date",
-          title: "日期选择",
-          itemRender: {
-            name: "a-date-picker",
-            props: {
-              // min: moment(),
-              // max: moment().add(10, "day")
-              // showTime: true,
-              // format: "YYYY-MM-DD HH:mm:ss"
-              // api: getCheckboxData
-            }
-          }
-        },
-        {
-          field: "time",
-          title: "时间",
-          itemRender: {
-            name: "a-time-picker"
-          }
-        },
-        {
-          field: "number2",
-          title: "数字2",
-          folding: true,
-          // width: "200px",
-          itemRender: {
-            name: "a-input-number"
-          }
-        },
+        }
+        // {
+        //   field: "radioGroup",
+        //   title: "单选框组",
+        //   itemRender: {
+        //     name: "a-radio-group",
+        //     props: {
+        //       // api: getCheckboxData,
+        //       // dataField: "",
+        //       // param: {
+        //       //   code: "cc"
+        //       // }
+        //       options: ["Apple", "Pear", "Orange"]
+        //       // options: [
+        //       //   { id: "Apple", name: "Apple" },
+        //       //   { id: "Pear", name: "Pear" },
+        //       //   { id: "Orange", name: "Orange" }
+        //       // ]
+        //     },
+        //     on: {
+        //       change: this.onRadioChange
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "number",
+        //   title: "数字",
+        //   // width: "200px",
+        //   itemRender: {
+        //     name: "a-input-number"
+        //   }
+        // },
+        // {
+        //   field: "date",
+        //   title: "日期选择",
+        //   itemRender: {
+        //     name: "a-date-picker",
+        //     props: {
+        //       // min: moment(),
+        //       // max: moment().add(10, "day")
+        //       // showTime: true,
+        //       // format: "YYYY-MM-DD HH:mm:ss"
+        //       // api: getCheckboxData
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "time",
+        //   title: "时间",
+        //   itemRender: {
+        //     name: "a-time-picker"
+        //   }
+        // },
+        // {
+        //   field: "number2",
+        //   title: "数字2",
+        //   folding: true,
+        //   // width: "200px",
+        //   itemRender: {
+        //     name: "a-input-number"
+        //   }
+        // },
         // {
         //   field: "month",
         //   title: "月份选择",
@@ -489,42 +620,42 @@ export default {
         //     }
         //   }
         // },
-        {
-          field: "ARangePickerSplit",
-          title: "日期范围拆分",
-          folding: true,
-          itemRender: {
-            name: "a-range-picker-split",
-            props: {
-              hasLimit: false
-              // showTime: { format: "HH:mm" }
-            }
-          }
-        },
+        // {
+        //   field: "ARangePickerSplit",
+        //   title: "日期范围拆分",
+        //   folding: true,
+        //   itemRender: {
+        //     name: "a-range-picker-split",
+        //     props: {
+        //       hasLimit: false
+        //       // showTime: { format: "HH:mm" }
+        //     }
+        //   }
+        // },
 
-        {
-          field: "number3",
-          title: "数字3",
-          folding: true,
-          // width: "200px",
-          itemRender: {
-            name: "a-input-number"
-          }
-        },
-        {
-          field: "switch",
-          title: "开关",
-          option: { valuePropName: "checked" },
-          folding: true,
-          itemRender: {
-            name: "a-switch",
-            props: {
-              // size: "small"
-              trueValue: 1,
-              falseValue: 0
-            }
-          }
-        },
+        // {
+        //   field: "number3",
+        //   title: "数字3",
+        //   folding: true,
+        //   // width: "200px",
+        //   itemRender: {
+        //     name: "a-input-number"
+        //   }
+        // },
+        // {
+        //   field: "switch",
+        //   title: "开关",
+        //   option: { valuePropName: "checked" },
+        //   folding: true,
+        //   itemRender: {
+        //     name: "a-switch",
+        //     props: {
+        //       // size: "small"
+        //       trueValue: 1,
+        //       falseValue: 0
+        //     }
+        //   }
+        // },
         // {
         //   field: "rate",
         //   title: "评分",
@@ -543,55 +674,55 @@ export default {
         //     }
         //   }
         // },
-        {
-          field: "cascader",
-          title: "级联选择",
-          itemRender: {
-            name: "a-cascader",
-            props: {
-              api: getTreeData,
-              valueField: "value",
-              labelField: "label"
-            }
-          }
-        },
-        {
-          field: "treeelect",
-          title: "树形选择器",
-          itemRender: {
-            name: "a-tree-select",
-            props: {
-              api: getTreeData
-              // treeData: [
-              //   {
-              //     title: "Node1",
-              //     value: "0-0",
-              //     key: "0-0",
-              //     children: [
-              //       {
-              //         value: "0-0-1",
-              //         key: "0-0-1",
-              //         scopedSlots: {
-              //           // custom title
-              //           title: "title"
-              //         }
-              //       },
-              //       {
-              //         title: "Child Node2",
-              //         value: "0-0-2",
-              //         key: "0-0-2"
-              //       }
-              //     ]
-              //   },
-              //   {
-              //     title: "Node2",
-              //     value: "0-1",
-              //     key: "0-1"
-              //   }
-              // ]
-            }
-          }
-        },
+        // {
+        //   field: "cascader",
+        //   title: "级联选择",
+        //   itemRender: {
+        //     name: "a-cascader",
+        //     props: {
+        //       api: getTreeData,
+        //       valueField: "value",
+        //       labelField: "label"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "treeelect",
+        //   title: "树形选择器",
+        //   itemRender: {
+        //     name: "a-tree-select",
+        //     props: {
+        //       api: getTreeData
+        //       // treeData: [
+        //       //   {
+        //       //     title: "Node1",
+        //       //     value: "0-0",
+        //       //     key: "0-0",
+        //       //     children: [
+        //       //       {
+        //       //         value: "0-0-1",
+        //       //         key: "0-0-1",
+        //       //         scopedSlots: {
+        //       //           // custom title
+        //       //           title: "title"
+        //       //         }
+        //       //       },
+        //       //       {
+        //       //         title: "Child Node2",
+        //       //         value: "0-0-2",
+        //       //         key: "0-0-2"
+        //       //       }
+        //       //     ]
+        //       //   },
+        //       //   {
+        //       //     title: "Node2",
+        //       //     value: "0-1",
+        //       //     key: "0-1"
+        //       //   }
+        //       // ]
+        //     }
+        //   }
+        // },
         // {
         //   field: "upload",
         //   title: "单选上传",
@@ -611,31 +742,31 @@ export default {
         //     }
         //   }
         // },
-        {
-          field: "imageUpload",
-          title: "图片上传",
-          itemRender: {
-            name: "a-upload",
-            props: {
-              name: "file",
-              action:
-                "http://www.opu.com.cn:17025/api/Admin/AdminCommon/UploadImage",
-              listType: "picture-card",
-              multiple: true,
-              buttonText: "+选择图片",
-              responseUrlField: "data.url",
-              // maxSize: 300,
-              headers: {
-                Authorization: "a4f32e99de2b481ba91117b805b910aa"
-              }
-            },
-            on: {
-              change: e => {
-                console.log(e);
-              }
-            }
-          }
-        },
+        // {
+        //   field: "imageUpload",
+        //   title: "图片上传",
+        //   itemRender: {
+        //     name: "a-upload",
+        //     props: {
+        //       name: "file",
+        //       action:
+        //         "http://www.opu.com.cn:17025/api/Admin/AdminCommon/UploadImage",
+        //       listType: "picture-card",
+        //       multiple: true,
+        //       buttonText: "+选择图片",
+        //       responseUrlField: "data.url",
+        //       // maxSize: 300,
+        //       headers: {
+        //         Authorization: "a4f32e99de2b481ba91117b805b910aa"
+        //       }
+        //     },
+        //     on: {
+        //       change: e => {
+        //         console.log(e);
+        //       }
+        //     }
+        //   }
+        // },
         // {
         //   field: "imageUpload1",
         //   title: "拖拽上传",
@@ -662,21 +793,21 @@ export default {
         //   }
         // },
 
-        {
-          field: "slot",
-          title: "item插槽",
-          option: {
-            initialValue: 555
-          },
-          slot: "itemSlot"
-        },
-        {
-          field: "inputslot",
-          title: "input插槽",
-          itemRender: {
-            slot: "inputSlot"
-          }
-        }
+        // {
+        //   field: "slot",
+        //   title: "item插槽",
+        //   option: {
+        //     initialValue: 555
+        //   },
+        //   slot: "itemSlot"
+        // },
+        // {
+        //   field: "inputslot",
+        //   title: "input插槽",
+        //   itemRender: {
+        //     slot: "inputSlot"
+        //   }
+        // }
         // {
         //   field: "renderContent",
         //   title: "自定义内容",
@@ -862,6 +993,12 @@ export default {
     },
     showModelTable() {
       this.$refs.modelTable.show();
+    },
+    loadOptionsData() {
+      this.$refs.dataForm.loadOptionsData({
+        selected: 123456,
+        checkboxGroup: 666
+      });
     }
   }
 };

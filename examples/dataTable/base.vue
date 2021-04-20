@@ -15,6 +15,7 @@
       @cell-click="onCellClick"
       :setcolumns-config="setColumns"
       :columns="tableColumn"
+      size="small"
       :edit-config="{ trigger: 'click', mode: 'cell' }"
       :searchConfig="search"
     >
