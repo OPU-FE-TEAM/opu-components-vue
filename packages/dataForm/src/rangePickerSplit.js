@@ -24,7 +24,6 @@ export default {
   },
   data() {
     return {
-      data: [],
       minDate: "",
       maxDate: ""
     };

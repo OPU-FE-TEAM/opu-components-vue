@@ -3,6 +3,7 @@ import ACustomRender from "./customRender";
 import AScopedSlots from "./scopedSlots";
 import AUpload from "./upload";
 import ARangePickerSplit from "./rangePickerSplit";
+import AInputNumberSplit from "./inputNumberSplit";
 // import ATest from "./test";
 import OptionsComponent from "./optionsComponent";
 import OpuDatePicker from "./datePicker";
@@ -19,6 +20,7 @@ export default {
   AScopedSlots,
   AUpload,
   ARangePickerSplit,
+  AInputNumberSplit,
   OpuSelect,
   OptionsComponent,
   OpuDatePicker,

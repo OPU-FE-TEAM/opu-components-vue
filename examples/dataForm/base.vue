@@ -293,6 +293,20 @@ export default {
             }
           }
         },
+        {
+          field: "price",
+          title: "金额",
+          itemRender: {
+            name: "a-input-number-split"
+          }
+        },
+        {
+          field: "cprice",
+          title: "时间",
+          itemRender: {
+            name: "a-range-picker-split"
+          }
+        },
         // {
         //   field: "name1",
         //   title: "名称2",
@@ -910,7 +924,8 @@ export default {
         selected: 2,
         sex: "1",
         radioGroup: 3,
-        switch: 1
+        switch: 1,
+        price: [11111, 22222]
       });
     },
     setItems() {

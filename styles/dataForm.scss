@@ -185,15 +185,27 @@ $formItemMarginBottom: 19px;
       min-width: auto!important;
     }
     
-  }
+}
 
-  .ant-calendar-date.outside{
+.ant-calendar-date.outside{
     background-color: #fafafa;
     width: auto;
 }
 
-  @media (max-width: 575px){
-      .data-form{
+.input-number-split {
+    display: flex;
+    .item {
+      flex: 1;
+    }
+    .fh {
+      padding: 0 5px;
+      font-size: 14px;
+      line-height: 32px;
+    }
+}
+
+@media (max-width: 575px){
+    .data-form{
         .ant-form-item-label{
             line-height: 39px;
         }
@@ -201,5 +213,5 @@ $formItemMarginBottom: 19px;
             display: inline-block; 
             width: auto; 
         }
-      }
-  }
+    }
+}

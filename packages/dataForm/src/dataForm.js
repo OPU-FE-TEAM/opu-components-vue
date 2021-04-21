@@ -358,6 +358,18 @@ function renderItemInput(item, h, _vm) {
           }
         };
       }
+    } else if (renderName === "a-input-number-split") {
+      if (props.on && utils.isObject(props.on)) {
+        props.on.inputPressEnter = e => {
+          nextItemFocus(item, _vm, e);
+        };
+      } else {
+        props.on = {
+          inputPressEnter: e => {
+            nextItemFocus(item, _vm, e);
+          }
+        };
+      }
     } else if (renderName === "a-switch") {
       renderName = "opu-switch";
     } else if (renderName === "a-checkbox") {
@@ -536,8 +548,9 @@ function renderItems(h, _vm) {
           on: {}
         };
         if (
-          (item.itemRender && focusItemTypes.includes(item.itemRender.name)) ||
-          !(item.itemRender && item.itemRender.name)
+          ((item.itemRender && focusItemTypes.includes(item.itemRender.name)) ||
+            !(item.itemRender && item.itemRender.name)) &&
+          !(item.itemRender && item.itemRender.name == "a-input-number-split")
         ) {
           wrapperProps.on.keyup = e => {
             const { keyCode } = e;
@@ -802,7 +815,8 @@ export default {
         "a-cascader",
         "a-tree-select",
         "a-textarea",
-        "a-range-picker-split"
+        "a-range-picker-split",
+        "a-input-number-split"
       ],
       unifyApiGetOptions: [],
       getItemPropsOptionsApiList: [],
@@ -1135,7 +1149,6 @@ export default {
       // 清除赋值字段的值
       this.setData(formData);
     },
-
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}) {
       const formData = {};
