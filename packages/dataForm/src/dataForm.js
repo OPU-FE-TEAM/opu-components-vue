@@ -27,7 +27,8 @@ function handeUnifyApiGetOptions(
   unifyList,
   optionsApiList,
   _vm,
-  formData = {}
+  formData = {},
+  callback
 ) {
   const { getSelectOptions } = _vm;
   // 处理同一请求参数
@@ -71,11 +72,16 @@ function handeUnifyApiGetOptions(
       fields
     });
   }
-  fetchItemPropsOptionsApiList(optionsApiList, _vm, formData);
+  fetchItemPropsOptionsApiList(optionsApiList, _vm, formData, callback);
 }
 
 // 请求表单项可选数据
-const fetchItemPropsOptionsApiList = async function(list, _vm, formData) {
+const fetchItemPropsOptionsApiList = async function(
+  list,
+  _vm,
+  formData,
+  callback
+) {
   const { setFieldsOptions, onOptionsAllLoad, onOptionsLoadBefore } = _vm;
   if (onOptionsLoadBefore) {
     const beforeRes = onOptionsLoadBefore(list);
@@ -123,13 +129,14 @@ const fetchItemPropsOptionsApiList = async function(list, _vm, formData) {
           // json[field] = itemData;
         }
       });
+      setFieldsOptions(json);
       if (onOptionsAllLoad) {
         const onLoadRes = onOptionsAllLoad(json);
         if (onLoadRes) {
           json = onLoadRes;
         }
       }
-      setFieldsOptions(json);
+      callback && callback();
     })
     .catch(() => {});
 };
@@ -985,20 +992,22 @@ export default {
 
       this.itemsOptions = data;
     },
-    loadOptionsData(formData = {}) {
+    loadOptionsData(formData = {}, callback) {
       const { unifyApiGetOptions, getItemPropsOptionsApiList } = this;
       if (unifyApiGetOptions.length) {
         handeUnifyApiGetOptions(
           unifyApiGetOptions,
           getItemPropsOptionsApiList,
           this,
-          formData
+          formData,
+          callback
         );
       } else if (getItemPropsOptionsApiList.length) {
         fetchItemPropsOptionsApiList(
           getItemPropsOptionsApiList,
           this,
-          formData
+          formData,
+          callback
         );
       }
     },

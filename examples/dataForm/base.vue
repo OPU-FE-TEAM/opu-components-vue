@@ -13,6 +13,8 @@
       :foldingButtonProps="false"
       :loading="loading"
       autoFocus="name3"
+      :autoLoadOptionsData="false"
+      loadOptionsIdField="id"
     >
       <template slot="itemSlot" slot-scope="text, updateValue, field">
         全插槽内容:{{ text }}{{ field }}
@@ -112,7 +114,8 @@ import { utils } from "../../index";
 //   });
 // }
 
-function getCheckboxData() {
+function getCheckboxData(values) {
+  console.log("get:", values);
   return new Promise(resolve => {
     setTimeout(() => {
       const data = Array.from({ length: 5 }, (_, key) => ({
@@ -122,6 +125,43 @@ function getCheckboxData() {
       data[3].isSelected = true;
       data[2].isSelected = true;
       resolve(data);
+    }, 500);
+  });
+}
+
+function getSelectGroupData() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const data = [
+        {
+          id: 1,
+          text: "男",
+          code: "boy",
+          children: [
+            { id: 11, text: "0-10岁", code: "b10" },
+            { id: 12, text: "11-20岁", code: "b20" },
+            { id: 13, text: "21-30岁", code: "b30" }
+          ]
+        },
+        {
+          id: 2,
+          text: "女",
+          isSelected: true,
+          code: "girl",
+          children: [
+            { id: 21, text: "0-10岁", code: "g10" },
+            { id: 22, text: "11-20岁", code: "g20" },
+            { id: 23, text: "21-30岁", code: "g30" }
+          ]
+        },
+        {
+          id: 3,
+          text: "未知"
+        }
+      ];
+      resolve({
+        data: data
+      });
     }, 500);
   });
 }
@@ -503,33 +543,8 @@ export default {
               valueField: "id",
               labelField: "text",
               childrenField: "children",
-              options: [
-                {
-                  id: 1,
-                  text: "男",
-                  code: "boy",
-                  children: [
-                    { id: 11, text: "0-10岁", code: "b10" },
-                    { id: 12, text: "11-20岁", code: "b20" },
-                    { id: 13, text: "21-30岁", code: "b30" }
-                  ]
-                },
-                {
-                  id: 2,
-                  text: "女",
-                  isSelected: true,
-                  code: "girl",
-                  children: [
-                    { id: 21, text: "0-10岁", code: "g10" },
-                    { id: 22, text: "11-20岁", code: "g20" },
-                    { id: 23, text: "21-30岁", code: "g30" }
-                  ]
-                },
-                {
-                  id: 3,
-                  text: "未知"
-                }
-              ]
+              api: getSelectGroupData,
+              dataField: "data"
             },
             on: {
               change(val, row, pRow) {
@@ -969,7 +984,8 @@ export default {
         sex: "1",
         radioGroup: 3,
         switch: 1,
-        price: [11111, 22222]
+        price: [11111, 22222],
+        selectGroup: 12
       });
     },
     setItems() {
@@ -1032,6 +1048,9 @@ export default {
     },
     onOptionsAllLoad(json) {
       console.log("所有api请求完成", json);
+      this.$nextTick(() => {
+        // this.setFormData();
+      });
     },
     onOptionsLoadBefore(list) {
       console.log("请求前回调", list);
@@ -1054,10 +1073,16 @@ export default {
       this.$refs.modelTable.show();
     },
     loadOptionsData() {
-      this.$refs.dataForm.loadOptionsData({
-        selected: 123456,
-        checkboxGroup: 666
-      });
+      this.$refs.dataForm.loadOptionsData(
+        {
+          selected: 123456,
+          checkboxGroup: 666
+        },
+        () => {
+          console.log("set");
+          this.setFormData();
+        }
+      );
     }
   }
 };
