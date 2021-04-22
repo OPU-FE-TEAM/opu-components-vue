@@ -376,6 +376,8 @@ function renderItemInput(item, h, _vm) {
       renderName = "opu-checkbox";
     } else if (renderName === "a-tree-select") {
       renderName = "opu-tree-select";
+    } else if (renderName === "a-select-group") {
+      renderName = "opu-select-group";
     } else if (optionsComponents.includes(renderName)) {
       // 有可选数据的组件
       props.props.componentPropsData = props.props;
@@ -427,7 +429,13 @@ function renderItemContent(item, h, _vm) {
 
         actionButton = h(
           "a-button",
-          { ...{ props: { ...buttonProps }, on: { ...buttonOn } } },
+          {
+            ...{
+              props: { ...buttonProps },
+              on: { ...buttonOn },
+              style: { ...p.button.style }
+            }
+          },
           [buttonContent]
         );
       }

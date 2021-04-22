@@ -63,6 +63,12 @@ DataForm.setup({
       placeholder: "请选择",
       allowClear: true,
       searchFields: ["code"]
+    },
+    selectGroup: {
+      showSearch: true,
+      placeholder: "请选择",
+      allowClear: true,
+      searchFields: ["code"]
     }
   }
 });

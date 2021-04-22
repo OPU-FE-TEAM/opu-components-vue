@@ -31,7 +31,7 @@ function handleItemPropsOptions(options, _vm, pValue = "") {
 }
 
 export default {
-  name: "OpuSelect",
+  name: "OpuSelectGroup",
   components: {},
   props: {
     ...SelectProps,
@@ -53,7 +53,8 @@ export default {
   data() {
     return {
       optionsData: [],
-      hasGroup: false
+      hasGroup: false,
+      cloneOptionsData: []
     };
   },
   computed: {
@@ -72,10 +73,11 @@ export default {
         $listeners,
         $options,
         optionsData,
-        value,
-        searchFields,
-        vF,
-        lF
+        value
+        // searchFields,
+        // vF,
+        // lF,
+        // childrenField
       } = this;
       const propsData = $options.propsData;
 
@@ -91,6 +93,7 @@ export default {
       } else if (value && utils.isArray(value)) {
         currentValue = value.map(p => p + "");
       }
+      console.log(propsData);
       const props = {
         props: {
           ...propsData,
@@ -98,35 +101,13 @@ export default {
         },
         on: {
           ...ons,
-          change: this.updateValue
+          change: this.updateValue,
+          search: this.onSearch
         }
       };
 
-      if (props.props.showSearch && !props.props.filterOption) {
-        props.props.filterOption = (input, option) => {
-          const value = option.componentOptions.propsData.value;
-          const objIndex = optionsData.findIndex(
-            item => item[vF].toString() === value
-          );
-          const obj = optionsData[objIndex];
-          let is = false;
-          const searchFieldList = [vF, lF, ...searchFields];
-          for (let i = 0; i < searchFieldList.length; i++) {
-            const key = searchFieldList[i];
-            if (obj[key]) {
-              if (
-                obj[key]
-                  .toString()
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              ) {
-                is = true;
-                break;
-              }
-            }
-          }
-          return is;
-        };
+      if (props.props.showSearch) {
+        props.props.filterOption = false;
       }
 
       props.props.options = optionsData;
@@ -142,6 +123,7 @@ export default {
       const { options } = this;
       if (options && options.length) {
         this.optionsData = handleItemPropsOptions(options, this);
+        this.cloneOptionsData = this.optionsData;
       }
     },
     updateValue(value) {
@@ -159,6 +141,7 @@ export default {
     setOptionsData(data) {
       const options = handleItemPropsOptions(data, this);
       this.optionsData = options;
+      this.cloneOptionsData = this.optionsData;
       return options;
     },
     getOptionsData() {
@@ -197,6 +180,66 @@ export default {
         });
       }
       return "";
+    },
+    onSearch(value) {
+      const { cloneOptionsData, vF, lF, searchFields, childrenField } = this;
+      const newData = utils.clone(cloneOptionsData, true);
+      if (value) {
+        const keyword = value.toLowerCase();
+        const searchFieldList = [vF, lF, ...searchFields];
+
+        const data = newData
+          .map(item => {
+            if (item[childrenField] && item[childrenField].length) {
+              const children = item[childrenField].filter(p => {
+                let is = false;
+                for (let i = 0; i < searchFieldList.length; i++) {
+                  const key = searchFieldList[i];
+                  if (p[key]) {
+                    if (
+                      p[key]
+                        .toString()
+                        .toLowerCase()
+                        .indexOf(keyword) >= 0
+                    ) {
+                      is = true;
+                      break;
+                    }
+                  }
+                }
+                return is;
+              });
+              if (children && children.length) {
+                item[childrenField] = children;
+                return item;
+              }
+            }
+            let is = false;
+            for (let i = 0; i < searchFieldList.length; i++) {
+              const key = searchFieldList[i];
+              if (item[key]) {
+                if (
+                  item[key]
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(keyword) >= 0
+                ) {
+                  is = true;
+                  break;
+                }
+              }
+            }
+            if (is) {
+              return item;
+            } else {
+              return "";
+            }
+          })
+          .filter(p => p !== "");
+        this.optionsData = data;
+      } else {
+        this.optionsData = newData;
+      }
     }
   },
   render(h) {
@@ -205,7 +248,7 @@ export default {
     if (optGroup) {
       componentProps.props.options = null;
     }
-
+    console.log(this.optionsData);
     return h(
       "a-select",
       {
