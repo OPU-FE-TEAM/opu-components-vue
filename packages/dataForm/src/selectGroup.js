@@ -93,7 +93,6 @@ export default {
       } else if (value && utils.isArray(value)) {
         currentValue = value.map(p => p + "");
       }
-      console.log(propsData);
       const props = {
         props: {
           ...propsData,
@@ -248,7 +247,6 @@ export default {
     if (optGroup) {
       componentProps.props.options = null;
     }
-    console.log(this.optionsData);
     return h(
       "a-select",
       {
