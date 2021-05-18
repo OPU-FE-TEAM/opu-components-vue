@@ -2,12 +2,13 @@ import { DataTable } from "../../dataTable";
 import { Pulldown } from "vxe-table";
 import { utils } from "../../init";
 function renderInput(h, _vm) {
-  const { onInputFocus, onInputKeyUp, text, onInputChange } = _vm;
+  const { onInputFocus, onInputKeyUp, text, onInputChange, disabled } = _vm;
   const onChange = utils.debounce(onInputChange, 200);
   return h("a-input", {
     props: {
       placeholder: "请选择",
-      value: text
+      value: text,
+      disabled
     },
     on: {
       focus: onInputFocus,
@@ -41,7 +42,8 @@ export default {
     },
     value: {
       type: [Object, Array, String, Number]
-    }
+    },
+    disabled: Boolean
   },
 
   data() {
@@ -58,6 +60,8 @@ export default {
         text = selectValue.map(p => p[this.textField]).join(",");
       } else if (selectValue && utils.isObject(selectValue)) {
         text = selectValue[this.textField];
+      } else if (selectValue) {
+        text = selectValue;
       }
       return text;
     },
@@ -128,8 +132,8 @@ export default {
 
   methods: {
     onTableRowSelect({ row }) {
-      this.selectValue = row;
-      this.$emit("change", this.selectValue);
+      this.selectValue = row[this.valueField];
+      this.$emit("change", this.selectValue, row);
       this.$refs.pulldownTable.hidePanel();
     },
     onTableCheckboxChange({ records }) {

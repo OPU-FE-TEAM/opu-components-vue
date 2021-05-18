@@ -44,7 +44,8 @@ export default {
       type: Array,
       default: () => []
     },
-    childrenField: String
+    childrenField: String,
+    renderOptionLabel: Function
   },
   model: {
     prop: "value",
@@ -197,12 +198,28 @@ export default {
         });
       }
       return "";
+    },
+    renderOptionItems(h) {
+      const { optionsData, renderOptionLabel } = this;
+      return optionsData.map(item => {
+        const label = renderOptionLabel(item);
+        return h("a-select-option", { props: { value: item.value } }, [label]);
+      });
     }
   },
   render(h) {
-    const { componentProps, renderOptGroup } = this;
+    const {
+      componentProps,
+      renderOptGroup,
+      renderOptionLabel,
+      renderOptionItems
+    } = this;
     const optGroup = renderOptGroup(h);
+    let optionItems = "";
     if (optGroup) {
+      componentProps.props.options = null;
+    } else if (renderOptionLabel && utils.isFunction(renderOptionLabel)) {
+      optionItems = renderOptionItems(h);
       componentProps.props.options = null;
     }
 
@@ -217,7 +234,7 @@ export default {
           ...componentProps.on
         }
       },
-      [optGroup]
+      [optGroup, optionItems]
     );
   }
 };

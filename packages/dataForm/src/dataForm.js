@@ -269,11 +269,13 @@ function renderItemInput(item, h, _vm) {
     } else {
       props.props.disabled = false;
     }
+
     // TODO 切换只读的处理
     // if (props.props && props.props.disabled !==true) {
     //   props.props.disabled=false;
     // }
   }
+
   let inputDom = "";
   if (item.itemRender && item.itemRender.slot) {
     // 插槽
@@ -490,7 +492,8 @@ function renderItems(h, _vm) {
     layout,
     currentColspan,
     $scopedSlots,
-    focusItemTypes
+    focusItemTypes,
+    currentScreen
     // $listeners,
     // submitButtonProps
   } = _vm;
@@ -540,8 +543,15 @@ function renderItems(h, _vm) {
         }
         if (layout === "grid") {
           // grid模式下每个单元格所占格
-          if (item.colspan && item.colspan > 1) {
-            formItemProps.style["gridColumn"] = "span " + item.colspan;
+          if (item.colspan) {
+            let itemColspan = "";
+            if (utils.isObject(item.colspan)) {
+              itemColspan = item.colspan[currentScreen];
+            } else {
+              itemColspan = item.colspan;
+            }
+            // that.currentScreen
+            formItemProps.style["gridColumn"] = "span " + itemColspan;
           }
           if (item.rowspan && item.rowspan > 1) {
             formItemProps.style["gridRow"] = "span " + item.rowspan;
@@ -835,7 +845,8 @@ export default {
       ],
       unifyApiGetOptions: [],
       getItemPropsOptionsApiList: [],
-      config: config
+      config: config,
+      currentScreen: "xl"
     };
   },
   computed: {
@@ -888,12 +899,14 @@ export default {
         keys.map(screen =>
           enquire.register(responsiveMap[screen], {
             match: () => {
+              that.currentScreen = screen;
               that.currentColspan = that.colspan[screen];
             },
             unmatch: () => {
               const keyIndex = keys.findIndex(p => p === screen);
               if (keyIndex > 0) {
                 const newKeyIndex = keyIndex - 1;
+                that.currentScreen = keys[newKeyIndex];
                 that.currentColspan = that.colspan[keys[newKeyIndex]];
               }
             },

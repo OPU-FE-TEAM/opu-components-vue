@@ -87,32 +87,32 @@ import { utils } from "../../index";
 //         }, 500);
 //     });
 // }
-// function getData(arr) {
-//   return new Promise(resolve => {
-//     setTimeout(() => {
-//       console.log(arr);
-//       const size = arr.pageSize ? arr.pageSize : 20;
-//       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
-//       const list = Array.from({ length: size }, (_, key) => ({
-//         id: key,
-//         name: `name_${pageIndex}_${key}`,
-//         sex: key < 3 ? 1 : 2,
-//         age: key
-//       }));
-//       const json = {
-//         // data: [...list],
-//         // total: 100
-//         code: 0,
-//         data: {
-//           data: [...list],
-//           total: 100
-//         }
-//       };
-//       console.log(json);
-//       resolve(json);
-//     }, 500);
-//   });
-// }
+function getData(arr) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log(arr);
+      const size = arr.pageSize ? arr.pageSize : 20;
+      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+      const list = Array.from({ length: size }, (_, key) => ({
+        id: key,
+        name: `name_${pageIndex}_${key}`,
+        sex: key < 3 ? 1 : 2,
+        age: key
+      }));
+      const json = {
+        // data: [...list],
+        // total: 100
+        code: 0,
+        data: {
+          data: [...list],
+          total: 100
+        }
+      };
+      console.log(json);
+      resolve(json);
+    }, 500);
+  });
+}
 
 function getCheckboxData(values) {
   console.log("get:", values);
@@ -224,7 +224,14 @@ export default {
       readonly: false,
       loading: false,
       expand: false,
-      colspan: 3,
+      colspan: {
+        xs: 1,
+        sm: 2,
+        md: 3,
+        lg: 4,
+        xl: 5,
+        xxl: 6
+      },
       selectGroupOptions: [
         {
           id: 1,
@@ -268,46 +275,74 @@ export default {
             name: "hidden"
           }
         },
-        // {
-        //   field: "pulldown",
-        //   title: "下拉面板",
-        //   itemRender: {
-        //     name: "pulldown-table",
-        //     props: {
-        //       table: {
-        //         props: {
-        //           columns: [
-        //             { type: "checkbox", width: 50 },
-        //             { type: "seq", title: "Number", width: 80 },
-        //             {
-        //               field: "name",
-        //               title: "Name",
-        //               width: 200
-        //             },
-        //             {
-        //               field: "sex",
-        //               title: "Sex",
-        //               width: 200
-        //             },
-        //             {
-        //               field: "age",
-        //               title: "Age",
-        //               width: 200
-        //             }
-        //           ],
-        //           height: 300,
-        //           highlightHoverRow: true,
-        //           highlightCurrentRow: true,
-        //           proxyConfig: {
-        //             ajax: {
-        //               query: getData
-        //             }
-        //           }
-        //         }
-        //       }
-        //     }
-        //   }
-        // },
+        {
+          field: "pulldown",
+          title: "下拉面板",
+          option: {
+            initialValue: "桂林"
+          },
+          itemRender: {
+            name: "pulldown-table",
+            props: {
+              valueField: "name",
+              table: {
+                props: {
+                  columns: [
+                    // { type: "checkbox", width: 50 },
+                    { type: "seq", title: "Number", width: 80 },
+                    {
+                      field: "name",
+                      title: "Name",
+                      width: 200
+                    },
+                    {
+                      field: "sex",
+                      title: "Sex",
+                      width: 200
+                    },
+                    {
+                      field: "age",
+                      title: "Age",
+                      width: 200
+                    }
+                  ],
+                  height: 300,
+                  highlightHoverRow: true,
+                  highlightCurrentRow: true,
+                  proxyConfig: {
+                    ajax: {
+                      query: getData
+                    }
+                  }
+                }
+              }
+            },
+            on: {
+              change(val, sel) {
+                console.log("change", val, sel);
+              },
+              inputChange(sel) {
+                console.log("inputChange", sel);
+              }
+            }
+          }
+        },
+        {
+          field: "isDelete",
+          title: "包含取消",
+          tooltip: "是否包含已取消的订单",
+          titleWidth: "85px",
+          option: {
+            initialValue: 0
+          },
+          itemRender: {
+            name: "a-switch",
+            props: {
+              trueValue: 1,
+              falseValue: 0
+            }
+          }
+        },
         {
           field: "name",
           title: "名称",
@@ -405,18 +440,26 @@ export default {
         //   title: "名称3",
         //   class: "abcd"
         // },
-        // {
-        //   field: "name66",
-        //   title: "名称66",
-        //   itemRender: {
-        //     name: "a-textarea",
-        //     on: {
-        //       enter: () => {
-        //         return false;
-        //       }
-        //     }
-        //   }
-        // },
+        {
+          field: "name66",
+          title: "名称66",
+          colspan: {
+            xs: 1,
+            sm: 2,
+            md: 3,
+            lg: 4,
+            xl: 5,
+            xxl: 6
+          },
+          itemRender: {
+            name: "a-textarea",
+            on: {
+              enter: () => {
+                return false;
+              }
+            }
+          }
+        },
         // {
         //   field: "name4",
         //   title: "名称4",
@@ -464,10 +507,15 @@ export default {
               // param: {
               //   code: "aa"
               // }
+              renderOptionLabel: item => {
+                return <div>aaaa {item.label}</div>;
+              },
               options: [
                 {
                   id: 1,
-                  text: "男"
+                  text: "男",
+                  isSelected: true,
+                  code: 1245
                 },
                 {
                   id: 2,
@@ -607,7 +655,7 @@ export default {
               // ]
             }
           }
-        }
+        },
         // {
         //   field: "radioGroup",
         //   title: "单选框组",
@@ -693,18 +741,20 @@ export default {
         //     }
         //   }
         // },
-        // {
-        //   field: "ARangePickerSplit",
-        //   title: "日期范围拆分",
-        //   folding: true,
-        //   itemRender: {
-        //     name: "a-range-picker-split",
-        //     props: {
-        //       hasLimit: false
-        //       // showTime: { format: "HH:mm" }
-        //     }
-        //   }
-        // },
+        {
+          field: "ARangePickerSplit",
+          title: "日期范围拆分",
+          itemRender: {
+            name: "a-range-picker-split",
+            props: {
+              hasLimit: false,
+              separator: () => {
+                return <div style="color:red;width:70px">结束日期：</div>;
+              }
+              // showTime: { format: "HH:mm" }
+            }
+          }
+        },
 
         // {
         //   field: "number3",
@@ -890,52 +940,52 @@ export default {
         //     }
         //   }
         // },
-        // {
-        //   align: "left",
-        //   colspan: 2,
-        //   colon: false,
-        //   // titleWidth:0,
-        //   itemRender: {
-        //     name: "buttons",
-        //     items: [
-        //       {
-        //         props: {
-        //           // 'html-type': 'submit',
-        //           action: "submit",
-        //           content: "提交",
-        //           type: "primary"
-        //         }
-        //       },
-        //       {
-        //         props: {
-        //           // 'html-type': 'reset',
-        //           action: "reset",
-        //           content: "重置"
-        //         },
-        //         on: {
-        //           click: () => {
-        //             console.log("click");
-        //             return false;
-        //           }
-        //         }
-        //       },
-        //       {
-        //         props: {
-        //           action: "gaoji",
-        //           content: "自定义action"
-        //         }
-        //       },
-        //       {
-        //         props: {
-        //           content: "设置表单值"
-        //         },
-        //         on: {
-        //           click: this.setFormData
-        //         }
-        //       }
-        //     ]
-        //   }
-        // }
+        {
+          align: "left",
+          colspan: 2,
+          colon: false,
+          // titleWidth:0,
+          itemRender: {
+            name: "buttons",
+            items: [
+              {
+                props: {
+                  // 'html-type': 'submit',
+                  action: "submit",
+                  content: "提交",
+                  type: "primary"
+                }
+              },
+              {
+                props: {
+                  // 'html-type': 'reset',
+                  action: "reset",
+                  content: "重置"
+                },
+                on: {
+                  click: () => {
+                    console.log("click");
+                    return false;
+                  }
+                }
+              },
+              {
+                props: {
+                  action: "gaoji",
+                  content: "自定义action"
+                }
+              },
+              {
+                props: {
+                  content: "设置表单值"
+                },
+                on: {
+                  click: this.setFormData
+                }
+              }
+            ]
+          }
+        }
       ]
     };
   },

@@ -51,6 +51,7 @@ export default {
     updateValue(value) {
       const { trueValue, falseValue } = this;
       const val = value ? trueValue : falseValue;
+
       this.$emit("update", val);
       this.$emit("change", val);
     }

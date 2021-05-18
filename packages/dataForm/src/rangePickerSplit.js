@@ -16,7 +16,8 @@ export default {
       type: Boolean,
       required: false,
       default: true
-    }
+    },
+    separator: [String, Function]
   },
   model: {
     prop: "value",
@@ -101,7 +102,7 @@ export default {
     }
   },
   render(h) {
-    const { hasLimit } = this;
+    const { hasLimit, separator } = this;
     const propsData = utils.clone(this.$options.propsData);
     delete propsData.value;
     const start = {
@@ -198,13 +199,19 @@ export default {
         }
       };
     }
+    let separatorText = "-";
+    if (separator && utils.isFunction(separator)) {
+      separatorText = separator();
+    } else if (separator) {
+      separatorText = separator;
+    }
 
     return (
       <div class="date-range-split">
         <div class="item">
           <opu-date-picker {...start} />
         </div>
-        <div class="fh"> - </div>
+        <div class="fh"> {separatorText} </div>
         <div class="item">
           <opu-date-picker {...end} />
         </div>
