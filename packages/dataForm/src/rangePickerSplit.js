@@ -108,8 +108,8 @@ export default {
     const start = {
       ref: "startDatePicker",
       props: {
-        ...propsData,
-        allowClear: false
+        ...propsData
+        // allowClear: false
       },
       style: {
         width: "100%"
@@ -132,8 +132,8 @@ export default {
     const end = {
       ref: "endDatePicker",
       props: {
-        ...propsData,
-        allowClear: false
+        ...propsData
+        // allowClear: false
       },
       style: {
         width: "100%"

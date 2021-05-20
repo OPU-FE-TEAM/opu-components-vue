@@ -633,7 +633,8 @@ export default {
           ...config.props,
           ...propsData,
           proxyConfig: utils.clone(proxyConfigOpt, true),
-          columns: columns
+          columns: columns,
+          loading: propsData.loading
         }
       });
       if (height && utils.isString(height) && height.indexOf("calc") > -1) {

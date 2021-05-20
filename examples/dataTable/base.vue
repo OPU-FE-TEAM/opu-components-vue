@@ -42,7 +42,7 @@
 // import {utils} from '../../index'
 
 function getData(arr) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       console.log(arr);
       const size = arr.pageSize ? arr.pageSize : 20;
@@ -55,7 +55,8 @@ function getData(arr) {
         select: "",
         select1: "",
         switch: false,
-        pulldownTable: ""
+        pulldownTable: "",
+        datePicker: "2021-05-05"
       }));
       const json = {
         // data: [...list],
@@ -66,8 +67,9 @@ function getData(arr) {
           total: 10000
         }
       };
+      reject();
       console.log(json);
-      resolve(json);
+      // resolve(json);
     }, 500);
   });
 }
@@ -498,7 +500,7 @@ export default {
         //   total: "data.total",
         //   list: "data.data"
         // },
-        autoLoad: false,
+        // autoLoad: false,
         ajax: {
           query: getData
         }

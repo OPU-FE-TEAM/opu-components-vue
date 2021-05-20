@@ -69,6 +69,10 @@ DataForm.setup({
       placeholder: "请选择",
       allowClear: true,
       searchFields: ["code"]
+    },
+    rangePickerSplit: {
+      allowClear: true,
+      placeholder: "请选择1"
     }
   }
 });
