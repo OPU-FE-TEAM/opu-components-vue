@@ -1215,8 +1215,14 @@ export default {
                 "a-select"
               ];
               let value = defaultValue;
+              const isSeletctMultiple =
+                item.itemRender.name == "select" &&
+                item.itemRender.props &&
+                item.itemRender.props.mode == "multiple";
               if (
-                !valueArrayTypes.includes(item.itemRender.name) &&
+                (!valueArrayTypes.includes(item.itemRender.name) ||
+                  !isSeletctMultiple) &&
+                utils.isArray(defaultValue) &&
                 defaultValue.length === 1
               ) {
                 value = defaultValue[0];
