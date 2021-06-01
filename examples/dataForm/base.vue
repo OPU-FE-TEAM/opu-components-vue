@@ -2,7 +2,7 @@
   <div>
     <DataForm
       ref="dataForm"
-      layout="grid"
+      layout="inline"
       :colspan="colspan"
       :readonly="readonly"
       :items="items"
@@ -15,6 +15,7 @@
       autoFocus="name3"
       :autoLoadOptionsData="false"
       loadOptionsIdField="id"
+      titleWidth="auto"
     >
       <template slot="itemSlot" slot-scope="text, updateValue, field">
         全插槽内容:{{ text }}{{ field }}
@@ -276,6 +277,27 @@ export default {
           }
         },
         {
+          field: "name11",
+          title: "姓名1",
+          itemRender: {
+            name: "a-input",
+            style: { width: "130px" }
+          }
+        },
+        {
+          field: "name22",
+          title: "姓名2",
+          itemRender: {
+            name: "a-input"
+          }
+        },
+        {
+          field: "sexName",
+          itemRender: {
+            name: "hidden"
+          }
+        },
+        {
           field: "pulldown",
           title: "下拉面板",
           option: {
@@ -315,6 +337,9 @@ export default {
                     }
                   }
                 }
+              },
+              inputProps: {
+                size: "small"
               }
             },
             on: {

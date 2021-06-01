@@ -100,6 +100,7 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
       ...cloneSearchConfig.on,
       buttonActionClick: onButtonActionClick
     },
+    style: { ...cloneSearchConfig.style },
     scopedSlots: $scopedSlots
   });
 

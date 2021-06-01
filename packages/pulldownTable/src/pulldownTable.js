@@ -2,11 +2,19 @@ import { DataTable } from "../../dataTable";
 import { Pulldown } from "vxe-table";
 import { utils } from "../../init";
 function renderInput(h, _vm) {
-  const { onInputFocus, onInputKeyUp, text, onInputChange, disabled } = _vm;
+  const {
+    onInputFocus,
+    onInputKeyUp,
+    text,
+    onInputChange,
+    disabled,
+    inputProps
+  } = _vm;
   const onChange = utils.debounce(onInputChange, 200);
   return h("a-input", {
     props: {
       placeholder: "请选择",
+      ...inputProps,
       value: text,
       disabled
     },
@@ -43,7 +51,10 @@ export default {
     value: {
       type: [Object, Array, String, Number]
     },
-    disabled: Boolean
+    disabled: Boolean,
+    inputProps: {
+      type: [Object]
+    }
   },
 
   data() {

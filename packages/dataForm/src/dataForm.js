@@ -503,7 +503,7 @@ function renderItems(h, _vm) {
         const formItemProps = {
           key: item.field,
           props: item,
-          style: {},
+          style: item.style ? item.style : {},
           class: item.class,
           scopedSlots: {}
         };

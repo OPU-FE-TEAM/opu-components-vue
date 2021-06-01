@@ -339,6 +339,7 @@ export default {
           // position: "left",
 
           // foldingLayout:"flex",
+          style: { width: "500px" },
           submitButtonProps: {
             content: "查询"
           },
