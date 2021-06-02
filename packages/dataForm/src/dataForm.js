@@ -82,7 +82,13 @@ const fetchItemPropsOptionsApiList = async function(
   formData,
   callback
 ) {
-  const { setFieldsOptions, onOptionsAllLoad, onOptionsLoadBefore } = _vm;
+  const {
+    setFieldsOptions,
+    onOptionsAllLoad,
+    onOptionsLoadBefore,
+    autoSetDefaultValue,
+    setFieldsOptionsDefaultValues
+  } = _vm;
   if (onOptionsLoadBefore) {
     const beforeRes = onOptionsLoadBefore(list);
     if (beforeRes === false) {
@@ -135,6 +141,9 @@ const fetchItemPropsOptionsApiList = async function(
         if (onLoadRes) {
           json = onLoadRes;
         }
+      }
+      if (autoSetDefaultValue) {
+        setFieldsOptionsDefaultValues();
       }
       callback && callback();
     })
@@ -816,6 +825,10 @@ export default {
       default: ""
     },
     isPartRequest: {
+      type: [Boolean, String],
+      default: ""
+    },
+    autoSetDefaultValue: {
       type: [Boolean, String],
       default: ""
     }

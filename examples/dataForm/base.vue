@@ -13,7 +13,6 @@
       :foldingButtonProps="false"
       :loading="loading"
       autoFocus="name3"
-      :autoLoadOptionsData="false"
       loadOptionsIdField="id"
       titleWidth="auto"
     >
@@ -291,12 +290,12 @@ export default {
             name: "a-input"
           }
         },
-        {
-          field: "sexName",
-          itemRender: {
-            name: "hidden"
-          }
-        },
+        // {
+        //   field: "sexName",
+        //   itemRender: {
+        //     name: "hidden"
+        //   }
+        // },
         {
           field: "pulldown",
           title: "下拉面板",
@@ -523,7 +522,7 @@ export default {
               placeholder: "请选择性别",
               // showSearch: true,
 
-              // defaultField: "isSelected",
+              defaultField: "isSelected",
               valueField: "id",
               labelField: "text",
               // dataField: "aa",

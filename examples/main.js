@@ -25,6 +25,7 @@ function getSelectData(arr) {
             default: key == 2 ? true : false,
             name: `${item}_${key}`
           }));
+          list[1].isSelected = true;
           json[item] = list;
         });
       } else if (arr.code) {
@@ -34,6 +35,7 @@ function getSelectData(arr) {
           name: `${arr.code}_${key}_${Math.ceil(Math.random() * 10)}`,
           code: `code_${key}`
         }));
+        list[1].isSelected = true;
         json[arr.code] = list;
       }
       console.log(json);
@@ -52,7 +54,8 @@ DataForm.setup({
     labelField: "name",
     // autoLoadOptionsData: true, //是否自动获取下拉数据
     loadOptionsIdField: "id",
-    isPartRequest: true
+    isPartRequest: true,
+    defaultField: "isSelected"
   },
   props: {
     selfUpdate: true
@@ -62,7 +65,8 @@ DataForm.setup({
       showSearch: true,
       placeholder: "请选择",
       allowClear: true,
-      searchFields: ["code"]
+      searchFields: ["code"],
+      defaultField: "isSelected"
     },
     selectGroup: {
       showSearch: true,
