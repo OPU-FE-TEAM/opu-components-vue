@@ -159,6 +159,7 @@ $formItemMarginBottom: 19px;
         .ant-select-disabled .ant-select-selection,
         .ant-input-disabled,
         .ant-cascader-picker-disabled,
+        .ant-time-picker-input[disabled],
         .ant-input-number-disabled{
             @include readonlyInput;
         }
@@ -166,7 +167,7 @@ $formItemMarginBottom: 19px;
             display: none;
         }
     }
-    .input_readonly[disabled]{
+    .input_readonly[disabled]:not(.ant-switch){
         @include readonlyInput;
     }
 }

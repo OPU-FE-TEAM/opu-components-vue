@@ -416,7 +416,15 @@ function renderItemContent(item, h, _vm) {
     item.itemRender && item.itemRender.before ? item.itemRender.before() : "";
   let after =
     item.itemRender && item.itemRender.after ? item.itemRender.after() : "";
-  if (item.actions && item.actions.length) {
+  if (
+    item.actions &&
+    item.actions.length &&
+    !(
+      item.itemRender &&
+      item.itemRender.props &&
+      item.itemRender.props.disabled
+    )
+  ) {
     after = item.actions.map(p => {
       let actionButton = "";
       if (utils.isFunction(p.button)) {
@@ -854,7 +862,8 @@ export default {
         "a-tree-select",
         "a-textarea",
         "a-range-picker-split",
-        "a-input-number-split"
+        "a-input-number-split",
+        "a-select-group"
       ],
       unifyApiGetOptions: [],
       getItemPropsOptionsApiList: [],
@@ -953,6 +962,11 @@ export default {
       const getItemPropsOptionsApiList = [];
       const unifyApiGetOptions = [];
       let cloneData = [];
+      const isAutoLoadOptionsData =
+        (autoLoadOptionsData === true || autoLoadOptionsData === false) &&
+        autoLoadOptionsData !== config.getSelectOptions.autoLoadOptionsData
+          ? autoLoadOptionsData
+          : config.getSelectOptions.autoLoadOptionsData;
       if (!expand) {
         cloneData = clone.filter(p => !p.folding);
       } else {
@@ -974,7 +988,8 @@ export default {
           utils.isEqual(
             oldItem.itemRender.props.param,
             item.itemRender.props.param
-          )
+          ) &&
+          isAutoLoadOptionsData
         ) {
           return item;
         }
@@ -1007,11 +1022,6 @@ export default {
       this.unifyApiGetOptions = unifyApiGetOptions;
       this.getItemPropsOptionsApiList = getItemPropsOptionsApiList;
 
-      const isAutoLoadOptionsData =
-        (autoLoadOptionsData === true || autoLoadOptionsData === false) &&
-        autoLoadOptionsData !== config.getSelectOptions.autoLoadOptionsData
-          ? autoLoadOptionsData
-          : config.getSelectOptions.autoLoadOptionsData;
       if (isAutoLoadOptionsData) {
         this.loadOptionsData();
       }

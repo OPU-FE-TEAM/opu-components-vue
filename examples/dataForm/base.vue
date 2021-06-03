@@ -290,6 +290,16 @@ export default {
             name: "a-input"
           }
         },
+        {
+          field: "endTime",
+          title: "时间",
+          itemRender: {
+            name: "a-time-picker",
+            props: {
+              format: "HH:mm"
+            }
+          }
+        },
         // {
         //   field: "sexName",
         //   itemRender: {
@@ -357,13 +367,13 @@ export default {
           tooltip: "是否包含已取消的订单",
           titleWidth: "85px",
           option: {
-            initialValue: 0
+            initialValue: true
           },
           itemRender: {
             name: "a-switch",
             props: {
-              trueValue: 1,
-              falseValue: 0
+              trueValue: true,
+              falseValue: false
             }
           }
         },
