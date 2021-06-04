@@ -888,7 +888,15 @@ export default {
           ) {
             // 可获得焦点的组件
             return item.field;
-          } else if (!(item.itemRender && item.itemRender.name)) {
+          } else if (
+            !(
+              item.itemRender &&
+              item.itemRender.name &&
+              (item.itemRender.name == "hidden" ||
+                item.itemRender.slot ||
+                item.itemRender.customRender)
+            )
+          ) {
             // 可获得焦点的组件
             return item.field;
           }
