@@ -891,8 +891,7 @@ export default {
           } else if (
             !(
               item.itemRender &&
-              item.itemRender.name &&
-              (item.itemRender.name == "hidden" ||
+              ((item.itemRender.name && item.itemRender.name == "hidden") ||
                 item.itemRender.slot ||
                 item.itemRender.customRender)
             )
