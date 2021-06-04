@@ -878,6 +878,12 @@ export default {
         .map(item => {
           if (
             item.itemRender &&
+            item.itemRender.props &&
+            item.itemRender.props.disabled
+          ) {
+            return "";
+          } else if (
+            item.itemRender &&
             this.focusItemTypes.includes(item.itemRender.name) &&
             (!(
               item.itemRender.props &&
