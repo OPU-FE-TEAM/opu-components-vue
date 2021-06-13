@@ -37,7 +37,6 @@ export * from "./pageWraper";
 export * from "./pulldownTable";
 
 export { default as utils } from "./utils";
-
 export default {
   install
 };
