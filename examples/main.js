@@ -77,6 +77,11 @@ DataForm.setup({
     rangePickerSplit: {
       allowClear: true,
       placeholder: "请选择1"
+    },
+    pulldownTable: {
+      inputProps: {
+        allowClear: true
+      }
     }
   }
 });

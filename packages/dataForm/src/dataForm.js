@@ -135,13 +135,13 @@ const fetchItemPropsOptionsApiList = async function(
           // json[field] = itemData;
         }
       });
-      setFieldsOptions(json);
       if (onOptionsAllLoad) {
         const onLoadRes = onOptionsAllLoad(json);
         if (onLoadRes) {
           json = onLoadRes;
         }
       }
+      setFieldsOptions(json);
       if (autoSetDefaultValue) {
         setFieldsOptionsDefaultValues();
       }
@@ -314,18 +314,22 @@ function renderItemInput(item, h, _vm) {
       item.itemRender.name !== "hidden"
         ? `${item.itemRender.name}`
         : "a-input";
+    // if (renderName.indexOf("a-") > -1) {
+    let configKey = "";
     if (renderName.indexOf("a-") > -1) {
-      let configKey = "";
       configKey = renderName.split("a-")[1];
       configKey = utils.lineToUpperCase(configKey, "-");
-      const configProps = config.defaultProps[configKey]
-        ? config.defaultProps[configKey]
-        : {};
-      props.props = {
-        ...configProps,
-        ...props.props
-      };
+    } else {
+      configKey = utils.lineToUpperCase(renderName, "-");
     }
+    const configProps = config.defaultProps[configKey]
+      ? config.defaultProps[configKey]
+      : {};
+    props.props = {
+      ...configProps,
+      ...props.props
+    };
+    // }
     if (renderName === "buttons") {
       if (props.props) {
         props.props.itemClick = onButtonClick;

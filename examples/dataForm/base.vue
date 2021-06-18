@@ -88,17 +88,21 @@ import { utils } from "../../index";
 //     });
 // }
 function getData(arr) {
+  console.log(arr);
   return new Promise(resolve => {
     setTimeout(() => {
       console.log(arr);
       const size = arr.pageSize ? arr.pageSize : 20;
       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
-      const list = Array.from({ length: size }, (_, key) => ({
+      let list = Array.from({ length: size }, (_, key) => ({
         id: key,
         name: `name_${pageIndex}_${key}`,
         sex: key < 3 ? 1 : 2,
         age: key
       }));
+      if (arr && arr.keyword == "123") {
+        list = [];
+      }
       const json = {
         // data: [...list],
         // total: 100
@@ -337,6 +341,22 @@ export default {
                       width: 200
                     }
                   ],
+                  headToolbar: {
+                    search: {
+                      layout: "inline",
+                      titleWidth: "auto",
+                      items: [
+                        {
+                          field: "name",
+                          title: "名称",
+                          itemRender: {
+                            name: "a-input",
+                            props: { placeholder: "请输入名称" }
+                          }
+                        }
+                      ]
+                    }
+                  },
                   height: 300,
                   highlightHoverRow: true,
                   highlightCurrentRow: true,
@@ -346,10 +366,12 @@ export default {
                     }
                   }
                 }
-              },
-              inputProps: {
-                size: "small"
               }
+              // inputProps: {
+              // allowClear: true
+              // size: "small"
+              // disabled: true
+              // }
             },
             on: {
               change(val, sel) {
@@ -358,6 +380,9 @@ export default {
               inputChange(sel) {
                 console.log("inputChange", sel);
               }
+              // "hide-panel"() {
+              //   debugger;
+              // }
             }
           }
         },

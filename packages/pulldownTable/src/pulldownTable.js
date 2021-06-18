@@ -6,22 +6,23 @@ function renderInput(h, _vm) {
     onInputFocus,
     onInputKeyUp,
     text,
-    onInputChange,
+    onCancelChange,
     disabled,
     inputProps
   } = _vm;
-  const onChange = utils.debounce(onInputChange, 200);
+  // const onChange = utils.debounce(onInputChange, 200);
   return h("a-input", {
     props: {
-      placeholder: "请选择",
+      placeholder: "",
+      disabled,
+      allowClear: true,
       ...inputProps,
-      value: text,
-      disabled
+      value: text
     },
     on: {
       focus: onInputFocus,
       keyup: onInputKeyUp,
-      change: onChange
+      change: onCancelChange
     }
   });
 }
@@ -60,7 +61,8 @@ export default {
   data() {
     return {
       tableData: [],
-      selectValue: ""
+      selectValue: "",
+      inputChangeValue: ""
     };
   },
   computed: {
@@ -97,6 +99,9 @@ export default {
       props.ref = "pulldownTable";
       props.scopedSlots = $scopedSlots;
       props.class = "pulldown";
+      props.on = {
+        "hide-panel": this.onPulldownHide
+      };
       return props;
     },
     tableProps() {
@@ -109,6 +114,7 @@ export default {
       } = this;
       const props = {
         props: {
+          "show-overflow": true,
           ...table.props,
           data: tableData,
           columns: table.props.columns
@@ -118,6 +124,8 @@ export default {
           "checkbox-change": onTableCheckboxChange,
           "checkbox-all": onTableCheckboxChange
         },
+        style: { background: "#fff", ...table.style },
+        class: "pulldown-table",
         slot: "dropdown"
       };
       if (table.props.proxyConfig && table.props.proxyConfig.ajax) {
@@ -138,6 +146,7 @@ export default {
     }
   },
   created() {
+    this.onChange = utils.debounce(this.onInputChange, 400);
     this.selectValue = this.value;
   },
 
@@ -155,14 +164,40 @@ export default {
     onInputFocus() {
       this.$refs.pulldownTable.showPanel();
       this.$emit("showPanel");
-    },
-    onInputChange(e) {
-      const { value } = e.target;
+      this.selectValue = "";
       const { table, searchBefore, searchField } = this;
       if (
         table.props.proxyConfig &&
         table.props.proxyConfig.ajax &&
         table.props.proxyConfig.ajax.query
+      ) {
+        let params = {};
+        params[searchField] = "";
+        if (searchBefore) {
+          const searchBeforeRes = searchBefore && searchBefore(params);
+          if (searchBeforeRes === false) {
+            return false;
+          } else if (searchBeforeRes) {
+            params = searchBeforeRes;
+          }
+        }
+        const dataTable = this.$refs.table;
+        dataTable.onSearchSubmit(params);
+      }
+    },
+    onInputChange(e) {
+      let { value } = e.target;
+      if (e.type === "click") {
+        value = "";
+      }
+      const pulldown = this.$refs.pulldownTable;
+      const { table, searchBefore, searchField } = this;
+      if (
+        table.props.proxyConfig &&
+        table.props.proxyConfig.ajax &&
+        table.props.proxyConfig.ajax.query &&
+        pulldown &&
+        pulldown.isPanelVisible()
       ) {
         let params = {};
         params[searchField] = value;
@@ -177,9 +212,19 @@ export default {
         const dataTable = this.$refs.table;
         dataTable.onSearchSubmit(params);
       }
+      // if (!value) {
+      //   this.$emit("change", "", {});
+      // }
+      this.inputChangeValue = value;
 
       this.$emit("inputChange", e);
     },
+    onCancelChange(e) {
+      if (e.type === "click") {
+        this.$emit("change", "", {});
+      }
+    },
+
     onInputEnter() {
       const dataTable = this.$refs.table;
       const pulldown = this.$refs.pulldownTable;
@@ -191,12 +236,14 @@ export default {
       }
     },
     // 快捷键上下切换选中行
-    onInputKeyUp({ key }) {
+    onInputKeyUp(e) {
+      const { key } = e;
       const { $refs, onInputEnter, valueField } = this;
       if (key == "Enter") {
         onInputEnter();
         return false;
       } else if (!(key == "ArrowDown" || key == "ArrowUp")) {
+        this.onChange(e);
         return false;
       }
       const dataTable = $refs.table;
@@ -224,18 +271,33 @@ export default {
           dataTable.setCurrentRow(tableData[nextIndex]);
         }
       }
+    },
+    onPulldownHide() {
+      this.selectValue = this.inputChangeValue;
+      this.$nextTick(() => {
+        this.selectValue = this.value;
+      });
     }
   },
   render(h) {
     const { tableProps, pulldownProps } = this;
-    return h("vxe-pulldown", pulldownProps, [
-      renderInput(h, this),
-      h("data-table", {
-        ...tableProps,
+    return h(
+      "vxe-pulldown",
+      {
+        ...pulldownProps,
         ...{
-          on: { ...tableProps.on }
+          on: { ...pulldownProps.on }
         }
-      })
-    ]);
+      },
+      [
+        renderInput(h, this),
+        h("data-table", {
+          ...tableProps,
+          ...{
+            on: { ...tableProps.on }
+          }
+        })
+      ]
+    );
   }
 };
