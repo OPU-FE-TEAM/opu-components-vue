@@ -5,6 +5,7 @@ import { Table } from "vxe-table";
 import { DataForm } from "../../dataForm";
 import config from "../conf";
 import SetColums from "./setColums";
+import Sortable from "sortablejs";
 
 const tablePropKeys = Object.keys(Table.props);
 const methods = {};
@@ -474,7 +475,8 @@ export default {
     setcolumnsConfig: Object,
     proxyColumns: Object,
     // 高亮行是否可反选
-    highlightCurrentUnselect: Boolean
+    highlightCurrentUnselect: Boolean,
+    dragSort: Boolean
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -657,7 +659,22 @@ export default {
           } else if (json) {
             arr = json;
           }
-          return proxyConfigOpt.ajax.query(arr);
+          return new Promise((resolve, reject) => {
+            proxyConfigOpt.ajax
+              .query(arr)
+              .then(res => {
+                resolve(res);
+                if (this.dragSort) {
+                  setTimeout(() => {
+                    this.treeDrog();
+                  }, 1000);
+                }
+              })
+              .catch(err => {
+                reject(err);
+              });
+          });
+          // return proxyConfigOpt.ajax.query(arr);
         };
       }
       // 默认添加分页
@@ -686,7 +703,6 @@ export default {
     this.tableColumns = columns ? columns : [];
   },
   mounted() {},
-  beforeDestroy() {},
   destroyed() {},
   methods: {
     ...methods,
@@ -932,6 +948,96 @@ export default {
         this.$emit("current-change", { ...e, row: null });
       }
       this.$emit("cell-click", e);
+    },
+    treeDrog() {
+      this.$nextTick(() => {
+        let xTable = this.$refs.dataGrid;
+        console.log(
+          xTable.$el,
+          xTable.$el.querySelector(".body--wrapper>.vxe-table--body tbody")
+        );
+        this.sortable = Sortable.create(
+          xTable.$el.querySelector(".body--wrapper>.vxe-table--body tbody"),
+          {
+            handle: ".drag-btn",
+            onEnd: ({ item, oldIndex }) => {
+              let options = { children: "children" };
+              let targetTrElem = item;
+              let wrapperElem = targetTrElem.parentNode;
+              let prevTrElem = targetTrElem.previousElementSibling;
+              let tableTreeData = xTable.getData();
+              let selfRow = xTable.getRowNode(targetTrElem).item;
+              let selfNode = utils.findTree(
+                tableTreeData,
+                row => row === selfRow,
+                options
+              );
+              if (prevTrElem) {
+                // 移动到节点
+                let prevRow = xTable.getRowNode(prevTrElem).item;
+                let prevNode = utils.findTree(
+                  tableTreeData,
+                  row => row === prevRow,
+                  options
+                );
+                if (
+                  utils.findTree(
+                    selfRow[options.children],
+                    row => prevRow === row,
+                    options
+                  )
+                ) {
+                  // 错误的移动
+                  let oldTrElem = wrapperElem.children[oldIndex];
+                  wrapperElem.insertBefore(targetTrElem, oldTrElem);
+                  return this.$XModal.message({
+                    message: "不允许自己给自己拖动！",
+                    status: "error"
+                  });
+                }
+                if (xTable.isTreeExpandByRow(prevRow)) {
+                  let currRow = selfNode.items.splice(selfNode.index, 1)[0];
+                  // 移动到当前的子节点
+                  prevRow[options.children].splice(0, 0, currRow);
+                } else {
+                  const prevNodeParentKey =
+                    prevNode && prevNode.parent && prevNode.parent._XID
+                      ? prevNode.parent._XID
+                      : "";
+                  const selfNodeParentKey =
+                    selfNode && selfNode.parent && selfNode.parent._XID
+                      ? selfNode.parent._XID
+                      : "";
+
+                  if (prevNodeParentKey === selfNodeParentKey) {
+                    let currRow = selfNode.items.splice(selfNode.index, 1)[0];
+                    // 移动到相邻节点
+                    prevNode.items.splice(
+                      prevNode.index +
+                        (selfNode.index < prevNode.index ? 0 : 1),
+                      0,
+                      currRow
+                    );
+                  }
+                }
+              } else {
+                // 移动到第一行
+                var currRow = selfNode.items.splice(selfNode.index, 1)[0];
+                tableTreeData.unshift(currRow);
+              }
+              // 如果变动了树层级，需要刷新数据
+              if (this.tableProps.treeConfig) {
+                xTable.syncData();
+              }
+            }
+          }
+        );
+      });
+    }
+  },
+  beforeDestroy() {
+    if (this.sortable) {
+      this.sortable.destroy();
     }
   },
   render(h) {

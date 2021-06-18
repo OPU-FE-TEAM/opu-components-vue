@@ -100,7 +100,7 @@ export default {
     treeDrop() {
       this.$nextTick(() => {
         let xTable = this.$refs.table;
-        this.sortable2 = Sortable.create(
+        this.sortable = Sortable.create(
           xTable.$el.querySelector(
             ".columns-table .body--wrapper>.vxe-table--body tbody"
           ),

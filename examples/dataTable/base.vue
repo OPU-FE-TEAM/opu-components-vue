@@ -42,7 +42,7 @@
 // import {utils} from '../../index'
 
 function getData(arr) {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     setTimeout(() => {
       console.log(arr);
       const size = arr.pageSize ? arr.pageSize : 20;
@@ -56,7 +56,17 @@ function getData(arr) {
         select1: "",
         switch: false,
         pulldownTable: "",
-        datePicker: "2021-05-05"
+        datePicker: "2021-05-05",
+        children: [
+          {
+            id: "a1",
+            name: "cname1"
+          },
+          {
+            id: "a2",
+            name: "cname2"
+          }
+        ]
       }));
       const json = {
         // data: [...list],
@@ -64,12 +74,11 @@ function getData(arr) {
         code: 0,
         data: {
           data: [...list],
-          total: 10000
+          total: size
         }
       };
-      reject();
       console.log(json);
-      // resolve(json);
+      resolve(json);
     }, 500);
   });
 }
@@ -448,28 +457,28 @@ export default {
         //     title: "自定义标题"
         //   }
         // },
-        // proxyConfig: {
-        //   props: {},
-        //   ajax: {
-        //     query: json => {
-        //       return new Promise(resolve => {
-        //         console.log(json);
-        //         getColumns({
-        //           ...json,
-        //           code: "aaaa"
-        //         }).then(res => {
-        //           resolve(res);
-        //         });
-        //       });
-        //     },
-        //     submit: getColumns
-        //   }
-        // }
+        proxyConfig: {
+          props: {},
+          ajax: {
+            query: json => {
+              return new Promise(resolve => {
+                console.log(json);
+                getColumns({
+                  ...json,
+                  code: "aaaa"
+                }).then(res => {
+                  resolve(res);
+                });
+              });
+            },
+            submit: getColumns
+          }
+        }
       },
 
       pagerConfig: {
-        pageIndex: 0
-        // pageSize: 10,
+        pageIndex: 0,
+        pageSize: 10
         // layouts: [
         //   "PrevJump",
         //   "PrevPage",
@@ -496,11 +505,11 @@ export default {
         // sort: true, // 启用排序代理
         // filter: true, // 启用筛选代理
         // form: true, // 启用表单代理
-        // props: {
-        //   result: "data.data",
-        //   total: "data.total",
-        //   list: "data.data"
-        // },
+        props: {
+          result: "data.data",
+          total: "data.total",
+          list: "data.data"
+        },
         // autoLoad: false,
         ajax: {
           query: getData
@@ -527,58 +536,77 @@ export default {
           }
         }
       },
+      treeConfig: {
+        children: "children"
+      },
       tableColumn: [
-        { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
-        { type: "seq", title: "Number", colIndex: 1, width: 80 },
+        // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         {
-          field: "pulldownTable",
-          title: "下拉面板",
-          minWidth: 140,
-          editRender: {
-            name: "pulldownTable",
-            props: {
-              valueField: "id",
-              textField: "name",
-              table: {
-                props: {
-                  size: "mini",
-                  columns: [
-                    { type: "checkbox", width: 50 },
-                    { type: "seq", title: "Number", width: 80 },
-                    {
-                      field: "name",
-                      title: "Name",
-                      width: 200
-                    },
-                    {
-                      field: "sex",
-                      title: "Sex",
-                      width: 200
-                    },
-                    {
-                      field: "age",
-                      title: "Age",
-                      width: 200
-                    }
-                  ],
-                  height: 300,
-                  highlightHoverRow: true,
-                  highlightCurrentRow: true,
-                  proxyConfig: {
-                    ajax: {
-                      query: getData
-                    }
-                  }
-                }
-              }
+          width: 60,
+          align: "center",
+          slots: {
+            default: () => {
+              return [
+                <span class="drag-btn">
+                  <i class="vxe-icon--menu"></i>
+                </span>
+              ];
             },
-            on: {
-              change: ({ row }) => {
-                console.log("490", row.pulldownTable);
-              }
+            header: () => {
+              return "排序";
             }
           }
         },
+        { type: "seq", title: "Number", colIndex: 1, width: 80 },
+        // {
+        //   field: "pulldownTable",
+        //   title: "下拉面板",
+        //   minWidth: 140,
+        //   editRender: {
+        //     name: "pulldownTable",
+        //     props: {
+        //       valueField: "id",
+        //       textField: "name",
+        //       table: {
+        //         props: {
+        //           size: "mini",
+        //           columns: [
+        //             { type: "checkbox", width: 50 },
+        //             { type: "seq", title: "Number", width: 80 },
+        //             {
+        //               field: "name",
+        //               title: "Name",
+        //               width: 200
+        //             },
+        //             {
+        //               field: "sex",
+        //               title: "Sex",
+        //               width: 200
+        //             },
+        //             {
+        //               field: "age",
+        //               title: "Age",
+        //               width: 200
+        //             }
+        //           ],
+        //           height: 300,
+        //           highlightHoverRow: true,
+        //           highlightCurrentRow: true,
+        //           proxyConfig: {
+        //             ajax: {
+        //               query: getData
+        //             }
+        //           }
+        //         }
+        //       }
+        //     },
+        //     on: {
+        //       change: ({ row }) => {
+        //         console.log("490", row.pulldownTable);
+        //       }
+        //     }
+        //   }
+        // },
         {
           field: "name",
           title: "Name",
@@ -610,47 +638,47 @@ export default {
             ]
           }
         },
-        {
-          field: "select1",
-          title: "下拉框请求下拉数据",
-          width: 140,
-          editRender: {
-            name: "ASelect",
-            options: [],
-            optionProps: {
-              value: "id",
-              label: "name"
-            }
-          }
-        },
-        {
-          field: "cascader",
-          title: "级联选择",
-          width: 140,
-          editRender: {
-            name: "ACascader",
-            props: {
-              options: []
-            }
-          }
-        },
-        {
-          field: "datePicker",
-          title: "日期选择",
-          width: 140,
-          editRender: {
-            name: "ADatePicker",
-            props: {}
-          }
-        },
-        {
-          field: "timePicker",
-          title: "时间选择",
-          width: 200,
-          editRender: {
-            name: "ATimePicker"
-          }
-        },
+        // {
+        //   field: "select1",
+        //   title: "下拉框请求下拉数据",
+        //   width: 140,
+        //   editRender: {
+        //     name: "ASelect",
+        //     options: [],
+        //     optionProps: {
+        //       value: "id",
+        //       label: "name"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "cascader",
+        //   title: "级联选择",
+        //   width: 140,
+        //   editRender: {
+        //     name: "ACascader",
+        //     props: {
+        //       options: []
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "datePicker",
+        //   title: "日期选择",
+        //   width: 140,
+        //   editRender: {
+        //     name: "ADatePicker",
+        //     props: {}
+        //   }
+        // },
+        // {
+        //   field: "timePicker",
+        //   title: "时间选择",
+        //   width: 200,
+        //   editRender: {
+        //     name: "ATimePicker"
+        //   }
+        // },
         {
           field: "switch",
           title: "开关",
@@ -678,12 +706,12 @@ export default {
   },
   methods: {
     fetchSelectData() {
-      getSelectData().then(res => {
-        if (this.$refs.xGrid) {
-          const column = this.$refs.xGrid.getColumnByField("select1");
-          column.editRender.options = res.data.data;
-        }
-      });
+      // getSelectData().then(res => {
+      //   if (this.$refs.xGrid) {
+      //     // const column = this.$refs.xGrid.getColumnByField("select1");
+      //     // column.editRender.options = res.data.data;
+      //   }
+      // });
     },
     searchEvent() {
       this.tablePage.currentPage = 1;
