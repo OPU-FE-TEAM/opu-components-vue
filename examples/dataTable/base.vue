@@ -8,7 +8,6 @@
       :loading="loading"
       :data="tableData"
       :headToolbar="headToolbar"
-      :proxy-config="proxyConfig"
       highlight-hover-row
       highlight-current-row
       @current-change="currentChangeEvent"
@@ -18,6 +17,10 @@
       size="small"
       :edit-config="{ trigger: 'click', mode: 'cell' }"
       :searchConfig="search"
+      :dragSort="true"
+      :tree-config="{}"
+      :rowKey="true"
+      class="abc-table"
     >
       <template v-slot:operate="{ row }">
         <a-button @click="editRow(row)">编辑</a-button>
@@ -35,6 +38,7 @@
     <a-button @click="getSearchData">获取搜索表单数据</a-button>
     <a-button @click="toSearch">搜索</a-button>
     <a-button @click="reload">刷新</a-button>
+    <a-button @click="setData">更新数据</a-button>
   </div>
 </template>
 
@@ -510,7 +514,7 @@ export default {
           total: "data.total",
           list: "data.data"
         },
-        // autoLoad: false,
+        autoLoad: false,
         ajax: {
           query: getData
         }
@@ -611,6 +615,7 @@ export default {
           field: "name",
           title: "Name",
           width: 140,
+          treeNode: true,
           editRender: { name: "AInput" }
         },
         {
@@ -695,7 +700,53 @@ export default {
         },
         { title: "操作", width: 200, slots: { default: "operate" } }
       ],
-      tableData: [],
+      tableData: [
+        {
+          id: 1,
+          name: "a1",
+          sex: 1,
+          children: [
+            {
+              id: "a11",
+              name: "cname1"
+            },
+            {
+              id: "a12",
+              name: "cname2"
+            }
+          ]
+        },
+        {
+          id: 2,
+          name: "a2",
+          sex: 1,
+          children: [
+            {
+              id: "a21",
+              name: "cname1"
+            },
+            {
+              id: "a22",
+              name: "cname2"
+            }
+          ]
+        },
+        {
+          id: 3,
+          name: "a3",
+          sex: 1,
+          children: [
+            {
+              id: "a31",
+              name: "cname1"
+            },
+            {
+              id: "a32",
+              name: "cname2"
+            }
+          ]
+        }
+      ],
       delDisabled: false,
       currentRow: {}
     };
@@ -800,6 +851,25 @@ export default {
     reload() {
       const grid = this.$refs.xGrid;
       grid.reload();
+    },
+    setData() {
+      this.tableData = [
+        {
+          id: 1,
+          name: "b1",
+          sex: 1
+        },
+        {
+          id: 2,
+          name: "b2",
+          sex: 1
+        },
+        {
+          id: 3,
+          name: "b3",
+          sex: 1
+        }
+      ];
     }
   }
 };

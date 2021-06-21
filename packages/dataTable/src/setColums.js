@@ -316,7 +316,7 @@ export default {
           cancel: onCancel,
           ok: onSubmit
         },
-        class: "advanced-search-modal"
+        class: "set-columns-modal"
       },
       [
         h(
