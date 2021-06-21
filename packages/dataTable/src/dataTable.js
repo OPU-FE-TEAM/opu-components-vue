@@ -593,39 +593,45 @@ export default {
       } = this;
       const propsData = this.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
-
       const columns = tableColumns.map(item => {
-        if (
-          item.editRender &&
-          item.editRender.name &&
-          item.editRender.name === "ACheckbox"
-        ) {
-          item.slots = {
-            default: "a_checkbox",
-            edit: "a_checkbox"
-          };
-          this.$scopedSlots["a_checkbox"] = renderCheckbox;
-        } else if (
-          item.editRender &&
-          item.editRender.name &&
-          item.editRender.name === "ASwitch"
-        ) {
-          item.slots = {
-            default: "a_switch",
-            edit: "a_switch"
-          };
-          this.$scopedSlots["a_switch"] = renderSwitch;
-        } else if (
-          item.editRender &&
-          item.editRender.name &&
-          item.editRender.name === "pulldownTable"
-        ) {
-          item.slots = {
-            default: "pulldownTableView",
-            edit: "pulldownTable"
-          };
-          this.$scopedSlots["pulldownTableView"] = renderPulldownTableView;
-          this.$scopedSlots["pulldownTable"] = renderPulldownTable;
+        if (item.cellRender) {
+          if (propsData && propsData.size == "mini") {
+            if (item.cellRender.props) {
+              item.cellRender.props.size = "default";
+            } else {
+              item.cellRender.props = {
+                size: "default"
+              };
+            }
+          }
+        }
+        if (item.editRender) {
+          if (item.editRender.name && item.editRender.name === "ACheckbox") {
+            item.slots = {
+              default: "a_checkbox",
+              edit: "a_checkbox"
+            };
+            this.$scopedSlots["a_checkbox"] = renderCheckbox;
+          } else if (
+            item.editRender.name &&
+            item.editRender.name === "ASwitch"
+          ) {
+            item.slots = {
+              default: "a_switch",
+              edit: "a_switch"
+            };
+            this.$scopedSlots["a_switch"] = renderSwitch;
+          } else if (
+            item.editRender.name &&
+            item.editRender.name === "pulldownTable"
+          ) {
+            item.slots = {
+              default: "pulldownTableView",
+              edit: "pulldownTable"
+            };
+            this.$scopedSlots["pulldownTableView"] = renderPulldownTableView;
+            this.$scopedSlots["pulldownTable"] = renderPulldownTable;
+          }
         }
         return item;
       });
