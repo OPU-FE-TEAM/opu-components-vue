@@ -320,6 +320,7 @@ export default {
             name: "pulldown-table",
             props: {
               valueField: "name",
+              // allowInputValue: true,
               table: {
                 props: {
                   columns: [
@@ -380,6 +381,11 @@ export default {
               inputChange(sel) {
                 console.log("inputChange", sel);
               }
+              // showPanel(e) {
+              //   if (e.target.value) {
+              //     e.target.select();
+              //   }
+              // }
               // "hide-panel"() {
               //   debugger;
               // }

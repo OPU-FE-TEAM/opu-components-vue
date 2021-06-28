@@ -4,11 +4,12 @@ import { utils } from "../../init";
 function renderInput(h, _vm) {
   const {
     onInputFocus,
-    onInputKeyUp,
+    onChange,
     text,
-    onCancelChange,
+    // onCancelChange,
     disabled,
-    inputProps
+    inputProps,
+    onInputKeyUp
   } = _vm;
   // const onChange = utils.debounce(onInputChange, 200);
   return h("a-input", {
@@ -22,7 +23,8 @@ function renderInput(h, _vm) {
     on: {
       focus: onInputFocus,
       keyup: onInputKeyUp,
-      change: onCancelChange
+      // change: onCancelChange,
+      input: onChange
     }
   });
 }
@@ -55,7 +57,9 @@ export default {
     disabled: Boolean,
     inputProps: {
       type: [Object]
-    }
+    },
+    // 允许输入值
+    allowInputValue: Boolean
   },
 
   data() {
@@ -161,10 +165,12 @@ export default {
       this.$emit("change", this.selectValue);
     },
 
-    onInputFocus() {
+    onInputFocus(e) {
       this.$refs.pulldownTable.showPanel();
-      this.$emit("showPanel");
-      this.selectValue = "";
+      this.$emit("showPanel", e);
+      if (!this.allowInputValue) {
+        this.selectValue = "";
+      }
       const { table, searchBefore, searchField } = this;
       if (
         table.props.proxyConfig &&
@@ -185,10 +191,14 @@ export default {
         dataTable.onSearchSubmit(params);
       }
     },
+
     onInputChange(e) {
       let { value } = e.target;
+      console.log(value);
       if (e.type === "click") {
         value = "";
+        this.$emit("change", "", {});
+        return false;
       }
       const pulldown = this.$refs.pulldownTable;
       const { table, searchBefore, searchField } = this;
@@ -212,9 +222,6 @@ export default {
         const dataTable = this.$refs.table;
         dataTable.onSearchSubmit(params);
       }
-      // if (!value) {
-      //   this.$emit("change", "", {});
-      // }
       this.inputChangeValue = value;
 
       this.$emit("inputChange", e);
@@ -243,7 +250,7 @@ export default {
         onInputEnter();
         return false;
       } else if (!(key == "ArrowDown" || key == "ArrowUp")) {
-        this.onChange(e);
+        // this.onChange(e);
         return false;
       }
       const dataTable = $refs.table;
@@ -273,10 +280,15 @@ export default {
       }
     },
     onPulldownHide() {
-      this.selectValue = this.inputChangeValue;
-      this.$nextTick(() => {
-        this.selectValue = this.value;
-      });
+      if (this.allowInputValue) {
+        this.selectValue = this.inputChangeValue;
+        this.$emit("change", this.selectValue, {});
+      } else {
+        // this.selectValue = this.inputChangeValue;
+        this.$nextTick(() => {
+          this.selectValue = this.value;
+        });
+      }
     }
   },
   render(h) {
