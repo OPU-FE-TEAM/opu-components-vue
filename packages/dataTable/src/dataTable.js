@@ -755,6 +755,12 @@ export default {
         ...searchData,
         ...pageData
       };
+      if (arr.filters.length) {
+        json.filters = arr.filters;
+      }
+      if (arr.sort && arr.sort.field) {
+        json.sort = arr.sort;
+      }
 
       return json;
     },

@@ -152,6 +152,7 @@ export default {
   created() {
     this.onChange = utils.debounce(this.onInputChange, 400);
     this.selectValue = this.value;
+    // this.inputChangeValue = this.value;
   },
 
   methods: {
@@ -170,6 +171,8 @@ export default {
       this.$emit("showPanel", e);
       if (!this.allowInputValue) {
         this.selectValue = "";
+      } else {
+        this.inputChangeValue = this.selectValue;
       }
       const { table, searchBefore, searchField } = this;
       if (
@@ -282,6 +285,7 @@ export default {
     onPulldownHide() {
       if (this.allowInputValue) {
         this.selectValue = this.inputChangeValue;
+        // console.log("---", this.selectValue, this.inputChangeValue);
         this.$emit("change", this.selectValue, {});
       } else {
         // this.selectValue = this.inputChangeValue;
