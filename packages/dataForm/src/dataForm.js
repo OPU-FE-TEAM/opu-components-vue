@@ -86,6 +86,7 @@ const fetchItemPropsOptionsApiList = async function(
     setFieldsOptions,
     onOptionsAllLoad,
     onOptionsLoadBefore,
+    onOptionsLoadAfter,
     autoSetDefaultValue,
     setFieldsOptionsDefaultValues
   } = _vm;
@@ -145,6 +146,7 @@ const fetchItemPropsOptionsApiList = async function(
       if (autoSetDefaultValue) {
         setFieldsOptionsDefaultValues();
       }
+      onOptionsLoadAfter(json);
       callback && callback();
     })
     .catch(() => {});
@@ -802,6 +804,11 @@ export default {
     },
     // 可选数据请求前回调
     onOptionsLoadBefore: {
+      type: Function,
+      default: () => {}
+    },
+    // 可选数据请求后回调
+    onOptionsLoadAfter: {
       type: Function,
       default: () => {}
     },

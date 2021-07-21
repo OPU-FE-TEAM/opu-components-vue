@@ -12,6 +12,9 @@ export default {
       type: Object,
       required: true
     },
+    onOptionsLoadAfter: {
+      type: Function
+    },
     modal: Object
   },
   data() {
@@ -141,7 +144,8 @@ export default {
       props: {
         ...formOpt,
         items,
-        readonly
+        readonly,
+        onOptionsLoadAfter: this.onOptionsLoadAfter
       },
       class: "crud-table-form",
       scopedSlots: $scopedSlots

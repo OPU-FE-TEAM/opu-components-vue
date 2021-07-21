@@ -11,7 +11,8 @@ function renderFormModal(modalOpt, formOpt, h, _vm) {
     ref: "formModal",
     props: {
       modal: modalOpt,
-      form: formOpt
+      form: formOpt,
+      onOptionsLoadAfter: _vm.onOptionsLoadAfter
     },
     on: {
       submit: onFormModalSubmit,
@@ -524,6 +525,12 @@ export default {
         });
       } else {
         formModal.setFormData(row);
+      }
+    },
+    onOptionsLoadAfter() {
+      let { proxyConfig } = this;
+      if (proxyConfig[this.currentAction].autoSetDefaultValue) {
+        this.$refs.formModal.$refs.form.setFieldsOptionsDefaultValues();
       }
     },
     filterFormItems(type) {
