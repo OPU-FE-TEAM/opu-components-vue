@@ -1256,24 +1256,20 @@ export default {
               })
               .filter(p => p !== "");
             if (defaultValue.length) {
-              const valueArrayTypes = [
-                "a-checkbox-group",
-                "a-radio-group",
-                "a-select"
-              ];
+              const valueArrayTypes = ["a-checkbox-group", "a-radio-group"];
               let value = defaultValue;
-              const isSeletctMultiple =
-                item.itemRender.name == "select" &&
-                item.itemRender.props &&
-                item.itemRender.props.mode == "multiple";
-              if (
-                (!valueArrayTypes.includes(item.itemRender.name) ||
-                  !isSeletctMultiple) &&
-                utils.isArray(defaultValue) &&
-                defaultValue.length === 1
-              ) {
-                value = defaultValue[0];
+              if (utils.isArray(defaultValue)) {
+                const isSeletctMultiple =
+                  item.itemRender.name == "a-select" &&
+                  item.itemRender.props &&
+                  item.itemRender.props.mode == "multiple";
+                value =
+                  valueArrayTypes.includes(item.itemRender.name) ||
+                  isSeletctMultiple
+                    ? defaultValue
+                    : defaultValue[0];
               }
+
               formData[item.field] = value;
             }
           }
