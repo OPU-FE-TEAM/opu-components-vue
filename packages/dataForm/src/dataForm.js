@@ -1227,8 +1227,8 @@ export default {
       this.setData(formData);
     },
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
-    setFieldsOptionsDefaultValues(fields = [], defaultData = {}) {
-      const formData = {};
+    setFieldsOptionsDefaultValues(fields = [], defaultData = {}, callback) {
+      let formData = {};
       this.itemsOptions.forEach(item => {
         if (
           item &&
@@ -1247,30 +1247,34 @@ export default {
           const input = this.$refs[inputRef];
           if (input && input.getOptionsData) {
             const options = input.getOptionsData();
-            const defaultValue = options
-              .map(p => {
-                if (p[defaultKey]) {
-                  return p[valueField];
+            const defaultRows = options.filter(p => p[defaultKey]);
+            if (defaultRows.length > 0) {
+              const defaultValue = defaultRows.map(p => {
+                return p[valueField];
+              });
+              if (defaultValue.length) {
+                const valueArrayTypes = ["a-checkbox-group", "a-radio-group"];
+                let value = defaultValue;
+                if (utils.isArray(defaultValue)) {
+                  const isSeletctMultiple =
+                    item.itemRender.name == "a-select" &&
+                    item.itemRender.props &&
+                    item.itemRender.props.mode == "multiple";
+                  value =
+                    valueArrayTypes.includes(item.itemRender.name) ||
+                    isSeletctMultiple
+                      ? defaultValue
+                      : defaultValue[0];
                 }
-                return "";
-              })
-              .filter(p => p !== "");
-            if (defaultValue.length) {
-              const valueArrayTypes = ["a-checkbox-group", "a-radio-group"];
-              let value = defaultValue;
-              if (utils.isArray(defaultValue)) {
-                const isSeletctMultiple =
-                  item.itemRender.name == "a-select" &&
-                  item.itemRender.props &&
-                  item.itemRender.props.mode == "multiple";
-                value =
-                  valueArrayTypes.includes(item.itemRender.name) ||
-                  isSeletctMultiple
-                    ? defaultValue
-                    : defaultValue[0];
-              }
 
-              formData[item.field] = value;
+                formData[item.field] = value;
+                if (callback) {
+                  formData = {
+                    ...formData,
+                    ...callback(item.field, defaultRows)
+                  };
+                }
+              }
             }
           }
         }
