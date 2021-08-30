@@ -147,7 +147,7 @@ const fetchItemPropsOptionsApiList = async function(
         setFieldsOptionsDefaultValues();
       }
       onOptionsLoadAfter(json);
-      callback && callback(res);
+      callback && callback(json);
     })
     .catch(() => {});
 };
