@@ -474,7 +474,8 @@ export default {
     setcolumnsConfig: Object,
     proxyColumns: Object,
     // 高亮行是否可反选
-    highlightCurrentUnselect: Boolean
+    highlightCurrentUnselect: Boolean,
+    tableIndex: { type: String, default: "" }
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -1003,6 +1004,9 @@ export default {
           {
             style: {
               height: tableHeight
+            },
+            attrs: {
+              "table-index": this.tableIndex.toString()
             }
           },
           [h("vxe-grid", { ...tableProps })]
