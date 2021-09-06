@@ -24,12 +24,12 @@
       <template slot="searchFormSlot">
         101010
       </template>
-      <!-- <template slot="headToolbar_buttons">
-        <a-button @click="onAdd" type="primary">自定义新增按钮</a-button>
+      <template slot="headToolbar_buttons">
+        <!-- <a-button @click="onAdd" type="primary">自定义新增按钮</a-button>
         <a-button :disabled="delDisabled">自定义按钮2</a-button>
-        <a-button @click="toSearch">搜索</a-button>
+        <a-button @click="toSearch">搜索</a-button> -->
         <a-button @click="reload">刷新</a-button>
-      </template> -->
+      </template>
     </crud-table>
   </div>
 </template>
@@ -40,7 +40,7 @@ function getData(arr) {
     setTimeout(() => {
       console.log(arr);
       const size = arr.pageSize ? arr.pageSize : 20;
-      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+      const pageIndex = arr.pageIndex ? arr.pageIndex : 0;
       const list = Array.from({ length: size }, (_, key) => ({
         id: key,
         name: `name_${pageIndex}_${key}`,
@@ -146,7 +146,7 @@ export default {
       proxyConfig: {
         add: {
           modalTitle: "新增会员",
-
+          reloadType: "query",
           props: {
             icon: "file-add",
             name: "新增1"
@@ -387,7 +387,7 @@ export default {
             { type: "seq", title: "Number", width: 80 },
             {
               field: "name",
-              title: "Name"
+              title: "Name123"
             },
             {
               field: "sex",
@@ -529,7 +529,7 @@ export default {
           },
           height: "calc(100vh - 100px)",
           // size: "mini",
-          pagerConfig: false,
+          // pagerConfig: false,
 
           proxyConfig: {
             seq: true, // 启用动态序号代理

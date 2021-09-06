@@ -5,7 +5,11 @@ export default {
   name: "optionsComponent",
   components: {},
   props: {
-    ...TreeSelectProps()
+    ...TreeSelectProps(),
+    searchFields: {
+      type: Array,
+      default: () => []
+    }
   },
   model: {
     prop: "value",
@@ -18,7 +22,13 @@ export default {
   },
   computed: {
     componentProps() {
-      const { $listeners, $options, optionsData } = this;
+      const {
+        $listeners,
+        $options,
+        optionsData,
+        replaceFields,
+        searchFields
+      } = this;
       const propsData = $options.propsData;
 
       const ons = {};
@@ -36,6 +46,33 @@ export default {
           change: this.updateValue
         }
       };
+
+      if (props.props.showSearch && !props.props.filterTreeNode) {
+        props.props.filterTreeNode = (value, treeNode) => {
+          const obj = treeNode.componentOptions.propsData.dataRef;
+          let is = false;
+          const searchFieldList = [
+            replaceFields.key,
+            replaceFields.title,
+            ...searchFields
+          ];
+          for (let i = 0; i < searchFieldList.length; i++) {
+            const key = searchFieldList[i];
+            if (obj[key]) {
+              if (
+                obj[key]
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(value.toLowerCase()) >= 0
+              ) {
+                is = true;
+                break;
+              }
+            }
+          }
+          return is;
+        };
+      }
       props.props.treeData = optionsData;
       return props;
     }

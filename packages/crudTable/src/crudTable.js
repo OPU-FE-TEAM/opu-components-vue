@@ -237,7 +237,11 @@ export default {
             } else {
               this.formModalSubmitMessage(res);
             }
-            this.reloadTable();
+            if (proxyConfig[currentAction].reloadType === "query") {
+              this.queryTable();
+            } else {
+              this.reloadTable();
+            }
           })
           .catch(() => {
             formModal && formModal.setConfirmLoading(false);
@@ -260,8 +264,11 @@ export default {
         this.modal.on.cancel();
       }
     },
-    reloadTable(params) {
-      this.$refs.table.reload(params);
+    reloadTable() {
+      this.$refs.table.reload();
+    },
+    queryTable(params) {
+      this.$refs.table.query(params);
     },
     // 渲染自动生成操作行的插槽
     renderRowAction(scope) {

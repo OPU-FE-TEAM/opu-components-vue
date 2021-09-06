@@ -709,7 +709,14 @@ export default {
   destroyed() {},
   methods: {
     ...methods,
-    reload(params) {
+    reload() {
+      const { proxyConfig } = this;
+      if (proxyConfig && proxyConfig.ajax && proxyConfig.ajax.query) {
+        this.searchData = this.tableAjaxJson;
+        this.$refs.dataGrid.commitProxy("reload");
+      }
+    },
+    query(params) {
       const { proxyConfig } = this;
       if (proxyConfig && proxyConfig.ajax && proxyConfig.ajax.query) {
         if (params) {
@@ -720,7 +727,7 @@ export default {
     },
     onSearchSubmit(values) {
       this.searchData = values;
-      this.reload();
+      this.query();
     },
     // 处理调用 proxyConfig.ajax 的query查询方法前处理请求参数
     handleTableQuery(arr) {
@@ -734,14 +741,19 @@ export default {
       // 分页参数
       let pageData = {};
       if (pagerConfigOpt && arr.page) {
-        const currentPageField = pagerConfigOpt.props.currentPage;
-        if (pagerConfigOpt.pageIndex === 0) {
-          pageData[currentPageField] = arr.page.currentPage - 1;
+        const pageField = pagerConfigOpt.props.currentPage;
+        if (searchData && searchData[pageField]) {
+          pageData[pageField] = searchData[pageField];
+          arr.page.currentPage = searchData[pageField] + 1;
+          delete this.searchData[pageField];
+          delete this.searchData[pagerConfigOpt.props.pageSize];
+        } else if (pagerConfigOpt.pageIndex === 0) {
+          pageData[pageField] = arr.page.currentPage - 1;
         } else if (pagerConfigOpt.pageIndex) {
-          pageData[currentPageField] =
+          pageData[pageField] =
             arr.page.currentPage - 1 + pagerConfigOpt.pageIndex;
         } else {
-          pageData[currentPageField] = arr.page.currentPage;
+          pageData[pageField] = arr.page.currentPage;
         }
 
         const pageSizeField = pagerConfigOpt.props.pageSize;
@@ -753,15 +765,18 @@ export default {
       }
 
       const json = {
-        ...searchData,
-        ...pageData
+        ...pageData,
+        ...searchData
       };
+
       if (arr.filters.length) {
         json.filters = arr.filters;
       }
       if (arr.sort && arr.sort.field) {
         json.sort = arr.sort;
       }
+
+      this.tableAjaxJson = json;
 
       return json;
     },
@@ -783,7 +798,7 @@ export default {
         const headSearchForm = this.$refs.headSearch;
         headSearchForm.setData(values);
         this.searchData = values;
-        this.reload();
+        this.query();
         onAdvancedcancel();
       });
     },

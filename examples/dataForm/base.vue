@@ -280,6 +280,78 @@ export default {
           }
         },
         {
+          field: "treeSelect",
+          title: "树下啦",
+          itemRender: {
+            name: "a-tree-select",
+            style: { width: "130px" },
+            props: {
+              showSearch: true,
+              replaceFields: {
+                children: "projectCategoryList",
+                title: "name",
+                key: "id",
+                value: "id"
+              },
+              searchFields: ["simpleCode"],
+              treeData: [
+                {
+                  id: "874199840383303680",
+                  name: "卤味",
+                  isDeleted: false,
+                  simpleCode: "LW,HK",
+                  projectCategoryList: [
+                    {
+                      id: "874199879860092928",
+                      name: "肉类",
+                      isDeleted: false,
+                      simpleCode: "RL,MO",
+                      projectCategoryList: []
+                    },
+                    {
+                      id: "878177788215951360",
+                      name: "蔬菜",
+                      isDeleted: false,
+                      simpleCode: "SC,AA",
+                      projectCategoryList: []
+                    }
+                  ]
+                },
+                {
+                  id: "874205575305494528",
+                  name: "地方小炒",
+                  isDeleted: false,
+                  simpleCode: "DFXC,FYIO",
+                  projectCategoryList: [
+                    {
+                      id: "874205640732442624",
+                      name: "桂林",
+                      isDeleted: false,
+                      simpleCode: "GL,SS",
+                      projectCategoryList: []
+                    }
+                  ]
+                },
+                {
+                  id: "877722722224832512",
+                  name: "套餐类",
+                  isDeleted: false,
+                  simpleCode: "TCL,DHO",
+                  projectCategoryList: [
+                    {
+                      id: "877722834753814528",
+                      name: "地方小炒套餐",
+                      isDeleted: false,
+                      simpleCode: "DFXCTC,FYIODH",
+                      projectCategoryList: []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
           field: "name11",
           title: "姓名1",
           itemRender: {
