@@ -1,8 +1,6 @@
 const GlobalConfig = {
   modal: {
     props: {
-      title: "设置表头",
-      width: 800,
       destroyOnClose: true,
       maskClosable: false
     }
