@@ -33,7 +33,7 @@ export default {
     form: Object,
     modal: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     table: Object,
     proxyConfig: Object,
