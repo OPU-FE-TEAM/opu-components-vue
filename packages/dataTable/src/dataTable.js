@@ -742,7 +742,10 @@ export default {
       let pageData = {};
       if (pagerConfigOpt && arr.page) {
         const pageField = pagerConfigOpt.props.currentPage;
-        if (searchData && searchData[pageField]) {
+        if (
+          searchData &&
+          (searchData[pageField] || searchData[pageField] == 0)
+        ) {
           pageData[pageField] = searchData[pageField];
           arr.page.currentPage = searchData[pageField] + 1;
           delete this.searchData[pageField];

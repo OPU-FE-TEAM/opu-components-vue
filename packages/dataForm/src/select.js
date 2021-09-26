@@ -111,7 +111,8 @@ export default {
           );
           const obj = optionsData[objIndex];
           let is = false;
-          const searchFieldList = [vF, lF, ...searchFields];
+          let searchFieldList = [lF, ...searchFields];
+          // vF,
           for (let i = 0; i < searchFieldList.length; i++) {
             const key = searchFieldList[i];
             if (obj[key]) {
