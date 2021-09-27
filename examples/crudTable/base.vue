@@ -469,12 +469,40 @@ export default {
                   itemRender: {
                     name: "a-select",
                     props: {
-                      placeholder: "请选择性别",
-                      showSearch: true,
-                      defaultField: "isSelected",
-                      valueField: "id",
-                      labelField: "name",
-                      param: { code: "aa" }
+                      options: [
+                        { id: 0, name: "1" },
+                        { id: 1, name: "2" },
+                        { id: 2, name: "3" },
+                        { id: 3, name: "4" }
+                      ]
+                      // placeholder: "请选择性别",
+                      // showSearch: true,
+                      // defaultField: "isSelected",
+                      // valueField: "id",
+                      // labelField: "name",
+                      // param: { code: "aa" }
+                    }
+                  }
+                },
+                {
+                  field: "sex1",
+                  title: "性别1",
+                  folding: true,
+                  itemRender: {
+                    name: "a-select",
+                    props: {
+                      options: [
+                        { id: 0, name: "1" },
+                        { id: 1, name: "2" },
+                        { id: 2, name: "3" },
+                        { id: 3, name: "4" }
+                      ]
+                      // placeholder: "请选择性别",
+                      // showSearch: true,
+                      // defaultField: "isSelected",
+                      // valueField: "id",
+                      // labelField: "name",
+                      // param: { code: "aa" }
                     }
                   }
                 },
