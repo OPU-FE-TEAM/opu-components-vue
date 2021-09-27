@@ -74,14 +74,14 @@ export default {
         this.maxDate = e;
       }
       this.minDate = e;
-      this.onChange();
+      this.onChange(0);
     },
     onEndChange(e) {
       if (this.minDate && !moment(this.minDate).isBefore(e)) {
         this.minDate = e;
       }
       this.maxDate = e;
-      this.onChange();
+      this.onChange(1);
     },
     startDisabledDate(current) {
       if (this.maxDate && current) {
