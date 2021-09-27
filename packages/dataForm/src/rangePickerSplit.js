@@ -17,7 +17,15 @@ export default {
       required: false,
       default: true
     },
-    separator: [String, Function]
+    separator: [String, Function],
+    startDisabledDate: {
+      type: Function,
+      default: null
+    },
+    endDisabledDate: {
+      type: Function,
+      default: null
+    }
   },
   model: {
     prop: "value",
@@ -83,15 +91,25 @@ export default {
       this.maxDate = e;
       this.onChange(1);
     },
-    startDisabledDate(current) {
-      if (this.maxDate && current) {
+    startDisabledDateFuc(current) {
+      if (
+        this.startDisabledDate &&
+        this.startDisabledDate(current, this.minDate, this.maxDate)
+      ) {
+        return true;
+      } else if (this.maxDate && current) {
         return current > this.maxDate || (this.min && current < this.min);
       } else if (this.min || this.max) {
         return current < this.min || current > this.max;
       }
     },
-    endDisabledDate(current) {
-      if (this.minDate && current) {
+    endDisabledDateFuc(current) {
+      if (
+        this.endDisabledDate &&
+        this.endDisabledDate(current, this.minDate, this.maxDate)
+      ) {
+        return true;
+      } else if (this.minDate && current) {
         return current < this.minDate || (this.max && current > this.max);
       } else if (this.min || this.max) {
         return current < this.min || current > this.max;
@@ -153,10 +171,10 @@ export default {
     // 限制
     if (hasLimit) {
       start.props.disabledDate = e => {
-        return this.startDisabledDate(e);
+        return this.startDisabledDateFuc(e);
       };
       end.props.disabledDate = e => {
-        return this.endDisabledDate(e);
+        return this.endDisabledDateFuc(e);
       };
     } else {
       start.scopedSlots = {
