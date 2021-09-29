@@ -190,8 +190,10 @@ export default {
             params = searchBeforeRes;
           }
         }
-        const dataTable = this.$refs.table;
-        dataTable.onSearchSubmit(params);
+        this.$nextTick(() => {
+          const dataTable = this.$refs.table;
+          dataTable.onSearchSubmit(params);
+        });
       }
     },
 

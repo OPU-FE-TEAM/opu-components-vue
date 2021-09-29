@@ -791,6 +791,15 @@ export default {
         this.advancedVisible = true;
         this.$nextTick(() => {
           this.$refs.advancedSearch.setData(searchData);
+          const advancedSearchForm = utils.clone(this.headToolbar.search, true)
+            .advancedSearchForm;
+          if (
+            advancedSearchForm &&
+            advancedSearchForm.on &&
+            advancedSearchForm.on.open
+          ) {
+            advancedSearchForm.on.open(this.$refs.advancedSearch, searchData);
+          }
         });
       }
     },
@@ -865,7 +874,17 @@ export default {
           checked: scope.row[scope.column.property]
         },
         on: {
+          input: val => {
+            console.log(123);
+            scope.row[scope.column.property] = val;
+          },
+          update: val => {
+            console.log(321);
+
+            scope.row[scope.column.property] = val;
+          },
           change(val) {
+            console.log(val);
             scope.row[scope.column.property] = val;
             if (
               currentColumn.editRender.on &&

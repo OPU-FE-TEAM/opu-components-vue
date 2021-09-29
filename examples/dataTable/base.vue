@@ -544,93 +544,6 @@ export default {
         children: "children"
       },
       tableColumn: [
-        // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
-        {
-          width: 60,
-          align: "center",
-          slots: {
-            default: () => {
-              return [
-                <span class="drag-btn">
-                  <i class="vxe-icon--menu"></i>
-                </span>
-              ];
-            },
-            header: () => {
-              return "排序";
-            }
-          }
-        },
-        { type: "seq", title: "Number", colIndex: 1, width: 80 },
-        // {
-        //   field: "pulldownTable",
-        //   title: "下拉面板",
-        //   minWidth: 140,
-        //   editRender: {
-        //     name: "pulldownTable",
-        //     props: {
-        //       valueField: "id",
-        //       textField: "name",
-        //       table: {
-        //         props: {
-        //           size: "mini",
-        //           columns: [
-        //             { type: "checkbox", width: 50 },
-        //             { type: "seq", title: "Number", width: 80 },
-        //             {
-        //               field: "name",
-        //               title: "Name",
-        //               width: 200
-        //             },
-        //             {
-        //               field: "sex",
-        //               title: "Sex",
-        //               width: 200
-        //             },
-        //             {
-        //               field: "age",
-        //               title: "Age",
-        //               width: 200
-        //             }
-        //           ],
-        //           height: 300,
-        //           highlightHoverRow: true,
-        //           highlightCurrentRow: true,
-        //           proxyConfig: {
-        //             ajax: {
-        //               query: getData
-        //             }
-        //           }
-        //         }
-        //       }
-        //     },
-        //     on: {
-        //       change: ({ row }) => {
-        //         console.log("490", row.pulldownTable);
-        //       }
-        //     }
-        //   }
-        // },
-        {
-          field: "name",
-          title: "Name",
-          width: 140,
-          treeNode: true,
-          editRender: { name: "AInput" }
-        },
-        {
-          field: "checkbox",
-          title: "Checkbox",
-          width: 140,
-          editRender: {
-            name: "ACheckbox",
-            on: {
-              change: ({ row }) => {
-                console.log(row.checkbox);
-              }
-            }
-          }
-        },
         {
           field: "select",
           title: "下拉框",
@@ -643,47 +556,135 @@ export default {
             ]
           }
         },
+        // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         // {
-        //   field: "select1",
-        //   title: "下拉框请求下拉数据",
-        //   width: 140,
-        //   editRender: {
-        //     name: "ASelect",
-        //     options: [],
-        //     optionProps: {
-        //       value: "id",
-        //       label: "name"
+        //   width: 60,
+        //   align: "center",
+        //   slots: {
+        //     default: () => {
+        //       return [
+        //         <span class="drag-btn">
+        //           <i class="vxe-icon--menu"></i>
+        //         </span>
+        //       ];
+        //     },
+        //     header: () => {
+        //       return "排序";
         //     }
         //   }
         // },
+        // { type: "seq", title: "Number", colIndex: 1, width: 80 },
+        // // {
+        // //   field: "pulldownTable",
+        // //   title: "下拉面板",
+        // //   minWidth: 140,
+        // //   editRender: {
+        // //     name: "pulldownTable",
+        // //     props: {
+        // //       valueField: "id",
+        // //       textField: "name",
+        // //       table: {
+        // //         props: {
+        // //           size: "mini",
+        // //           columns: [
+        // //             { type: "checkbox", width: 50 },
+        // //             { type: "seq", title: "Number", width: 80 },
+        // //             {
+        // //               field: "name",
+        // //               title: "Name",
+        // //               width: 200
+        // //             },
+        // //             {
+        // //               field: "sex",
+        // //               title: "Sex",
+        // //               width: 200
+        // //             },
+        // //             {
+        // //               field: "age",
+        // //               title: "Age",
+        // //               width: 200
+        // //             }
+        // //           ],
+        // //           height: 300,
+        // //           highlightHoverRow: true,
+        // //           highlightCurrentRow: true,
+        // //           proxyConfig: {
+        // //             ajax: {
+        // //               query: getData
+        // //             }
+        // //           }
+        // //         }
+        // //       }
+        // //     },
+        // //     on: {
+        // //       change: ({ row }) => {
+        // //         console.log("490", row.pulldownTable);
+        // //       }
+        // //     }
+        // //   }
+        // // },
         // {
-        //   field: "cascader",
-        //   title: "级联选择",
+        //   field: "name",
+        //   title: "Name",
+        //   width: 140,
+        //   treeNode: true,
+        //   editRender: { name: "AInput" }
+        // },
+        // {
+        //   field: "checkbox",
+        //   title: "Checkbox",
         //   width: 140,
         //   editRender: {
-        //     name: "ACascader",
-        //     props: {
-        //       options: []
+        //     name: "ACheckbox",
+        //     on: {
+        //       change: ({ row }) => {
+        //         console.log(row.checkbox);
+        //       }
         //     }
         //   }
         // },
-        // {
-        //   field: "datePicker",
-        //   title: "日期选择",
-        //   width: 140,
-        //   editRender: {
-        //     name: "ADatePicker",
-        //     props: {}
-        //   }
-        // },
-        // {
-        //   field: "timePicker",
-        //   title: "时间选择",
-        //   width: 200,
-        //   editRender: {
-        //     name: "ATimePicker"
-        //   }
-        // },
+
+        // // {
+        // //   field: "select1",
+        // //   title: "下拉框请求下拉数据",
+        // //   width: 140,
+        // //   editRender: {
+        // //     name: "ASelect",
+        // //     options: [],
+        // //     optionProps: {
+        // //       value: "id",
+        // //       label: "name"
+        // //     }
+        // //   }
+        // // },
+        // // {
+        // //   field: "cascader",
+        // //   title: "级联选择",
+        // //   width: 140,
+        // //   editRender: {
+        // //     name: "ACascader",
+        // //     props: {
+        // //       options: []
+        // //     }
+        // //   }
+        // // },
+        // // {
+        // //   field: "datePicker",
+        // //   title: "日期选择",
+        // //   width: 140,
+        // //   editRender: {
+        // //     name: "ADatePicker",
+        // //     props: {}
+        // //   }
+        // // },
+        // // {
+        // //   field: "timePicker",
+        // //   title: "时间选择",
+        // //   width: 200,
+        // //   editRender: {
+        // //     name: "ATimePicker"
+        // //   }
+        // // },
         {
           field: "switch",
           title: "开关",
@@ -705,6 +706,8 @@ export default {
           id: 1,
           name: "a1",
           sex: 1,
+          select: "",
+          switch: false,
           children: [
             {
               id: "a11",
@@ -720,6 +723,8 @@ export default {
           id: 2,
           name: "a2",
           sex: 1,
+          select: "",
+          switch: true,
           children: [
             {
               id: "a21",
