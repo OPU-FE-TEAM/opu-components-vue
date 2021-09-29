@@ -131,7 +131,7 @@ export default {
         props: {
           ...config.table,
           ...table.props,
-          data: tableData,
+          data: proxyConfig ? null : tableData,
           columns: table.props.columns
         },
         on: {

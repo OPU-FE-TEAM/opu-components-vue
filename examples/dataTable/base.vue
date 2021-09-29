@@ -373,12 +373,19 @@ export default {
           //     title: "高级搜索1"
           //   }
           // },
-          // advancedSearchForm: {
-          //   props: {
-          //     layout: "grid",
-          //     colspan: 2
-          //   }
-          // },
+          advancedSearchForm: {
+            props: {
+              layout: "grid",
+              colspan: 2
+            },
+            on: {
+              open: (advancedSearchForm, formData) => {
+                console.log(advancedSearchForm);
+                console.log(formData);
+                debugger;
+              }
+            }
+          },
           items: [
             {
               field: "name",
