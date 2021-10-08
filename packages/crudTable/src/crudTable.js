@@ -197,6 +197,9 @@ export default {
     };
   },
   methods: {
+    headSearch() {
+      this.$refs.table.headSearch();
+    },
     onToobarButtonClick(code) {
       const { add } = this;
       switch (code) {

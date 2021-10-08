@@ -641,6 +641,7 @@ export default {
         props: {
           ...config.props,
           ...propsData,
+          data: proxyConfigOpt ? null : propsData.data,
           proxyConfig: utils.clone(proxyConfigOpt, true),
           columns: columns,
           loading: propsData.loading
@@ -709,6 +710,11 @@ export default {
   destroyed() {},
   methods: {
     ...methods,
+    headSearch() {
+      this.$nextTick(() => {
+        this.$refs.headSearch.onSubmit();
+      });
+    },
     reload() {
       const { proxyConfig } = this;
       if (proxyConfig && proxyConfig.ajax && proxyConfig.ajax.query) {
