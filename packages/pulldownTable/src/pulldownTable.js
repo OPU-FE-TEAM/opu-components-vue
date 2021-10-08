@@ -77,7 +77,7 @@ export default {
         text = selectValue.map(p => p[this.textField]).join(",");
       } else if (selectValue && utils.isObject(selectValue)) {
         text = selectValue[this.textField];
-      } else if (selectValue) {
+      } else if (selectValue || selectValue == 0) {
         text = selectValue;
       }
       return text;
@@ -90,7 +90,7 @@ export default {
       return rest;
     },
     pulldownProps() {
-      const { pulldownExtendProps, $scopedSlots } = this;
+      const { pulldownExtendProps } = this;
       const propsData = this.$options.propsData;
       const props = Object.assign({}, pulldownExtendProps);
       Object.assign(props, {
@@ -101,7 +101,7 @@ export default {
         }
       });
       props.ref = "pulldownTable";
-      props.scopedSlots = $scopedSlots;
+      // props.scopedSlots = $scopedSlots;
       props.class = "pulldown";
       props.on = {
         "hide-panel": this.onPulldownHide
@@ -157,8 +157,9 @@ export default {
 
   methods: {
     onTableRowSelect({ row }) {
-      this.selectValue = row[this.valueField];
-      this.$emit("change", this.selectValue, row);
+      let selectValue = row[this.valueField];
+      this.$emit("input", row[this.textField]);
+      this.$emit("change", selectValue, row);
       this.$refs.pulldownTable.hidePanel();
     },
     onTableCheckboxChange({ records }) {
@@ -199,10 +200,10 @@ export default {
 
     onInputChange(e) {
       let { value } = e.target;
-      console.log(value);
       if (e.type === "click") {
         value = "";
-        this.$emit("change", "", {});
+        this.$emit("input", value);
+        this.$emit("change", value, {});
         return false;
       }
       const pulldown = this.$refs.pulldownTable;
@@ -287,7 +288,6 @@ export default {
     onPulldownHide() {
       if (this.allowInputValue) {
         this.selectValue = this.inputChangeValue;
-        // console.log("---", this.selectValue, this.inputChangeValue);
         this.$emit("change", this.selectValue, {});
       } else {
         // this.selectValue = this.inputChangeValue;

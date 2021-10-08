@@ -4,7 +4,7 @@
       :table="table"
       :searchBefore="onSearchBefore"
       searchField="key"
-      :value="value"
+      v-model="value"
       style="width:300px"
       @inputChange="onInputChange"
       @change="onChange"
@@ -140,16 +140,7 @@ export default {
           }
         }
       },
-      value: [
-        {
-          id: 3,
-          name: "name_1_3"
-        },
-        {
-          id: 5,
-          name: "name_1_5"
-        }
-      ]
+      value: "123"
     };
   },
   methods: {
