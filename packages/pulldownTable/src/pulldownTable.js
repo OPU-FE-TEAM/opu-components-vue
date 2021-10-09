@@ -154,16 +154,15 @@ export default {
 
   methods: {
     onTableRowSelect({ row }) {
-      let selectValue = row[this.valueField];
-      this.$emit("input", row[this.textField]);
-      this.$emit("change", selectValue, row);
+      let text = row[this.textField];
+      this.$emit("input", text);
+      this.$emit("change", text, row);
       this.$refs.pulldownTable.hidePanel();
     },
     onTableCheckboxChange({ records }) {
       this.selectValue = records;
       this.$emit("change", this.selectValue);
     },
-
     onInputFocus(e) {
       this.$refs.pulldownTable.showPanel();
       this.$emit("showPanel", e);

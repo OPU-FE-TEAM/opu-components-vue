@@ -8,6 +8,7 @@
       style="width:300px"
       @inputChange="onInputChange"
       @change="onChange"
+      textField="sex"
     />
   </div>
 </template>
@@ -20,7 +21,7 @@ function getData(arr) {
       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
       const list = Array.from({ length: size }, (_, key) => ({
         id: key,
-        name: `name_${pageIndex}_${key}`,
+        keyName: `name_${pageIndex}_${key}`,
         sex: key < 3 ? 1 : 2,
         age: key
       }));
@@ -46,7 +47,7 @@ export default {
             { type: "checkbox", width: 50 },
             { type: "seq", title: "Number", width: 80 },
             {
-              field: "name",
+              field: "keyName",
               title: "Name",
               width: 200
             },

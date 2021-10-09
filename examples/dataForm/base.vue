@@ -392,6 +392,7 @@ export default {
             name: "pulldown-table",
             props: {
               valueField: "name",
+              textField: "sex",
               // allowInputValue: true,
               table: {
                 props: {
