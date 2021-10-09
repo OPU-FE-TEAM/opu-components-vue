@@ -4,14 +4,12 @@ import { utils } from "../../init";
 function renderInput(h, _vm) {
   const {
     onInputFocus,
-    onChange,
+    onInputChangeBefore,
     text,
-    // onCancelChange,
     disabled,
     inputProps,
     onInputKeyUp
   } = _vm;
-  // const onChange = utils.debounce(onInputChange, 200);
   return h("a-input", {
     props: {
       placeholder: "",
@@ -23,8 +21,7 @@ function renderInput(h, _vm) {
     on: {
       focus: onInputFocus,
       keyup: onInputKeyUp,
-      // change: onCancelChange,
-      input: onChange
+      input: onInputChangeBefore
     }
   });
 }
@@ -197,15 +194,15 @@ export default {
         });
       }
     },
-
+    onInputChangeBefore(e) {
+      if (e.type === "click") {
+        this.onClear("");
+      } else {
+        this.onInputChange(e);
+      }
+    },
     onInputChange(e) {
       let { value } = e.target;
-      if (e.type === "click") {
-        value = "";
-        this.$emit("input", value);
-        this.$emit("change", value, {});
-        return false;
-      }
       const pulldown = this.$refs.pulldownTable;
       const { table, searchBefore, searchField } = this;
       if (
@@ -232,12 +229,10 @@ export default {
 
       this.$emit("inputChange", e);
     },
-    onCancelChange(e) {
-      if (e.type === "click") {
-        this.$emit("change", "", {});
-      }
+    onClear(value) {
+      this.$emit("input", value);
+      this.$emit("change", value, {});
     },
-
     onInputEnter() {
       const dataTable = this.$refs.table;
       const pulldown = this.$refs.pulldownTable;
