@@ -81,7 +81,6 @@ export default {
     },
 
     setOptionsData(data) {
-      debugger;
       this.optionsData = data;
       return data;
     },
