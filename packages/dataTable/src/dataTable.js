@@ -781,7 +781,8 @@ export default {
       if (arr.filters.length) {
         json.filters = arr.filters;
       }
-      if (arr.sort && arr.sort.field) {
+
+      if (arr.sort) {
         json.sort = arr.sort;
       }
 

@@ -383,11 +383,17 @@ export default {
       table: {
         props: {
           editConfig: { trigger: "click", mode: "cell" },
+          "sort-config": {
+            // remote: true,
+            trigger: "cell",
+            orders: ["desc", "asc", null]
+          },
           columns: [
             { type: "seq", title: "Number", width: 80 },
             {
               field: "name",
-              title: "Name123"
+              title: "Name123",
+              sortable: true
             },
             {
               field: "sex",

@@ -14,6 +14,7 @@ import OpuSwitch from "./switch";
 import OpuCheckbox from "./checkbox";
 import OpuTreeSelect from "./treeSelect";
 import OpuSelectGroup from "./selectGroup";
+import OpuAutoComplete from "./autoComplete";
 
 export default {
   Buttons,
@@ -29,5 +30,6 @@ export default {
   OpuSwitch,
   OpuCheckbox,
   OpuTreeSelect,
-  OpuSelectGroup
+  OpuSelectGroup,
+  OpuAutoComplete
 };

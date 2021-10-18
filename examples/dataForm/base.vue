@@ -118,6 +118,17 @@ function getData(arr) {
   });
 }
 
+function idTypeFunction() {
+  let arr = [];
+  for (let i = 0; i < parseFloat(Math.random() * 10) + 1; i++) {
+    arr.push(i.toString());
+  }
+  return {
+    data: arr
+  };
+}
+idTypeFunction();
+
 function getCheckboxData(values) {
   console.log("get:", values);
   return new Promise(resolve => {
@@ -280,6 +291,19 @@ export default {
           }
         },
         {
+          title: "证件类型",
+          field: "idType",
+          itemRender: {
+            name: "a-auto-complete",
+            props: {
+              // options: ["1", "2", "3"],
+              api: idTypeFunction,
+              param: { value: "idType" },
+              dataField: "data"
+            }
+          }
+        },
+        {
           field: "treeSelect",
           title: "树下啦",
           itemRender: {
@@ -356,7 +380,13 @@ export default {
           title: "姓名1",
           itemRender: {
             name: "a-input",
-            style: { width: "130px" }
+            style: { width: "130px" },
+            after: () => {
+              return ["多少元"];
+            },
+            before: () => {
+              return ["满"];
+            }
           }
         },
         {

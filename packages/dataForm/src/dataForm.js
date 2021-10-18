@@ -402,6 +402,8 @@ function renderItemInput(item, h, _vm) {
       renderName = "opu-tree-select";
     } else if (renderName === "a-select-group") {
       renderName = "opu-select-group";
+    } else if (renderName === "a-auto-complete") {
+      renderName = "opu-auto-complete";
     } else if (optionsComponents.includes(renderName)) {
       // 有可选数据的组件
       props.props.componentPropsData = props.props;
@@ -862,6 +864,7 @@ export default {
       focusItemTypes: [
         "a-input",
         "a-password",
+        "a-auto-complete",
         "a-input-number",
         "a-select",
         "a-date-picker",
