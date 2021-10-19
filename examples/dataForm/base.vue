@@ -236,7 +236,7 @@ export default {
     const that = this;
     return {
       key: 1,
-      readonly: false,
+      readonly: true,
       loading: false,
       expand: false,
       colspan: {
@@ -1161,7 +1161,8 @@ export default {
   mounted() {
     // this.setFieldsOptionsDefaultValues();
     this.$refs.dataForm.setData({
-      checkboxGroup: [2, 3]
+      checkboxGroup: [2, 3],
+      idType: "1"
     });
   },
   methods: {

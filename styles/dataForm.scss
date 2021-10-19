@@ -160,11 +160,15 @@ $formItemMarginBottom: 19px;
         .ant-input-disabled,
         .ant-cascader-picker-disabled,
         .ant-time-picker-input[disabled],
+        .ant-select-auto-complete.ant-select .ant-input[disabled],
         .ant-input-number-disabled{
             @include readonlyInput;
         }
         .ant-select-arrow{
             display: none;
+        }
+        .ant-select-auto-complete.ant-select .ant-input[disabled]{
+            border:none;
         }
     }
     .input_readonly[disabled]:not(.ant-switch){

@@ -404,6 +404,7 @@ function renderItemInput(item, h, _vm) {
       renderName = "opu-select-group";
     } else if (renderName === "a-auto-complete") {
       renderName = "opu-auto-complete";
+      props.props.componentPropsData = props.props;
     } else if (optionsComponents.includes(renderName)) {
       // 有可选数据的组件
       props.props.componentPropsData = props.props;
