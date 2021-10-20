@@ -236,7 +236,7 @@ export default {
     const that = this;
     return {
       key: 1,
-      readonly: true,
+      readonly: false,
       loading: false,
       expand: false,
       colspan: {
@@ -288,6 +288,17 @@ export default {
           field: "sexName",
           itemRender: {
             name: "hidden"
+          }
+        },
+        {
+          field: "number",
+          title: "数字",
+          // width: "200px",
+          itemRender: {
+            name: "a-input-number",
+            extend: val => {
+              return <p>{val}</p>;
+            }
           }
         },
         {

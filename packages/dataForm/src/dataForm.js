@@ -425,6 +425,10 @@ function renderItemContent(item, h, _vm) {
     item.itemRender && item.itemRender.before ? item.itemRender.before() : "";
   let after =
     item.itemRender && item.itemRender.after ? item.itemRender.after() : "";
+  let extend =
+    item.itemRender && item.itemRender.extend
+      ? item.itemRender.extend(item)
+      : "";
   if (
     item.actions &&
     item.actions.length &&
@@ -505,6 +509,13 @@ function renderItemContent(item, h, _vm) {
           class: "data-form-item-after"
         },
         [after]
+      ),
+      h(
+        "div",
+        {
+          class: "data-form-item-extend"
+        },
+        [extend]
       )
     ]
   );

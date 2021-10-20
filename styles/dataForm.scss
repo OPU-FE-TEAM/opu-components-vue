@@ -23,6 +23,7 @@ $formItemMarginBottom: 19px;
         .data-form-item-content{
             flex:1;
             display: flex;
+            flex-wrap: wrap;
             
             &>.data-form-item-input{
                 // line-height: 0;
@@ -33,6 +34,9 @@ $formItemMarginBottom: 19px;
                 &>.data-form-buttons{
                     min-width: initial;
                 }
+            }
+            .data-form-item-extend{
+                width:100%;
             }
         }
         &.left{

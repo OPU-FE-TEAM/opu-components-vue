@@ -1,12 +1,14 @@
 /**
  * 有下拉数据的输入组件
  */
+import { AutoCompleteProps } from "ant-design-vue/lib/auto-complete";
 import utils from "../../utils";
 
 export default {
   name: "optionsComponent",
   components: {},
   props: {
+    ...AutoCompleteProps,
     renderName: {
       type: String,
       default: "a-auto-complete"
@@ -26,13 +28,7 @@ export default {
   },
   computed: {
     componentProps() {
-      const {
-        $listeners,
-        optionsData,
-        renderName,
-        componentPropsData,
-        value
-      } = this;
+      const { $listeners, optionsData, componentPropsData, value } = this;
 
       const ons = {};
       utils.each($listeners, (cb, type) => {
@@ -57,11 +53,7 @@ export default {
           change: this.updateValue
         }
       };
-      if (renderName === "a-tree-select") {
-        props.props.treeData = optionsData;
-      } else {
-        props.props.options = optionsData;
-      }
+      props.props.options = optionsData;
       return props;
     }
   },
