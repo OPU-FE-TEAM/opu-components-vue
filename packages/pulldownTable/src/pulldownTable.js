@@ -63,7 +63,8 @@ export default {
     return {
       tableData: [],
       selectValue: "",
-      inputChangeValue: ""
+      inputChangeValue: "",
+      timer: null
     };
   },
   computed: {
@@ -204,31 +205,34 @@ export default {
     },
     onInputChange(e) {
       let { value } = e.target;
-      const pulldown = this.$refs.pulldownTable;
-      const { table, searchBefore, searchField } = this;
-      if (
-        table.props.proxyConfig &&
-        table.props.proxyConfig.ajax &&
-        table.props.proxyConfig.ajax.query &&
-        pulldown &&
-        pulldown.isPanelVisible()
-      ) {
-        let params = {};
-        params[searchField] = value;
-        if (searchBefore) {
-          const searchBeforeRes = searchBefore && searchBefore(params);
-          if (searchBeforeRes === false) {
-            return false;
-          } else if (searchBeforeRes) {
-            params = searchBeforeRes;
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        const pulldown = this.$refs.pulldownTable;
+        const { table, searchBefore, searchField } = this;
+        if (
+          table.props.proxyConfig &&
+          table.props.proxyConfig.ajax &&
+          table.props.proxyConfig.ajax.query &&
+          pulldown &&
+          pulldown.isPanelVisible()
+        ) {
+          let params = {};
+          params[searchField] = value;
+          if (searchBefore) {
+            const searchBeforeRes = searchBefore && searchBefore(params);
+            if (searchBeforeRes === false) {
+              return false;
+            } else if (searchBeforeRes) {
+              params = searchBeforeRes;
+            }
           }
+          const dataTable = this.$refs.table;
+          dataTable.onSearchSubmit(params);
         }
-        const dataTable = this.$refs.table;
-        dataTable.onSearchSubmit(params);
-      }
-      this.inputChangeValue = value;
+        this.inputChangeValue = value;
 
-      this.$emit("inputChange", e);
+        this.$emit("inputChange", e);
+      }, 300);
     },
     onClear(value) {
       this.$emit("input", value);
