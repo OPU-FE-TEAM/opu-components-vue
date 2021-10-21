@@ -21,7 +21,7 @@ function renderInput(h, _vm) {
     on: {
       focus: onInputFocus,
       keyup: onInputKeyUp,
-      input: onInputChangeBefore
+      change: onInputChangeBefore
     }
   });
 }
@@ -197,6 +197,7 @@ export default {
       }
     },
     onInputChangeBefore(e) {
+      console.log("debugger");
       if (e.type === "click") {
         this.onClear("");
       } else {
@@ -207,6 +208,7 @@ export default {
       let { value } = e.target;
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
+        this.selectValue = value;
         const pulldown = this.$refs.pulldownTable;
         const { table, searchBefore, searchField } = this;
         if (
