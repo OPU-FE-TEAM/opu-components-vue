@@ -37,7 +37,7 @@
     <a-button @click="setSearchData">设置搜索表单数据</a-button>
     <a-button @click="getSearchData">获取搜索表单数据</a-button>
     <a-button @click="toSearch">搜索</a-button>
-    <a-button @click="reload">刷新</a-button>
+    <a-button @click="reload">刷新1</a-button>
     <a-button @click="setData">更新数据</a-button>
   </div>
 </template>
@@ -833,7 +833,10 @@ export default {
       const str = JSON.stringify(row);
       console.log(str);
     },
-    onAdd() {},
+    onAdd() {
+      debugger;
+      this.$refs.crudTable.reloadTable();
+    },
     setSearchData() {
       const grid = this.$refs.xGrid;
       grid.setSearchData({

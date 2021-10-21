@@ -718,8 +718,7 @@ export default {
     reload() {
       const { proxyConfig } = this;
       if (proxyConfig && proxyConfig.ajax && proxyConfig.ajax.query) {
-        this.searchData = this.tableAjaxJson;
-        this.$refs.dataGrid.commitProxy("reload");
+        this.$refs.dataGrid.commitProxy("query");
       }
     },
     query(params) {
@@ -748,15 +747,7 @@ export default {
       let pageData = {};
       if (pagerConfigOpt && arr.page) {
         const pageField = pagerConfigOpt.props.currentPage;
-        if (
-          searchData &&
-          (searchData[pageField] || searchData[pageField] == 0)
-        ) {
-          pageData[pageField] = searchData[pageField];
-          arr.page.currentPage = searchData[pageField] + 1;
-          delete this.searchData[pageField];
-          delete this.searchData[pagerConfigOpt.props.pageSize];
-        } else if (pagerConfigOpt.pageIndex === 0) {
+        if (pagerConfigOpt.pageIndex === 0) {
           pageData[pageField] = arr.page.currentPage - 1;
         } else if (pagerConfigOpt.pageIndex) {
           pageData[pageField] =
@@ -786,7 +777,7 @@ export default {
         json.sort = arr.sort;
       }
 
-      this.tableAjaxJson = json;
+      // this.tableAjaxJson = json;
 
       return json;
     },
@@ -882,16 +873,12 @@ export default {
         },
         on: {
           input: val => {
-            console.log(123);
             scope.row[scope.column.property] = val;
           },
           update: val => {
-            console.log(321);
-
             scope.row[scope.column.property] = val;
           },
           change(val) {
-            console.log(val);
             scope.row[scope.column.property] = val;
             if (
               currentColumn.editRender.on &&
@@ -1034,7 +1021,6 @@ export default {
       // 头部搜索
       headSearchForm = renderHeadSearch(searchConfig, h, this);
     }
-
     return h(
       "div",
       {

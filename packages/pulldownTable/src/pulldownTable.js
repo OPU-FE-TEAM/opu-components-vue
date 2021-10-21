@@ -131,6 +131,7 @@ export default {
       };
       if (table.props.proxyConfig && table.props.proxyConfig.ajax) {
         props.props.proxyConfig = {
+          ...table.props.proxyConfig,
           ajax: {
             ...table.props.proxyConfig.ajax
           }
@@ -155,6 +156,7 @@ export default {
   methods: {
     onTableRowSelect({ row }) {
       let text = row[this.textField];
+      this.selectValue = this.value;
       this.$emit("input", text);
       this.$emit("change", text, row);
       this.$refs.pulldownTable.hidePanel();

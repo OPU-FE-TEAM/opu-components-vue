@@ -89,6 +89,7 @@ import { utils } from "../../index";
 // }
 function getData(arr) {
   console.log(arr);
+  console.log("请求");
   return new Promise(resolve => {
     setTimeout(() => {
       console.log(arr);
@@ -456,26 +457,28 @@ export default {
                       width: 200
                     }
                   ],
-                  headToolbar: {
-                    search: {
-                      layout: "inline",
-                      titleWidth: "auto",
-                      items: [
-                        {
-                          field: "name",
-                          title: "名称",
-                          itemRender: {
-                            name: "a-input",
-                            props: { placeholder: "请输入名称" }
-                          }
-                        }
-                      ]
-                    }
-                  },
+                  // headToolbar: {
+                  //   search: {
+                  //     layout: "inline",
+                  //     titleWidth: "auto",
+                  //     items: [
+                  //       {
+                  //         field: "name",
+                  //         title: "名称",
+                  //         itemRender: {
+                  //           name: "a-input",
+                  //           props: { placeholder: "请输入名称" }
+                  //         }
+                  //       }
+                  //     ]
+                  //   }
+                  // },
+                  size: "mini",
                   height: 300,
                   highlightHoverRow: true,
                   highlightCurrentRow: true,
                   proxyConfig: {
+                    autoLoad: false,
                     ajax: {
                       query: getData
                     }
