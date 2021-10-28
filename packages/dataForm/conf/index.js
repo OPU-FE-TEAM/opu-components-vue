@@ -29,6 +29,7 @@ const GlobalConfig = {
     api: null,
     valueField: "value",
     labelField: "label",
+    childrenField: "children",
     dataField: "data",
     defaultField: "default",
     autoLoadOptionsData: true, //是否自动获取下拉数据

@@ -864,6 +864,11 @@ export default {
     autoSetDefaultValue: {
       type: [Boolean, String],
       default: ""
+    },
+    //是否清空找不到的值
+    isClearUndefinedValue: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -891,6 +896,16 @@ export default {
         "a-input-number-split",
         "a-select-group"
       ],
+      //有返回数据的Form组件名称
+      optionsFormTypes: [
+        "a-select",
+        "a-select-group",
+        "a-tree-select",
+        "a-radio-group",
+        "a-checkbox-group"
+      ],
+      //有返回数据的item集合索引
+      optionsItemIndexs: {},
       unifyApiGetOptions: [],
       getItemPropsOptionsApiList: [],
       config: config,
@@ -996,7 +1011,14 @@ export default {
   },
   methods: {
     cloneItems(items) {
-      const { expand, autoLoadOptionsData, isPartRequest } = this;
+      const {
+        expand,
+        autoLoadOptionsData,
+        isPartRequest,
+        optionsItemIndexs,
+        optionsFormTypes,
+        isClearUndefinedValue
+      } = this;
       const clone = utils.clone(items, true);
       const getItemPropsOptionsApiList = [];
       const unifyApiGetOptions = [];
@@ -1011,11 +1033,12 @@ export default {
       } else {
         cloneData = clone;
       }
+      let newOptionsItemIndexs = {};
       const isFormPartRequest =
         isPartRequest !== ""
           ? isPartRequest
           : config.getSelectOptions.isPartRequest;
-      const data = cloneData.map(item => {
+      const data = cloneData.map((item, index) => {
         const oldItem = this.itemsOptions.find(p => p.field === item.field);
         if (
           oldItem &&
@@ -1056,8 +1079,43 @@ export default {
         ) {
           unifyApiGetOptions.push(item);
         }
+
+        if (isClearUndefinedValue) {
+          if (
+            item.itemRender &&
+            item.itemRender.name &&
+            optionsFormTypes.indexOf(item.itemRender.name) > -1
+          )
+            if (optionsItemIndexs[item.field]) {
+              newOptionsItemIndexs[item.field] = {
+                ...optionsItemIndexs[item.field],
+                index
+              };
+            } else {
+              let itemProps = item.itemRender.props || {};
+              newOptionsItemIndexs[item.field] = {
+                name: item.itemRender.name,
+                valueField: config.getSelectOptions.valueField,
+                labelField: config.getSelectOptions.labelField,
+                options: [],
+                ...itemProps,
+                index
+              };
+              if (
+                item.itemRender.name == "a-tree-select" &&
+                item.itemRender.props &&
+                item.itemRender.props.treeData &&
+                item.itemRender.props.treeData.length > 0
+              ) {
+                newOptionsItemIndexs[item.field].options =
+                  item.itemRender.props.treeData;
+              }
+            }
+        }
         return item;
       });
+
+      this.optionsItemIndexs = newOptionsItemIndexs;
       this.unifyApiGetOptions = unifyApiGetOptions;
       this.getItemPropsOptionsApiList = getItemPropsOptionsApiList;
 
@@ -1092,13 +1150,68 @@ export default {
     },
     // 设置表单值
     setData(values) {
-      const { items } = this;
+      const { optionsItemIndexs, isClearUndefinedValue } = this;
       // 过滤掉formitems未定义的字段
-      const formFields = items.map(item => item.field);
+      // const formFields = items.map(item => item.field);
       let formData = {};
       for (const key in values) {
-        if (formFields.includes(key)) {
-          formData[key] = values[key];
+        let item = optionsItemIndexs[key];
+        if (item) {
+          let is = false;
+          if (isClearUndefinedValue && item && item.options.length > 0) {
+            if (item.options.length > 0) {
+              if (item.name == "a-tree-select") {
+                let valueField = item.replaceFields
+                  ? item.replaceFields.value ||
+                    config.getSelectOptions.valueField
+                  : config.getSelectOptions.valueField;
+                let childrenField = item.replaceFields
+                  ? item.replaceFields.children ||
+                    config.getSelectOptions.childrenField
+                  : config.getSelectOptions.childrenField;
+                if (utils.isArray(values[key])) {
+                  values[key] = utils.hasOptionsValue(
+                    item.options,
+                    values[key],
+                    valueField,
+                    childrenField,
+                    true
+                  );
+                  is = true;
+                } else {
+                  is = utils.hasOptionsValue(
+                    item.options,
+                    values[key],
+                    valueField,
+                    childrenField
+                  );
+                }
+              } else {
+                if (utils.isArray(values[key])) {
+                  const arrValue = [];
+                  const vF = item.valueField;
+                  for (let i = 0; i < item.options.length; i++) {
+                    const el = item.options[i];
+                    if (values[key].includes(el[vF])) {
+                      arrValue.push(el[vF]);
+                    }
+                    if (arrValue.length == values[key].length) break;
+                  }
+                  is = true;
+                  values[key] = arrValue;
+                } else {
+                  is =
+                    item.options.findIndex(
+                      p => p[item.valueField] == values[key]
+                    ) > -1;
+                }
+              }
+            }
+          } else {
+            is = true;
+          }
+
+          formData[key] = is ? values[key] : undefined;
         }
       }
       this.form.setFieldsValue(formData);
@@ -1203,7 +1316,9 @@ export default {
     },
     // 设置一组字段的options数据
     setFieldsOptions(data) {
+      let { optionsItemIndexs } = this;
       const formData = this.getData();
+      const clearFormData = {};
       for (const key in data) {
         const options = data[key];
         const item = this.itemsOptions.find(p => p.field === key);
@@ -1213,6 +1328,7 @@ export default {
           const input = this.$refs[inputRef];
           if (input && input.setOptionsData) {
             input.setOptionsData(options);
+            optionsItemIndexs[item.field].options = options;
           }
           if (formData[key]) {
             const vF =
@@ -1228,18 +1344,21 @@ export default {
                   arrValue.push(el[vF]);
                 }
               }
-              formData[key] = arrValue;
+              clearFormData[key] = arrValue;
             } else {
               const valueRow = options.find(p => p[vF] == formData[key]);
               if (!valueRow) {
-                formData[key] = "";
+                clearFormData[key] = "";
               }
             }
           }
         }
       }
+
       // 清除赋值字段的值
-      this.setData(formData);
+      if (!utils.isEmptyObject(clearFormData)) {
+        this.setData(clearFormData);
+      }
     },
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}, callback) {

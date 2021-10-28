@@ -1,5 +1,56 @@
 import XEUtils from "xe-utils";
 
+//  查询当前options中 是否存在指定值
+function hasOptionsValue(options, value, valueField, childrenField) {
+  let is = false;
+  for (let i = 0; i < options.length; i++) {
+    let item = options[i];
+    if (item[valueField] == value) {
+      is = true;
+    }
+    if (item[childrenField] && item[childrenField].length > 0) {
+      is = hasOptionsValue(
+        item[childrenField],
+        value,
+        valueField,
+        childrenField
+      );
+    }
+    if (is) break;
+  }
+
+  return is;
+}
+
+function hasOptionsMultipleValue(
+  options,
+  value,
+  valueField,
+  childrenField,
+  existValue = []
+) {
+  for (let i = 0; i < options.length; i++) {
+    let item = options[i];
+    if (value.indexOf(item[valueField]) > -1) {
+      existValue.push(item[valueField]);
+    }
+    if (item[childrenField] && item[childrenField].length > 0) {
+      existValue = existValue.concat(
+        hasOptionsMultipleValue(
+          item[childrenField],
+          value,
+          valueField,
+          childrenField
+        )
+      );
+    }
+
+    if (existValue.length == value.length) break;
+  }
+
+  return existValue;
+}
+
 XEUtils.mixin({
   // 获取对象中指定key的值
   getObjData(key, obj) {
@@ -98,6 +149,17 @@ XEUtils.mixin({
         }
       })
     );
+  },
+  hasOptionsValue(options, value, valueField, childrenField, isMultiple) {
+    if (isMultiple) {
+      return hasOptionsMultipleValue(options, value, valueField, childrenField);
+    } else {
+      return hasOptionsValue(options, value, valueField, childrenField);
+    }
+  },
+  //是否空对象
+  isEmptyObject(data) {
+    return JSON.stringify(data) === "{}";
   }
 });
 

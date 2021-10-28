@@ -13,7 +13,8 @@
 </template>
 
 <script>
-import dataFormBase from "./dataForm/base";
+// import dataFormBase from "./dataForm/base";
+import dataFormBase from "./dataForm/select";
 import dataTableBase from "./dataTable/base";
 import dataTableJsx from "./dataTable/jsx";
 
