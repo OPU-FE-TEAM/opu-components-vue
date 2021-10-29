@@ -486,7 +486,11 @@ function renderItemContent(item, h, _vm) {
     "div",
     {
       style: { width: formTitleWidth },
-      class: "data-form-item-content"
+      class: {
+        "data-form-item-content": true,
+        "form-item-buttons":
+          item.itemRender && item.itemRender.name == "buttons"
+      }
     },
     [
       h(
@@ -1366,12 +1370,10 @@ export default {
     setFieldsOptions(data) {
       let { optionsItemIndexs, formClearUndefinedValue } = this;
       const formData = this.getData();
-      const clearFormData = {};
       for (const key in data) {
         const options = data[key];
         const item = this.itemsOptions.find(p => p.field === key);
         if (item && item.itemRender && item.itemRender.props) {
-          const itemProps = item.itemRender.props;
           const inputRef = "input_" + item.field;
           const input = this.$refs[inputRef];
           if (input && input.setOptionsData) {
@@ -1380,35 +1382,11 @@ export default {
               optionsItemIndexs[item.field].options = options;
             }
           }
-          if (formData[key]) {
-            const vF =
-              itemProps.valueField != undefined
-                ? itemProps.valueField
-                : config.getSelectOptions.valueField;
-            if (utils.isArray(formData[key])) {
-              // 数组的值
-              const arrValue = [];
-              for (let i = 0; i < options.length; i++) {
-                const el = options[i];
-                if (formData[key].includes(el[vF])) {
-                  arrValue.push(el[vF]);
-                }
-              }
-              clearFormData[key] = arrValue;
-            } else {
-              const valueRow = options.find(p => p[vF] == formData[key]);
-              if (!valueRow) {
-                clearFormData[key] = "";
-              }
-            }
-          }
         }
       }
 
       // 清除赋值字段的值
-      if (!utils.isEmptyObject(clearFormData)) {
-        this.setData(clearFormData);
-      }
+      this.setData(formData);
     },
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}, callback) {

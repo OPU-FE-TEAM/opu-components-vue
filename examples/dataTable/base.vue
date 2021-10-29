@@ -32,7 +32,7 @@
     </DataTable>
 
     <a-button @click="getData">获取数据</a-button>
-    <a-button @click="$refs.xGrid.showSetColumns()">设置表头</a-button>
+    <a-button @click="$refs.xGrid.showSetColumns()">设置表头1</a-button>
     <a-button @click="updateColumns">更新表头</a-button>
     <a-button @click="setSearchData">设置搜索表单数据</a-button>
     <a-button @click="getSearchData">获取搜索表单数据</a-button>
