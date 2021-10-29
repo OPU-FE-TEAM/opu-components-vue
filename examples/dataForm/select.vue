@@ -18,6 +18,8 @@
 import { DataForm } from "../../index";
 // import { utils } from "../../index";
 
+var a = { id: 1, name: 10 };
+
 function getSelectGroupData() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -51,6 +53,7 @@ export default {
   },
   data() {
     return {
+      a,
       loading: true,
       items: [
         // {
@@ -302,6 +305,11 @@ export default {
         }
       ]
     };
+  },
+  computed: {
+    dataValue() {
+      return a;
+    }
   },
   created() {},
   mounted() {},

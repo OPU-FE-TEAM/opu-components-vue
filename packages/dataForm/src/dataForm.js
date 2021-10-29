@@ -169,7 +169,7 @@ function handlefieldOptionsDataField(field, json, _vm) {
 
 // 渲染标题
 function renderItemTitle(item, h, _vm) {
-  const { titleColon, titleWidth, titleAlign } = _vm;
+  const { formTitleColon, formTitleWidth, formTitleAlign } = _vm;
   //是否必填
   let isRequired = false;
   if (item.option && item.option.rules && item.option.rules.length) {
@@ -189,7 +189,7 @@ function renderItemTitle(item, h, _vm) {
     titleText = item.title;
   }
   let titleWidthStr =
-    item.titleWidth || item.titleWidth === 0 ? item.titleWidth : titleWidth;
+    item.titleWidth || item.titleWidth === 0 ? item.titleWidth : formTitleWidth;
   if (utils.isNumber(titleWidthStr)) {
     titleWidthStr = `${titleWidthStr}px`;
   }
@@ -212,8 +212,8 @@ function renderItemTitle(item, h, _vm) {
     {
       class: [
         "data-form-item-title",
-        titleAlign,
-        { colon: item.colon === false ? item.colon : titleColon },
+        formTitleAlign,
+        { colon: item.colon === false ? item.colon : formTitleColon },
         { required: isRequired }
       ],
       style: {
@@ -420,7 +420,7 @@ function renderItemInput(item, h, _vm) {
 
 // 渲染每个表单项内容
 function renderItemContent(item, h, _vm) {
-  const { titleWidth, $scopedSlots } = _vm;
+  const { formTitleWidth, $scopedSlots } = _vm;
   const before =
     item.itemRender && item.itemRender.before ? item.itemRender.before() : "";
   let after =
@@ -485,7 +485,7 @@ function renderItemContent(item, h, _vm) {
   return h(
     "div",
     {
-      style: { width: titleWidth },
+      style: { width: formTitleWidth },
       class: "data-form-item-content"
     },
     [
@@ -526,7 +526,7 @@ function renderItems(h, _vm) {
   const {
     itemsOptions,
     $slots,
-    layout,
+    formLayout,
     currentColspan,
     $scopedSlots,
     focusItemTypes,
@@ -578,7 +578,7 @@ function renderItems(h, _vm) {
           };
           formItemContent = [renderItemContent(item, h, _vm)];
         }
-        if (layout === "grid") {
+        if (formLayout === "grid") {
           // grid模式下每个单元格所占格
           if (item.colspan) {
             let itemColspan = "";
@@ -593,7 +593,7 @@ function renderItems(h, _vm) {
           if (item.rowspan && item.rowspan > 1) {
             formItemProps.style["gridRow"] = "span " + item.rowspan;
           }
-        } else if (layout === "flex") {
+        } else if (formLayout === "flex") {
           // 当flex模式下的宽度
           const colWidth = 100 / currentColspan;
           if (item.width) {
@@ -640,8 +640,8 @@ function renderActionButtons(h, _vm) {
     loading,
     onSubmit,
     resetFields,
-    titleWidth,
-    layout,
+    formTitleWidth,
+    formLayout,
     expand,
     onExpandClick,
     items,
@@ -732,16 +732,16 @@ function renderActionButtons(h, _vm) {
     }
     let titleWidthStr = 0;
     let buttonStyle = {};
-    if (layout != "inline") {
-      if (utils.isNumber(titleWidth)) {
-        titleWidthStr = `${titleWidth}px`;
+    if (formLayout != "inline") {
+      if (utils.isNumber(formTitleWidth)) {
+        titleWidthStr = `${formTitleWidth}px`;
       } else {
-        titleWidthStr = titleWidth;
+        titleWidthStr = formTitleWidth;
       }
     }
-    if (layout === "grid" && currentColspan && currentColspan > 1) {
+    if (formLayout === "grid" && currentColspan && currentColspan > 1) {
       buttonStyle["gridColumn"] = "span " + currentColspan;
-    } else if (layout === "flex") {
+    } else if (formLayout === "flex") {
       buttonStyle["width"] = `100%`;
     }
     return h(
@@ -774,43 +774,48 @@ export default {
     ...inputs
   },
   props: {
+    /* config 配置参数 开始 */
+    // 布局，'horizontal'|'vertical'|'inline'|'grid'|'flex'
+    layout: {
+      type: String,
+      default: ""
+    },
+    // grid、flex布局时的列数
+    colspan: {
+      type: [Number, Object],
+      default: ""
+    },
+    // 所有项的标题对齐方式
+    titleAlign: {
+      type: String,
+      default: ""
+    },
+    // 所有项的标题宽度
+    titleWidth: {
+      type: [String, Number],
+      default: ""
+    },
+    // 是否显示标题冒号
+    titleColon: {
+      type: [Boolean, String],
+      default: ""
+    },
+    //是否清空找不到的值
+    clearUndefinedValue: {
+      type: [Boolean, String],
+      default: ""
+    },
+    /* config 配置参数 结束 */
     // 表单内容
     items: {
       type: Array,
       default: () => []
-    },
-    // 布局，'horizontal'|'vertical'|'inline'|'grid'|'flex'
-    layout: {
-      type: String,
-      default: config.layout
-    },
-
-    // grid、flex布局时的列数
-    colspan: {
-      type: [Number, Object],
-      default: config.colspan
     },
     // 是否只读
     readonly: {
       type: Boolean,
       default: false
     },
-    // 所有项的标题对齐方式
-    titleAlign: {
-      type: String,
-      default: config.titleAlign
-    },
-    // 所有项的标题宽度
-    titleWidth: {
-      type: [String, Number],
-      default: config.titleWidth
-    },
-    // 是否显示标题冒号
-    titleColon: {
-      type: Boolean,
-      default: config.titleColon
-    },
-
     // 可选数据全部请求完后回调
     onOptionsAllLoad: {
       type: Function,
@@ -864,11 +869,6 @@ export default {
     autoSetDefaultValue: {
       type: [Boolean, String],
       default: ""
-    },
-    //是否清空找不到的值
-    isClearUndefinedValue: {
-      type: Boolean,
-      default: false
     }
   },
   data() {
@@ -876,7 +876,6 @@ export default {
       form: this.$form.createForm(this),
       itemsOptions: [],
       expand: false, //折叠展开
-      currentColspan: 1,
       // 支持回车活动焦点的组件
       focusItemTypes: [
         "a-input",
@@ -949,21 +948,65 @@ export default {
           return "";
         })
         .filter(p => p !== "");
+    },
+    //布局
+    formLayout() {
+      let layout = this.layout;
+      if (layout === "") {
+        layout = config.layout;
+      }
+      return layout;
+    },
+    // grid、flex布局时的列数
+    currentColspan() {
+      let colspan = this.colspan;
+      if (colspan === "") {
+        colspan = config.colspan;
+      }
+      if (utils.isObject(colspan)) {
+        colspan = colspan[this.currentScreen];
+      }
+      return colspan;
+    },
+    // 所有项的标题对齐方式
+    formTitleAlign() {
+      let titleAlign = this.titleAlign;
+      if (titleAlign === "") {
+        titleAlign = config.titleAlign;
+      }
+      return titleAlign;
+    },
+    // 所有项的标题宽度
+    formTitleWidth() {
+      let titleWidth = this.titleWidth;
+      if (titleWidth === "") {
+        titleWidth = config.titleWidth;
+      }
+      return titleWidth;
+    },
+    // 是否显示标题冒号
+    formTitleColon() {
+      let titleColon = this.titleColon;
+      if (titleColon === "") {
+        titleColon = config.titleColon;
+      }
+      return titleColon;
+    },
+    //是否清空找不到的值
+    formClearUndefinedValue() {
+      let clearUndefinedValue = this.clearUndefinedValue;
+      if (clearUndefinedValue === "") {
+        clearUndefinedValue = config.clearUndefinedValue;
+      }
+      return clearUndefinedValue;
     }
   },
   watch: {
     items(items) {
       this.cloneItems(items);
-    },
-    colspan(val) {
-      this.currentColspan = val;
     }
   },
   created() {
-    this.currentColspan = this.colspan;
-    // for (const key in config) {
-    //   this[key] = config[key];
-    // }
     this.cloneItems(this.items);
   },
   mounted() {
@@ -976,17 +1019,13 @@ export default {
           enquire.register(responsiveMap[screen], {
             match: () => {
               that.currentScreen = screen;
-              that.currentColspan = that.colspan[screen];
             },
             unmatch: () => {
               const keyIndex = keys.findIndex(p => p === screen);
               if (keyIndex > 0) {
-                const newKeyIndex = keyIndex - 1;
-                that.currentScreen = keys[newKeyIndex];
-                that.currentColspan = that.colspan[keys[newKeyIndex]];
+                that.currentScreen = keys[keyIndex - 1];
               }
             },
-            // Keep a empty destory to avoid triggering unmatch when unregister
             destroy() {}
           })
         );
@@ -1015,9 +1054,7 @@ export default {
         expand,
         autoLoadOptionsData,
         isPartRequest,
-        optionsItemIndexs,
-        optionsFormTypes,
-        isClearUndefinedValue
+        formClearUndefinedValue
       } = this;
       const clone = utils.clone(items, true);
       const getItemPropsOptionsApiList = [];
@@ -1080,37 +1117,11 @@ export default {
           unifyApiGetOptions.push(item);
         }
 
-        if (isClearUndefinedValue) {
-          if (
-            item.itemRender &&
-            item.itemRender.name &&
-            optionsFormTypes.indexOf(item.itemRender.name) > -1
-          )
-            if (optionsItemIndexs[item.field]) {
-              newOptionsItemIndexs[item.field] = {
-                ...optionsItemIndexs[item.field],
-                index
-              };
-            } else {
-              let itemProps = item.itemRender.props || {};
-              newOptionsItemIndexs[item.field] = {
-                name: item.itemRender.name,
-                valueField: config.getSelectOptions.valueField,
-                labelField: config.getSelectOptions.labelField,
-                options: [],
-                ...itemProps,
-                index
-              };
-              if (
-                item.itemRender.name == "a-tree-select" &&
-                item.itemRender.props &&
-                item.itemRender.props.treeData &&
-                item.itemRender.props.treeData.length > 0
-              ) {
-                newOptionsItemIndexs[item.field].options =
-                  item.itemRender.props.treeData;
-              }
-            }
+        if (formClearUndefinedValue) {
+          let row = this.initOptionsItemIndex(item, index);
+          if (row) {
+            newOptionsItemIndexs[item.field] = row;
+          }
         }
         return item;
       });
@@ -1124,6 +1135,41 @@ export default {
       }
 
       this.itemsOptions = data;
+    },
+    //初始化 optionsItem 索引数据
+    initOptionsItemIndex(item, index) {
+      let { optionsItemIndexs, optionsFormTypes } = this;
+      let row;
+      if (
+        item.itemRender &&
+        item.itemRender.name &&
+        optionsFormTypes.indexOf(item.itemRender.name) > -1
+      )
+        if (optionsItemIndexs[item.field]) {
+          row = {
+            ...optionsItemIndexs[item.field],
+            index
+          };
+        } else {
+          let itemProps = item.itemRender.props || {};
+          row = {
+            name: item.itemRender.name,
+            valueField: config.getSelectOptions.valueField,
+            labelField: config.getSelectOptions.labelField,
+            options: [],
+            ...itemProps,
+            index
+          };
+          if (
+            item.itemRender.name == "a-tree-select" &&
+            item.itemRender.props &&
+            item.itemRender.props.treeData &&
+            item.itemRender.props.treeData.length > 0
+          ) {
+            row.options = item.itemRender.props.treeData;
+          }
+        }
+      return row;
     },
     loadOptionsData(formData = {}, callback) {
       const { unifyApiGetOptions, getItemPropsOptionsApiList } = this;
@@ -1150,15 +1196,15 @@ export default {
     },
     // 设置表单值
     setData(values) {
-      const { optionsItemIndexs, isClearUndefinedValue } = this;
+      const { items, optionsItemIndexs, formClearUndefinedValue } = this;
       // 过滤掉formitems未定义的字段
-      // const formFields = items.map(item => item.field);
+      const formFields = items.map(item => item.field);
       let formData = {};
       for (const key in values) {
-        let item = optionsItemIndexs[key];
-        if (item) {
-          let is = false;
-          if (isClearUndefinedValue && item && item.options.length > 0) {
+        if (formFields.includes(key)) {
+          let item = optionsItemIndexs[key];
+          if (formClearUndefinedValue && item) {
+            let is = false;
             if (item.options.length > 0) {
               if (item.name == "a-tree-select") {
                 let valueField = item.replaceFields
@@ -1206,12 +1252,14 @@ export default {
                     ) > -1;
                 }
               }
+            } else {
+              is = true;
             }
-          } else {
-            is = true;
-          }
 
-          formData[key] = is ? values[key] : undefined;
+            formData[key] = is ? values[key] : undefined;
+          } else {
+            formData[key] = values[key];
+          }
         }
       }
       this.form.setFieldsValue(formData);
@@ -1316,7 +1364,7 @@ export default {
     },
     // 设置一组字段的options数据
     setFieldsOptions(data) {
-      let { optionsItemIndexs } = this;
+      let { optionsItemIndexs, formClearUndefinedValue } = this;
       const formData = this.getData();
       const clearFormData = {};
       for (const key in data) {
@@ -1328,7 +1376,9 @@ export default {
           const input = this.$refs[inputRef];
           if (input && input.setOptionsData) {
             input.setOptionsData(options);
-            optionsItemIndexs[item.field].options = options;
+            if (formClearUndefinedValue && optionsItemIndexs[item.field]) {
+              optionsItemIndexs[item.field].options = options;
+            }
           }
           if (formData[key]) {
             const vF =
@@ -1497,7 +1547,7 @@ export default {
     }
   },
   render(h) {
-    const { form, layout, currentColspan, readonly, onSubmit } = this;
+    const { form, formLayout, currentColspan, readonly, onSubmit } = this;
     // ant design form的layout属性
     const antdLayouts = ["horizontal", "vertical", "inline"];
     // form表单的参数
@@ -1505,9 +1555,9 @@ export default {
       props: {
         ...config.props,
         form: form,
-        layout: antdLayouts.includes(layout) ? layout : null
+        layout: antdLayouts.includes(formLayout) ? formLayout : null
       },
-      class: ["data-form", layout],
+      class: ["data-form", formLayout],
       style: {},
       on: {
         submit: onSubmit
@@ -1516,7 +1566,7 @@ export default {
     if (readonly) {
       formProps.class.push("readonly");
     }
-    if (layout === "grid") {
+    if (formLayout === "grid") {
       let formColnumStyle = "";
       for (let i = 0; i < currentColspan; i++) {
         formColnumStyle += " 1fr";

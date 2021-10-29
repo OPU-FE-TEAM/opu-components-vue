@@ -6,6 +6,7 @@ const GlobalConfig = {
   titleAlign: "right", // 所有项的标题对齐方式，left,center,right
   titleColon: true, // 是否显示所有项标题后的冒号
   filterNullValues: true, //获取数据时是否清除空值字段值
+  clearUndefinedValue: false, //表单清空找不到的值
 
   // 提交按钮的props参数
   submitButtonProps: {
