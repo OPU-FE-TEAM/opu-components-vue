@@ -5,6 +5,7 @@ import { Table } from "vxe-table";
 import { DataForm } from "../../dataForm";
 import config from "../conf";
 import SetColums from "./setColums";
+import editRenderMixin from "./mixin/editRender";
 
 const tablePropKeys = Object.keys(Table.props);
 const methods = {};
@@ -481,6 +482,7 @@ export default {
     //   default: "auto"
     // }
   },
+  mixins: [editRenderMixin],
   watch: {
     columns(val) {
       // this.tableColumns = val;
@@ -607,6 +609,15 @@ export default {
           }
         }
         if (item.editRender) {
+          if (propsData && propsData.size == "mini") {
+            if (item.editRender.props) {
+              item.editRender.props.size = "default";
+            } else {
+              item.editRender.props = {
+                size: "default"
+              };
+            }
+          }
           if (item.editRender.name && item.editRender.name === "ACheckbox") {
             item.slots = {
               default: "a_checkbox",
@@ -701,7 +712,7 @@ export default {
       // 表头代理
       fetchColumns(proxyColumns);
     }
-    this.tableColumns = columns ? columns : [];
+    this.setTableColumns(columns);
     if (proxyConfigOpt && proxyConfigOpt.ajax && proxyConfigOpt.ajax.query) {
       this.hasAjaxQuery = true;
     }
@@ -826,14 +837,19 @@ export default {
       const { proxyColumns, fetchColumns } = this;
 
       if (data) {
-        this.backupColumns = utils.clone(data);
+        data = utils.clone(data);
+        this.backupColumns = data;
         const configProps =
           proxyColumns &&
           proxyColumns.props &&
           utils.isObject(proxyColumns.props)
             ? { ...config.proxyColumns.props, ...proxyColumns.props }
             : config.proxyColumns.props;
-        this.tableColumns = data.filter(p => p[configProps.show] !== false);
+        console.log("进入设置");
+        this.tableColumns = this.editColumnsRender(data, p => {
+          return p[configProps.show] !== false;
+        });
+        // this.tableColumns = data.filter(p => p[configProps.show] !== false);
       } else if (proxyColumns) {
         fetchColumns(proxyColumns);
       }
@@ -1021,6 +1037,7 @@ export default {
       // 头部搜索
       headSearchForm = renderHeadSearch(searchConfig, h, this);
     }
+
     return h(
       "div",
       {
