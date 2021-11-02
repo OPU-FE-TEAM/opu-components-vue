@@ -362,7 +362,7 @@ const editRender = {
             let props = item.itemRender.props || {};
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
-            if (editSlotHidden(row)) return "";
+            if (editSlotHidden(row, props)) return "";
             return [
               <a-switch
                 {...{
@@ -397,7 +397,7 @@ const editRender = {
             let props = item.itemRender.props || {};
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
-            if (editSlotHidden(row)) return "";
+            if (editSlotHidden(row, props)) return "";
             return [
               <a-checkbox
                 {...{
