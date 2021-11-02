@@ -1,4 +1,5 @@
 const GlobalConfig = {
+  editSize: "default",
   props: {
     border: true,
     resizable: true
@@ -21,6 +22,15 @@ const GlobalConfig = {
       pageSize: "pageSize",
       currentPage: "pageIndex"
     }
+  },
+  getSelectOptions: {
+    api: null,
+    valueField: "value",
+    labelField: "label",
+    childrenField: "children",
+    dataField: "data",
+    defaultField: "default",
+    isPartRequest: false //是否将统一api分别发送请求
   },
   // 接口代理
   proxyConfig: {

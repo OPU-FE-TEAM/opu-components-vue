@@ -845,7 +845,6 @@ export default {
           utils.isObject(proxyColumns.props)
             ? { ...config.proxyColumns.props, ...proxyColumns.props }
             : config.proxyColumns.props;
-        console.log("进入设置");
         this.tableColumns = this.editColumnsRender(data, p => {
           return p[configProps.show] !== false;
         });

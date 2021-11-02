@@ -786,7 +786,7 @@ export default {
     },
     // grid、flex布局时的列数
     colspan: {
-      type: [Number, Object],
+      type: [Number, String, Object],
       default: ""
     },
     // 所有项的标题对齐方式

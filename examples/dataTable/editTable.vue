@@ -12,12 +12,13 @@
       :edit-config="{ trigger: 'click', mode: 'row' }"
     >
       <template v-slot:operate="{ row }">
-        <a-button @click="editRow(row)">编辑</a-button>
+        <a-button @click="editRow(row)">删除</a-button>
       </template>
     </DataTable>
-
+    <a-date-picker />
     <a-button @click="onAdd">新增</a-button>
     <a-button @click="onChange">改变</a-button>
+    <a-button @click="getData">获取数据</a-button>
     <p>{{ data }}</p>
   </div>
 </template>
@@ -25,18 +26,121 @@
 <script>
 import moment from "moment";
 
+function getData() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      let arr = [];
+      for (let i = 0; i < 10; i++) {
+        arr.push({
+          label: i + " " + i,
+          value: i,
+          id: i + 1,
+          text: i + 1 + "-" + i + 1
+        });
+      }
+      resolve(arr);
+    }, 5000);
+  });
+}
+
 export default {
   components: {},
   data() {
     return {
       columns: [
         {
+          field: "switch",
+          align: "left",
+          title: "开关",
+          minWidth: 150,
+          itemRender: {
+            name: "ASwitch",
+            props: {
+              hidden: row => {
+                return row.orderType == 1;
+              }
+            }
+          }
+        },
+        {
+          field: "date",
+          title: "日期",
+          minWidth: 150,
+          itemRender: {
+            name: "ADatePicker",
+            props: {
+              format: "YYYY-MM-DD",
+              // format: "YYYY-MM-DD HH:mm:ss",
+              // showTime: true,
+              disabled: row => {
+                return row.orderType == 3;
+              }
+            },
+            on: {
+              change: e => {
+                console.log(e);
+              }
+            }
+          }
+        },
+        {
+          field: "switch1",
+          align: "left",
+          title: "开关1",
+          minWidth: 150,
+          itemRender: {
+            name: "ASwitch",
+            props: {
+              disabled: row => {
+                return row.orderType == 1;
+              },
+              trueValue: "1",
+              falseValue: "0"
+            }
+          }
+        },
+        {
+          field: "checkbox",
+          align: "left",
+          title: "选中",
+          minWidth: 150,
+          itemRender: {
+            name: "ACheckbox",
+            props: {
+              disabled: row => {
+                return row.orderType == 1;
+              }
+            }
+          }
+        },
+        {
+          field: "checkbox1",
+          align: "left",
+          title: "选中1",
+          minWidth: 150,
+          itemRender: {
+            name: "a-checkbox",
+            props: {
+              disabled: row => {
+                return row.orderType == 1;
+              },
+              trueValue: "1",
+              falseValue: "0"
+            }
+          }
+        },
+        {
           field: "name",
           align: "left",
           title: "名称",
           minWidth: 150,
           itemRender: {
-            name: "AInput"
+            name: "AInput",
+            props: {
+              disabled: row => {
+                return row.orderType == 1;
+              }
+            }
           }
         },
         {
@@ -45,7 +149,12 @@ export default {
           title: "数量",
           minWidth: 150,
           itemRender: {
-            name: "AInputNumber"
+            name: "AInputNumber",
+            props: {
+              disabled: row => {
+                return row.orderType == 2;
+              }
+            }
           }
         },
         {
@@ -57,54 +166,100 @@ export default {
             name: "ASelect",
             props: {
               options: [
-                { value: 1, label: 1 },
-                { value: 2, label: 2 },
-                { value: 3, label: 3 }
+                { value: 1, label: "省份" },
+                { value: 2, label: "城市" },
+                { value: 3, label: "区域" }
               ]
+            },
+            on: {
+              change: (value, option, row, rowIndex) => {
+                console.log(value);
+                console.log(option);
+                console.log(rowIndex);
+                if (value == 1) {
+                  row.oneSelectList = [
+                    { value: 11, label: "广西" },
+                    { value: 22, label: "广东" }
+                  ];
+                } else if (value == 2) {
+                  row.oneSelectList = [
+                    { value: 1, label: "桂林" },
+                    { value: 2, label: "贺州" }
+                  ];
+                  this.$refs.dataTable.setEditOptions({
+                    apiSelect: [
+                      { value: 1, label: "桂林" },
+                      { value: 2, label: "贺州" }
+                    ]
+                  });
+                } else {
+                  row.oneSelectList = [
+                    { value: 99, label: "象山" },
+                    { value: 88, label: "叠彩" }
+                  ];
+                }
+                row.oneSelect = "";
+              }
             }
           }
         },
         {
-          field: "orderDetailId",
-          title: "关联明细",
-          minWidth: 300,
-          slots: {
-            default: ({ row }) => {
-              return [
-                <a-select
-                  {...{
-                    props: {
-                      showSearch: true,
-                      allowClear: true,
-                      value: row.orderDetailId,
-                      options: [
-                        { value: 1, label: 1 },
-                        { value: 2, label: 2 },
-                        { value: 3, label: 3 }
-                      ]
-                    },
-                    on: {
-                      change: value => {
-                        console.log("orderDetailId");
-                        row.orderDetailId = value;
-                      }
-                    }
-                  }}
-                />
-              ];
-            }
-          }
-        },
-        {
-          field: "date",
+          field: "apiSelect",
           align: "left",
-          title: "日期",
+          title: "请求下拉",
           minWidth: 150,
           itemRender: {
-            name: "ADatePicker",
+            name: "ASelect",
             props: {
-              format: "YYYY-MM-DD HH:mm:ss",
-              showTime: true
+              api: getData,
+              valueField: "id",
+              labelField: "text",
+              disabled: row => {
+                return row.orderType == 3;
+              }
+            }
+          }
+        },
+        {
+          field: "apiSelect1",
+          align: "left",
+          title: "请求下拉",
+          minWidth: 150,
+          itemRender: {
+            name: "ASelect",
+            props: {
+              api: getData,
+              disabled: row => {
+                return row.orderType == 3;
+              }
+            }
+          }
+        },
+        {
+          field: "oneSelect",
+          align: "left",
+          title: "行内数据下拉",
+          minWidth: 150,
+          itemRender: {
+            name: "ASelect",
+            props: {
+              optionsField: "oneSelectList",
+              valueField: "id",
+              labelField: "text"
+            }
+          }
+        },
+        {
+          field: "oneSelect1",
+          align: "left",
+          title: "行内数据下拉1",
+          minWidth: 150,
+          itemRender: {
+            name: "ASelect",
+            props: {
+              optionsField: "oneSelectList1",
+              valueField: "id",
+              labelField: "text"
             }
           }
         },
@@ -117,7 +272,10 @@ export default {
             name: "ATimePicker",
             props: {
               format: "HH:mm",
-              showTime: true
+              showTime: true,
+              disabled: row => {
+                return row.orderType == 3;
+              }
             },
             on: {
               change: () => {
@@ -129,11 +287,26 @@ export default {
       ],
       data: [
         {
+          switch: false,
+          switch1: "1",
+          checkbox: false,
+          checkbox1: "1",
           name: "123",
           number: "333",
           orderType: "",
-          orderDetailId: "",
+          apiSelect: "",
+          apiSelect1: "",
           date: moment(),
+          oneSelect: "",
+          oneSelect1: "",
+          oneSelectList: [
+            { value: 11, label: "广西" },
+            { value: 22, label: "广东" }
+          ],
+          oneSelectList1: [
+            { value: 11, label: "广西1" },
+            { value: 22, label: "广东1" }
+          ],
           time: moment("12:08:23", "HH:mm:ss")
         }
       ]
@@ -143,15 +316,40 @@ export default {
   methods: {
     onAdd() {
       this.data.push({
+        switch: false,
+        switch1: "0",
+        checkbox: true,
+        checkbox1: "0",
         name: "123",
         number: "333",
-        select: "",
+        orderType: "",
+        apiSelect: "",
+        apiSelect1: "",
         date: moment(),
+        oneSelect: "",
+        oneSelect1: "",
+        oneSelectList: [
+          { value: 11, label: "广西" },
+          { value: 22, label: "广东" }
+        ],
+        oneSelectList1: [
+          { value: 11, label: "广西1" },
+          { value: 22, label: "广东1" }
+        ],
         time: moment("12:08:23", "HH:mm:ss")
       });
     },
     onChange() {},
-    setData() {}
+    setData() {},
+    getData() {
+      console.log(
+        this.data.map(p => {
+          return {
+            time: p.time.format("HH:mm")
+          };
+        })
+      );
+    }
   }
 };
 </script>
