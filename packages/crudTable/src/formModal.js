@@ -49,6 +49,8 @@ export default {
       this.loading = true;
       this.visible = true;
       this.confirmLoading = true;
+      this.autoSetDefaultValue =
+        this.form.props.autoSetDefaultValue && actionType === "add";
       this.$nextTick(() => {
         let res = "";
         if (callback) {
@@ -70,8 +72,8 @@ export default {
       this.confirmLoading = flag;
     },
     setFormData(data) {
-      this.loadOptionsData(data);
       this.$refs.form && this.$refs.form.setData(data);
+      this.loadOptionsData(data);
       this.loading = false;
       this.confirmLoading = false;
     },
@@ -116,7 +118,9 @@ export default {
       $scopedSlots,
       readonly,
       title,
-      items
+      items,
+      autoSetDefaultValue,
+      autoLoadOptionsData
     } = this;
     //TODO 自动以footer 增加 loading状态
     const modalProps = {
@@ -145,6 +149,8 @@ export default {
         ...formOpt,
         items,
         readonly,
+        autoSetDefaultValue,
+        autoLoadOptionsData,
         onOptionsLoadAfter: this.onOptionsLoadAfter
       },
       class: "crud-table-form",

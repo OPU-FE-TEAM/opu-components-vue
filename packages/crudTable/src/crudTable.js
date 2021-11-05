@@ -485,6 +485,9 @@ export default {
             data = utils.getObjData(queryDataField, res);
           }
           formModal.setFormData(data);
+          // if (form && form.props && form.props.autoSetDefaultValue) {
+          // } else {
+          // }
         });
       } else {
         setTimeout(() => {

@@ -4,11 +4,10 @@ import config from "../../conf";
 
 function handlefieldOptionsDataField(item, json) {
   let optionData = json;
-  if (item && item.itemRender && item.itemRender.props) {
-    const itemProps = item.itemRender.props;
+  if (item) {
     const df =
-      itemProps.dataField != undefined
-        ? itemProps.dataField
+      item.dataField != undefined
+        ? item.dataField
         : config.getSelectOptions.dataField;
     optionData = utils.getObjData(df, json);
   }
@@ -16,21 +15,12 @@ function handlefieldOptionsDataField(item, json) {
 }
 
 //编辑插槽 是否禁用
-function editSlotDisabled(row, props) {
-  return !props.disabled
-    ? false
-    : typeof props.disabled == "function"
-    ? props.disabled(row)
-    : props.disabled;
-}
-
-//编辑插槽 是否禁用
-function editSlotHidden(row, props) {
-  return !props.hidden
-    ? false
-    : typeof props.hidden == "function"
-    ? props.hidden(row)
-    : props.hidden;
+function editSlotPropInit(row, props, key, defaultKey = false) {
+  return !props[key]
+    ? defaultKey
+    : typeof props[key] == "function"
+    ? props[key](row)
+    : props[key];
 }
 
 const editRender = {
@@ -43,6 +33,10 @@ const editRender = {
     editSize: {
       type: String,
       default: ""
+    },
+    onOptionsLoadAfter: {
+      type: Function,
+      default: null
     }
   },
   data() {
@@ -57,7 +51,8 @@ const editRender = {
         "ACheckbox"
       ],
       editOptions: {},
-      editApiList: []
+      editApiList: [],
+      editDefaultOption: {}
     };
   },
   computed: {
@@ -94,6 +89,9 @@ const editRender = {
     getEditOptions() {
       return this.editOptions;
     },
+    getEditDefaultOption() {
+      return this.editDefaultOption;
+    },
     editColumnsRender(data, filterCallback) {
       let { editType, editOptions, toHump } = this;
       let apiList = [];
@@ -110,22 +108,30 @@ const editRender = {
             };
             if (name == "ASwitch" || name == "ACheckbox") p.align = "center";
             let props = p.itemRender.props || {};
-            if (
-              name == "ASelect" &&
-              p.itemRender.props &&
-              !p.itemRender.optionsField &&
-              !editOptions[p.field] &&
-              (props.api || getSelectOptions.api)
-            ) {
-              apiList.push({
-                field: p.field,
-                api: props.api || getSelectOptions.api,
-                valueField: props.valueField || getSelectOptions.valueField,
-                labelField: props.labelField || getSelectOptions.labelField,
-                childrenField:
-                  props.childrenField || getSelectOptions.childrenField,
-                dataField: props.dataField || getSelectOptions.dataField
-              });
+            if (name == "ASelect" && p.itemRender.props) {
+              if (p.itemRender.props.options) {
+                editOptions[p.field] == p.itemRender.props.options;
+              } else if (
+                !p.itemRender.props.optionsField &&
+                !editOptions[p.field] &&
+                (props.api ||
+                  props.dataField ||
+                  props.param ||
+                  getSelectOptions.api)
+              ) {
+                apiList.push({
+                  field: p.field,
+                  api: props.api || getSelectOptions.api,
+                  valueField: props.valueField || getSelectOptions.valueField,
+                  labelField: props.labelField || getSelectOptions.labelField,
+                  childrenField:
+                    props.childrenField || getSelectOptions.childrenField,
+                  dataField: props.dataField || getSelectOptions.dataField,
+                  defaultField:
+                    props.defaultField || getSelectOptions.defaultField,
+                  param: props.param || {}
+                });
+              }
             }
           }
         }
@@ -147,12 +153,17 @@ const editRender = {
         }
       }
 
-      let promises = list.map(p => p.api());
+      let promises = list.map(p => p.api(p.param));
       Promise.all(promises)
         .then(res => {
-          let { editOptions } = that;
+          let { editOptions, editDefaultOption, onOptionsLoadAfter } = that;
           list.forEach((item, index) => {
-            const { valueField, labelField, childrenField } = item;
+            const {
+              valueField,
+              labelField,
+              childrenField,
+              defaultField
+            } = item;
             // 字段单独配置api的可选数据的处理
             let optionsData = handlefieldOptionsDataField(
               item,
@@ -169,11 +180,19 @@ const editRender = {
               if (p[childrenField] != "children") {
                 p.children = p[childrenField];
               }
+              if (p[defaultField]) {
+                editDefaultOption[item.field] = p.value;
+              }
               return p;
             });
           });
-
           that.editOptions = editOptions;
+          that.editDefaultOption = editDefaultOption;
+
+          if (onOptionsLoadAfter) {
+            onOptionsLoadAfter({ editOptions, editDefaultOption });
+          }
+
           that.$refs.dataGrid.updateData();
         })
         .catch(() => {});
@@ -193,7 +212,7 @@ const editRender = {
                     size: this.editItemSize,
                     ...props,
                     value: row[item.field],
-                    disabled: editSlotDisabled(row, props)
+                    disabled: editSlotPropInit(row, props, "disabled")
                   },
                   on: {
                     ...itemRender.on,
@@ -225,7 +244,9 @@ const editRender = {
                     size: this.editItemSize,
                     ...props,
                     value: row[item.field],
-                    disabled: editSlotDisabled(row, props)
+                    disabled: editSlotPropInit(row, props, "disabled"),
+                    max: editSlotPropInit(row, props, "max", Infinity),
+                    min: editSlotPropInit(row, props, "min", -Infinity)
                   },
                   on: {
                     ...itemRender.on,
@@ -266,7 +287,7 @@ const editRender = {
                     ...itemRender.props,
                     value: row[item.field],
                     options: options,
-                    disabled: editSlotDisabled(row, props)
+                    disabled: editSlotPropInit(row, props, "disabled")
                   },
                   on: {
                     ...itemRender.on,
@@ -302,7 +323,7 @@ const editRender = {
                       : row[item.field].format
                       ? row[item.field]
                       : moment(row[item.field]),
-                    disabled: editSlotDisabled(row, props)
+                    disabled: editSlotPropInit(row, props, "disabled")
                   },
                   on: {
                     ...itemRender.on,
@@ -335,7 +356,7 @@ const editRender = {
                     clearIcon: true,
                     ...itemRender.props,
                     value: row[item.field],
-                    disabled: editSlotDisabled(row, props)
+                    disabled: editSlotPropInit(row, props, "disabled")
                   },
                   on: {
                     ...item.on,
@@ -362,7 +383,7 @@ const editRender = {
             let props = item.itemRender.props || {};
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
-            if (editSlotHidden(row, props)) return "";
+            if (editSlotPropInit(row, props, "hidden")) return "";
             return [
               <a-switch
                 {...{
@@ -370,7 +391,7 @@ const editRender = {
                     size: this.editItemSize,
                     ...itemRender.props,
                     checked: row[item.field] == trueValue,
-                    disabled: editSlotDisabled(row, props)
+                    disabled: editSlotPropInit(row, props, "disabled")
                   },
                   on: {
                     ...item.on,
@@ -397,7 +418,7 @@ const editRender = {
             let props = item.itemRender.props || {};
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
-            if (editSlotHidden(row, props)) return "";
+            if (editSlotPropInit(row, props, "hidden")) return "";
             return [
               <a-checkbox
                 {...{
@@ -405,7 +426,7 @@ const editRender = {
                     size: this.editItemSize,
                     ...itemRender.props,
                     checked: row[item.field] == trueValue,
-                    disabled: editSlotDisabled(row, props)
+                    disabled: editSlotPropInit(row, props, "disabled")
                   },
                   on: {
                     ...item.on,
