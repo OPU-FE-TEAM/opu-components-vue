@@ -19,7 +19,8 @@ import dataFormBase from "./dataForm/select";
 import dataTableBase from "./dataTable/editTable";
 import dataTableJsx from "./dataTable/jsx";
 
-import crudTableBase from "./crudTable/base";
+import crudTableBase from "./crudTable/index1";
+// import crudTableBase from "./crudTable/base";
 import Cell from "./other/cell";
 import pageWraper from "./other/pageWraper";
 import pulldownTable from "./other/pulldownTable";
@@ -39,7 +40,7 @@ export default {
   },
   data() {
     return {
-      tab: 2,
+      tab: 3,
       locale: zh_CN
     };
   }

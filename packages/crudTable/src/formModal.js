@@ -59,9 +59,9 @@ export default {
             this.setFormData(res);
           }
         }
-        if (actionType === "add" && !res) {
-          this.loadOptionsData();
-        }
+        // if (actionType === "add" && !res) {
+        //   // this.loadOptionsData();
+        // }
       });
     },
     loadOptionsData(data) {
@@ -73,7 +73,7 @@ export default {
     },
     setFormData(data) {
       this.$refs.form && this.$refs.form.setData(data);
-      this.loadOptionsData(data);
+      // this.loadOptionsData(data);
       this.loading = false;
       this.confirmLoading = false;
     },

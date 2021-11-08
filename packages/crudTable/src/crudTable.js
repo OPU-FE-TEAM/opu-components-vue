@@ -444,7 +444,7 @@ export default {
       );
       formModal.setItems(filterFormItems(this.currentAction));
       formModal.show(openCallback, this.currentAction);
-      formModal.loadOptionsData();
+      // formModal.loadOptionsData();
       formModal.setLoading(false);
     },
     edit(row, e) {
