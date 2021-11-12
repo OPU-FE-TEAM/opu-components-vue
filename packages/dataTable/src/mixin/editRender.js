@@ -16,7 +16,7 @@ function handlefieldOptionsDataField(item, json) {
 
 //编辑插槽 是否禁用
 function editSlotPropInit(row, props, key, defaultKey = false) {
-  return !props[key]
+  return !props[key] || props[key] == 0
     ? defaultKey
     : typeof props[key] == "function"
     ? props[key](row)
@@ -114,10 +114,7 @@ const editRender = {
               } else if (
                 !p.itemRender.props.optionsField &&
                 !editOptions[p.field] &&
-                (props.api ||
-                  props.dataField ||
-                  props.param ||
-                  getSelectOptions.api)
+                (props.api || props.dataField || props.param)
               ) {
                 apiList.push({
                   field: p.field,
@@ -171,6 +168,9 @@ const editRender = {
               that
             );
             editOptions[item.field] = optionsData.map(p => {
+              if (p.value && !p[config.originalValueKey]) {
+                p[config.originalValueKey] = p.value;
+              }
               if (p[labelField] != "label") {
                 p.label = p[labelField];
               }
@@ -205,31 +205,36 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            return [
-              <a-input
-                {...{
-                  props: {
-                    size: this.editItemSize,
-                    ...props,
-                    value: row[item.field],
-                    disabled: editSlotPropInit(row, props, "disabled")
-                  },
-                  on: {
-                    ...itemRender.on,
-                    change: e => {
-                      let value = e.target.value;
-                      row[item.field] = value;
-                      if (itemRender.on && itemRender.on.change) {
-                        itemRender.on.change(e, { row, rowIndex });
+            let disabled = editSlotPropInit(row, props, "disabled");
+            if (disabled !== true && disabled !== false) {
+              return [disabled];
+            } else {
+              return [
+                <a-input
+                  {...{
+                    props: {
+                      size: this.editItemSize,
+                      ...props,
+                      value: row[item.field],
+                      disabled
+                    },
+                    on: {
+                      ...itemRender.on,
+                      change: e => {
+                        let value = e.target.value;
+                        row[item.field] = value;
+                        if (itemRender.on && itemRender.on.change) {
+                          itemRender.on.change(e, { row, rowIndex });
+                        }
                       }
+                    },
+                    style: {
+                      ...itemRender.style
                     }
-                  },
-                  style: {
-                    ...itemRender.style
-                  }
-                }}
-              />
-            ];
+                  }}
+                />
+              ];
+            }
           };
           break;
         case "AInputNumber":
@@ -237,33 +242,38 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            return [
-              <a-input-number
-                {...{
-                  props: {
-                    size: this.editItemSize,
-                    ...props,
-                    value: row[item.field],
-                    disabled: editSlotPropInit(row, props, "disabled"),
-                    max: editSlotPropInit(row, props, "max", Infinity),
-                    min: editSlotPropInit(row, props, "min", -Infinity)
-                  },
-                  on: {
-                    ...itemRender.on,
-                    change: e => {
-                      let value = e;
-                      row[item.field] = value;
-                      if (itemRender.on && itemRender.on.change) {
-                        itemRender.on.change(value, { row, rowIndex });
+            let disabled = editSlotPropInit(row, props, "disabled");
+            if (disabled !== true && disabled !== false) {
+              return [disabled];
+            } else {
+              return [
+                <a-input-number
+                  {...{
+                    props: {
+                      size: this.editItemSize,
+                      ...props,
+                      value: row[item.field],
+                      disabled,
+                      max: editSlotPropInit(row, props, "max", Infinity),
+                      min: editSlotPropInit(row, props, "min", -Infinity)
+                    },
+                    on: {
+                      ...itemRender.on,
+                      change: e => {
+                        let value = e;
+                        row[item.field] = value;
+                        if (itemRender.on && itemRender.on.change) {
+                          itemRender.on.change(value, { row, rowIndex });
+                        }
                       }
+                    },
+                    style: {
+                      ...itemRender.style
                     }
-                  },
-                  style: {
-                    ...itemRender.style
-                  }
-                }}
-              />
-            ];
+                  }}
+                />
+              ];
+            }
           };
           break;
         case "ASelect":
@@ -277,34 +287,39 @@ const editRender = {
               : props.options
               ? props.options
               : this.editOptions[item.field];
-            return [
-              <a-select
-                {...{
-                  props: {
-                    size: this.editItemSize,
-                    showSearch: true,
-                    allowClear: true,
-                    ...itemRender.props,
-                    value: row[item.field],
-                    options: options,
-                    disabled: editSlotPropInit(row, props, "disabled")
-                  },
-                  on: {
-                    ...itemRender.on,
-                    change: (value, option) => {
-                      row[item.field] = value;
-                      if (itemRender.on && itemRender.on.change) {
-                        itemRender.on.change(value, option, {
-                          row,
-                          rowIndex,
-                          options
-                        });
+            let disabled = editSlotPropInit(row, props, "disabled");
+            if (disabled !== true && disabled !== false) {
+              return [disabled];
+            } else {
+              return [
+                <a-select
+                  {...{
+                    props: {
+                      size: this.editItemSize,
+                      showSearch: true,
+                      allowClear: true,
+                      ...itemRender.props,
+                      value: row[item.field],
+                      options: options,
+                      disabled
+                    },
+                    on: {
+                      ...itemRender.on,
+                      change: (value, option) => {
+                        row[item.field] = value;
+                        if (itemRender.on && itemRender.on.change) {
+                          itemRender.on.change(value, option, {
+                            row,
+                            rowIndex,
+                            options
+                          });
+                        }
                       }
                     }
-                  }
-                }}
-              />
-            ];
+                  }}
+                />
+              ];
+            }
           };
           break;
         case "ADatePicker":
@@ -312,35 +327,40 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            return [
-              <a-date-picker
-                {...{
-                  props: {
-                    size: this.editItemSize,
-                    ...itemRender.props,
-                    value: !row[item.field]
-                      ? null
-                      : row[item.field].format
-                      ? row[item.field]
-                      : moment(row[item.field]),
-                    disabled: editSlotPropInit(row, props, "disabled")
-                  },
-                  on: {
-                    ...itemRender.on,
-                    change: e => {
-                      let value = e;
-                      row[item.field] = value;
-                      if (itemRender.on && itemRender.on.change) {
-                        itemRender.on.change(e, { row, rowIndex });
+            let disabled = editSlotPropInit(row, props, "disabled");
+            if (disabled !== true && disabled !== false) {
+              return [disabled];
+            } else {
+              return [
+                <a-date-picker
+                  {...{
+                    props: {
+                      size: this.editItemSize,
+                      ...itemRender.props,
+                      value: !row[item.field]
+                        ? null
+                        : row[item.field].format
+                        ? row[item.field]
+                        : moment(row[item.field]),
+                      disabled
+                    },
+                    on: {
+                      ...itemRender.on,
+                      change: e => {
+                        let value = e;
+                        row[item.field] = value;
+                        if (itemRender.on && itemRender.on.change) {
+                          itemRender.on.change(e, { row, rowIndex });
+                        }
                       }
+                    },
+                    style: {
+                      ...itemRender.style
                     }
-                  },
-                  style: {
-                    ...itemRender.style
-                  }
-                }}
-              />
-            ];
+                  }}
+                />
+              ];
+            }
           };
           break;
         case "ATimePicker":
@@ -348,32 +368,37 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            return [
-              <a-time-picker
-                {...{
-                  props: {
-                    size: this.editItemSize,
-                    clearIcon: true,
-                    ...itemRender.props,
-                    value: row[item.field],
-                    disabled: editSlotPropInit(row, props, "disabled")
-                  },
-                  on: {
-                    ...item.on,
-                    change: e => {
-                      let value = e;
-                      row[item.field] = value;
-                      if (itemRender.on && itemRender.on.change) {
-                        itemRender.on.change(e, { row, rowIndex });
+            let disabled = editSlotPropInit(row, props, "disabled");
+            if (disabled !== true && disabled !== false) {
+              return [disabled];
+            } else {
+              return [
+                <a-time-picker
+                  {...{
+                    props: {
+                      size: this.editItemSize,
+                      clearIcon: true,
+                      ...itemRender.props,
+                      value: row[item.field],
+                      disabled
+                    },
+                    on: {
+                      ...item.on,
+                      change: e => {
+                        let value = e;
+                        row[item.field] = value;
+                        if (itemRender.on && itemRender.on.change) {
+                          itemRender.on.change(e, { row, rowIndex });
+                        }
                       }
+                    },
+                    style: {
+                      ...itemRender.style
                     }
-                  },
-                  style: {
-                    ...itemRender.style
-                  }
-                }}
-              />
-            ];
+                  }}
+                />
+              ];
+            }
           };
           break;
         case "ASwitch":
@@ -384,31 +409,36 @@ const editRender = {
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
             if (editSlotPropInit(row, props, "hidden")) return "";
-            return [
-              <a-switch
-                {...{
-                  props: {
-                    size: this.editItemSize,
-                    ...itemRender.props,
-                    checked: row[item.field] == trueValue,
-                    disabled: editSlotPropInit(row, props, "disabled")
-                  },
-                  on: {
-                    ...item.on,
-                    change: e => {
-                      let value = e ? trueValue : falseValue;
-                      row[item.field] = value;
-                      if (itemRender.on && itemRender.on.change) {
-                        itemRender.on.change(e, { row, rowIndex });
+            let disabled = editSlotPropInit(row, props, "disabled");
+            if (disabled !== true && disabled !== false) {
+              return [disabled];
+            } else {
+              return [
+                <a-switch
+                  {...{
+                    props: {
+                      size: this.editItemSize,
+                      ...itemRender.props,
+                      checked: row[item.field] == trueValue,
+                      disabled
+                    },
+                    on: {
+                      ...item.on,
+                      change: e => {
+                        let value = e ? trueValue : falseValue;
+                        row[item.field] = value;
+                        if (itemRender.on && itemRender.on.change) {
+                          itemRender.on.change(e, { row, rowIndex });
+                        }
                       }
+                    },
+                    style: {
+                      ...itemRender.style
                     }
-                  },
-                  style: {
-                    ...itemRender.style
-                  }
-                }}
-              />
-            ];
+                  }}
+                />
+              ];
+            }
           };
           break;
         case "ACheckbox":
@@ -419,31 +449,36 @@ const editRender = {
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
             if (editSlotPropInit(row, props, "hidden")) return "";
-            return [
-              <a-checkbox
-                {...{
-                  props: {
-                    size: this.editItemSize,
-                    ...itemRender.props,
-                    checked: row[item.field] == trueValue,
-                    disabled: editSlotPropInit(row, props, "disabled")
-                  },
-                  on: {
-                    ...item.on,
-                    change: e => {
-                      let value = e.target.checked ? trueValue : falseValue;
-                      row[item.field] = value;
-                      if (itemRender.on && itemRender.on.change) {
-                        itemRender.on.change(e, { row, rowIndex });
+            let disabled = editSlotPropInit(row, props, "disabled");
+            if (disabled !== true && disabled !== false) {
+              return [disabled];
+            } else {
+              return [
+                <a-checkbox
+                  {...{
+                    props: {
+                      size: this.editItemSize,
+                      ...itemRender.props,
+                      checked: row[item.field] == trueValue,
+                      disabled
+                    },
+                    on: {
+                      ...item.on,
+                      change: e => {
+                        let value = e.target.checked ? trueValue : falseValue;
+                        row[item.field] = value;
+                        if (itemRender.on && itemRender.on.change) {
+                          itemRender.on.change(e, { row, rowIndex });
+                        }
                       }
+                    },
+                    style: {
+                      ...itemRender.style
                     }
-                  },
-                  style: {
-                    ...itemRender.style
-                  }
-                }}
-              />
-            ];
+                  }}
+                />
+              ];
+            }
           };
           break;
       }

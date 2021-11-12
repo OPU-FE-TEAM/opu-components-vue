@@ -30,6 +30,7 @@ const GlobalConfig = {
     childrenField: "children",
     dataField: "data",
     defaultField: "default",
+    originalValueKey: "originalValue",
     isPartRequest: false //是否将统一api分别发送请求
   },
   // 接口代理

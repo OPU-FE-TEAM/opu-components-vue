@@ -8,6 +8,9 @@ function handleItemPropsOptions(options, _vm, pValue = "") {
   if (options && utils.isArray(options)) {
     const cloneOptions = utils.clone(options);
     return cloneOptions.map(item => {
+      if (item.value && vF != "value" && !item[config.originalValueKey]) {
+        item[config.originalValueKey] = item.value;
+      }
       if (vF) {
         item.value = item[vF] + "";
       }
