@@ -73,7 +73,7 @@ export default {
               // format: "YYYY-MM-DD HH:mm:ss",
               // showTime: true,
               disabled: row => {
-                return row.orderType == 3;
+                return [row.date.format("YYYY-MM-DD")];
               }
             },
             on: {

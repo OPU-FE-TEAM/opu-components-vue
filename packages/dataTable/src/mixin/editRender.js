@@ -206,7 +206,7 @@ const editRender = {
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
             let disabled = editSlotPropInit(row, props, "disabled");
-            if (disabled !== true && disabled !== false) {
+            if (typeof disabled == "object") {
               return [disabled];
             } else {
               return [
@@ -243,7 +243,7 @@ const editRender = {
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
             let disabled = editSlotPropInit(row, props, "disabled");
-            if (disabled !== true && disabled !== false) {
+            if (typeof disabled == "object") {
               return [disabled];
             } else {
               return [
@@ -288,7 +288,7 @@ const editRender = {
               ? props.options
               : this.editOptions[item.field];
             let disabled = editSlotPropInit(row, props, "disabled");
-            if (disabled !== true && disabled !== false) {
+            if (typeof disabled == "object") {
               return [disabled];
             } else {
               return [
@@ -328,7 +328,7 @@ const editRender = {
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
             let disabled = editSlotPropInit(row, props, "disabled");
-            if (disabled !== true && disabled !== false) {
+            if (typeof disabled == "object") {
               return [disabled];
             } else {
               return [
@@ -369,7 +369,7 @@ const editRender = {
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
             let disabled = editSlotPropInit(row, props, "disabled");
-            if (disabled !== true && disabled !== false) {
+            if (typeof disabled == "object") {
               return [disabled];
             } else {
               return [
@@ -410,7 +410,7 @@ const editRender = {
             let falseValue = props.falseValue ? props.falseValue : false;
             if (editSlotPropInit(row, props, "hidden")) return "";
             let disabled = editSlotPropInit(row, props, "disabled");
-            if (disabled !== true && disabled !== false) {
+            if (typeof disabled == "object") {
               return [disabled];
             } else {
               return [
@@ -450,7 +450,7 @@ const editRender = {
             let falseValue = props.falseValue ? props.falseValue : false;
             if (editSlotPropInit(row, props, "hidden")) return "";
             let disabled = editSlotPropInit(row, props, "disabled");
-            if (disabled !== true && disabled !== false) {
+            if (typeof disabled == "object") {
               return [disabled];
             } else {
               return [
