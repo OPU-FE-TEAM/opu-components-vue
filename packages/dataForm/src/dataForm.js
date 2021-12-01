@@ -183,6 +183,7 @@ function renderItemTitle(item, h, _vm) {
   }
   //标题内容
   let titleText = "";
+  if (item.title === false) return "";
   if (typeof item.title === "function") {
     titleText = [item.title()];
   } else {
