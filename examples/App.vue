@@ -8,6 +8,7 @@
       <pageWraper v-else-if="tab == 5" />
       <pulldownTable v-else-if="tab == 6" />
       <dataTableJsx v-else-if="tab == 7" />
+      <setColumns v-else-if="tab == 8" />
     </a-config-provider>
   </div>
 </template>
@@ -18,6 +19,7 @@ import dataFormBase from "./dataForm/base";
 // import dataTableBase from "./dataTable/base";
 import dataTableBase from "./dataTable/editTable";
 import dataTableJsx from "./dataTable/jsx";
+import setColumns from "./dataTable/setColumns.vue";
 
 import crudTableBase from "./crudTable/index1";
 // import crudTableBase from "./crudTable/base";
@@ -36,11 +38,12 @@ export default {
     Cell,
     pageWraper,
     pulldownTable,
-    dataTableJsx
+    dataTableJsx,
+    setColumns
   },
   data() {
     return {
-      tab: 1,
+      tab: 8,
       locale: zh_CN
     };
   }

@@ -44,6 +44,213 @@ function getSelectData(arr) {
   });
 }
 
+function getColumns(arr) {
+  return new Promise(resolve => {
+    console.log(arr);
+    setTimeout(() => {
+      // const code = arr && arr.code ? arr.code : "";
+      const list = [
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "HIS编码",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "hisId",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 2,
+          sysColumnName: "HIS编码",
+          width: 120
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品编码",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "code",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 3,
+          sysColumnName: "物品编码",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称1",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称1",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称2",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称2",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称3",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称3",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称4",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称4",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称5",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称5",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称6",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称6",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称7",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称7",
+          width: 180
+        },
+        {
+          align: "left",
+          children: [],
+          colSpan: null,
+          customName: "物品名称8",
+          drag: true,
+          freeze: null,
+          isHide: false,
+          name: "name",
+          parentCode: "",
+          rowSpan: null,
+          show: true,
+          sort: 4,
+          sysColumnName: "物品名称8",
+          width: 180
+        }
+      ];
+      const json = {
+        // data: [...list],
+        // total: 100
+        code: 0,
+        data: list
+      };
+      resolve(json);
+    }, 500);
+  });
+}
+
+function saveColumns(arr) {
+  return new Promise(resolve => {
+    console.log(arr);
+    setTimeout(() => {
+      const json = {
+        code: 0,
+        data: []
+      };
+      resolve(json);
+    }, 500);
+  });
+}
+
 DataForm.setup({
   titleColon: false,
   titleWidth: 220,
@@ -88,6 +295,50 @@ DataForm.setup({
 DataTable.setup({
   pagerConfig: {
     pageIndex: 0
+  },
+  proxyColumns: {
+    props: {
+      list: "data",
+      show: "show",
+      align: "align",
+      fixed: "freeze",
+      title: "customName",
+      field: "name"
+    },
+    defaultAjax: {
+      query: getColumns
+    }
+  },
+  setColumns: {
+    modal: {
+      props: {
+        bodyStyle: { height: "600px" }
+      }
+    },
+    proxyConfig: {
+      props: {
+        list: "data",
+        show: "show",
+        align: "align",
+        fixed: "freeze",
+        title: "customName",
+        field: "name",
+        defaultTitle: "sysColumnName"
+      },
+      defaultAjax: {
+        query: getColumns,
+        submit: saveColumns
+      },
+      on: {
+        submitBefore: values => {
+          console.log(values);
+          return {
+            code: values.code,
+            list: values.data
+          };
+        }
+      }
+    }
   }
 });
 

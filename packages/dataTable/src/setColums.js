@@ -50,6 +50,12 @@ export default {
       return option.modal && option.modal.props
         ? { ...config.setColumns.modal.props, ...option.modal.props }
         : config.setColumns.modal.props;
+    },
+    onConfig() {
+      const { option } = this;
+      return option.proxyConfig && option.proxyConfig.on
+        ? { ...config.setColumns.proxyConfig.on, ...option.proxyConfig.on }
+        : config.setColumns.proxyConfig.on;
     }
   },
 
@@ -61,8 +67,11 @@ export default {
   methods: {
     show() {
       this.visible = true;
-      const { query, columns, handelColumns } = this;
-      if (query) {
+      const { query, columns, handelColumns, option } = this;
+      if (
+        query ||
+        (option && option.proxyConfig && option.proxyConfig.params)
+      ) {
         this.fetchColumns();
       } else {
         this.tableData = handelColumns(utils.clone(columns));
@@ -70,27 +79,54 @@ export default {
       }
     },
     handelColumns(data) {
-      return data
-        ? data.map(item => {
-            if (item.show !== false) {
-              item.show = true;
-            }
-            if (!item.defaultTitle) {
-              item.defaultTitle = item.title;
-            }
-            if (!item.fixed) {
-              item.fixed = "";
-            }
-            return item;
-          })
-        : [];
+      const { propsConfig } = this;
+      console.log(propsConfig);
+      return this.handleColumnsData(data, propsConfig);
+    },
+    //处理api获取的表头数据
+    handleColumnsData(data, configProps) {
+      // let copyColumns = utils.clone(columns);
+      const apiColumns = data.map(item => {
+        // 替换字段
+        let obj = {
+          ...item
+        };
+        for (const key in configProps) {
+          if (key !== "list") {
+            obj[key] = item[configProps[key]];
+          }
+        }
+        if (obj.children && obj.children.length) {
+          obj.children = this.handleColumnsData(obj.children, configProps);
+        }
+        return obj;
+      });
+      return apiColumns;
     },
     fetchColumns() {
-      const { query, propsConfig, handelColumns } = this;
+      const { query, propsConfig, handelColumns, option } = this;
       // const json = {
       //   ...getOpt.param
       // };
-      query().then(res => {
+      const defaultAjax =
+        config.setColumns &&
+        config.setColumns.proxyConfig &&
+        config.setColumns.proxyConfig.defaultAjax
+          ? config.setColumns.proxyConfig.defaultAjax
+          : {};
+      const opt = option.proxyConfig ? option.proxyConfig : {};
+      let params = null;
+      let queryApi = null;
+      if (opt && opt.params) {
+        params = opt.params;
+        if (defaultAjax && defaultAjax.query && !query) {
+          queryApi = defaultAjax.query;
+        }
+      }
+      if (query) {
+        queryApi = query;
+      }
+      queryApi(params).then(res => {
         // const dataField = getOpt.dataField ? getOpt.dataField : "data";
         const data = utils.getObjData(propsConfig.list, res);
         this.tableData = handelColumns(data);
@@ -200,9 +236,14 @@ export default {
       this.visible = false;
     },
     onSubmit() {
-      const { submit } = this;
+      const { submit, onConfig, option } = this;
       const data = this.getData();
       const { tableData } = data;
+      const opt = option.proxyConfig ? option.proxyConfig : {};
+      let params = {};
+      if (opt && opt.params) {
+        params = opt.params;
+      }
 
       const newTableData = tableData.map(item => {
         if (!(item.fixed === "left" || item.fixed === "right")) {
@@ -210,8 +251,28 @@ export default {
         }
         return item;
       });
-      if (submit) {
-        submit(newTableData).then(() => {
+      const defaultAjax =
+        config.setColumns &&
+        config.setColumns.proxyConfig &&
+        config.setColumns.proxyConfig.defaultAjax
+          ? config.setColumns.proxyConfig.defaultAjax
+          : {};
+
+      let submitApi = submit;
+      if (defaultAjax && defaultAjax.submit && !submitApi) {
+        submitApi = defaultAjax.submit;
+      }
+      if (submitApi) {
+        let json = { ...params, data: newTableData };
+        if (onConfig && onConfig.submitBefore) {
+          const submitBeforeRes = onConfig.submitBefore(json);
+          if (submitBeforeRes === false) {
+            return false;
+          } else if (submitBeforeRes) {
+            json = submitBeforeRes;
+          }
+        }
+        submitApi(json).then(() => {
           this.visible = false;
           this.$emit("submit");
         });
@@ -302,7 +363,6 @@ export default {
     const modalProps = {
       ...modalOpt
     };
-
     return h(
       "a-modal",
       {
@@ -331,7 +391,8 @@ export default {
               data: tableData,
               treeConfig: { children: "children" },
               editConfig: { trigger: "click", mode: "row" },
-              checkboxConfig: { checkStrictly: true }
+              checkboxConfig: { checkStrictly: true },
+              height: "auto"
             },
             scopedSlots: {
               btn_default: () => {

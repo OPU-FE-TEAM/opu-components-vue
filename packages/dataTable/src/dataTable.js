@@ -171,7 +171,6 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
 // 渲染设置表头窗口
 function renderColumnsModal(h, _vm) {
   const { backupColumns, setTableColumns, setColumnsOpt } = _vm;
-
   return h("SetColums", {
     ref: "setColumsModal",
     props: {
@@ -538,6 +537,14 @@ export default {
           this.setcolumnsConfig.proxyConfig.ajax
             ? this.setcolumnsConfig.proxyConfig.ajax
             : {};
+
+            const proxyConfigOn =
+          this.setcolumnsConfig &&
+          this.setcolumnsConfig.proxyConfig &&
+          this.setcolumnsConfig.proxyConfig.on
+            ? this.setcolumnsConfig.proxyConfig.on
+            : {};
+
         return {
           modal: {
             props: {
@@ -546,6 +553,7 @@ export default {
             }
           },
           proxyConfig: {
+            params:this.setcolumnsConfig && this.setcolumnsConfig.proxyConfig && this.setcolumnsConfig.proxyConfig.params?this.setcolumnsConfig.proxyConfig.params:null,
             props: {
               ...config.setColumns.proxyConfig.props,
               ...proxyConfigProps
@@ -553,6 +561,10 @@ export default {
             ajax: {
               ...config.setColumns.proxyConfig.ajax,
               ...proxyConfigAjax
+            },
+            on:{
+              ...config.setColumns.proxyConfig.on,
+              ...proxyConfigOn
             }
           }
         };
@@ -711,8 +723,10 @@ export default {
     if (proxyColumns) {
       // 表头代理
       fetchColumns(proxyColumns);
+    }else{
+
+      this.setTableColumns(columns);
     }
-    this.setTableColumns(columns);
     if (proxyConfigOpt && proxyConfigOpt.ajax && proxyConfigOpt.ajax.query) {
       this.hasAjaxQuery = true;
     }
@@ -835,7 +849,6 @@ export default {
     // 设置表头
     setTableColumns(data) {
       const { proxyColumns, fetchColumns } = this;
-
       if (data) {
         data = utils.clone(data);
         this.backupColumns = data;
@@ -952,8 +965,20 @@ export default {
     // api获取表头
     fetchColumns(opt) {
       const { columns } = this;
-      if (opt.ajax && opt.ajax.query) {
-        opt.ajax.query().then(res => {
+      const defaultAjax = config.proxyColumns && config.proxyColumns.defaultAjax?config.proxyColumns.defaultAjax:{}
+      let params = null;
+      let queryApi = null;
+      if(opt.params){
+        params=opt.params;
+        if(defaultAjax && defaultAjax.query && !(opt.ajax && opt.ajax.query)){
+          queryApi = defaultAjax.query
+        }
+      }
+      if(opt.ajax && opt.ajax.query){
+        queryApi = opt.ajax.query
+      }
+      if (queryApi) {
+        queryApi(params).then(res => {
           const configProps =
             opt.props && utils.isObject(opt.props)
               ? { ...config.proxyColumns.props, ...opt.props }

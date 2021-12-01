@@ -62,7 +62,8 @@ const GlobalConfig = {
     proxyConfig: {
       props: {
         list: "data.data"
-      }
+      },
+      on: {}
     }
   }
 };
