@@ -5,7 +5,12 @@ import utils from "../../utils";
 import config from "../conf";
 
 // 处理表单项的可选数据结构为 antd所需的
-function handleItemPropsOptions(options, valueField, labelField) {
+function handleItemPropsOptions(
+  options,
+  valueField,
+  labelField,
+  childrenField = "children"
+) {
   const vF = valueField ? valueField : config.getSelectOptions.valueField;
   const lF = labelField ? labelField : config.getSelectOptions.labelField;
   if (options && utils.isArray(options)) {
@@ -20,8 +25,13 @@ function handleItemPropsOptions(options, valueField, labelField) {
       if (lF) {
         item.label = item[lF];
       }
-      if (item.children && item.children.length) {
-        item.children = handleItemPropsOptions(item.children, vF, lF);
+      if (item[childrenField] && item[childrenField].length) {
+        item.children = handleItemPropsOptions(
+          item[childrenField],
+          vF,
+          lF,
+          childrenField
+        );
       }
       return item;
     });
@@ -40,6 +50,7 @@ export default {
     value: [Number, String, Object, Array],
     valueField: String,
     labelField: String,
+    childrenField: String,
     dataField: String,
     options: Array,
     componentPropsData: Object
@@ -101,12 +112,13 @@ export default {
   },
   methods: {
     init() {
-      const { valueField, labelField, options } = this;
+      const { valueField, labelField, options, childrenField } = this;
       if (options && options.length) {
         this.optionsData = handleItemPropsOptions(
           options,
           valueField,
-          labelField
+          labelField,
+          childrenField
         );
       }
     },
@@ -116,8 +128,13 @@ export default {
     },
 
     setOptionsData(data) {
-      const { valueField, labelField } = this;
-      const options = handleItemPropsOptions(data, valueField, labelField);
+      const { valueField, labelField, childrenField } = this;
+      const options = handleItemPropsOptions(
+        data,
+        valueField,
+        labelField,
+        childrenField
+      );
       this.optionsData = options;
       return options;
     },

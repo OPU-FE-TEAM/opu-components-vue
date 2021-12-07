@@ -1262,7 +1262,8 @@ export default {
             id: 6,
             name: "girl"
           }
-        ]
+        ],
+        idType: ["a", "b", "c"]
       });
     },
     setFieldsOptionsDefaultValues() {
