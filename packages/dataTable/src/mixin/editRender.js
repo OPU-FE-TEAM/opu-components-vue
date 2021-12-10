@@ -106,8 +106,9 @@ const editRender = {
             p.slots = {
               default: ({ row, rowIndex, $columnIndex }) => {
                 return [
-                  <div style="display:flex;">
-                    {p.itemRender.before && p.itemRender.before()}
+                  <div style="display:flex;align-items: center;">
+                    {p.itemRender.before &&
+                      p.itemRender.before({ row, rowIndex, $columnIndex })}
                     <div style="flex:1">
                       {this.editSlotRender(name)({
                         row,
@@ -115,7 +116,8 @@ const editRender = {
                         $columnIndex
                       })}
                     </div>
-                    {p.itemRender.after && p.itemRender.after()}
+                    {p.itemRender.after &&
+                      p.itemRender.after({ row, rowIndex, $columnIndex })}
                   </div>
                 ];
               }
