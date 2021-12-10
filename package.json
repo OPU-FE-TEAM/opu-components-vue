@@ -1,6 +1,6 @@
 {
   "name": "opu-components-vue",
-  "version": "1.7.37",
+  "version": "1.7.38",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
