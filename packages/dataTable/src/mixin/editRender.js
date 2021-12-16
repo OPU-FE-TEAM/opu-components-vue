@@ -104,7 +104,23 @@ const editRender = {
           let name = toHump(p.itemRender.name || editType[0]);
           if (editType.indexOf(toHump(p.itemRender.name || editType[0])) > -1) {
             p.slots = {
-              default: this.editSlotRender(name)
+              default: ({ row, rowIndex, $columnIndex }) => {
+                return [
+                  <div style="display:flex;align-items: center;">
+                    {p.itemRender.before &&
+                      p.itemRender.before({ row, rowIndex, $columnIndex })}
+                    <div style="flex:1">
+                      {this.editSlotRender(name)({
+                        row,
+                        rowIndex,
+                        $columnIndex
+                      })}
+                    </div>
+                    {p.itemRender.after &&
+                      p.itemRender.after({ row, rowIndex, $columnIndex })}
+                  </div>
+                ];
+              }
             };
             if (name == "ASwitch" || name == "ACheckbox") p.align = "center";
             let props = p.itemRender.props || {};
@@ -302,6 +318,10 @@ const editRender = {
                       value: row[item.field],
                       options: options,
                       disabled
+                    },
+                    style: {
+                      width: "100%",
+                      ...itemRender.style
                     },
                     on: {
                       ...itemRender.on,

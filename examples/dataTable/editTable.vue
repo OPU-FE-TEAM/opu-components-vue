@@ -49,6 +49,52 @@ export default {
     return {
       columns: [
         {
+          field: "orderType",
+          align: "left",
+          title: "下拉框",
+          minWidth: 150,
+          itemRender: {
+            name: "ASelect",
+            props: {
+              options: [
+                { value: 1, label: "省份" },
+                { value: 2, label: "城市" },
+                { value: 3, label: "区域" }
+              ]
+            },
+            on: {
+              change: (value, option, row, rowIndex) => {
+                console.log(value);
+                console.log(option);
+                console.log(rowIndex);
+                if (value == 1) {
+                  row.oneSelectList = [
+                    { value: 11, label: "广西" },
+                    { value: 22, label: "广东" }
+                  ];
+                } else if (value == 2) {
+                  row.oneSelectList = [
+                    { value: 1, label: "桂林" },
+                    { value: 2, label: "贺州" }
+                  ];
+                  this.$refs.dataTable.setEditOptions({
+                    apiSelect: [
+                      { value: 1, label: "桂林" },
+                      { value: 2, label: "贺州" }
+                    ]
+                  });
+                } else {
+                  row.oneSelectList = [
+                    { value: 99, label: "象山" },
+                    { value: 88, label: "叠彩" }
+                  ];
+                }
+                row.oneSelect = "";
+              }
+            }
+          }
+        },
+        {
           field: "switch",
           align: "left",
           title: "开关",
@@ -154,52 +200,9 @@ export default {
               disabled: row => {
                 return row.orderType == 2;
               }
-            }
-          }
-        },
-        {
-          field: "orderType",
-          align: "left",
-          title: "下拉框",
-          minWidth: 150,
-          itemRender: {
-            name: "ASelect",
-            props: {
-              options: [
-                { value: 1, label: "省份" },
-                { value: 2, label: "城市" },
-                { value: 3, label: "区域" }
-              ]
             },
-            on: {
-              change: (value, option, row, rowIndex) => {
-                console.log(value);
-                console.log(option);
-                console.log(rowIndex);
-                if (value == 1) {
-                  row.oneSelectList = [
-                    { value: 11, label: "广西" },
-                    { value: 22, label: "广东" }
-                  ];
-                } else if (value == 2) {
-                  row.oneSelectList = [
-                    { value: 1, label: "桂林" },
-                    { value: 2, label: "贺州" }
-                  ];
-                  this.$refs.dataTable.setEditOptions({
-                    apiSelect: [
-                      { value: 1, label: "桂林" },
-                      { value: 2, label: "贺州" }
-                    ]
-                  });
-                } else {
-                  row.oneSelectList = [
-                    { value: 99, label: "象山" },
-                    { value: 88, label: "叠彩" }
-                  ];
-                }
-                row.oneSelect = "";
-              }
+            after: () => {
+              return [<a-button style="padding:0 5px;">每日</a-button>];
             }
           }
         },
