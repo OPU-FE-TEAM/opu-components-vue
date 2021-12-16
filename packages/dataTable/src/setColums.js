@@ -80,7 +80,6 @@ export default {
     },
     handelColumns(data) {
       const { propsConfig } = this;
-      console.log(propsConfig);
       return this.handleColumnsData(data, propsConfig);
     },
     //处理api获取的表头数据

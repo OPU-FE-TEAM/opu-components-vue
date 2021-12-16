@@ -719,7 +719,6 @@ export default {
       props.on = ons;
       props.ref = "dataGrid";
       props.scopedSlots = $scopedSlots;
-      console.log(props);
       return props;
     }
   },

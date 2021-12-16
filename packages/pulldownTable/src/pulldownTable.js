@@ -197,7 +197,6 @@ export default {
       }
     },
     onInputChangeBefore(e) {
-      console.log("debugger");
       if (e.type === "click") {
         this.onClear("");
       } else {
