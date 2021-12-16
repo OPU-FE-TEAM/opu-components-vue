@@ -199,7 +199,8 @@ export default {
             props: {
               disabled: row => {
                 return row.orderType == 2;
-              }
+              },
+              min: 0
             },
             after: () => {
               return [<a-button style="padding:0 5px;">每日</a-button>];
