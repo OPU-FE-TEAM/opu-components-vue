@@ -538,7 +538,7 @@ export default {
             ? this.setcolumnsConfig.proxyConfig.ajax
             : {};
 
-            const proxyConfigOn =
+        const proxyConfigOn =
           this.setcolumnsConfig &&
           this.setcolumnsConfig.proxyConfig &&
           this.setcolumnsConfig.proxyConfig.on
@@ -553,7 +553,12 @@ export default {
             }
           },
           proxyConfig: {
-            params:this.setcolumnsConfig && this.setcolumnsConfig.proxyConfig && this.setcolumnsConfig.proxyConfig.params?this.setcolumnsConfig.proxyConfig.params:null,
+            params:
+              this.setcolumnsConfig &&
+              this.setcolumnsConfig.proxyConfig &&
+              this.setcolumnsConfig.proxyConfig.params
+                ? this.setcolumnsConfig.proxyConfig.params
+                : null,
             props: {
               ...config.setColumns.proxyConfig.props,
               ...proxyConfigProps
@@ -562,7 +567,7 @@ export default {
               ...config.setColumns.proxyConfig.ajax,
               ...proxyConfigAjax
             },
-            on:{
+            on: {
               ...config.setColumns.proxyConfig.on,
               ...proxyConfigOn
             }
@@ -714,7 +719,7 @@ export default {
       props.on = ons;
       props.ref = "dataGrid";
       props.scopedSlots = $scopedSlots;
-
+      console.log(props);
       return props;
     }
   },
@@ -723,8 +728,7 @@ export default {
     if (proxyColumns) {
       // 表头代理
       fetchColumns(proxyColumns);
-    }else{
-
+    } else {
       this.setTableColumns(columns);
     }
     if (proxyConfigOpt && proxyConfigOpt.ajax && proxyConfigOpt.ajax.query) {
@@ -965,17 +969,20 @@ export default {
     // api获取表头
     fetchColumns(opt) {
       const { columns } = this;
-      const defaultAjax = config.proxyColumns && config.proxyColumns.defaultAjax?config.proxyColumns.defaultAjax:{}
+      const defaultAjax =
+        config.proxyColumns && config.proxyColumns.defaultAjax
+          ? config.proxyColumns.defaultAjax
+          : {};
       let params = null;
       let queryApi = null;
-      if(opt.params){
-        params=opt.params;
-        if(defaultAjax && defaultAjax.query && !(opt.ajax && opt.ajax.query)){
-          queryApi = defaultAjax.query
+      if (opt.params) {
+        params = opt.params;
+        if (defaultAjax && defaultAjax.query && !(opt.ajax && opt.ajax.query)) {
+          queryApi = defaultAjax.query;
         }
       }
-      if(opt.ajax && opt.ajax.query){
-        queryApi = opt.ajax.query
+      if (opt.ajax && opt.ajax.query) {
+        queryApi = opt.ajax.query;
       }
       if (queryApi) {
         queryApi(params).then(res => {
