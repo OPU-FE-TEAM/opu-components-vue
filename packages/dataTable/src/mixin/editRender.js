@@ -16,7 +16,7 @@ function handlefieldOptionsDataField(item, json) {
 
 //编辑插槽 是否禁用
 function editSlotPropInit(row, props, key, defaultKey = false) {
-  return !props[key] || props[key] == 0
+  return !props[key] && props[key] != 0
     ? defaultKey
     : typeof props[key] == "function"
     ? props[key](row)
