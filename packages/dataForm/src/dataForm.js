@@ -1499,6 +1499,7 @@ export default {
     onExpandClick() {
       const expand = !this.expand;
       this.setExpand(expand);
+      this.$emit("folding", expand);
     },
     // 加载表单项的下拉数据
     loadItemOptionsData(field, params) {
