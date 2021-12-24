@@ -113,6 +113,7 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
   const {
     onSearchSubmit,
     advancedVisible,
+    onAdvancedReset,
     onAdvancedcancel,
     onAdvancedSubmit,
     $scopedSlots
@@ -162,7 +163,46 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
         cancel: onAdvancedcancel,
         ok: onAdvancedSubmit
       },
-      class: "advanced-search-modal"
+      class: "advanced-search-modal",
+      scopedSlots: {
+        footer: () => {
+          return [
+            <a-button
+              {...{
+                props: {
+                  type: "danger"
+                },
+                on: {
+                  click: onAdvancedReset
+                }
+              }}
+            >
+              重置
+            </a-button>,
+            <a-button
+              {...{
+                on: {
+                  click: onAdvancedcancel
+                }
+              }}
+            >
+              取消
+            </a-button>,
+            <a-button
+              {...{
+                props: {
+                  type: "primary"
+                },
+                on: {
+                  click: onAdvancedSubmit
+                }
+              }}
+            >
+              确认
+            </a-button>
+          ];
+        }
+      }
     },
     [form]
   );
@@ -829,6 +869,10 @@ export default {
         });
       }
     },
+    onAdvancedReset() {
+      const { $refs } = this;
+      $refs.advancedSearch.resetFields();
+    },
     onAdvancedSubmit() {
       const { $refs, onAdvancedcancel } = this;
       $refs.advancedSearch.validateFields().then(values => {
@@ -840,7 +884,6 @@ export default {
         onAdvancedcancel();
       });
     },
-
     onAdvancedcancel() {
       this.advancedVisible = false;
     },
