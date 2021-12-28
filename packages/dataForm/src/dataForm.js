@@ -1075,7 +1075,7 @@ export default {
       } else {
         cloneData = clone;
       }
-      let newOptionsItemIndexs = {};
+      let newOptionsItemIndexs = this.newOptionsItemIndexs;
       const isFormPartRequest =
         isPartRequest !== ""
           ? isPartRequest
@@ -1128,6 +1128,7 @@ export default {
             newOptionsItemIndexs[item.field] = row;
           }
         }
+
         return item;
       });
 

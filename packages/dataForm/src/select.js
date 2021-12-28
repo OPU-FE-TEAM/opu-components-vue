@@ -160,7 +160,6 @@ export default {
       this.$emit("update", value, row, pRow);
       this.$emit("change", value, row, pRow);
     },
-
     setOptionsData(data) {
       const options = handleItemPropsOptions(data, this);
       this.optionsData = options;

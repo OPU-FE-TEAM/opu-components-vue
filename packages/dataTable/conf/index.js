@@ -33,6 +33,22 @@ const GlobalConfig = {
     originalValueKey: "originalValue",
     isPartRequest: false //是否将统一api分别发送请求
   },
+  // 各个表单项默认的props
+  defaultProps: {
+    // input: {
+    //   placeholder: "请输入",
+    //   allowClear: true
+    // },
+    // inputNumber: {
+    //   placeholder: "请输入数字",
+    //   allowClear: true
+    // },
+    select: {
+      showSearch: true,
+      placeholder: "请选择",
+      allowClear: true
+    }
+  },
   // 接口代理
   proxyConfig: {
     seq: true, // 启用动态序号代理

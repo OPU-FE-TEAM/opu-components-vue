@@ -57,9 +57,9 @@ export default {
             name: "ASelect",
             props: {
               options: [
-                { value: 1, label: "省份" },
-                { value: 2, label: "城市" },
-                { value: 3, label: "区域" }
+                { value: "1", label: "省份" },
+                { value: "2", label: "城市" },
+                { value: "3", label: "区域" }
               ]
             },
             on: {

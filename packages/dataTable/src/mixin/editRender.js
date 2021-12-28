@@ -1,4 +1,5 @@
 import moment from "moment";
+import cloneDeep from "lodash";
 import utils from "../../../utils";
 import config from "../../conf";
 
@@ -93,7 +94,7 @@ const editRender = {
       return this.editDefaultOption;
     },
     editColumnsRender(data, filterCallback) {
-      let { editType, editOptions, toHump } = this;
+      let { editType, editOptions, toHump, editDefaultOption } = this;
       let apiList = [];
       let getSelectOptions = config.getSelectOptions;
       data = data.filter(p => {
@@ -125,8 +126,36 @@ const editRender = {
             if (name == "ASwitch" || name == "ACheckbox") p.align = "center";
             let props = p.itemRender.props || {};
             if (name == "ASelect" && p.itemRender.props) {
+              const valueField =
+                props.valueField || getSelectOptions.valueField;
+              const labelField =
+                props.labelField || getSelectOptions.labelField;
+              const childrenField =
+                props.childrenField || getSelectOptions.childrenField;
+              const dataField = props.dataField || getSelectOptions.dataField;
+              const defaultField =
+                props.defaultField || getSelectOptions.defaultField;
+
               if (p.itemRender.props.options) {
-                editOptions[p.field] == p.itemRender.props.options;
+                editOptions[p.field] ==
+                  cloneDeep(p.itemRender.props.options).map(o => {
+                    if (o.value && !o[config.originalValueKey]) {
+                      o[config.originalValueKey] = o.value;
+                    }
+                    if (o[labelField] != "label") {
+                      o.label = o[labelField];
+                    }
+                    if (o[valueField] != "value") {
+                      o.value = o[valueField];
+                    }
+                    if (o[childrenField] != "children") {
+                      o.children = o[childrenField];
+                    }
+                    if (o[defaultField]) {
+                      editDefaultOption[p.field] = p.value;
+                    }
+                    return p;
+                  });
               } else if (
                 !p.itemRender.props.optionsField &&
                 !editOptions[p.field] &&
@@ -135,13 +164,11 @@ const editRender = {
                 apiList.push({
                   field: p.field,
                   api: props.api || getSelectOptions.api,
-                  valueField: props.valueField || getSelectOptions.valueField,
-                  labelField: props.labelField || getSelectOptions.labelField,
-                  childrenField:
-                    props.childrenField || getSelectOptions.childrenField,
-                  dataField: props.dataField || getSelectOptions.dataField,
-                  defaultField:
-                    props.defaultField || getSelectOptions.defaultField,
+                  valueField,
+                  labelField,
+                  childrenField,
+                  dataField,
+                  defaultField,
                   param: props.param || {}
                 });
               }
@@ -150,6 +177,7 @@ const editRender = {
         }
         return true;
       });
+      this.editDefaultOption = editDefaultOption;
       this.editApiList = apiList;
       this.fetchItemPropsOptionsApiList();
       return data;
@@ -212,6 +240,41 @@ const editRender = {
           that.$refs.dataGrid.updateData();
         })
         .catch(() => {});
+    },
+    selectFilterRender(props, optionsData) {
+      let getSelectOptions = config.getSelectOptions;
+      const valueField = props.valueField || getSelectOptions.valueField;
+      const labelField = props.labelField || getSelectOptions.labelField;
+      const searchFields =
+        props.searchFields || config.defaultProps.select.searchFields || [];
+      if (props.showSearch && !props.filterOption) {
+        props.filterOption = (input, option) => {
+          const value = option.componentOptions.propsData.value;
+          const objIndex = optionsData.findIndex(
+            p => p[valueField].toString() === value
+          );
+          const obj = optionsData[objIndex];
+          let is = false;
+          let searchFieldList = [labelField, ...searchFields];
+          // vF,
+          for (let i = 0; i < searchFieldList.length; i++) {
+            const key = searchFieldList[i];
+            if (obj[key]) {
+              if (
+                obj[key]
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              ) {
+                is = true;
+                break;
+              }
+            }
+          }
+          return is;
+        };
+      }
+      return props;
     },
     editSlotRender(name) {
       let slot;
@@ -307,18 +370,21 @@ const editRender = {
             if (typeof disabled == "object") {
               return [disabled];
             } else {
+              props = this.selectFilterRender(
+                {
+                  size: this.editItemSize,
+                  ...config.defaultProps.select,
+                  ...itemRender.props,
+                  value: row[item.field],
+                  options: options,
+                  disabled
+                },
+                options
+              );
               return [
                 <a-select
                   {...{
-                    props: {
-                      size: this.editItemSize,
-                      showSearch: true,
-                      allowClear: true,
-                      ...itemRender.props,
-                      value: row[item.field],
-                      options: options,
-                      disabled
-                    },
+                    props,
                     style: {
                       width: "100%",
                       ...itemRender.style
