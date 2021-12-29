@@ -1075,7 +1075,7 @@ export default {
       } else {
         cloneData = clone;
       }
-      let newOptionsItemIndexs = this.newOptionsItemIndexs;
+      let newOptionsItemIndexs = this.optionsItemIndexs;
       const isFormPartRequest =
         isPartRequest !== ""
           ? isPartRequest
