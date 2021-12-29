@@ -74,7 +74,7 @@ export default {
   methods: {
     onChange() {
       let value = [this.minDate, this.maxDate];
-      this.$emit("updata", value);
+      this.$emit("update", value);
       this.$emit("change", value);
     },
     onStartChange(e) {

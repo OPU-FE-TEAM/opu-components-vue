@@ -81,7 +81,7 @@ export default {
     },
     onChange() {
       let value = [this.sValue, this.eValue];
-      this.$emit("updata", value);
+      this.$emit("update", value);
       this.$emit("change", value);
     },
     onStartChange(e) {
