@@ -7,6 +7,7 @@
       :loading="loading"
       isClearUndefinedValue
       autoSetDefaultValue
+      titleWidth="80"
     >
     </DataForm>
     <a-button @click="onSetFormData">赋值</a-button>
@@ -109,21 +110,21 @@ export default {
             }
           }
         },
-        {
-          field: "ordinaryMultiple",
-          title: "请求多选下拉",
-          itemRender: {
-            name: "a-select",
-            props: {
-              mode: "multiple",
-              size: "small",
-              defaultField: "isSelected",
-              valueField: "Id",
-              labelField: "Text",
-              api: getSelectGroupData
-            }
-          }
-        },
+        // {
+        //   field: "ordinaryMultiple",
+        //   title: "请求多选下拉",
+        //   itemRender: {
+        //     name: "a-select",
+        //     props: {
+        //       mode: "multiple",
+        //       size: "small",
+        //       defaultField: "isSelected",
+        //       valueField: "Id",
+        //       labelField: "Text",
+        //       api: getSelectGroupData
+        //     }
+        //   }
+        // },
         // {
         //   field: "optionTreeSelect",
         //   title: "option树下拉",
@@ -198,6 +199,57 @@ export default {
         //     }
         //   }
         // },
+        {
+          title: "部门",
+          field: "departId123",
+          itemRender: {
+            name: "a-tree-select",
+            props: {
+              treeData: [
+                {
+                  key: "874199840383303680",
+                  title: "卤味",
+                  isDeleted: true,
+                  simpleCode: "LW,HK",
+                  disabled: true,
+                  children: [
+                    {
+                      key: "874199879860092928",
+                      title: "肉类",
+                      isDeleted: false,
+                      simpleCode: "RL,MO",
+                      children: []
+                    },
+                    {
+                      key: "878177788215951360",
+                      title: "蔬菜",
+                      isDeleted: false,
+                      simpleCode: "SC,AA",
+                      children: []
+                    }
+                  ]
+                },
+                {
+                  key: "874205575305494528",
+                  title: "地方小炒",
+                  isDeleted: false,
+                  simpleCode: "DFXC,FYIO",
+                  children: [
+                    {
+                      key: "874205640732442624",
+                      title: "桂林",
+                      isDeleted: false,
+                      simpleCode: "GL,SS",
+                      disabled: true,
+                      children: []
+                    }
+                  ]
+                }
+              ]
+            },
+            treeDefaultExpandAll: true
+          }
+        }
         // {
         //   field: "optionMultipleTreeSelect",
         //   title: "多选options树下拉",
@@ -274,35 +326,35 @@ export default {
         //     }
         //   }
         // }
-        {
-          field: "sex",
-          title: "单选框组",
-          itemRender: {
-            name: "a-radio-group",
-            props: {
-              options: [
-                { name: "男", id: "man" },
-                { name: "女", id: "woman" }
-              ]
-            }
-          }
-        },
-        {
-          field: "checkboxGroup",
-          title: "复选框组",
-          itemRender: {
-            name: "a-checkbox-group",
-            props: {
-              options: [
-                { label: "Apple", value: "Apple" },
-                { label: "Pear", value: "Pear" },
-                { label: "Orange", value: "Orange" }
-              ],
-              valueField: "value",
-              labelField: "label"
-            }
-          }
-        }
+        // {
+        //   field: "sex",
+        //   title: "单选框组",
+        //   itemRender: {
+        //     name: "a-radio-group",
+        //     props: {
+        //       options: [
+        //         { name: "男", id: "man" },
+        //         { name: "女", id: "woman" }
+        //       ]
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "checkboxGroup",
+        //   title: "复选框组",
+        //   itemRender: {
+        //     name: "a-checkbox-group",
+        //     props: {
+        //       options: [
+        //         { label: "Apple", value: "Apple" },
+        //         { label: "Pear", value: "Pear" },
+        //         { label: "Orange", value: "Orange" }
+        //       ],
+        //       valueField: "value",
+        //       labelField: "label"
+        //     }
+        //   }
+        // }
       ]
     };
   },

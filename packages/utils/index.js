@@ -7,8 +7,7 @@ function hasOptionsValue(options, value, valueField, childrenField) {
     let item = options[i];
     if (item[valueField] == value) {
       is = true;
-    }
-    if (item[childrenField] && item[childrenField].length > 0) {
+    } else if (item[childrenField] && item[childrenField].length > 0) {
       is = hasOptionsValue(
         item[childrenField],
         value,
