@@ -85,7 +85,7 @@ export default {
       this.onChange(0);
     },
     onEndChange(e) {
-      if (this.minDate && !moment(this.minDate).isBefore(e)) {
+      if (this.minDate && e && !moment(this.minDate).isBefore(e)) {
         this.minDate = e;
       }
       this.maxDate = e;

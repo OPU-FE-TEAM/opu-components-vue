@@ -143,10 +143,11 @@ const fetchItemPropsOptionsApiList = async function(
         }
       }
       setFieldsOptions(json);
+      let defaultFormData = {};
       if (autoSetDefaultValue) {
-        setFieldsOptionsDefaultValues();
+        defaultFormData = setFieldsOptionsDefaultValues();
       }
-      onOptionsLoadAfter(json);
+      onOptionsLoadAfter(json, defaultFormData);
       callback && callback(json);
     })
     .catch(() => {});
@@ -1393,6 +1394,7 @@ export default {
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}, callback) {
       let formData = {};
+      let defaultFormData = {};
       this.itemsOptions.forEach(item => {
         if (
           item &&
@@ -1430,7 +1432,10 @@ export default {
                       ? defaultValue
                       : defaultValue[0];
                 }
-
+                defaultFormData[item.field] = {
+                  value,
+                  option: defaultRows
+                };
                 formData[item.field] = value;
                 if (callback) {
                   formData = {
@@ -1448,6 +1453,7 @@ export default {
         ...formData
       };
       this.setData(json);
+      return defaultFormData;
     },
     // 渲染的按钮点击事件
     onButtonClick(action, e) {

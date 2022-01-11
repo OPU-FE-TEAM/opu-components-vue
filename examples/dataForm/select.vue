@@ -57,6 +57,17 @@ export default {
       a,
       loading: true,
       items: [
+        {
+          field: "checkOutDate1",
+          title: "日期范围",
+          itemRender: {
+            name: "a-range-picker-split",
+            props: {
+              allowClear: true,
+              hasLimit: false
+            }
+          }
+        },
         // {
         //   field: "ordinary",
         //   title: "options下拉",
@@ -93,7 +104,7 @@ export default {
         // },
         {
           field: "ordinary1",
-          title: "请求下拉",
+          title: "请求下拉123",
           // hasFeedback: true,
           // option: {
           //   rules: [{ required: true, message: "请输入名称!" }]

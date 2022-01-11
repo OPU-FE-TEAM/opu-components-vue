@@ -875,7 +875,7 @@ export default {
     },
     onAdvancedSubmit() {
       const { $refs, onAdvancedcancel } = this;
-      $refs.advancedSearch.validateFields().then(values => {
+      $refs.advancedSearch.validateFields((err, values) => {
         //同步值到headform
         const headSearchForm = this.$refs.headSearch;
         headSearchForm.setData(values);
