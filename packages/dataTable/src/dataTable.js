@@ -872,6 +872,10 @@ export default {
     onAdvancedReset() {
       const { $refs } = this;
       $refs.advancedSearch.resetFields();
+      if (config.advancedResetClearHeadSearchForm) {
+        $refs.headSearch.resetFields();
+        this.searchData = {};
+      }
     },
     onAdvancedSubmit() {
       const { $refs, onAdvancedcancel } = this;

@@ -1,5 +1,6 @@
 const GlobalConfig = {
   editSize: "default",
+  advancedResetClearHeadSearchForm: false,
   props: {
     border: true,
     resizable: true

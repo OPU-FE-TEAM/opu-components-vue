@@ -38,6 +38,10 @@ const editRender = {
     onOptionsLoadAfter: {
       type: Function,
       default: null
+    },
+    onOptionsAllLoad: {
+      type: Function,
+      default: null
     }
   },
   data() {
@@ -229,6 +233,9 @@ const editRender = {
               return p;
             });
           });
+          if (that.onOptionsAllLoad) {
+            editOptions = that.onOptionsAllLoad(editOptions);
+          }
           that.editOptions = editOptions;
           that.editDefaultOption = editDefaultOption;
 
