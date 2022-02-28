@@ -54,7 +54,9 @@ const GlobalConfig = {
       }
     }
   },
-  permissions: []
+  permissions: [],
+  showPermissionsTip: false,
+  showPermissionsTipText: "没有权限"
 };
 
 export default GlobalConfig;

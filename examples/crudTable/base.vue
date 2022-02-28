@@ -244,6 +244,9 @@ export default {
             }
             return false;
           },
+          disabledTip: row => {
+            return row.name;
+          },
           submit: values => {
             // 自行处理请求前
             return new Promise(resolve => {

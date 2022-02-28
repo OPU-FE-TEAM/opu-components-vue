@@ -305,21 +305,34 @@ export default {
           const res = proxyConfig.view.permission(scope);
           viewButtonProps.disabled = !res;
         }
+        let button = h(
+          "a-button",
+          {
+            props: viewButtonProps,
+            on: {
+              click: () => {
+                view(scope.row);
+              }
+            }
+          },
+          viewButtonProps.name ? viewButtonProps.name : "查看"
+        );
+        let tips = !proxyConfig.view.disabledTip
+          ? config.showPermissionsTipText
+          : proxyConfig.view.disabledTip(scope.row);
 
-        buttons.push(
-          h(
-            "a-button",
+        if (viewButtonProps.disabled && tips) {
+          button = h(
+            "a-tooltip",
             {
-              props: viewButtonProps,
-              on: {
-                click: () => {
-                  view(scope.row);
-                }
+              scopedSlots: {
+                title: () => tips
               }
             },
-            viewButtonProps.name ? viewButtonProps.name : "查看"
-          )
-        );
+            [button]
+          );
+        }
+        buttons.push(button);
       }
       // 编辑
       if (proxyConfig && proxyConfig.edit) {
@@ -334,20 +347,34 @@ export default {
           const res = proxyConfig.edit.permission(scope);
           editButtonProps.disabled = !res;
         }
-        buttons.push(
-          h(
-            "a-button",
+        let button = h(
+          "a-button",
+          {
+            props: editButtonProps,
+            on: {
+              click: e => {
+                edit(scope.row, e);
+              }
+            }
+          },
+          editButtonProps.name ? editButtonProps.name : "编辑"
+        );
+        let tips = !proxyConfig.edit.disabledTip
+          ? config.showPermissionsTipText
+          : proxyConfig.edit.disabledTip(scope.row);
+
+        if (editButtonProps.disabled && tips) {
+          button = h(
+            "a-tooltip",
             {
-              props: editButtonProps,
-              on: {
-                click: e => {
-                  edit(scope.row, e);
-                }
+              scopedSlots: {
+                title: () => tips
               }
             },
-            editButtonProps.name ? editButtonProps.name : "编辑"
-          )
-        );
+            [button]
+          );
+        }
+        buttons.push(button);
       }
       // 删除按钮
       if (proxyConfig && proxyConfig.del) {
@@ -362,42 +389,55 @@ export default {
           const res = proxyConfig.del.permission(scope);
           delButtonProps.disabled = !res;
         }
+        let button;
         if (delButtonProps.disabled) {
-          buttons.push(
-            h(
-              "a-button",
-              {
-                props: delButtonProps
-              },
-              delButtonProps.name ? delButtonProps.name : "删除"
-            )
+          button = h(
+            "a-button",
+            {
+              props: delButtonProps
+            },
+            delButtonProps.name ? delButtonProps.name : "删除"
           );
         } else {
-          buttons.push(
-            h(
-              "a-popconfirm",
-              {
-                props: {
-                  title: proxyConfigOpt.del.popconfirmTitle
-                },
-                on: {
-                  confirm: () => {
-                    del(scope.row);
-                  }
-                }
+          button = h(
+            "a-popconfirm",
+            {
+              props: {
+                title: proxyConfigOpt.del.popconfirmTitle
               },
-              [
-                h(
-                  "a-button",
-                  {
-                    props: delButtonProps
-                  },
-                  delButtonProps.name ? delButtonProps.name : "删除"
-                )
-              ]
-            )
+              on: {
+                confirm: () => {
+                  del(scope.row);
+                }
+              }
+            },
+            [
+              h(
+                "a-button",
+                {
+                  props: delButtonProps
+                },
+                delButtonProps.name ? delButtonProps.name : "删除"
+              )
+            ]
           );
         }
+        let tips = !proxyConfig.del.disabledTip
+          ? config.showPermissionsTipText
+          : proxyConfig.del.disabledTip(scope.row);
+
+        if (delButtonProps.disabled && tips) {
+          button = h(
+            "a-tooltip",
+            {
+              scopedSlots: {
+                title: () => tips
+              }
+            },
+            [button]
+          );
+        }
+        buttons.push(button);
       }
 
       //前置插槽
