@@ -50,6 +50,7 @@ const editRender = {
         "AInput",
         "AInputNumber",
         "ASelect",
+        "AAutoComplete",
         "ADatePicker",
         "ATimePicker",
         "ASwitch",
@@ -128,7 +129,10 @@ const editRender = {
             };
             if (name == "ASwitch" || name == "ACheckbox") p.align = "center";
             let props = p.itemRender.props || {};
-            if (name == "ASelect" && p.itemRender.props) {
+            if (
+              ["ASelect", "AAutoComplete"].includes(name) &&
+              p.itemRender.props
+            ) {
               const valueField =
                 props.valueField || getSelectOptions.valueField;
               const labelField =
@@ -157,7 +161,7 @@ const editRender = {
                     if (o[defaultField]) {
                       editDefaultOption[p.field] = p.value;
                     }
-                    return p;
+                    return o;
                   });
               } else if (
                 !p.itemRender.props.optionsField &&
@@ -247,13 +251,14 @@ const editRender = {
         })
         .catch(() => {});
     },
-    selectFilterRender(props, optionsData) {
+    selectFilterRender(props) {
       let getSelectOptions = config.getSelectOptions;
       const valueField = props.valueField || getSelectOptions.valueField;
       const labelField = props.labelField || getSelectOptions.labelField;
       const searchFields =
         props.searchFields || config.defaultProps.select.searchFields || [];
       if (props.showSearch && !props.filterOption) {
+        let optionsData = props.options || [];
         props.filterOption = (input, option) => {
           const value = option.componentOptions.propsData.value;
           const objIndex = optionsData.findIndex(
@@ -281,6 +286,61 @@ const editRender = {
         };
       }
       return props;
+    },
+    autoCompleteFilterRender(props) {
+      let getSelectOptions = config.getSelectOptions;
+      let value = props.value;
+      let dataSource = props.dataSource;
+      delete props.dataSource;
+      const valueField = props.valueField || getSelectOptions.labelField;
+      const labelField = props.labelField || getSelectOptions.labelField;
+      if (props.search) {
+        dataSource = props.search(value);
+      } else {
+        const searchFields = props.searchFields || [];
+        dataSource = props.options.filter(p => {
+          if (!value) return true;
+          let is = false;
+          if (Object.prototype.toString.call(p) === "[Object Object]") {
+            let searchFieldList = [labelField, ...searchFields];
+            // vF,
+            for (let i = 0; i < searchFieldList.length; i++) {
+              const key = searchFieldList[i];
+              let optionValue = p[key] || p;
+              if (value) {
+                if (
+                  optionValue
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(value.toLowerCase()) >= 0
+                ) {
+                  is = true;
+                  break;
+                }
+              }
+            }
+          } else if (
+            p
+              .toString()
+              .toLowerCase()
+              .indexOf(value.toLowerCase()) >= 0
+          ) {
+            is = true;
+          }
+          return is;
+        });
+      }
+      const selectOptions = dataSource.map(p => {
+        return (
+          <a-select-option key={p[valueField] || p}>
+            {p[labelField] || p}
+          </a-select-option>
+        );
+      });
+      return { props, selectOptions, dataSource, valueField, labelField };
+    },
+    findOptionRow(options, value, valueField) {
+      return options.find(p => p[valueField] == value) || {};
     },
     editSlotRender(name) {
       let slot;
@@ -376,17 +436,14 @@ const editRender = {
             if (typeof disabled == "object") {
               return [disabled];
             } else {
-              props = this.selectFilterRender(
-                {
-                  size: this.editItemSize,
-                  ...config.defaultProps.select,
-                  ...itemRender.props,
-                  value: row[item.field],
-                  options: options,
-                  disabled
-                },
-                options
-              );
+              props = this.selectFilterRender({
+                size: this.editItemSize,
+                ...config.defaultProps.select,
+                ...itemRender.props,
+                value: row[item.field],
+                options: options,
+                disabled
+              });
               return [
                 <a-select
                   {...{
@@ -410,6 +467,74 @@ const editRender = {
                     }
                   }}
                 />
+              ];
+            }
+          };
+          break;
+        case "AAutoComplete":
+          slot = ({ row, rowIndex, $columnIndex }) => {
+            let item = this.tableColumns[$columnIndex];
+            let itemRender = item.itemRender || {};
+            let props = item.itemRender.props || {};
+            var optionsField = (props && props.optionsField) || "";
+            var options = optionsField
+              ? row[optionsField]
+              : props.options
+              ? props.options
+              : this.editOptions[item.field];
+            let disabled = editSlotPropInit(row, props, "disabled");
+            if (typeof disabled == "object") {
+              return [disabled];
+            } else {
+              let filterData = this.autoCompleteFilterRender({
+                size: this.editItemSize,
+                ...itemRender.props,
+                value: row[item.field],
+                dataSource: options || [],
+                disabled
+              });
+              let selectOptions = filterData.selectOptions;
+              let dataSource = filterData.dataSource;
+              props = filterData.props;
+              return [
+                <a-auto-complete
+                  {...{
+                    props,
+                    style: {
+                      width: "100%",
+                      ...itemRender.style
+                    },
+                    on: {
+                      ...itemRender.on,
+                      change: value => {
+                        row[item.field] = value;
+                        if (itemRender.on && itemRender.on.change) {
+                          itemRender.on.change(value);
+                        }
+                      },
+                      select: value => {
+                        let optionRow = this.findOptionRow(
+                          dataSource,
+                          value,
+                          filterData.valueField
+                        );
+                        row[item.field] =
+                          optionRow[filterData.labelField] || value;
+                        if (itemRender.on && itemRender.on.select) {
+                          itemRender.on.select(value, optionRow, {
+                            row,
+                            rowIndex,
+                            dataSource
+                          });
+                        }
+                      }
+                    }
+                  }}
+                >
+                  <template {...{ slot: "dataSource" }}>
+                    {selectOptions}
+                  </template>
+                </a-auto-complete>
               ];
             }
           };

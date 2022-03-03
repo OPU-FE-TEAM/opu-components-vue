@@ -49,6 +49,61 @@ export default {
     return {
       columns: [
         {
+          field: "type1",
+          align: "left",
+          title: "搜索输入",
+          minWidth: 150,
+          itemRender: {
+            name: "AAutoComplete",
+            props: {
+              labelField: "label",
+              valueField: "value",
+              options: [
+                { value: "1", label: "省份" },
+                { value: "2", label: "省份1" },
+                { value: "21", label: "省份2" },
+                { value: "22", label: "省份3" },
+                { value: "3", label: "区域" },
+                { value: "4", label: "123" }
+              ]
+            },
+            on: {
+              select: (e, option) => {
+                console.log(e);
+                console.log(option);
+                debugger;
+              }
+            }
+          }
+        },
+        {
+          field: "type1",
+          align: "left",
+          title: "搜索输入",
+          minWidth: 150,
+          itemRender: {
+            name: "AAutoComplete",
+            props: {
+              options: [
+                "1456",
+                "12342",
+                "453213",
+                "4563464",
+                "453645",
+                "1345356",
+                "745345"
+              ]
+            },
+            on: {
+              select: (e, option) => {
+                console.log(e);
+                console.log(option);
+                debugger;
+              }
+            }
+          }
+        },
+        {
           field: "orderType",
           align: "left",
           title: "下拉框",
@@ -291,6 +346,7 @@ export default {
       ],
       data: [
         {
+          type1: "",
           switch: false,
           switch1: "1",
           checkbox: false,
