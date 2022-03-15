@@ -160,14 +160,18 @@ export default {
         proxyConfig.add
       ) {
         const addButtonProps = proxyConfigOpt.add.props;
-        if (
-          proxyConfig.add &&
-          proxyConfig.add.permission &&
-          !utils.hasEquaValueArray(permissionsArr, proxyConfig.add.permission)
-        ) {
-          // 无权限
-          addButtonProps.disabled = true;
+        if (proxyConfig.add && proxyConfig.add.permission) {
+          if (
+            utils.isArray(proxyConfig.add.permission) &&
+            !utils.hasEquaValueArray(permissionsArr, proxyConfig.add.permission)
+          ) {
+            addButtonProps.disabled = true;
+          } else if (utils.isFunction(proxyConfig.add.permission)) {
+            const res = proxyConfig.add.permission();
+            addButtonProps.disabled = !res;
+          }
         }
+
         props.props.headToolbar.buttons = [
           {
             name: "新增",
@@ -317,20 +321,22 @@ export default {
           },
           viewButtonProps.name ? viewButtonProps.name : "查看"
         );
-        let tips = !proxyConfig.view.disabledTip
-          ? config.showPermissionsTipText
-          : proxyConfig.view.disabledTip(scope.row);
+        if (config.showPermissionsTip) {
+          let tips = !proxyConfig.view.disabledTip
+            ? config.showPermissionsTipText
+            : proxyConfig.view.disabledTip(scope.row);
 
-        if (viewButtonProps.disabled && tips) {
-          button = h(
-            "a-tooltip",
-            {
-              scopedSlots: {
-                title: () => tips
-              }
-            },
-            [button]
-          );
+          if (viewButtonProps.disabled && tips) {
+            button = h(
+              "a-tooltip",
+              {
+                scopedSlots: {
+                  title: () => tips
+                }
+              },
+              [button]
+            );
+          }
         }
         buttons.push(button);
       }
@@ -359,20 +365,22 @@ export default {
           },
           editButtonProps.name ? editButtonProps.name : "编辑"
         );
-        let tips = !proxyConfig.edit.disabledTip
-          ? config.showPermissionsTipText
-          : proxyConfig.edit.disabledTip(scope.row);
+        if (config.showPermissionsTip) {
+          let tips = !proxyConfig.edit.disabledTip
+            ? config.showPermissionsTipText
+            : proxyConfig.edit.disabledTip(scope.row);
 
-        if (editButtonProps.disabled && tips) {
-          button = h(
-            "a-tooltip",
-            {
-              scopedSlots: {
-                title: () => tips
-              }
-            },
-            [button]
-          );
+          if (editButtonProps.disabled && tips) {
+            button = h(
+              "a-tooltip",
+              {
+                scopedSlots: {
+                  title: () => tips
+                }
+              },
+              [button]
+            );
+          }
         }
         buttons.push(button);
       }
@@ -422,20 +430,22 @@ export default {
             ]
           );
         }
-        let tips = !proxyConfig.del.disabledTip
-          ? config.showPermissionsTipText
-          : proxyConfig.del.disabledTip(scope.row);
+        if (config.showPermissionsTip) {
+          let tips = !proxyConfig.del.disabledTip
+            ? config.showPermissionsTipText
+            : proxyConfig.del.disabledTip(scope.row);
 
-        if (delButtonProps.disabled && tips) {
-          button = h(
-            "a-tooltip",
-            {
-              scopedSlots: {
-                title: () => tips
-              }
-            },
-            [button]
-          );
+          if (delButtonProps.disabled && tips) {
+            button = h(
+              "a-tooltip",
+              {
+                scopedSlots: {
+                  title: () => tips
+                }
+              },
+              [button]
+            );
+          }
         }
         buttons.push(button);
       }

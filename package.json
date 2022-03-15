@@ -1,6 +1,6 @@
 {
   "name": "opu-components-vue",
-  "version": "1.7.59",
+  "version": "1.7.75",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -26,7 +26,7 @@
     "enquire.js": "^2.1.6",
     "sortablejs": "^1.14.0",
     "vue": "^2.6.14",
-    "vxe-table": "^3.5.0",
+    "vxe-table": "3.3.13",
     "vxe-table-plugin-antd": "^1.11.3",
     "xe-utils": "^3.5.4"
   },

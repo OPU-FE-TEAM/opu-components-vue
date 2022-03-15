@@ -73,6 +73,8 @@ export default {
       const listeners = this.$listeners;
       if (!listeners.preview) {
         window.open(url, "new");
+      } else {
+        this.$emit("preview", info);
       }
     },
     hasAccept(info, isMessage) {
@@ -94,6 +96,7 @@ export default {
       value,
       onChange,
       onPreview,
+      action,
       onBeforeUpload,
       dragger
     } = this;
@@ -125,7 +128,6 @@ export default {
         buttonContent
       );
     }
-
     if (value && typeof value === "string") {
       if (multiple) {
         throw new Error(
@@ -155,7 +157,7 @@ export default {
       });
     } else if (value && value.fileList) {
       propsData.fileList = value.fileList.map(p => {
-        if (!p.status) {
+        if (action && !p.status) {
           p.status = "error";
         }
         return p;

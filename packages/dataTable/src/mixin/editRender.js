@@ -1,5 +1,5 @@
 import moment from "moment";
-import cloneDeep from "lodash";
+import { cloneDeep } from "lodash";
 import utils from "../../../utils";
 import config from "../../conf";
 
@@ -144,25 +144,26 @@ const editRender = {
                 props.defaultField || getSelectOptions.defaultField;
 
               if (p.itemRender.props.options) {
-                editOptions[p.field] ==
-                  cloneDeep(p.itemRender.props.options).map(o => {
-                    if (o.value && !o[config.originalValueKey]) {
-                      o[config.originalValueKey] = o.value;
-                    }
-                    if (o[labelField] != "label") {
-                      o.label = o[labelField];
-                    }
-                    if (o[valueField] != "value") {
-                      o.value = o[valueField];
-                    }
-                    if (o[childrenField] != "children") {
-                      o.children = o[childrenField];
-                    }
-                    if (o[defaultField]) {
-                      editDefaultOption[p.field] = p.value;
-                    }
-                    return o;
-                  });
+                editOptions[p.field] = cloneDeep(
+                  p.itemRender.props.options
+                ).map(o => {
+                  if (o.value && !o[config.originalValueKey]) {
+                    o[config.originalValueKey] = o.value;
+                  }
+                  if (o[labelField] != "label") {
+                    o.label = o[labelField];
+                  }
+                  if (o[valueField] != "value") {
+                    o.value = o[valueField];
+                  }
+                  if (o[childrenField] != "children") {
+                    o.children = o[childrenField];
+                  }
+                  if (o[defaultField]) {
+                    editDefaultOption[p.field] = p.value;
+                  }
+                  return o;
+                });
               } else if (
                 !p.itemRender.props.optionsField &&
                 !editOptions[p.field] &&
@@ -185,6 +186,8 @@ const editRender = {
         return true;
       });
       this.editDefaultOption = editDefaultOption;
+      debugger;
+      this.editOptions = editOptions;
       this.editApiList = apiList;
       this.fetchItemPropsOptionsApiList();
       return data;
@@ -287,7 +290,7 @@ const editRender = {
       }
       return props;
     },
-    autoCompleteFilterRender(props) {
+    autoCompleteFilterRender(props, row) {
       let getSelectOptions = config.getSelectOptions;
       let value = props.value;
       let dataSource = props.dataSource;
@@ -295,13 +298,13 @@ const editRender = {
       const valueField = props.valueField || getSelectOptions.labelField;
       const labelField = props.labelField || getSelectOptions.labelField;
       if (props.search) {
-        dataSource = props.search(value);
+        dataSource = props.search(value, dataSource, row);
       } else {
         const searchFields = props.searchFields || [];
-        dataSource = props.options.filter(p => {
+        dataSource = dataSource.filter(p => {
           if (!value) return true;
           let is = false;
-          if (Object.prototype.toString.call(p) === "[Object Object]") {
+          if (Object.prototype.toString.call(p) === "[object Object]") {
             let searchFieldList = [labelField, ...searchFields];
             // vF,
             for (let i = 0; i < searchFieldList.length; i++) {
@@ -371,6 +374,11 @@ const editRender = {
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, { row, rowIndex });
                         }
+                      },
+                      blur: e => {
+                        if (itemRender.on && itemRender.on.blur) {
+                          itemRender.on.blur(e, { row, rowIndex });
+                        }
                       }
                     },
                     style: {
@@ -410,6 +418,11 @@ const editRender = {
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(value, { row, rowIndex });
                         }
+                      },
+                      blur: e => {
+                        if (itemRender.on && itemRender.on.blur) {
+                          itemRender.on.blur(e, { row, rowIndex });
+                        }
                       }
                     },
                     style: {
@@ -426,21 +439,23 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            var optionsField = (props && props.optionsField) || "";
-            var options = optionsField
-              ? row[optionsField]
-              : props.options
-              ? props.options
-              : this.editOptions[item.field];
+            let optionsField = (props && props.optionsField) || "";
             let disabled = editSlotPropInit(row, props, "disabled");
             if (typeof disabled == "object") {
               return [disabled];
             } else {
+              let value = row[item.field];
+              let options = optionsField
+                ? row[optionsField]
+                : this.editOptions[item.field];
+              if (props.optionsFilter) {
+                options = props.optionsFilter(cloneDeep(options), value);
+              }
               props = this.selectFilterRender({
                 size: this.editItemSize,
                 ...config.defaultProps.select,
                 ...itemRender.props,
-                value: row[item.field],
+                value,
                 options: options,
                 disabled
               });
@@ -463,6 +478,11 @@ const editRender = {
                             options
                           });
                         }
+                      },
+                      blur: e => {
+                        if (itemRender.on && itemRender.on.blur) {
+                          itemRender.on.blur(e, { row, rowIndex });
+                        }
                       }
                     }
                   }}
@@ -476,23 +496,28 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            var optionsField = (props && props.optionsField) || "";
-            var options = optionsField
+            let optionsField = (props && props.optionsField) || "";
+            let options = optionsField
               ? row[optionsField]
-              : props.options
-              ? props.options
               : this.editOptions[item.field];
             let disabled = editSlotPropInit(row, props, "disabled");
             if (typeof disabled == "object") {
               return [disabled];
             } else {
-              let filterData = this.autoCompleteFilterRender({
-                size: this.editItemSize,
-                ...itemRender.props,
-                value: row[item.field],
-                dataSource: options || [],
-                disabled
-              });
+              let value = row[item.field];
+              if (props.optionsFilter) {
+                options = props.optionsFilter(cloneDeep(options), value);
+              }
+              let filterData = this.autoCompleteFilterRender(
+                {
+                  size: this.editItemSize,
+                  ...itemRender.props,
+                  value,
+                  dataSource: options || [],
+                  disabled
+                },
+                row
+              );
               let selectOptions = filterData.selectOptions;
               let dataSource = filterData.dataSource;
               props = filterData.props;
@@ -526,6 +551,11 @@ const editRender = {
                             rowIndex,
                             dataSource
                           });
+                        }
+                      },
+                      blur: e => {
+                        if (itemRender.on && itemRender.on.blur) {
+                          itemRender.on.blur(e, { row, rowIndex });
                         }
                       }
                     }
@@ -569,6 +599,11 @@ const editRender = {
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, { row, rowIndex });
                         }
+                      },
+                      blur: e => {
+                        if (itemRender.on && itemRender.on.blur) {
+                          itemRender.on.blur(e, { row, rowIndex });
+                        }
                       }
                     },
                     style: {
@@ -606,6 +641,11 @@ const editRender = {
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, { row, rowIndex });
+                        }
+                      },
+                      blur: e => {
+                        if (itemRender.on && itemRender.on.blur) {
+                          itemRender.on.blur(e, { row, rowIndex });
                         }
                       }
                     },
@@ -647,6 +687,11 @@ const editRender = {
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, { row, rowIndex });
                         }
+                      },
+                      blur: e => {
+                        if (itemRender.on && itemRender.on.blur) {
+                          itemRender.on.blur(e, { row, rowIndex });
+                        }
                       }
                     },
                     style: {
@@ -686,6 +731,11 @@ const editRender = {
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, { row, rowIndex });
+                        }
+                      },
+                      blur: e => {
+                        if (itemRender.on && itemRender.on.blur) {
+                          itemRender.on.blur(e, { row, rowIndex });
                         }
                       }
                     },
