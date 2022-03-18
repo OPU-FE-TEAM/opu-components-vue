@@ -11,6 +11,8 @@
       @buttonActionClick="onButtonClick"
       @submit="onSubmit"
       :foldingButtonProps="false"
+      autoSetDefaultValue
+      autoSetDefaultFirst
       :loading="loading"
       autoFocus="name3"
       loadOptionsIdField="id"
@@ -302,19 +304,19 @@ export default {
             }
           }
         },
-        {
-          title: "证件类型",
-          field: "idType",
-          itemRender: {
-            name: "a-auto-complete",
-            props: {
-              // options: ["1", "2", "3"],
-              api: idTypeFunction,
-              param: { value: "idType" },
-              dataField: "data"
-            }
-          }
-        },
+        // {
+        //   title: "证件类型",
+        //   field: "idType",
+        //   itemRender: {
+        //     name: "a-auto-complete",
+        //     props: {
+        //       // options: ["1", "2", "3"],
+        //       api: idTypeFunction,
+        //       param: { value: "idType" },
+        //       dataField: "data"
+        //     }
+        //   }
+        // },
         {
           field: "treeSelect",
           title: "树下啦",
@@ -592,20 +594,20 @@ export default {
             }
           }
         },
-        {
-          field: "price",
-          title: "金额",
-          itemRender: {
-            name: "a-input-number-split"
-          }
-        },
-        {
-          field: "cprice",
-          title: "时间",
-          itemRender: {
-            name: "a-range-picker-split"
-          }
-        },
+        // {
+        //   field: "price",
+        //   title: "金额",
+        //   itemRender: {
+        //     name: "a-input-number-split"
+        //   }
+        // },
+        // {
+        //   field: "cprice",
+        //   title: "时间",
+        //   itemRender: {
+        //     name: "a-range-picker-split"
+        //   }
+        // },
         // {
         //   field: "name1",
         //   title: "名称2",
@@ -622,26 +624,26 @@ export default {
         //   title: "名称3",
         //   class: "abcd"
         // },
-        {
-          field: "name66",
-          title: "名称66",
-          colspan: {
-            xs: 1,
-            sm: 2,
-            md: 3,
-            lg: 4,
-            xl: 5,
-            xxl: 6
-          },
-          itemRender: {
-            name: "a-textarea",
-            on: {
-              enter: () => {
-                return false;
-              }
-            }
-          }
-        },
+        // {
+        //   field: "name66",
+        //   title: "名称66",
+        //   colspan: {
+        //     xs: 1,
+        //     sm: 2,
+        //     md: 3,
+        //     lg: 4,
+        //     xl: 5,
+        //     xxl: 6
+        //   },
+        //   itemRender: {
+        //     name: "a-textarea",
+        //     on: {
+        //       enter: () => {
+        //         return false;
+        //       }
+        //     }
+        //   }
+        // },
         // {
         //   field: "name4",
         //   title: "名称4",

@@ -184,7 +184,7 @@ export default {
       // 不存在行操作插槽，自动生成
       if (
         proxyConfig &&
-        (proxyConfig.edit || proxyConfig.del) &&
+        (proxyConfig.edit || proxyConfig.del || proxyConfig.view) &&
         !$scopedSlots.rowAction
       ) {
         $scopedSlots["rowAction"] = renderRowAction;

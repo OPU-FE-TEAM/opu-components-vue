@@ -186,7 +186,6 @@ const editRender = {
         return true;
       });
       this.editDefaultOption = editDefaultOption;
-      debugger;
       this.editOptions = editOptions;
       this.editApiList = apiList;
       this.fetchItemPropsOptionsApiList();

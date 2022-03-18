@@ -873,8 +873,16 @@ export default {
       default: ""
     },
     autoSetDefaultValue: {
-      type: [Boolean, String],
-      default: ""
+      type: Boolean,
+      default: false
+    },
+    autoSetDefaultFirst: {
+      type: Boolean,
+      default: false
+    },
+    autoSetDefaultFirstRequired: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -1136,7 +1144,6 @@ export default {
       this.optionsItemIndexs = newOptionsItemIndexs;
       this.unifyApiGetOptions = unifyApiGetOptions;
       this.getItemPropsOptionsApiList = getItemPropsOptionsApiList;
-
       if (isAutoLoadOptionsData) {
         this.loadOptionsData();
       }
@@ -1195,6 +1202,8 @@ export default {
           formData,
           callback
         );
+      } else if (this.autoSetDefaultValue) {
+        this.setFieldsOptionsDefaultValues();
       }
     },
     // 获取表单数据，不验证
@@ -1393,6 +1402,7 @@ export default {
     },
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}, callback) {
+      let { autoSetDefaultFirst, autoSetDefaultFirstRequired } = this;
       let formData = {};
       let defaultFormData = {};
       this.itemsOptions.forEach(item => {
@@ -1413,35 +1423,51 @@ export default {
           const input = this.$refs[inputRef];
           if (input && input.getOptionsData) {
             const options = input.getOptionsData();
-            const defaultRows = options.filter(p => p[defaultKey]);
-            if (defaultRows.length > 0) {
-              const defaultValue = defaultRows.map(p => {
-                return p[valueField];
-              });
-              if (defaultValue.length) {
-                const valueArrayTypes = ["a-checkbox-group", "a-radio-group"];
-                let value = defaultValue;
-                if (utils.isArray(defaultValue)) {
-                  const isSeletctMultiple =
-                    item.itemRender.name == "a-select" &&
-                    item.itemRender.props &&
-                    item.itemRender.props.mode == "multiple";
-                  value =
-                    valueArrayTypes.includes(item.itemRender.name) ||
-                    isSeletctMultiple
-                      ? defaultValue
-                      : defaultValue[0];
+            if (options.length > 0) {
+              let defaultRows = [];
+              if (autoSetDefaultFirst) {
+                if (!autoSetDefaultFirstRequired) {
+                  defaultRows = [options[0]];
+                } else if (
+                  item.option &&
+                  item.option.rules &&
+                  item.option.rules[0] &&
+                  item.option.rules[0].required
+                ) {
+                  defaultRows = [options[0]];
                 }
-                defaultFormData[item.field] = {
-                  value,
-                  option: defaultRows
-                };
-                formData[item.field] = value;
-                if (callback) {
-                  formData = {
-                    ...formData,
-                    ...callback(item.field, defaultRows)
+              } else {
+                defaultRows = options.filter(p => p[defaultKey]);
+              }
+              if (defaultRows.length > 0) {
+                const defaultValue = defaultRows.map(p => {
+                  return p[valueField];
+                });
+                if (defaultValue.length) {
+                  const valueArrayTypes = ["a-checkbox-group", "a-radio-group"];
+                  let value = defaultValue;
+                  if (utils.isArray(defaultValue)) {
+                    const isSeletctMultiple =
+                      item.itemRender.name == "a-select" &&
+                      item.itemRender.props &&
+                      item.itemRender.props.mode == "multiple";
+                    value =
+                      valueArrayTypes.includes(item.itemRender.name) ||
+                      isSeletctMultiple
+                        ? defaultValue
+                        : defaultValue[0];
+                  }
+                  defaultFormData[item.field] = {
+                    value,
+                    option: defaultRows
                   };
+                  formData[item.field] = value;
+                  if (callback) {
+                    formData = {
+                      ...formData,
+                      ...callback(item.field, defaultRows)
+                    };
+                  }
                 }
               }
             }
