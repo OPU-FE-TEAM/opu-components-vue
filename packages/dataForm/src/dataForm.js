@@ -1465,14 +1465,14 @@ export default {
                     option: defaultRows
                   };
                   formData[item.field] = value;
-                  if (props.Linkage) {
-                    if (props.Linkage instanceof Array) {
-                      props.Linkage.forEach(linkItem => {
+                  if (props.linkage) {
+                    if (props.linkage instanceof Array) {
+                      props.linkage.forEach(linkItem => {
                         linkageFormData[linkItem.key] =
                           defaultRows[linkItem.value];
                       });
                     } else {
-                      for (let linkItem in props.Linkage) {
+                      for (let linkItem in props.linkage) {
                         linkageFormData[linkItem.key] =
                           defaultRows[linkItem.value];
                       }
