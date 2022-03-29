@@ -1404,7 +1404,9 @@ export default {
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}, callback) {
       let { autoSetDefaultFirst, autoSetDefaultFirstRequired } = this;
       let formData = {};
+      let linkageFormData = {};
       let defaultFormData = {};
+
       this.itemsOptions.forEach(item => {
         if (
           item &&
@@ -1413,11 +1415,12 @@ export default {
           ((fields.length && fields.includes(item.field)) ||
             fields.length === 0)
         ) {
-          const defaultKey = item.itemRender.props.defaultField
-            ? item.itemRender.props.defaultField
+          let props = item.itemRender.props;
+          const defaultKey = props.defaultField
+            ? props.defaultField
             : config.getSelectOptions.defaultField;
-          const valueField = item.itemRender.props.valueField
-            ? item.itemRender.props.valueField
+          const valueField = props.valueField
+            ? props.valueField
             : config.getSelectOptions.valueField;
           const inputRef = "input_" + item.field;
           const input = this.$refs[inputRef];
@@ -1449,8 +1452,8 @@ export default {
                   if (utils.isArray(defaultValue)) {
                     const isSeletctMultiple =
                       item.itemRender.name == "a-select" &&
-                      item.itemRender.props &&
-                      item.itemRender.props.mode == "multiple";
+                      props &&
+                      props.mode == "multiple";
                     value =
                       valueArrayTypes.includes(item.itemRender.name) ||
                       isSeletctMultiple
@@ -1462,6 +1465,19 @@ export default {
                     option: defaultRows
                   };
                   formData[item.field] = value;
+                  if (props.Linkage) {
+                    if (props.Linkage instanceof Array) {
+                      props.Linkage.forEach(linkItem => {
+                        linkageFormData[linkItem.key] =
+                          defaultRows[linkItem.value];
+                      });
+                    } else {
+                      for (let linkItem in props.Linkage) {
+                        linkageFormData[linkItem.key] =
+                          defaultRows[linkItem.value];
+                      }
+                    }
+                  }
                   if (callback) {
                     formData = {
                       ...formData,
@@ -1476,7 +1492,8 @@ export default {
       });
       const json = {
         ...defaultData,
-        ...formData
+        ...formData,
+        ...linkageFormData
       };
       this.setData(json);
       return defaultFormData;

@@ -16,11 +16,11 @@ function handlefieldOptionsDataField(item, json) {
 }
 
 //编辑插槽 是否禁用
-function editSlotPropInit(row, props, key, defaultKey = false) {
+function editSlotPropInit(row, props, key, defaultKey = false, field) {
   return !props[key] && props[key] != 0
     ? defaultKey
     : typeof props[key] == "function"
-    ? props[key](row)
+    ? props[key](row, field)
     : props[key];
 }
 
@@ -352,7 +352,7 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            let disabled = editSlotPropInit(row, props, "disabled");
+            let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
             } else {
@@ -371,12 +371,20 @@ const editRender = {
                         let value = e.target.value;
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, { row, rowIndex });
+                          itemRender.on.change(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, { row, rowIndex });
+                          itemRender.on.blur(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       }
                     },
@@ -394,7 +402,7 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            let disabled = editSlotPropInit(row, props, "disabled");
+            let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
             } else {
@@ -406,8 +414,20 @@ const editRender = {
                       ...props,
                       value: row[item.field],
                       disabled,
-                      max: editSlotPropInit(row, props, "max", Infinity),
-                      min: editSlotPropInit(row, props, "min", -Infinity)
+                      max: editSlotPropInit(
+                        row,
+                        props,
+                        "max",
+                        Infinity,
+                        item.field
+                      ),
+                      min: editSlotPropInit(
+                        row,
+                        props,
+                        "min",
+                        -Infinity,
+                        item.field
+                      )
                     },
                     on: {
                       ...itemRender.on,
@@ -415,12 +435,20 @@ const editRender = {
                         let value = e;
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(value, { row, rowIndex });
+                          itemRender.on.change(value, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, { row, rowIndex });
+                          itemRender.on.blur(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       }
                     },
@@ -439,7 +467,7 @@ const editRender = {
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
             let optionsField = (props && props.optionsField) || "";
-            let disabled = editSlotPropInit(row, props, "disabled");
+            let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
             } else {
@@ -474,13 +502,18 @@ const editRender = {
                           itemRender.on.change(value, option, {
                             row,
                             rowIndex,
-                            options
+                            options,
+                            field: item.field
                           });
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, { row, rowIndex });
+                          itemRender.on.blur(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       }
                     }
@@ -499,7 +532,7 @@ const editRender = {
             let options = optionsField
               ? row[optionsField]
               : this.editOptions[item.field];
-            let disabled = editSlotPropInit(row, props, "disabled");
+            let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
             } else {
@@ -533,7 +566,7 @@ const editRender = {
                       change: value => {
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(value);
+                          itemRender.on.change(value, row, item.field);
                         }
                       },
                       select: value => {
@@ -548,13 +581,18 @@ const editRender = {
                           itemRender.on.select(value, optionRow, {
                             row,
                             rowIndex,
-                            dataSource
+                            dataSource,
+                            field: item.field
                           });
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, { row, rowIndex });
+                          itemRender.on.blur(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       }
                     }
@@ -573,7 +611,7 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            let disabled = editSlotPropInit(row, props, "disabled");
+            let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
             } else {
@@ -596,12 +634,20 @@ const editRender = {
                         let value = e;
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, { row, rowIndex });
+                          itemRender.on.change(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, { row, rowIndex });
+                          itemRender.on.blur(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       }
                     },
@@ -619,7 +665,7 @@ const editRender = {
             let item = this.tableColumns[$columnIndex];
             let itemRender = item.itemRender || {};
             let props = item.itemRender.props || {};
-            let disabled = editSlotPropInit(row, props, "disabled");
+            let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
             } else {
@@ -639,12 +685,20 @@ const editRender = {
                         let value = e;
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, { row, rowIndex });
+                          itemRender.on.change(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, { row, rowIndex });
+                          itemRender.on.blur(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       }
                     },
@@ -664,8 +718,8 @@ const editRender = {
             let props = item.itemRender.props || {};
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
-            if (editSlotPropInit(row, props, "hidden")) return "";
-            let disabled = editSlotPropInit(row, props, "disabled");
+            if (editSlotPropInit(row, props, "hidden", item.field)) return "";
+            let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
             } else {
@@ -684,12 +738,20 @@ const editRender = {
                         let value = e ? trueValue : falseValue;
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, { row, rowIndex });
+                          itemRender.on.change(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, { row, rowIndex });
+                          itemRender.on.blur(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       }
                     },
@@ -709,8 +771,8 @@ const editRender = {
             let props = item.itemRender.props || {};
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
-            if (editSlotPropInit(row, props, "hidden")) return "";
-            let disabled = editSlotPropInit(row, props, "disabled");
+            if (editSlotPropInit(row, props, "hidden", item.field)) return "";
+            let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
             } else {
@@ -729,12 +791,20 @@ const editRender = {
                         let value = e.target.checked ? trueValue : falseValue;
                         row[item.field] = value;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, { row, rowIndex });
+                          itemRender.on.change(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, { row, rowIndex });
+                          itemRender.on.blur(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
                         }
                       }
                     },
