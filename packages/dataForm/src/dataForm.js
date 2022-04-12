@@ -1222,7 +1222,10 @@ export default {
           if (formClearUndefinedValue && item) {
             let is = false;
             if (item.options.length > 0) {
-              if (item.name == "a-tree-select") {
+              if (
+                item.name == "a-tree-select" ||
+                item.name == "a-select-group"
+              ) {
                 let valueField = item.replaceFields
                   ? item.replaceFields.value ||
                     config.getSelectOptions.valueField

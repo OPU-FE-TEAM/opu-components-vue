@@ -16,7 +16,7 @@ function handlefieldOptionsDataField(item, json) {
 }
 
 //编辑插槽 是否禁用
-function editSlotPropInit(row, props, key, defaultKey = false, field) {
+function editSlotPropInit(row, props, key, field, defaultKey = false) {
   return !props[key] && props[key] != 0
     ? defaultKey
     : typeof props[key] == "function"
@@ -418,15 +418,15 @@ const editRender = {
                         row,
                         props,
                         "max",
-                        Infinity,
-                        item.field
+                        item.field,
+                        Infinity
                       ),
                       min: editSlotPropInit(
                         row,
                         props,
                         "min",
-                        -Infinity,
-                        item.field
+                        item.field,
+                        -Infinity
                       )
                     },
                     on: {
