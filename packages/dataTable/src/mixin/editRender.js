@@ -386,6 +386,15 @@ const editRender = {
                             field: item.field
                           });
                         }
+                      },
+                      keydown: e => {
+                        if (itemRender.on && itemRender.on.keydown) {
+                          itemRender.on.keydown(e, {
+                            row,
+                            rowIndex,
+                            field: item.field
+                          });
+                        }
                       }
                     },
                     style: {
