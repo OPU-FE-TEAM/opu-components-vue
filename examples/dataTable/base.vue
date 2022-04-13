@@ -21,6 +21,11 @@
       :tree-config="{}"
       :rowKey="true"
       class="abc-table"
+      :column-config="{ isHover: true, resizable: false }"
+      :column-key="true"
+      :highlight-hover-column="true"
+      :sortable="true"
+      :sort-config="{ remote: true }"
     >
       <template v-slot:operate="{ row }">
         <a-button @click="editRow(row)">编辑</a-button>

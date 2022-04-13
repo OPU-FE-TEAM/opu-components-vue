@@ -441,13 +441,17 @@ function renderHeadToolbar(h, _vm) {
 }
 
 //处理api获取的表头数据
-function handleColumnsData(data, columns, configProps) {
+function handleColumnsData(data, columns, configProps, _vm) {
+  const { sortable } = _vm;
   let copyColumns = utils.clone(columns);
   const apiColumns = data.map(item => {
     // 替换字段
     let obj = {
       ...item
     };
+    if (sortable) {
+      obj.sortable = true;
+    }
     for (const key in configProps) {
       if (key !== "list") {
         obj[key] = item[configProps[key]];
@@ -463,7 +467,12 @@ function handleColumnsData(data, columns, configProps) {
       }
     }
     if (obj.children && obj.children.length) {
-      obj.children = handleColumnsData(obj.children, obj.children, configProps);
+      obj.children = handleColumnsData(
+        obj.children,
+        obj.children,
+        configProps,
+        _vm
+      );
     }
     return obj;
   });
@@ -515,7 +524,8 @@ export default {
     proxyColumns: Object,
     // 高亮行是否可反选
     highlightCurrentUnselect: Boolean,
-    tableIndex: { type: String, default: "" }
+    tableIndex: { type: String, default: "" },
+    sortable: { type: Boolean, default: false }
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -898,17 +908,23 @@ export default {
     },
     // 设置表头
     setTableColumns(data) {
-      const { proxyColumns, fetchColumns } = this;
+      const { proxyColumns, fetchColumns, sortable } = this;
       if (data) {
-        data = utils.clone(data);
-        this.backupColumns = data;
+        let columnsData = utils.clone(data);
+        if (sortable) {
+          columnsData = columnsData.map(p => {
+            p.sortable = true;
+            return p;
+          });
+        }
+        this.backupColumns = columnsData;
         const configProps =
           proxyColumns &&
           proxyColumns.props &&
           utils.isObject(proxyColumns.props)
             ? { ...config.proxyColumns.props, ...proxyColumns.props }
             : config.proxyColumns.props;
-        this.tableColumns = this.editColumnsRender(data, p => {
+        this.tableColumns = this.editColumnsRender(columnsData, p => {
           return p[configProps.show] !== false;
         });
         // this.tableColumns = data.filter(p => p[configProps.show] !== false);
@@ -1015,6 +1031,7 @@ export default {
     // api获取表头
     fetchColumns(opt) {
       const { columns } = this;
+      const that = this;
       const defaultAjax =
         config.proxyColumns && config.proxyColumns.defaultAjax
           ? config.proxyColumns.defaultAjax
@@ -1037,7 +1054,12 @@ export default {
               ? { ...config.proxyColumns.props, ...opt.props }
               : config.proxyColumns.props;
           const data = utils.getObjData(configProps.list, res);
-          const tableColumns = handleColumnsData(data, columns, configProps);
+          const tableColumns = handleColumnsData(
+            data,
+            columns,
+            configProps,
+            that
+          );
           this.backupColumns = utils.clone(tableColumns);
           this.tableColumns = tableColumns.filter(
             p => p[configProps.show] !== false
