@@ -8,8 +8,8 @@
       :loading="loading"
       :data="tableData"
       :columns="tableColumn"
-      :sortable="true"
-      :sort-config="{ remote: true }"
+      :setcolumns-config="{ proxyConfig: proxyColumns }"
+      :proxy-columns="proxyColumns"
     >
     </DataTable>
   </div>
@@ -23,20 +23,25 @@ export default {
   data() {
     return {
       loading: false,
+      proxyColumns: {
+        params: {
+          queryFlag: false,
+          typeCode: "abc"
+        }
+      },
 
       tableColumn: [
-        { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
-        {
-          title: "name",
-          field: "name",
-          sortable: true
-        },
-        {
-          title: "sex",
-          field: "sex"
-        },
-
-        { title: "操作", width: 200, slots: { default: "operate" } }
+        // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
+        // {
+        //   title: "name",
+        //   field: "name",
+        //   sortable: true
+        // },
+        // {
+        //   title: "sex",
+        //   field: "sex"
+        // },
+        // { title: "操作", width: 200, slots: { default: "operate" } }
       ],
       tableData: [
         {

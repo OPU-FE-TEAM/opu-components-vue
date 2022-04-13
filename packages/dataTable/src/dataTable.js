@@ -454,7 +454,11 @@ function handleColumnsData(data, columns, configProps, _vm) {
     }
     for (const key in configProps) {
       if (key !== "list") {
-        obj[key] = item[configProps[key]];
+        let value = item[configProps[key]];
+        if (key === "fixed" && value == "none") {
+          value = "";
+        }
+        obj[key] = value;
       }
     }
     // 合并传入的定义
@@ -790,6 +794,7 @@ export default {
       props.on = ons;
       props.ref = "dataGrid";
       props.scopedSlots = $scopedSlots;
+      console.log(props.props);
       return props;
     }
   },
@@ -1138,11 +1143,7 @@ export default {
       }
     }
   },
-  beforeDestroy() {
-    if (this.sortable) {
-      this.sortable.destroy();
-    }
-  },
+  beforeDestroy() {},
   render(h) {
     const {
       tableProps,

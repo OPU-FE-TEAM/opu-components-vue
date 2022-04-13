@@ -56,7 +56,7 @@ function getColumns(arr) {
           colSpan: null,
           customName: "HIS编码",
           drag: true,
-          freeze: null,
+          freeze: "none",
           isHide: false,
           name: "hisId",
           parentCode: "",
