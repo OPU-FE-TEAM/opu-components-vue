@@ -83,6 +83,7 @@ const GlobalConfig = {
       on: {}
     }
   }
+  // sortConfig: {}
 };
 
 export default GlobalConfig;

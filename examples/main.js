@@ -339,6 +339,11 @@ DataTable.setup({
         }
       }
     }
+  },
+  sortConfig: {
+    handleServerSortParams: e => {
+      console.log(e);
+    }
   }
 });
 

@@ -659,7 +659,8 @@ export default {
         height,
         highlightCurrentUnselect,
         onCurrentRowCellClick,
-        onCurrentRowChange
+        onCurrentRowChange,
+        handleServerSort
       } = this;
       const propsData = this.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
@@ -765,6 +766,26 @@ export default {
       if (highlightCurrentUnselect) {
         ons["cell-click"] = onCurrentRowCellClick;
         ons["current-change"] = onCurrentRowChange;
+      }
+      // 合并排序配置
+      if (config.sortConfig && utils.isObject(config.sortConfig)) {
+        if (props.props.sortConfig) {
+          props.props.sortConfig = {
+            ...config.sortConfig,
+            ...props.props.sortConfig
+          };
+        } else {
+          props.props.sortConfig = { ...config.sortConfig };
+        }
+      }
+      // 全局处理服务端排序
+      // console.log($listeners["sort-change"]);
+      if (
+        props.props.sortConfig &&
+        props.props.sortConfig.remote &&
+        !$listeners["sort-change"]
+      ) {
+        ons["sort-change"] = handleServerSort;
       }
       props.on = ons;
       props.ref = "dataGrid";
@@ -1103,6 +1124,18 @@ export default {
         this.$emit("current-change", { ...e, row: null });
       }
       this.$emit("cell-click", e);
+    },
+    handleServerSort(e) {
+      const { tableProps } = this;
+      if (
+        tableProps.props.sortConfig &&
+        tableProps.props.sortConfig.handleServerSortParams
+      ) {
+        const params = tableProps.props.sortConfig.handleServerSortParams(e);
+        if (params) {
+          this.query(params);
+        }
+      }
     }
   },
   beforeDestroy() {

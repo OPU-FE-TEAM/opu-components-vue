@@ -58,7 +58,11 @@ export default {
     };
   },
   created() {},
-  methods: {}
+  methods: {
+    onSortChange(e) {
+      console.log(e);
+    }
+  }
 };
 </script>
 
