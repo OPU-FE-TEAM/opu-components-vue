@@ -783,7 +783,6 @@ export default {
         }
       }
       // 全局处理服务端排序
-      // console.log($listeners["sort-change"]);
       if (
         props.props.sortConfig &&
         props.props.sortConfig.remote &&
@@ -794,7 +793,6 @@ export default {
       props.on = ons;
       props.ref = "dataGrid";
       props.scopedSlots = $scopedSlots;
-      console.log(props.props);
       return props;
     }
   },
