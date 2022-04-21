@@ -73,7 +73,8 @@ const GlobalConfig = {
     modal: {
       props: {
         title: "设置表头",
-        width: 800
+        width: 800,
+        zIndex: 2000
       }
     },
     proxyConfig: {

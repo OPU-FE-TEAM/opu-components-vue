@@ -93,8 +93,9 @@ export default {
       const props = Object.assign({}, pulldownExtendProps);
       Object.assign(props, {
         props: {
+          modelValue: true,
           transfer: true,
-          "destroy-on-close": true,
+          // "destroy-on-close": true,
           ...propsData
         }
       });

@@ -30,6 +30,10 @@ export default {
     },
     propsConfig() {
       const { option } = this;
+      // let props = {};
+      // if (option.tableConfig.props) {
+
+      // }
       return option.proxyConfig && option.proxyConfig.props
         ? {
             ...config.setColumns.proxyConfig.props,
@@ -92,7 +96,12 @@ export default {
         };
         for (const key in configProps) {
           if (key !== "list") {
-            obj[key] = item[configProps[key]];
+            obj[key] =
+              item[configProps[key]] ||
+              item[configProps[key]] == 0 ||
+              item[configProps[key]] === false
+                ? item[configProps[key]]
+                : "";
           }
         }
         if (obj.children && obj.children.length) {
@@ -261,8 +270,8 @@ export default {
       if (defaultAjax && defaultAjax.submit && !submitApi) {
         submitApi = defaultAjax.submit;
       }
+      let json = { ...params, data: newTableData };
       if (submitApi) {
-        let json = { ...params, data: newTableData };
         if (onConfig && onConfig.submitBefore) {
           const submitBeforeRes = onConfig.submitBefore(json);
           if (submitBeforeRes === false) {
@@ -276,6 +285,17 @@ export default {
           this.$emit("submit");
         });
       } else {
+        //转换数据到原来
+        let propsConfig = {};
+        for (const key in this.propsConfig) {
+          propsConfig[this.propsConfig[key]] = key;
+        }
+        if (onConfig && onConfig.submitBefore) {
+          const submitBeforeRes = onConfig.submitBefore(json);
+          if (submitBeforeRes === false) {
+            return;
+          }
+        }
         this.visible = false;
         this.$emit("submit", newTableData);
       }
@@ -288,7 +308,8 @@ export default {
       modalOpt,
       visible,
       onSubmit,
-      onCancel
+      onCancel,
+      option
     } = this;
 
     const dropBtn = (
@@ -296,7 +317,7 @@ export default {
         <i class="vxe-icon--menu"></i>
       </span>
     );
-    const tableColumn = [
+    let tableColumn = [
       {
         width: 60,
         align: "center",
@@ -358,6 +379,9 @@ export default {
         }
       }
     ];
+    if (option.tableConfig.columns) {
+      tableColumn = option.tableConfig.columns;
+    }
 
     const modalProps = {
       ...modalOpt

@@ -599,6 +599,11 @@ export default {
             ? this.setcolumnsConfig.proxyConfig.on
             : {};
 
+        const tableConfig =
+          this.setcolumnsConfig && this.setcolumnsConfig.tableConfig
+            ? this.setcolumnsConfig.tableConfig
+            : {};
+
         return {
           modal: {
             props: {
@@ -625,6 +630,10 @@ export default {
               ...config.setColumns.proxyConfig.on,
               ...proxyConfigOn
             }
+          },
+          tableConfig: {
+            ...config.setColumns.tableConfig,
+            ...tableConfig
           }
         };
       } else {
@@ -1085,9 +1094,12 @@ export default {
             that
           );
           this.backupColumns = utils.clone(tableColumns);
-          this.tableColumns = tableColumns.filter(
-            p => p[configProps.show] !== false
-          );
+          // this.tableColumns = tableColumns.filter(
+          //   p => p[configProps.show] !== false
+          // );
+          this.tableColumns = this.editColumnsRender(tableColumns, p => {
+            return p[configProps.show] !== false;
+          });
         });
       }
     },

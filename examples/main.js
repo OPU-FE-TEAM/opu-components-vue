@@ -238,18 +238,18 @@ function getColumns(arr) {
   });
 }
 
-function saveColumns(arr) {
-  return new Promise(resolve => {
-    console.log(arr);
-    setTimeout(() => {
-      const json = {
-        code: 0,
-        data: []
-      };
-      resolve(json);
-    }, 500);
-  });
-}
+// function saveColumns(arr) {
+//   return new Promise(resolve => {
+//     console.log(arr);
+//     setTimeout(() => {
+//       const json = {
+//         code: 0,
+//         data: []
+//       };
+//       resolve(json);
+//     }, 500);
+//   });
+// }
 
 DataForm.setup({
   titleColon: false,
@@ -294,7 +294,56 @@ DataForm.setup({
 });
 DataTable.setup({
   pagerConfig: {
-    pageIndex: 0
+    pageIndex: 0,
+    pageSize: 30, //默认每页条数
+    slots: {
+      left: grid => {
+        const vm = new Vue();
+        const h = vm.$createElement;
+        let setColumnsButton = "";
+        if (
+          grid.$grid.$parent &&
+          grid.$grid.$parent.$options.propsData &&
+          grid.$grid.$parent.$options.propsData.setcolumnsConfig
+        ) {
+          setColumnsButton = h(
+            "a-button",
+            {
+              props: {
+                icon: "setting",
+                size: "small"
+              },
+              style: { marginLeft: "8px" },
+              on: {
+                click: () => {
+                  grid.$grid.$parent.showSetColumns &&
+                    grid.$grid.$parent.showSetColumns();
+                }
+              }
+            },
+            []
+          );
+        }
+        return [
+          h(
+            "a-button",
+            {
+              props: {
+                icon: "reload",
+                size: "small"
+              },
+              on: {
+                click: () => {
+                  grid.$grid.commitProxy("reload");
+                }
+              }
+            },
+            []
+          ),
+          setColumnsButton
+        ];
+      }
+    }
   },
   proxyColumns: {
     props: {
@@ -326,8 +375,8 @@ DataTable.setup({
         defaultTitle: "sysColumnName"
       },
       defaultAjax: {
-        query: getColumns,
-        submit: saveColumns
+        query: getColumns
+        // submit: saveColumns
       },
       on: {
         submitBefore: values => {

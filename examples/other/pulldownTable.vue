@@ -43,13 +43,95 @@ export default {
     return {
       table: {
         props: {
+          setcolumnsConfig: {
+            modal: {
+              props: {
+                bodyStyle: { height: "500px" }
+              }
+            },
+            proxyConfig: {
+              props: {
+                title: "title",
+                width: "width",
+                align: "align",
+                show: "show",
+                fixed: "fixed",
+                field: "field"
+              },
+              on: {
+                submitBefore: values => {
+                  console.log(values);
+                  // return false;
+                }
+              }
+            },
+            tableConfig: {
+              columns: [
+                {
+                  width: 60,
+                  align: "center",
+                  slots: {
+                    default: "btn_default",
+                    header: () => {
+                      return "排序";
+                    }
+                  }
+                },
+                {
+                  field: "title",
+                  title: "显示标题",
+                  align: "center",
+                  editRender: { name: "AInput" }
+                },
+                {
+                  field: "width",
+                  title: "列宽",
+                  align: "center",
+                  editRender: { name: "AInputNumber" }
+                },
+                {
+                  field: "align",
+                  title: "对齐方式",
+                  align: "center",
+                  editRender: {
+                    name: "ASelect",
+                    options: [
+                      { label: "居左", value: "left" },
+                      { label: "居中", value: "center" },
+                      { label: "居右", value: "right" }
+                    ]
+                  }
+                },
+                {
+                  field: "show",
+                  title: "显示",
+                  align: "center",
+                  slots: { default: "show_default" }
+                },
+                {
+                  field: "fixed",
+                  title: "固定",
+                  align: "center",
+                  editRender: {
+                    name: "ASelect",
+                    options: [
+                      { label: "不固定", value: "" },
+                      { label: "靠左", value: "left" },
+                      { label: "靠右", value: "right" }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
           columns: [
             { type: "checkbox", width: 50 },
             { type: "seq", title: "Number", width: 80 },
             {
               field: "keyName",
               title: "Name",
-              width: 200
+              width: 200,
+              align: "left"
             },
             {
               field: "sex",
@@ -159,3 +241,8 @@ export default {
   }
 };
 </script>
+<style>
+.ant-select-dropdown {
+  z-index: 2010 !important;
+}
+</style>
