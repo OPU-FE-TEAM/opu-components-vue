@@ -1449,38 +1449,37 @@ export default {
                 const defaultValue = defaultRows.map(p => {
                   return p[valueField];
                 });
-                if (defaultValue.length) {
-                  const valueArrayTypes = ["a-checkbox-group", "a-radio-group"];
+                if (defaultValue && defaultValue.length) {
                   let value = defaultValue;
-                  if (utils.isArray(defaultValue)) {
-                    const isSeletctMultiple =
-                      item.itemRender.name == "a-select" &&
+                  const valueArrayTypes = ["a-checkbox-group", "a-radio-group"];
+                  const isSeletctMultiple =
+                    (item.itemRender.name == "a-select" &&
                       props &&
-                      props.mode == "multiple";
-                    value =
-                      valueArrayTypes.includes(item.itemRender.name) ||
-                      isSeletctMultiple
-                        ? defaultValue
-                        : defaultValue[0];
+                      props.mode == "multiple") ||
+                    valueArrayTypes.includes(item.itemRender.name);
+                  if (!isSeletctMultiple) {
+                    value = defaultValue[0];
+                    defaultRows = defaultRows[0];
                   }
-                  defaultFormData[item.field] = {
-                    value,
-                    option: defaultRows
-                  };
-                  formData[item.field] = value;
-                  if (props.linkage) {
+                  if (!isSeletctMultiple && props.linkage) {
                     if (props.linkage instanceof Array) {
                       props.linkage.forEach(linkItem => {
-                        linkageFormData[linkItem.key] =
-                          defaultRows[linkItem.value];
+                        linkageFormData[linkItem.key] = utils.getObjData(
+                          linkItem.value,
+                          defaultRows
+                        );
                       });
                     } else {
                       for (let linkItem in props.linkage) {
-                        linkageFormData[linkItem.key] =
-                          defaultRows[linkItem.value];
+                        linkageFormData[linkItem] = utils.getObjData(
+                          props.linkage[linkItem],
+                          defaultRows
+                        );
                       }
                     }
                   }
+                  formData[item.field] = value;
+                  defaultFormData[item.field] = defaultRows;
                   if (callback) {
                     formData = {
                       ...formData,
