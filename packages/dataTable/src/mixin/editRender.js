@@ -370,6 +370,7 @@ const editRender = {
                       change: e => {
                         let value = e.target.value;
                         row[item.field] = value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, {
                             row,
@@ -443,6 +444,7 @@ const editRender = {
                       change: e => {
                         let value = e;
                         row[item.field] = value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(value, {
                             row,
@@ -507,6 +509,7 @@ const editRender = {
                       ...itemRender.on,
                       change: (value, option) => {
                         row[item.field] = value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(value, option, {
                             row,
@@ -574,6 +577,7 @@ const editRender = {
                       ...itemRender.on,
                       change: value => {
                         row[item.field] = value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(value, row, item.field);
                         }
@@ -586,6 +590,7 @@ const editRender = {
                         );
                         row[item.field] =
                           optionRow[filterData.labelField] || value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.select) {
                           itemRender.on.select(value, optionRow, {
                             row,
@@ -642,6 +647,7 @@ const editRender = {
                       change: e => {
                         let value = e;
                         row[item.field] = value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, {
                             row,
@@ -693,6 +699,7 @@ const editRender = {
                       change: e => {
                         let value = e;
                         row[item.field] = value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, {
                             row,
@@ -746,6 +753,7 @@ const editRender = {
                       change: e => {
                         let value = e ? trueValue : falseValue;
                         row[item.field] = value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, {
                             row,
@@ -799,6 +807,7 @@ const editRender = {
                       change: e => {
                         let value = e.target.checked ? trueValue : falseValue;
                         row[item.field] = value;
+                        row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, {
                             row,
