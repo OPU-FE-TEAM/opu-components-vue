@@ -122,11 +122,10 @@ export default {
         );
       }
     },
-    updateValue(value) {
-      this.$emit("update", value);
-      this.$emit("change", value);
+    updateValue(...arg) {
+      this.$emit("update", ...arg);
+      this.$emit("change", ...arg);
     },
-
     setOptionsData(data) {
       const { valueField, labelField, childrenField } = this;
       const options = handleItemPropsOptions(
