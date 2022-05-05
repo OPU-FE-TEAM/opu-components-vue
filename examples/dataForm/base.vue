@@ -685,6 +685,7 @@ export default {
               defaultField: "isSelected",
               valueField: "id",
               labelField: "text",
+              linkage: { name22: "code" },
               // dataField: "aa",
               // labelInValue: true,
               // api:getSelectData,
