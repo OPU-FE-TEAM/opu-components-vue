@@ -110,20 +110,20 @@ const editRender = {
           let name = toHump(p.itemRender.name || editType[0]);
           if (editType.indexOf(toHump(p.itemRender.name || editType[0])) > -1) {
             if (!p.slots) p.slots = {};
-            p.slots.default = ({ row, rowIndex, $columnIndex }) => {
+            p.slots.default = ({ row, rowIndex, columnIndex }) => {
               return [
                 <div style="display:flex;align-items: center;">
                   {p.itemRender.before &&
-                    p.itemRender.before({ row, rowIndex, $columnIndex })}
+                    p.itemRender.before({ row, rowIndex, columnIndex })}
                   <div style="flex:1">
                     {this.editSlotRender(name)({
                       row,
                       rowIndex,
-                      $columnIndex
+                      columnIndex
                     })}
                   </div>
                   {p.itemRender.after &&
-                    p.itemRender.after({ row, rowIndex, $columnIndex })}
+                    p.itemRender.after({ row, rowIndex, columnIndex })}
                 </div>
               ];
             };
@@ -348,10 +348,10 @@ const editRender = {
       let slot;
       switch (name) {
         case "AInput":
-          slot = ({ row, rowIndex, $columnIndex }) => {
-            let item = this.tableColumns[$columnIndex];
+          slot = ({ row, rowIndex, columnIndex }) => {
+            let item = this.tableColumns[columnIndex];
             let itemRender = item.itemRender || {};
-            let props = item.itemRender.props || {};
+            let props = itemRender.props || {};
             let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
@@ -408,10 +408,10 @@ const editRender = {
           };
           break;
         case "AInputNumber":
-          slot = ({ row, rowIndex, $columnIndex }) => {
-            let item = this.tableColumns[$columnIndex];
+          slot = ({ row, rowIndex, columnIndex }) => {
+            let item = this.tableColumns[columnIndex];
             let itemRender = item.itemRender || {};
-            let props = item.itemRender.props || {};
+            let props = itemRender.props || {};
             let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
@@ -473,10 +473,10 @@ const editRender = {
           };
           break;
         case "ASelect":
-          slot = ({ row, rowIndex, $columnIndex }) => {
-            let item = this.tableColumns[$columnIndex];
+          slot = ({ row, rowIndex, columnIndex }) => {
+            let item = this.tableColumns[columnIndex];
             let itemRender = item.itemRender || {};
-            let props = item.itemRender.props || {};
+            let props = itemRender.props || {};
             let optionsField = (props && props.optionsField) || "";
             let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
@@ -536,10 +536,10 @@ const editRender = {
           };
           break;
         case "AAutoComplete":
-          slot = ({ row, rowIndex, $columnIndex }) => {
-            let item = this.tableColumns[$columnIndex];
+          slot = ({ row, rowIndex, columnIndex }) => {
+            let item = this.tableColumns[columnIndex];
             let itemRender = item.itemRender || {};
-            let props = item.itemRender.props || {};
+            let props = itemRender.props || {};
             let optionsField = (props && props.optionsField) || "";
             let options = optionsField
               ? row[optionsField]
@@ -621,10 +621,10 @@ const editRender = {
           };
           break;
         case "ADatePicker":
-          slot = ({ row, rowIndex, $columnIndex }) => {
-            let item = this.tableColumns[$columnIndex];
+          slot = ({ row, rowIndex, columnIndex }) => {
+            let item = this.tableColumns[columnIndex];
             let itemRender = item.itemRender || {};
-            let props = item.itemRender.props || {};
+            let props = itemRender.props || {};
             let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
@@ -676,10 +676,10 @@ const editRender = {
           };
           break;
         case "ATimePicker":
-          slot = ({ row, rowIndex, $columnIndex }) => {
-            let item = this.tableColumns[$columnIndex];
+          slot = ({ row, rowIndex, columnIndex }) => {
+            let item = this.tableColumns[columnIndex];
             let itemRender = item.itemRender || {};
-            let props = item.itemRender.props || {};
+            let props = itemRender.props || {};
             let disabled = editSlotPropInit(row, props, "disabled", item.field);
             if (typeof disabled == "object") {
               return [disabled];
@@ -728,10 +728,10 @@ const editRender = {
           };
           break;
         case "ASwitch":
-          slot = ({ row, rowIndex, $columnIndex }) => {
-            let item = this.tableColumns[$columnIndex];
+          slot = ({ row, rowIndex, columnIndex }) => {
+            let item = this.tableColumns[columnIndex];
             let itemRender = item.itemRender || {};
-            let props = item.itemRender.props || {};
+            let props = itemRender.props || {};
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
             if (editSlotPropInit(row, props, "hidden", item.field)) return "";
@@ -782,10 +782,10 @@ const editRender = {
           };
           break;
         case "ACheckbox":
-          slot = ({ row, rowIndex, $columnIndex }) => {
-            let item = this.tableColumns[$columnIndex];
+          slot = ({ row, rowIndex, columnIndex }) => {
+            let item = this.tableColumns[columnIndex];
             let itemRender = item.itemRender || {};
-            let props = item.itemRender.props || {};
+            let props = itemRender.props || {};
             let trueValue = props.trueValue ? props.trueValue : true;
             let falseValue = props.falseValue ? props.falseValue : false;
             if (editSlotPropInit(row, props, "hidden", item.field)) return "";
