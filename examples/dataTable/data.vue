@@ -2,14 +2,12 @@
   <div>
     <a-button @click="$refs.xGrid.showSetColumns()">设置表头1</a-button>
     <DataTable
-      show-overflow
-      keep-source
       ref="xGrid"
-      height="calc(100vh - 100px)"
+      :height="400"
+      show-overflow
       :loading="loading"
       :data="tableData"
       :columns="tableColumn"
-      :setcolumns-config="setcolumnsConfig"
     >
     </DataTable>
   </div>
@@ -41,6 +39,11 @@ export default {
         {
           title: "Nex",
           field: "sex",
+          align: "left"
+        },
+        {
+          title: "Age",
+          field: "age",
           align: "left"
         }
         // { title: "操作", width: 200, slots: { default: "operate" } }
@@ -145,7 +148,14 @@ export default {
       }
     };
   },
-  created() {},
+  created() {
+    const list = Array.from({ length: 110 }, (_, key) => ({
+      id: key,
+      name: `abc_${key}`,
+      age: key
+    }));
+    this.tableData = list;
+  },
   methods: {
     onSortChange(e) {
       console.log(e);
