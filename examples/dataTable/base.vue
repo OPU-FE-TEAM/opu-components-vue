@@ -15,6 +15,7 @@
       :setcolumns-config="setColumns"
       :columns="tableColumn"
       size="small"
+      :checkboxConfig="{ highlight: true, trigger: 'row' }"
       :edit-config="{ trigger: 'click', mode: 'cell' }"
       :searchConfig="search"
       :dragSort="true"
@@ -222,6 +223,12 @@ export default {
           sex: ""
         },
         items: [
+          {
+            type: "checkbox",
+            title: "",
+            width: 30,
+            fixed: "left"
+          },
           {
             field: "name",
             title: "app.body.label.name",

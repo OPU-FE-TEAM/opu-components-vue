@@ -150,13 +150,13 @@ const editRender = {
                   if (o.value && !o[config.originalValueKey]) {
                     o[config.originalValueKey] = o.value;
                   }
-                  if (o[labelField] != "label") {
+                  if (labelField != "label") {
                     o.label = o[labelField];
                   }
-                  if (o[valueField] != "value") {
+                  if (valueField != "value") {
                     o.value = o[valueField];
                   }
-                  if (o[childrenField] != "children") {
+                  if (childrenField != "children") {
                     o.children = o[childrenField];
                   }
                   if (o[defaultField]) {
@@ -344,57 +344,75 @@ const editRender = {
     findOptionRow(options, value, valueField) {
       return options.find(p => p[valueField] == value) || {};
     },
+    //插槽class  style 等重写
+    editSlotItemRender(name, e) {
+      if (typeof name == "function") {
+        return name(e);
+      } else {
+        return name;
+      }
+    },
     editSlotRender(name) {
-      let slot;
-      switch (name) {
-        case "AInput":
-          slot = ({ row, rowIndex, columnIndex }) => {
-            let item = this.tableColumns[columnIndex];
-            let itemRender = item.itemRender || {};
-            let props = itemRender.props || {};
-            let disabled = editSlotPropInit(row, props, "disabled", item.field);
-            if (typeof disabled == "object") {
-              return [disabled];
-            } else {
-              return [
+      return event => {
+        let { columnIndex, row } = event;
+        let item = this.tableColumns[columnIndex];
+        let itemRender = item.itemRender || {};
+        let props = itemRender.props || {};
+        let disabled = editSlotPropInit(row, props, "disabled", item.field);
+        let element;
+        if (typeof disabled == "object") {
+          return [disabled];
+        } else {
+          event.field = item.field;
+          props = {
+            size: this.editItemSize,
+            ...props,
+            value: row[item.field],
+            disabled
+          };
+          let attr = {
+            class: this.editSlotItemRender(itemRender.class, event),
+            style: this.editSlotItemRender(itemRender.style, event)
+          };
+
+          var optionsField, value, options, trueValue, falseValue;
+
+          let ons = {
+            change: e => {
+              row[item.field] = e;
+              row.ISEDIT = true;
+              if (itemRender.on && itemRender.on.change) {
+                itemRender.on.change(e, event);
+              }
+            },
+            blur: e => {
+              if (itemRender.on && itemRender.on.blur) {
+                itemRender.on.blur(e, event);
+              }
+            }
+          };
+
+          switch (name) {
+            case "AInput":
+              element = (
                 <a-input
                   {...{
-                    props: {
-                      size: this.editItemSize,
-                      ...props,
-                      value: row[item.field],
-                      disabled
-                    },
+                    ...attr,
+                    props,
                     on: {
                       ...itemRender.on,
+                      ...ons,
                       change: e => {
                         let value = e.target.value;
                         row[item.field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
-                        }
-                      },
-                      blur: e => {
-                        if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
+                          itemRender.on.change(e, event);
                         }
                       },
                       keydown: e => {
                         if (itemRender.on && itemRender.on.keydown) {
-                          itemRender.on.keydown(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
+                          itemRender.on.keydown(e, event);
                         }
                       }
                     },
@@ -403,27 +421,15 @@ const editRender = {
                     }
                   }}
                 />
-              ];
-            }
-          };
-          break;
-        case "AInputNumber":
-          slot = ({ row, rowIndex, columnIndex }) => {
-            let item = this.tableColumns[columnIndex];
-            let itemRender = item.itemRender || {};
-            let props = itemRender.props || {};
-            let disabled = editSlotPropInit(row, props, "disabled", item.field);
-            if (typeof disabled == "object") {
-              return [disabled];
-            } else {
-              return [
+              );
+              break;
+            case "AInputNumber":
+              element = (
                 <a-input-number
                   {...{
+                    ...attr,
                     props: {
-                      size: this.editItemSize,
                       ...props,
-                      value: row[item.field],
-                      disabled,
                       max: editSlotPropInit(
                         row,
                         props,
@@ -441,118 +447,73 @@ const editRender = {
                     },
                     on: {
                       ...itemRender.on,
+                      ...ons,
                       change: e => {
                         let value = e;
                         row[item.field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(value, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
+                          itemRender.on.change(value, event);
                         }
                       },
                       blur: e => {
                         if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
+                          itemRender.on.blur(e, event);
                         }
                       }
-                    },
-                    style: {
-                      ...itemRender.style
                     }
                   }}
                 />
-              ];
-            }
-          };
-          break;
-        case "ASelect":
-          slot = ({ row, rowIndex, columnIndex }) => {
-            let item = this.tableColumns[columnIndex];
-            let itemRender = item.itemRender || {};
-            let props = itemRender.props || {};
-            let optionsField = (props && props.optionsField) || "";
-            let disabled = editSlotPropInit(row, props, "disabled", item.field);
-            if (typeof disabled == "object") {
-              return [disabled];
-            } else {
-              let value = row[item.field];
-              let options = optionsField
+              );
+              break;
+            case "ASelect":
+              optionsField = (props && props.optionsField) || "";
+              value = row[item.field];
+              options = optionsField
                 ? row[optionsField]
                 : this.editOptions[item.field];
               if (props.optionsFilter) {
                 options = props.optionsFilter(cloneDeep(options), value);
               }
               props = this.selectFilterRender({
-                size: this.editItemSize,
+                ...props,
                 ...config.defaultProps.select,
-                ...itemRender.props,
-                value,
-                options: options,
-                disabled
+                options: options
               });
-              return [
+              element = (
                 <a-select
                   {...{
+                    ...attr,
                     props,
                     style: {
                       width: "100%",
-                      ...itemRender.style
+                      ...attr.style
                     },
                     on: {
                       ...itemRender.on,
+                      ...ons,
                       change: (value, option) => {
                         row[item.field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(value, option, {
-                            row,
-                            rowIndex,
-                            options,
-                            field: item.field
-                          });
-                        }
-                      },
-                      blur: e => {
-                        if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
+                          itemRender.on.change(value, option, event);
                         }
                       }
                     }
                   }}
                 />
-              ];
-            }
-          };
-          break;
-        case "AAutoComplete":
-          slot = ({ row, rowIndex, columnIndex }) => {
-            let item = this.tableColumns[columnIndex];
-            let itemRender = item.itemRender || {};
-            let props = itemRender.props || {};
-            let optionsField = (props && props.optionsField) || "";
-            let options = optionsField
-              ? row[optionsField]
-              : this.editOptions[item.field];
-            let disabled = editSlotPropInit(row, props, "disabled", item.field);
-            if (typeof disabled == "object") {
-              return [disabled];
-            } else {
-              let value = row[item.field];
+              );
+              break;
+            case "AAutoComplete":
+              optionsField = (props && props.optionsField) || "";
+              options = optionsField
+                ? row[optionsField]
+                : this.editOptions[item.field];
+              value = row[item.field];
               if (props.optionsFilter) {
                 options = props.optionsFilter(cloneDeep(options), value);
               }
-              let filterData = this.autoCompleteFilterRender(
+              var filterData = this.autoCompleteFilterRender(
                 {
                   size: this.editItemSize,
                   ...itemRender.props,
@@ -562,12 +523,13 @@ const editRender = {
                 },
                 row
               );
-              let selectOptions = filterData.selectOptions;
-              let dataSource = filterData.dataSource;
+              var selectOptions = filterData.selectOptions;
+              var dataSource = filterData.dataSource;
               props = filterData.props;
-              return [
+              element = (
                 <a-auto-complete
                   {...{
+                    ...attr,
                     props,
                     style: {
                       width: "100%",
@@ -575,13 +537,7 @@ const editRender = {
                     },
                     on: {
                       ...itemRender.on,
-                      change: value => {
-                        row[item.field] = value;
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(value, row, item.field);
-                        }
-                      },
+                      ...ons,
                       select: value => {
                         let optionRow = this.findOptionRow(
                           dataSource,
@@ -592,21 +548,7 @@ const editRender = {
                           optionRow[filterData.labelField] || value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.select) {
-                          itemRender.on.select(value, optionRow, {
-                            row,
-                            rowIndex,
-                            dataSource,
-                            field: item.field
-                          });
-                        }
-                      },
-                      blur: e => {
-                        if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
+                          itemRender.on.select(value, optionRow, event);
                         }
                       }
                     }
@@ -616,228 +558,586 @@ const editRender = {
                     {selectOptions}
                   </template>
                 </a-auto-complete>
-              ];
-            }
-          };
-          break;
-        case "ADatePicker":
-          slot = ({ row, rowIndex, columnIndex }) => {
-            let item = this.tableColumns[columnIndex];
-            let itemRender = item.itemRender || {};
-            let props = itemRender.props || {};
-            let disabled = editSlotPropInit(row, props, "disabled", item.field);
-            if (typeof disabled == "object") {
-              return [disabled];
-            } else {
-              return [
+              );
+              break;
+            case "ADatePicker":
+              element = (
                 <a-date-picker
                   {...{
+                    ...attr,
                     props: {
-                      size: this.editItemSize,
-                      ...itemRender.props,
+                      ...props,
                       value: !row[item.field]
                         ? null
                         : row[item.field].format
                         ? row[item.field]
-                        : moment(row[item.field]),
-                      disabled
+                        : moment(row[item.field])
                     },
                     on: {
                       ...itemRender.on,
-                      change: e => {
-                        let value = e;
-                        row[item.field] = value;
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
-                        }
-                      },
-                      blur: e => {
-                        if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
-                        }
-                      }
-                    },
-                    style: {
-                      ...itemRender.style
+                      ...ons
                     }
                   }}
                 />
-              ];
-            }
-          };
-          break;
-        case "ATimePicker":
-          slot = ({ row, rowIndex, columnIndex }) => {
-            let item = this.tableColumns[columnIndex];
-            let itemRender = item.itemRender || {};
-            let props = itemRender.props || {};
-            let disabled = editSlotPropInit(row, props, "disabled", item.field);
-            if (typeof disabled == "object") {
-              return [disabled];
-            } else {
-              return [
+              );
+              break;
+            case "ATimePicker":
+              element = (
                 <a-time-picker
                   {...{
+                    ...attr,
                     props: {
-                      size: this.editItemSize,
                       clearIcon: true,
-                      ...itemRender.props,
+                      ...props,
                       value: row[item.field],
                       disabled
                     },
                     on: {
                       ...item.on,
-                      change: e => {
-                        let value = e;
-                        row[item.field] = value;
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
-                        }
-                      },
-                      blur: e => {
-                        if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
-                        }
-                      }
-                    },
-                    style: {
-                      ...itemRender.style
+                      ...ons
                     }
                   }}
                 />
-              ];
-            }
-          };
-          break;
-        case "ASwitch":
-          slot = ({ row, rowIndex, columnIndex }) => {
-            let item = this.tableColumns[columnIndex];
-            let itemRender = item.itemRender || {};
-            let props = itemRender.props || {};
-            let trueValue = props.trueValue ? props.trueValue : true;
-            let falseValue = props.falseValue ? props.falseValue : false;
-            if (editSlotPropInit(row, props, "hidden", item.field)) return "";
-            let disabled = editSlotPropInit(row, props, "disabled", item.field);
-            if (typeof disabled == "object") {
-              return [disabled];
-            } else {
-              return [
+              );
+              break;
+            case "ASwitch":
+              trueValue = props.trueValue ? props.trueValue : true;
+              falseValue = props.falseValue ? props.falseValue : false;
+              if (editSlotPropInit(row, props, "hidden", item.field)) return "";
+              element = (
                 <a-switch
                   {...{
+                    ...attr,
                     props: {
-                      size: this.editItemSize,
-                      ...itemRender.props,
-                      checked: row[item.field] == trueValue,
-                      disabled
+                      ...props,
+                      checked: row[item.field] == trueValue
                     },
                     on: {
-                      ...item.on,
+                      ...itemRender.on,
+                      ...ons,
                       change: e => {
                         let value = e ? trueValue : falseValue;
                         row[item.field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
-                        }
-                      },
-                      blur: e => {
-                        if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
+                          itemRender.on.change(e, event);
                         }
                       }
-                    },
-                    style: {
-                      ...itemRender.style
                     }
                   }}
                 />
-              ];
-            }
-          };
-          break;
-        case "ACheckbox":
-          slot = ({ row, rowIndex, columnIndex }) => {
-            let item = this.tableColumns[columnIndex];
-            let itemRender = item.itemRender || {};
-            let props = itemRender.props || {};
-            let trueValue = props.trueValue ? props.trueValue : true;
-            let falseValue = props.falseValue ? props.falseValue : false;
-            if (editSlotPropInit(row, props, "hidden", item.field)) return "";
-            let disabled = editSlotPropInit(row, props, "disabled", item.field);
-            if (typeof disabled == "object") {
-              return [disabled];
-            } else {
-              return [
+              );
+              break;
+            case "ACheckbox":
+              trueValue = props.trueValue ? props.trueValue : true;
+              falseValue = props.falseValue ? props.falseValue : false;
+              if (editSlotPropInit(row, props, "hidden", item.field)) return "";
+              element = (
                 <a-checkbox
                   {...{
+                    ...attr,
                     props: {
-                      size: this.editItemSize,
-                      ...itemRender.props,
-                      checked: row[item.field] == trueValue,
-                      disabled
+                      ...props,
+                      checked: row[item.field] == trueValue
                     },
                     on: {
-                      ...item.on,
+                      ...itemRender.on,
+                      ...ons,
                       change: e => {
                         let value = e.target.checked ? trueValue : falseValue;
                         row[item.field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
-                        }
-                      },
-                      blur: e => {
-                        if (itemRender.on && itemRender.on.blur) {
-                          itemRender.on.blur(e, {
-                            row,
-                            rowIndex,
-                            field: item.field
-                          });
+                          itemRender.on.change(e, event);
                         }
                       }
-                    },
-                    style: {
-                      ...itemRender.style
                     }
                   }}
                 />
-              ];
-            }
-          };
-          break;
-      }
-      return slot;
+              );
+              break;
+          }
+        }
+        return [element];
+      };
     }
+    // editSlotRender1(name) {
+    //   let slot;
+    //   switch (name) {
+    //     case "AInput":
+    //       slot = event => {
+    //         let { columnIndex, row } = event;
+    //         let item = this.tableColumns[columnIndex];
+    //         let itemRender = item.itemRender || {};
+    //         let props = itemRender.props || {};
+    //         let disabled = editSlotPropInit(row, props, "disabled", item.field);
+    //         if (typeof disabled == "object") {
+    //           return [disabled];
+    //         } else {
+    //           event.field = item.field;
+    //           return [
+    //             <a-input
+    //               {...{
+    //                 props: {
+    //                   size: this.editItemSize,
+    //                   ...props,
+    //                   value: row[item.field],
+    //                   disabled
+    //                 },
+    //                 on: {
+    //                   ...itemRender.on,
+    //                   change: e => {
+    //                     let value = e.target.value;
+    //                     row[item.field] = value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.change) {
+    //                       itemRender.on.change(e, event);
+    //                     }
+    //                   },
+    //                   blur: e => {
+    //                     if (itemRender.on && itemRender.on.blur) {
+    //                       itemRender.on.blur(e, event);
+    //                     }
+    //                   },
+    //                   keydown: e => {
+    //                     if (itemRender.on && itemRender.on.keydown) {
+    //                       itemRender.on.keydown(e, event);
+    //                     }
+    //                   }
+    //                 },
+    //                 style: {
+    //                   ...itemRender.style
+    //                 }
+    //               }}
+    //             />
+    //           ];
+    //         }
+    //       };
+    //       break;
+    //     case "AInputNumber":
+    //       slot = event => {
+    //         let { columnIndex, row } = event;
+    //         let item = this.tableColumns[columnIndex];
+    //         let itemRender = item.itemRender || {};
+    //         let props = itemRender.props || {};
+    //         let disabled = editSlotPropInit(row, props, "disabled", item.field);
+    //         if (typeof disabled == "object") {
+    //           return [disabled];
+    //         } else {
+    //           event.field = item.field;
+    //           return [
+    //             <a-input-number
+    //               {...{
+    //                 style: itemRender.style,
+    //                 props: {
+    //                   size: this.editItemSize,
+    //                   ...props,
+    //                   value: row[item.field],
+    //                   disabled,
+    //                   max: editSlotPropInit(
+    //                     row,
+    //                     props,
+    //                     "max",
+    //                     item.field,
+    //                     Infinity
+    //                   ),
+    //                   min: editSlotPropInit(
+    //                     row,
+    //                     props,
+    //                     "min",
+    //                     item.field,
+    //                     -Infinity
+    //                   )
+    //                 },
+    //                 on: {
+    //                   ...itemRender.on,
+    //                   change: e => {
+    //                     let value = e;
+    //                     row[item.field] = value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.change) {
+    //                       itemRender.on.change(value, event);
+    //                     }
+    //                   },
+    //                   blur: e => {
+    //                     if (itemRender.on && itemRender.on.blur) {
+    //                       itemRender.on.blur(e, event);
+    //                     }
+    //                   }
+    //                 },
+    //                 class: this.editSlotItemRender(itemRender.class, event)
+    //               }}
+    //             />
+    //           ];
+    //         }
+    //       };
+    //       break;
+    //     case "ASelect":
+    //       slot = ({ row, rowIndex, columnIndex }) => {
+    //         let item = this.tableColumns[columnIndex];
+    //         let itemRender = item.itemRender || {};
+    //         let props = itemRender.props || {};
+    //         let disabled = editSlotPropInit(row, props, "disabled", item.field);
+    //         if (typeof disabled == "object") {
+    //           return [disabled];
+    //         } else {
+    //           let optionsField = (props && props.optionsField) || "";
+    //           let value = row[item.field];
+    //           let options = optionsField
+    //             ? row[optionsField]
+    //             : this.editOptions[item.field];
+    //           if (props.optionsFilter) {
+    //             options = props.optionsFilter(cloneDeep(options), value);
+    //           }
+    //           props = this.selectFilterRender({
+    //             size: this.editItemSize,
+    //             ...config.defaultProps.select,
+    //             ...itemRender.props,
+    //             value,
+    //             options: options,
+    //             disabled
+    //           });
+    //           return [
+    //             <a-select
+    //               {...{
+    //                 props,
+    //                 style: {
+    //                   width: "100%",
+    //                   ...itemRender.style
+    //                 },
+    //                 on: {
+    //                   ...itemRender.on,
+    //                   change: (value, option) => {
+    //                     row[item.field] = value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.change) {
+    //                       itemRender.on.change(value, option, {
+    //                         row,
+    //                         rowIndex,
+    //                         options,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   },
+    //                   blur: e => {
+    //                     if (itemRender.on && itemRender.on.blur) {
+    //                       itemRender.on.blur(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   }
+    //                 }
+    //               }}
+    //             />
+    //           ];
+    //         }
+    //       };
+    //       break;
+    //     case "AAutoComplete":
+    //       slot = ({ row, rowIndex, columnIndex }) => {
+    //         let item = this.tableColumns[columnIndex];
+    //         let itemRender = item.itemRender || {};
+    //         let props = itemRender.props || {};
+    //         let disabled = editSlotPropInit(row, props, "disabled", item.field);
+    //         if (typeof disabled == "object") {
+    //           return [disabled];
+    //         } else {
+    //           let optionsField = (props && props.optionsField) || "";
+    //           let options = optionsField
+    //             ? row[optionsField]
+    //             : this.editOptions[item.field];
+    //           let value = row[item.field];
+    //           if (props.optionsFilter) {
+    //             options = props.optionsFilter(cloneDeep(options), value);
+    //           }
+    //           let filterData = this.autoCompleteFilterRender(
+    //             {
+    //               size: this.editItemSize,
+    //               ...itemRender.props,
+    //               value,
+    //               dataSource: options || [],
+    //               disabled
+    //             },
+    //             row
+    //           );
+    //           let selectOptions = filterData.selectOptions;
+    //           let dataSource = filterData.dataSource;
+    //           props = filterData.props;
+    //           return [
+    //             <a-auto-complete
+    //               {...{
+    //                 props,
+    //                 style: {
+    //                   width: "100%",
+    //                   ...itemRender.style
+    //                 },
+    //                 on: {
+    //                   ...itemRender.on,
+    //                   change: value => {
+    //                     row[item.field] = value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.change) {
+    //                       itemRender.on.change(value, row, item.field);
+    //                     }
+    //                   },
+    //                   select: value => {
+    //                     let optionRow = this.findOptionRow(
+    //                       dataSource,
+    //                       value,
+    //                       filterData.valueField
+    //                     );
+    //                     row[item.field] =
+    //                       optionRow[filterData.labelField] || value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.select) {
+    //                       itemRender.on.select(value, optionRow, {
+    //                         row,
+    //                         rowIndex,
+    //                         dataSource,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   },
+    //                   blur: e => {
+    //                     if (itemRender.on && itemRender.on.blur) {
+    //                       itemRender.on.blur(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   }
+    //                 }
+    //               }}
+    //             >
+    //               <template {...{ slot: "dataSource" }}>
+    //                 {selectOptions}
+    //               </template>
+    //             </a-auto-complete>
+    //           ];
+    //         }
+    //       };
+    //       break;
+    //     case "ADatePicker":
+    //       slot = ({ row, rowIndex, columnIndex }) => {
+    //         let item = this.tableColumns[columnIndex];
+    //         let itemRender = item.itemRender || {};
+    //         let props = itemRender.props || {};
+    //         let disabled = editSlotPropInit(row, props, "disabled", item.field);
+    //         if (typeof disabled == "object") {
+    //           return [disabled];
+    //         } else {
+    //           return [
+    //             <a-date-picker
+    //               {...{
+    //                 props: {
+    //                   size: this.editItemSize,
+    //                   ...itemRender.props,
+    //                   value: !row[item.field]
+    //                     ? null
+    //                     : row[item.field].format
+    //                     ? row[item.field]
+    //                     : moment(row[item.field]),
+    //                   disabled
+    //                 },
+    //                 on: {
+    //                   ...itemRender.on,
+    //                   change: e => {
+    //                     let value = e;
+    //                     row[item.field] = value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.change) {
+    //                       itemRender.on.change(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   },
+    //                   blur: e => {
+    //                     if (itemRender.on && itemRender.on.blur) {
+    //                       itemRender.on.blur(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   }
+    //                 },
+    //                 style: {
+    //                   ...itemRender.style
+    //                 }
+    //               }}
+    //             />
+    //           ];
+    //         }
+    //       };
+    //       break;
+    //     case "ATimePicker":
+    //       slot = ({ row, rowIndex, columnIndex }) => {
+    //         let item = this.tableColumns[columnIndex];
+    //         let itemRender = item.itemRender || {};
+    //         let props = itemRender.props || {};
+    //         let disabled = editSlotPropInit(row, props, "disabled", item.field);
+    //         if (typeof disabled == "object") {
+    //           return [disabled];
+    //         } else {
+    //           return [
+    //             <a-time-picker
+    //               {...{
+    //                 props: {
+    //                   size: this.editItemSize,
+    //                   clearIcon: true,
+    //                   ...itemRender.props,
+    //                   value: row[item.field],
+    //                   disabled
+    //                 },
+    //                 on: {
+    //                   ...item.on,
+    //                   change: e => {
+    //                     let value = e;
+    //                     row[item.field] = value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.change) {
+    //                       itemRender.on.change(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   },
+    //                   blur: e => {
+    //                     if (itemRender.on && itemRender.on.blur) {
+    //                       itemRender.on.blur(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   }
+    //                 },
+    //                 style: {
+    //                   ...itemRender.style
+    //                 }
+    //               }}
+    //             />
+    //           ];
+    //         }
+    //       };
+    //       break;
+    //     case "ASwitch":
+    //       slot = ({ row, rowIndex, columnIndex }) => {
+    //         let item = this.tableColumns[columnIndex];
+    //         let itemRender = item.itemRender || {};
+    //         let props = itemRender.props || {};
+    //         let trueValue = props.trueValue ? props.trueValue : true;
+    //         let falseValue = props.falseValue ? props.falseValue : false;
+    //         if (editSlotPropInit(row, props, "hidden", item.field)) return "";
+    //         let disabled = editSlotPropInit(row, props, "disabled", item.field);
+    //         if (typeof disabled == "object") {
+    //           return [disabled];
+    //         } else {
+    //           return [
+    //             <a-switch
+    //               {...{
+    //                 props: {
+    //                   size: this.editItemSize,
+    //                   ...itemRender.props,
+    //                   checked: row[item.field] == trueValue,
+    //                   disabled
+    //                 },
+    //                 on: {
+    //                   ...item.on,
+    //                   change: e => {
+    //                     let value = e ? trueValue : falseValue;
+    //                     row[item.field] = value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.change) {
+    //                       itemRender.on.change(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   },
+    //                   blur: e => {
+    //                     if (itemRender.on && itemRender.on.blur) {
+    //                       itemRender.on.blur(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   }
+    //                 },
+    //                 style: {
+    //                   ...itemRender.style
+    //                 }
+    //               }}
+    //             />
+    //           ];
+    //         }
+    //       };
+    //       break;
+    //     case "ACheckbox":
+    //       slot = ({ row, rowIndex, columnIndex }) => {
+    //         let item = this.tableColumns[columnIndex];
+    //         let itemRender = item.itemRender || {};
+    //         let props = itemRender.props || {};
+    //         let trueValue = props.trueValue ? props.trueValue : true;
+    //         let falseValue = props.falseValue ? props.falseValue : false;
+    //         if (editSlotPropInit(row, props, "hidden", item.field)) return "";
+    //         let disabled = editSlotPropInit(row, props, "disabled", item.field);
+    //         if (typeof disabled == "object") {
+    //           return [disabled];
+    //         } else {
+    //           return [
+    //             <a-checkbox
+    //               {...{
+    //                 props: {
+    //                   size: this.editItemSize,
+    //                   ...itemRender.props,
+    //                   checked: row[item.field] == trueValue,
+    //                   disabled
+    //                 },
+    //                 on: {
+    //                   ...item.on,
+    //                   change: e => {
+    //                     let value = e.target.checked ? trueValue : falseValue;
+    //                     row[item.field] = value;
+    //                     row.ISEDIT = true;
+    //                     if (itemRender.on && itemRender.on.change) {
+    //                       itemRender.on.change(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   },
+    //                   blur: e => {
+    //                     if (itemRender.on && itemRender.on.blur) {
+    //                       itemRender.on.blur(e, {
+    //                         row,
+    //                         rowIndex,
+    //                         field: item.field
+    //                       });
+    //                     }
+    //                   }
+    //                 },
+    //                 style: {
+    //                   ...itemRender.style
+    //                 }
+    //               }}
+    //             />
+    //           ];
+    //         }
+    //       };
+    //       break;
+    //   }
+    //   return slot;
+    // }
   }
 };
 

@@ -62,6 +62,38 @@ let data = [
   }
 ];
 
+function getData(arr = {}) {
+  console.log(arr);
+  console.log("请求");
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log(arr);
+      const size = arr.pageSize ? arr.pageSize : 20;
+      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+      let list = Array.from({ length: size }, (_, key) => ({
+        id: key,
+        name: `name_${pageIndex}_${key}`,
+        sex: key < 3 ? 1 : 2,
+        age: key
+      }));
+      if (arr && arr.keyword == "123") {
+        list = [];
+      }
+      const json = {
+        // data: [...list],
+        // total: 100
+        code: 0,
+        data: {
+          data: [...list],
+          total: 100
+        }
+      };
+      console.log(json);
+      resolve(json);
+    }, 500);
+  });
+}
+
 export default {
   components: {
     // test1
@@ -69,6 +101,75 @@ export default {
   data() {
     return {
       items: [
+        {
+          field: "pulldown",
+          title: "下拉面板",
+          option: {
+            initialValue: "桂林"
+          },
+          itemRender: {
+            name: "pulldown-table",
+            props: {
+              valueField: "name",
+              textField: "age",
+              // allowInputValue: true,
+              table: {
+                props: {
+                  columns: [
+                    // { type: "checkbox", width: 50 },
+                    { type: "seq", title: "Number", width: 80 },
+                    {
+                      field: "name",
+                      title: "Name",
+                      width: 200
+                    },
+                    {
+                      field: "sex",
+                      title: "Sex",
+                      width: 200
+                    },
+                    {
+                      field: "age",
+                      title: "Age",
+                      width: 200
+                    }
+                  ],
+                  size: "mini",
+                  height: 300,
+                  highlightHoverRow: true,
+                  highlightCurrentRow: true,
+                  proxyConfig: {
+                    autoLoad: false,
+                    ajax: {
+                      query: getData
+                    }
+                  }
+                }
+              }
+              // inputProps: {
+              // allowClear: true
+              // size: "small"
+              // disabled: true
+              // }
+            },
+            on: {
+              change(val, sel) {
+                console.log("change", val, sel);
+              },
+              inputChange(sel) {
+                console.log("inputChange", sel);
+              }
+              // showPanel(e) {
+              //   if (e.target.value) {
+              //     e.target.select();
+              //   }
+              // }
+              // "hide-panel"() {
+              //   debugger;
+              // }
+            }
+          }
+        },
         {
           title: "出库去向",
           field: "trackId",

@@ -1,9 +1,11 @@
 const GlobalConfig = {
   editSize: "default",
   advancedResetClearHeadSearchForm: false,
+  keyboardSpace: true, //开启空格控制checkbox快捷键
   props: {
     border: true,
-    resizable: true
+    resizable: true,
+    keyboardConfig: { isArrow: true } //是否开启键盘上下事件
   },
   pagerConfig: {
     pageIndex: 1, //分页初始值

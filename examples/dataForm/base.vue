@@ -459,22 +459,6 @@ export default {
                       width: 200
                     }
                   ],
-                  // headToolbar: {
-                  //   search: {
-                  //     layout: "inline",
-                  //     titleWidth: "auto",
-                  //     items: [
-                  //       {
-                  //         field: "name",
-                  //         title: "名称",
-                  //         itemRender: {
-                  //           name: "a-input",
-                  //           props: { placeholder: "请输入名称" }
-                  //         }
-                  //       }
-                  //     ]
-                  //   }
-                  // },
                   size: "mini",
                   height: 300,
                   highlightHoverRow: true,

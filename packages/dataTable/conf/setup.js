@@ -5,7 +5,8 @@ import utils from "../../utils";
 function mergeOpts(data1, data2) {
   if (data1 && utils.isObject(data2)) {
     utils.objectEach(data2, (val, key) => {
-      data1[key] = data1[key] && val ? mergeOpts(data1[key], val) : val;
+      data1[key] =
+        data1[key] && (val || val === false) ? mergeOpts(data1[key], val) : val;
     });
     return data1;
   }

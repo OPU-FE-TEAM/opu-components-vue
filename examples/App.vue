@@ -15,13 +15,13 @@
 </template>
 
 <script>
-// import dataFormBase from "./dataForm/test";
-import dataFormBase from "./dataForm/base";
+import dataFormBase from "./dataForm/test";
+// import dataFormBase from "./dataForm/base";
 // import dataFormBase from "./dataForm/select";
-import dataTableBase from "./dataTable/base";
+// import dataTableBase from "./dataTable/base";
 import dataTableBase1 from "./dataTable/data";
 
-// import dataTableBase from "./dataTable/editTable";
+import dataTableBase from "./dataTable/editTable";
 import dataTableJsx from "./dataTable/jsx";
 import setColumns from "./dataTable/setColumns.vue";
 
@@ -48,7 +48,7 @@ export default {
   },
   data() {
     return {
-      tab: 9,
+      tab: 2,
       locale: zh_CN
     };
   }

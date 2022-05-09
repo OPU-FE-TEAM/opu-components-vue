@@ -528,8 +528,10 @@ export default {
     proxyColumns: Object,
     // 高亮行是否可反选
     highlightCurrentUnselect: Boolean,
+    defaultSelectFristRow: { type: Boolean, default: false },
     tableIndex: { type: String, default: "" },
-    sortable: { type: Boolean, default: false }
+    sortable: { type: Boolean, default: false },
+    keyboardSpace: { type: [Boolean, String], default: null }
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -657,6 +659,7 @@ export default {
       }
     },
     tableProps() {
+      let that = this;
       const {
         $listeners,
         $scopedSlots,
@@ -673,11 +676,18 @@ export default {
         highlightCurrentUnselect,
         onCurrentRowCellClick,
         onCurrentRowChange,
-        handleServerSort
-      } = this;
-      const propsData = this.$options.propsData;
+        onKeyDownSpace,
+        handleServerSort,
+        keyboardSpace
+      } = that;
+      let hasCheckbox = false;
+      const propsData = that.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
+
       const columns = tableColumns.map(item => {
+        if (!hasCheckbox && item.type == "checkbox") {
+          hasCheckbox = true;
+        }
         if (item.cellRender) {
           if (propsData && propsData.size == "mini") {
             if (item.cellRender.props) {
@@ -704,7 +714,7 @@ export default {
               default: "a_checkbox",
               edit: "a_checkbox"
             };
-            this.$scopedSlots["a_checkbox"] = renderCheckbox;
+            that.$scopedSlots["a_checkbox"] = renderCheckbox;
           } else if (
             item.editRender.name &&
             item.editRender.name === "ASwitch"
@@ -713,7 +723,7 @@ export default {
               default: "a_switch",
               edit: "a_switch"
             };
-            this.$scopedSlots["a_switch"] = renderSwitch;
+            that.$scopedSlots["a_switch"] = renderSwitch;
           } else if (
             item.editRender.name &&
             item.editRender.name === "pulldownTable"
@@ -722,8 +732,8 @@ export default {
               default: "pulldownTableView",
               edit: "pulldownTable"
             };
-            this.$scopedSlots["pulldownTableView"] = renderPulldownTableView;
-            this.$scopedSlots["pulldownTable"] = renderPulldownTable;
+            that.$scopedSlots["pulldownTableView"] = renderPulldownTableView;
+            that.$scopedSlots["pulldownTable"] = renderPulldownTable;
           }
         }
         return item;
@@ -745,11 +755,31 @@ export default {
       const ons = {};
       utils.each($listeners, (cb, type) => {
         ons[type] = (...args) => {
-          this.$emit(type, ...args);
+          that.$emit(type, ...args);
         };
       });
+      //高亮行反选
+      if (highlightCurrentUnselect) {
+        ons["cell-click"] = onCurrentRowCellClick;
+      }
+      ons["current-change"] = onCurrentRowChange;
+
+      let isKeyboardSpace =
+        keyboardSpace !== null ? keyboardSpace : config.keyboardSpace;
+      if (isKeyboardSpace) {
+        ons["keydown"] = e => {
+          let event = e.$event;
+          if (hasCheckbox && event.code == "Space") {
+            event.preventDefault();
+            event.stopPropagation();
+            onKeyDownSpace(e);
+          }
+          that.$emit("keyDown", e);
+        };
+      }
+
       if (proxyConfigOpt && proxyConfigOpt.ajax && proxyConfigOpt.ajax.query) {
-        this.hasAjaxQuery = true;
+        that.hasAjaxQuery = true;
         props.props.proxyConfig.ajax.query = arr => {
           const json = handleTableQuery(arr);
           if (json === false) {
@@ -762,6 +792,24 @@ export default {
               .query(arr)
               .then(res => {
                 resolve(res);
+                if (that.defaultSelectFristRow) {
+                  that.$nextTick(() => {
+                    let data = utils.getObjData(
+                      props.props.proxyConfig.props.result,
+                      res
+                    );
+                    if (data && data.length) {
+                      let grid = that.$refs.dataGrid;
+                      grid.setCurrentRow(data[0]);
+                      grid.focus();
+                      that.onCurrentRowChange({
+                        row: data[0],
+                        rowIndex: 0,
+                        $rowIndex: 0
+                      });
+                    }
+                  });
+                }
               })
               .catch(err => {
                 reject(err);
@@ -771,15 +819,10 @@ export default {
         };
       }
       // 默认添加分页
-      if (props.props.pagerConfig !== false && this.hasAjaxQuery) {
+      if (props.props.pagerConfig !== false && that.hasAjaxQuery) {
         props.props.pagerConfig = pagerConfigOpt;
       }
 
-      //高亮行反选
-      if (highlightCurrentUnselect) {
-        ons["cell-click"] = onCurrentRowCellClick;
-        ons["current-change"] = onCurrentRowChange;
-      }
       // 合并排序配置
       if (config.sortConfig && utils.isObject(config.sortConfig)) {
         if (props.props.sortConfig) {
@@ -1131,6 +1174,15 @@ export default {
       }, 10);
       this.$emit("current-change", e);
     },
+    //当表格被激活且键盘被按下空格时
+    onKeyDownSpace: utils.debounce(function() {
+      let grid = this.$refs.dataGrid;
+      let row = this.currentRow;
+      grid.setCheckboxRow(row, !grid.isCheckedByCheckboxRow(row));
+      this.$nextTick(() => {
+        this.$emit("checkbox-change", { records: grid.getCheckboxRecords() });
+      });
+    }, 300),
     // 允许反选高亮行时接管，单元格点击事件
     onCurrentRowCellClick(e) {
       if (this.currentRow._XID && e.row._XID === this.currentRow._XID) {

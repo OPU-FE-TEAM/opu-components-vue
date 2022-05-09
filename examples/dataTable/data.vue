@@ -1,14 +1,19 @@
 <template>
   <div>
     <a-button @click="$refs.xGrid.showSetColumns()">设置表头1</a-button>
+    <a-button @click="onScroll">滚动</a-button>
     <DataTable
       ref="xGrid"
       :height="400"
       show-overflow
       :loading="loading"
       :data="tableData"
+      highlight-current-row
+      highlightCurrentUnselect
       :columns="tableColumn"
+      @current-change="change"
     >
+      <!-- :checkboxConfig="{ highlight: true, trigger: 'row' }" -->
     </DataTable>
   </div>
 </template>
@@ -29,6 +34,12 @@ export default {
       },
 
       tableColumn: [
+        {
+          type: "checkbox",
+          title: "",
+          width: 30,
+          fixed: "left"
+        },
         // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         {
           title: "Name",
@@ -39,7 +50,18 @@ export default {
         {
           title: "Nex",
           field: "sex",
-          align: "left"
+          align: "left",
+          itemRender: {
+            name: "ADatePicker",
+            props: {
+              format: "YYYY-MM-DD",
+              inputReadOnly: true,
+              allowClear: false
+            },
+            on: {
+              change: this.onCheckOutDateChange
+            }
+          }
         },
         {
           title: "Age",
@@ -159,6 +181,23 @@ export default {
   methods: {
     onSortChange(e) {
       console.log(e);
+    },
+    onScroll() {
+      let that = this;
+      that.tableData.push({
+        id: that.tableData.length,
+        name: `新增_${that.tableData.length}`,
+        age: that.tableData.length
+      });
+      that.$nextTick(() => {
+        that.$refs.xGrid.scrollTo(0, 99999999999);
+        // that.$refs.xGrid.scrollToRow(that.tableData[15]);
+      });
+    },
+    change(a, b, c) {
+      console.log(a);
+      console.log(b);
+      console.log(c);
     }
   }
 };

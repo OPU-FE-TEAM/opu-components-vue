@@ -6,13 +6,14 @@ function renderInput(h, _vm) {
     onInputFocus,
     onInputChangeBefore,
     text,
+    selectValueText,
     disabled,
     inputProps,
     onInputKeyUp
   } = _vm;
   return h("a-input", {
     props: {
-      placeholder: "",
+      placeholder: selectValueText,
       disabled,
       allowClear: true,
       ...inputProps,
@@ -61,14 +62,17 @@ export default {
 
   data() {
     return {
+      multiple: false,
       tableData: [],
       selectValue: "",
+      currentValue: "",
       inputChangeValue: "",
-      timer: null
+      timer: null,
+      checkboxIndex: -1
     };
   },
   computed: {
-    text() {
+    selectValueText() {
       const { selectValue } = this;
       let text = "";
       if (selectValue && utils.isArray(selectValue)) {
@@ -77,6 +81,18 @@ export default {
         text = selectValue[this.textField];
       } else if (selectValue || selectValue == 0) {
         text = selectValue;
+      }
+      return text;
+    },
+    text() {
+      const { currentValue } = this;
+      let text = "";
+      if (currentValue && utils.isArray(currentValue)) {
+        text = currentValue.map(p => p[this.textField]).join(",");
+      } else if (currentValue && utils.isObject(currentValue)) {
+        text = currentValue[this.textField];
+      } else if (currentValue || currentValue == 0) {
+        text = currentValue;
       }
       return text;
     },
@@ -108,22 +124,30 @@ export default {
       return props;
     },
     tableProps() {
+      let that = this;
       const {
         table,
         tableData,
         $scopedSlots,
+        // onCurrentChange,
         onTableRowSelect,
         onTableCheckboxChange
-      } = this;
+      } = that;
+      //是否存在多选  若存在  多选checkbox索引
+      that.checkboxIndex = table.props.columns.findIndex(
+        p => p.type == "checkbox"
+      );
       const props = {
         props: {
+          defaultSelectFristRow: true,
           "show-overflow": true,
           ...table.props,
           data: tableData,
           columns: table.props.columns
         },
         on: {
-          "current-change": onTableRowSelect,
+          "cell-click": onTableRowSelect,
+          // "current-change": onCurrentChange,
           "checkbox-change": onTableCheckboxChange,
           "checkbox-all": onTableCheckboxChange
         },
@@ -146,35 +170,50 @@ export default {
   },
   watch: {
     value(val) {
-      this.selectValue = val;
+      this.currentValue = val;
     }
   },
   created() {
     this.onChange = utils.debounce(this.onInputChange, 400);
-    this.selectValue = this.value;
+    this.currentValue = this.value;
     // this.inputChangeValue = this.value;
   },
 
   methods: {
-    onTableRowSelect({ row }) {
-      let text = row[this.textField];
-      this.selectValue = this.value;
-      this.$emit("input", text);
-      this.$emit("change", text, row);
-      this.$refs.pulldownTable.hidePanel();
+    // onCurrentChange({ row }) {
+    //   console.log(row);
+    //   // let text = row[this.textField];
+    //   // this.currentValue = row;
+    //   // this.selectValue = row;
+    //   // console.log(text, "text");
+    //   // this.$emit("input", row);
+    //   // this.$emit("change", text, row);
+    //   //   // this.$refs.pulldownTable.hidePanel();
+    // },
+    onTableRowSelect({ row, columnIndex }) {
+      let { checkboxIndex } = this;
+      if (checkboxIndex < 0 || checkboxIndex != columnIndex) {
+        let text = row[this.textField];
+        this.selectValue = row;
+        this.currentValue = row;
+        this.$emit("input", text);
+        this.$emit("change", text, row);
+        this.$refs.pulldownTable.hidePanel();
+      }
     },
     onTableCheckboxChange({ records }) {
       this.selectValue = records;
+      this.currentValue = records;
       this.$emit("change", this.selectValue);
     },
     onInputFocus(e) {
       this.$refs.pulldownTable.showPanel();
       this.$emit("showPanel", e);
-      if (!this.allowInputValue) {
-        this.selectValue = "";
-      } else {
-        this.inputChangeValue = this.selectValue;
-      }
+      this.currentValue = "";
+      // if (this.allowInputValue) {
+      // } else {
+      //   this.inputChangeValue = this.selectValue;
+      // }
       const { table, searchBefore, searchField } = this;
       if (
         table.props.proxyConfig &&
@@ -195,6 +234,9 @@ export default {
           const dataTable = this.$refs.table;
           dataTable.onSearchSubmit(params);
         });
+      } else if (this.tableData.length > 0) {
+        const dataTable = this.$refs.table;
+        dataTable.setCurrentRow(this.tableData[0]);
       }
     },
     onInputChangeBefore(e) {
@@ -208,7 +250,7 @@ export default {
       let { value } = e.target;
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
-        this.selectValue = value;
+        this.currentValue = value;
         const pulldown = this.$refs.pulldownTable;
         const { table, searchBefore, searchField } = this;
         if (
@@ -231,12 +273,13 @@ export default {
           const dataTable = this.$refs.table;
           dataTable.onSearchSubmit(params);
         }
-        this.inputChangeValue = value;
+        // this.inputChangeValue = value;
 
         this.$emit("inputChange", e);
       }, 300);
     },
     onClear(value) {
+      this.selectValue = {};
       this.$emit("input", value);
       this.$emit("change", value, {});
     },
@@ -253,48 +296,59 @@ export default {
     // 快捷键上下切换选中行
     onInputKeyUp(e) {
       const { key } = e;
-      const { $refs, onInputEnter, valueField } = this;
+      const {
+        // $refs,
+        onInputEnter,
+        onInputFocus
+        // valueField
+      } = this;
       if (key == "Enter") {
         onInputEnter();
         return false;
-      } else if (!(key == "ArrowDown" || key == "ArrowUp")) {
-        // this.onChange(e);
-        return false;
       }
-      const dataTable = $refs.table;
-      const tableData = dataTable.getData();
-      const tableSelectedRow = dataTable.getCurrentRecord();
-
-      if (!tableSelectedRow && tableData && tableData.length) {
-        // 不存在选中的值，默认选中第一行
-        dataTable.setCurrentRow(tableData[0]);
-      } else if (tableData && tableData.length) {
-        const index = tableData.findIndex(
-          p => p[valueField] === tableSelectedRow[valueField]
-        );
-        let nextIndex = 0;
-        if (key === "ArrowUp") {
-          nextIndex = index - 1;
-          if (nextIndex < 0) {
-            nextIndex = 0;
-          }
-        } else {
-          nextIndex = index + 1;
-        }
-
-        if (tableData[nextIndex]) {
-          dataTable.setCurrentRow(tableData[nextIndex]);
-        }
+      if (!this.$refs.pulldownTable.isPanelVisible() && key == "ArrowDown") {
+        onInputFocus();
       }
+      //  else if (key == "ArrowDown" || key == "ArrowUp") {
+      //   const dataTable = $refs.table;
+      //   const tableData = dataTable.getData();
+      //   const tableSelectedRow = dataTable.getCurrentRecord();
+
+      //   if (!tableSelectedRow && tableData && tableData.length) {
+      //     // 不存在选中的值，默认选中第一行
+      //     dataTable.setCurrentRow(tableData[0]);
+      //     dataTable.focus();
+      //   }
+      // }
+
+      //  else if (tableData && tableData.length) {
+      //   const index = tableData.findIndex(
+      //     p => p[valueField] === tableSelectedRow[valueField]
+      //   );
+      //   let nextIndex = 0;
+      //   if (key === "ArrowUp") {
+      //     nextIndex = index - 1;
+      //     if (nextIndex < 0) {
+      //       nextIndex = 0;
+      //     }
+      //   } else {
+      //     nextIndex = index + 1;
+      //   }
+
+      //   if (tableData[nextIndex]) {
+      //     dataTable.setCurrentRow(tableData[nextIndex]);
+      //   }
+      // }
     },
     onPulldownHide() {
-      if (this.allowInputValue) {
-        this.selectValue = this.inputChangeValue;
-        this.$emit("change", this.selectValue, {});
+      let that = this;
+      if (that.allowInputValue) {
+        that.selectValue = that.currentValue;
+        that.$emit("change", that.selectValue, {});
       } else {
-        // this.selectValue = this.inputChangeValue;
-        this.$nextTick(() => {
-          this.selectValue = this.value;
+        // that.selectValue = that.inputChangeValue;
+        that.$nextTick(() => {
+          that.currentValue = that.selectValue;
         });
       }
     }
