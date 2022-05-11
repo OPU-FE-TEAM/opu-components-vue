@@ -1,6 +1,11 @@
 <template>
   <div>
     <div style="width:300px">
+      <a-date-picker
+        @change="onChange"
+        @panelChange="onpanelChange"
+        mode="year"
+      />
       <DataForm
         ref="dataForm"
         :items="items"
@@ -101,6 +106,20 @@ export default {
   data() {
     return {
       items: [
+        {
+          title: "年份",
+          field: "year",
+          itemRender: {
+            name: "a-date-picker",
+            // YearPicker
+            // name: "a-date-picker",
+            props: {
+              mode: "year",
+              format: "YYYY"
+            }
+          }
+        },
+
         {
           field: "pulldown",
           title: "下拉面板",
@@ -229,6 +248,12 @@ export default {
     };
   },
   methods: {
+    onChange(e) {
+      console.log(e);
+    },
+    onpanelChange(e) {
+      console.log(e.format("YYYY"));
+    },
     onChangeTrackId(a, b, c, d) {
       console.log(a);
       console.log(b);

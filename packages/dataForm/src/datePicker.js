@@ -21,7 +21,6 @@ export default {
     componentProps() {
       const { $listeners, $options, value } = this;
       const propsData = $options.propsData;
-
       const ons = {};
       utils.each($listeners, (cb, type) => {
         ons[type] = (...args) => {
@@ -36,6 +35,12 @@ export default {
         on: {
           ...ons,
           change: this.updateValue,
+          panelChange: e => {
+            console.log(propsData);
+            if (propsData.mode == "year") {
+              this.updateValue(e);
+            }
+          },
           openChange: this.onOpenChange
         }
       };
