@@ -23,6 +23,10 @@ export default {
     confirmLoading: {
       type: Boolean,
       default: false
+    },
+    showFooter: {
+      type: [Boolean, String],
+      default: true
     }
   },
   model: {
@@ -47,14 +51,16 @@ export default {
         onSubmit,
         cancelText,
         visible,
-        confirmLoading
+        confirmLoading,
+        showFooter
       } = this;
       const propsData = this.$options.propsData;
       let props = {
         props: {
           className: "opu-modal",
           ...propsData,
-          value: visible
+          value: visible,
+          showFooter
         }
       };
       props.ref = "modal";
@@ -78,7 +84,8 @@ export default {
           );
         }
       };
-      if (propsData.showFooter && !$scopedSlots.footer) {
+      console.log(propsData.showFooter, showFooter);
+      if (showFooter && !$scopedSlots.footer) {
         let okButton = (
           <a-button
             {...{

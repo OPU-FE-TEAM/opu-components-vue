@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-button type="primary" @click="open">打开</a-button>
-    <modal title="" v-model="visible" showFooter :width="700">
+    <modal title="" v-model="visible" :width="700">
       666
       <template #footer>
         8888
