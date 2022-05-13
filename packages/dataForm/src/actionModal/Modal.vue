@@ -80,11 +80,11 @@ export default {
       );
     }
     return h(
-      "a-modal",
+      "modal",
       {
         props: {
           ...modalProps,
-          visible: visible,
+          value: visible,
           destroyOnClose: true,
           confirmLoading: confirmLoading
         },

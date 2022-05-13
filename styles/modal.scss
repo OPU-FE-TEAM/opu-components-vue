@@ -1,0 +1,22 @@
+.vxe-modal--wrapper.type--modal .vxe-modal--header{
+    padding:0!important;
+    &>.modal-title{
+        padding: 0.6em 4.6em 0.6em 1em;
+        min-height: 41.58px;
+    }
+}
+.hidden-input{
+    position: fixed;
+    left:-99999px;
+    opacity: 0;
+}
+.vxe-modal--wrapper .vxe-modal--footer {
+    padding: 10px 16px!important;
+    text-align: right;
+    background: transparent;
+    border-top: 1px solid #e8e8e8;
+    border-radius: 0 0 4px 4px;
+    &>button+button{
+        margin-left:8px;
+    }
+}

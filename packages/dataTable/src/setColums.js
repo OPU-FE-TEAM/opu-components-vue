@@ -2,10 +2,13 @@ import Vue from "vue";
 import utils from "../../utils";
 import Sortable from "sortablejs";
 import config from "../conf";
+import { Modal } from "../../modal";
 
 export default {
   name: "SetColumns",
-  components: {},
+  components: {
+    Modal
+  },
   props: {
     option: {
       type: Object,
@@ -387,13 +390,13 @@ export default {
       ...modalOpt
     };
     return h(
-      "a-modal",
+      "modal",
       {
         props: {
           title: modalProps.title ? modalProps.title : "设置表头",
           width: 800,
           ...modalProps,
-          visible: visible
+          value: visible
         },
         on: {
           cancel: onCancel,
@@ -415,7 +418,7 @@ export default {
               treeConfig: { children: "children" },
               editConfig: { trigger: "click", mode: "row" },
               checkboxConfig: { checkStrictly: true },
-              height: "auto"
+              height: "600px"
             },
             scopedSlots: {
               btn_default: () => {

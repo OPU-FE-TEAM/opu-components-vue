@@ -99,6 +99,7 @@ export default {
         props: {
           ...propsData,
           value: currentValue
+          // getPopupContainer: triggerNode => triggerNode.parentNode
         },
         on: {
           ...ons,

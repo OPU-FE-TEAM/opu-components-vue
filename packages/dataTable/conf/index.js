@@ -79,6 +79,11 @@ const GlobalConfig = {
         zIndex: 2000
       }
     },
+    // table: {
+    //   props: {
+    //     height: "auto"
+    //   }
+    // },
     proxyConfig: {
       props: {
         list: "data.data"

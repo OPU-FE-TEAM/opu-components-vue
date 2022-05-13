@@ -1,11 +1,13 @@
 import utils from "../../utils";
 import config from "../conf";
 import { DataForm } from "../../dataForm";
+import { Modal } from "../../modal";
 
 export default {
   name: "FormModal",
   components: {
-    DataForm
+    DataForm,
+    Modal
   },
   props: {
     form: {
@@ -123,19 +125,32 @@ export default {
       autoLoadOptionsData
     } = this;
     //TODO 自动以footer 增加 loading状态
+    // let footerButtons = (
+    //   <div>
+    //     <a-button {...{ on: { click: onCancel } }}>关闭</a-button>
+    //   </div>
+    // );
     const modalProps = {
       props: {
         width: 800,
         ...modalOpt,
         title: title ? title : modalOpt.title,
         confirmLoading: confirmLoading,
-        visible: visible
+        // visible: visible
+        value: visible,
+        showFooter: true
       },
       on: {
-        cancel: onCancel,
-        ok: onSubmit
+        // update: onCancel,
+        ok: onSubmit,
+        update: onCancel
       },
       class: "crud-table-form-modal"
+      // scopedSlots: {
+      //   footer: () => {
+      //     return footerButtons;
+      //   }
+      // }
     };
     if (readonly) {
       modalProps.props.okButtonProps = {
@@ -156,7 +171,7 @@ export default {
       class: "crud-table-form",
       scopedSlots: $scopedSlots
     };
-    return h("a-modal", modalProps, [
+    return h("modal", modalProps, [
       h("a-spin", { props: { spinning: loading } }, [h("data-form", formProps)])
     ]);
   }

@@ -6,6 +6,7 @@ import { DataForm } from "../../dataForm";
 import config from "../conf";
 import SetColums from "./setColums";
 import editRenderMixin from "./mixin/editRender";
+import { Modal } from "../../modal";
 
 const tablePropKeys = Object.keys(Table.props);
 const methods = {};
@@ -151,13 +152,14 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
       : {};
 
   return h(
-    "a-modal",
+    "modal",
     {
       ...cloneSearchConfig.advancedSearchModal,
       props: {
         ...modalProps,
         title: modalProps.title ? modalProps.title : "高级查询",
-        visible: advancedVisible
+        value: advancedVisible,
+        showFooter: true
       },
       on: {
         cancel: onAdvancedcancel,
@@ -509,7 +511,8 @@ export default {
   name: "DataTable",
   components: {
     DataForm,
-    SetColums
+    SetColums,
+    Modal
   },
   props: {
     ...Table.props,

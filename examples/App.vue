@@ -10,6 +10,7 @@
       <dataTableJsx v-else-if="tab == 7" />
       <setColumns v-else-if="tab == 8" />
       <dataTableBase1 v-else-if="tab == 9" />
+      <modalDemo v-else-if="tab == 10" />
     </a-config-provider>
   </div>
 </template>
@@ -30,6 +31,7 @@ import crudTableBase from "./crudTable/index1";
 import Cell from "./other/cell";
 import pageWraper from "./other/pageWraper";
 import pulldownTable from "./other/pulldownTable";
+import modalDemo from "./other/modal";
 
 import zh_CN from "ant-design-vue/lib/locale-provider/zh_CN";
 // import enUS from "ant-design-vue/es/locale/en_US";
@@ -44,11 +46,12 @@ export default {
     pulldownTable,
     dataTableJsx,
     setColumns,
-    dataTableBase1
+    dataTableBase1,
+    modalDemo
   },
   data() {
     return {
-      tab: 1,
+      tab: 10,
       locale: zh_CN
     };
   }
