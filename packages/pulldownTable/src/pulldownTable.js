@@ -19,6 +19,7 @@ function renderInput(h, _vm) {
       ...inputProps,
       value: text
     },
+    ref: "input",
     on: {
       focus: onInputFocus,
       keyup: onInputKeyUp,
@@ -55,6 +56,11 @@ export default {
     disabled: Boolean,
     inputProps: {
       type: [Object]
+    },
+    //是否focus时保留原值搜索
+    retainSearchValue: {
+      type: Boolean,
+      default: true
     },
     // 允许输入值
     allowInputValue: Boolean
@@ -171,11 +177,13 @@ export default {
   watch: {
     value(val) {
       this.currentValue = val;
+      this.selectValue = val;
     }
   },
   created() {
     this.onChange = utils.debounce(this.onInputChange, 400);
     this.currentValue = this.value;
+    this.selectValue = this.value;
     // this.inputChangeValue = this.value;
   },
 
@@ -190,6 +198,9 @@ export default {
     //   // this.$emit("change", text, row);
     //   //   // this.$refs.pulldownTable.hidePanel();
     // },
+    focus() {
+      this.$refs.input.focus();
+    },
     onTableRowSelect({ row, columnIndex }) {
       let { checkboxIndex } = this;
       if (checkboxIndex < 0 || checkboxIndex != columnIndex) {
@@ -207,36 +218,39 @@ export default {
       this.$emit("change", this.selectValue);
     },
     onInputFocus(e) {
-      this.$refs.pulldownTable.showPanel();
-      this.$emit("showPanel", e);
-      this.currentValue = "";
-      // if (this.allowInputValue) {
+      let that = this;
+      const { table, searchBefore, searchField, retainSearchValue } = that;
+      that.$refs.pulldownTable.showPanel();
+      that.$emit("showPanel", e);
+      if (!retainSearchValue) {
+        that.currentValue = "";
+      }
+      // if (that.allowInputValue) {
       // } else {
-      //   this.inputChangeValue = this.selectValue;
+      //   that.inputChangeValue = that.selectValue;
       // }
-      const { table, searchBefore, searchField } = this;
       if (
         table.props.proxyConfig &&
         table.props.proxyConfig.ajax &&
         table.props.proxyConfig.ajax.query
       ) {
-        let params = {};
-        params[searchField] = "";
-        if (searchBefore) {
-          const searchBeforeRes = searchBefore && searchBefore(params);
-          if (searchBeforeRes === false) {
-            return false;
-          } else if (searchBeforeRes) {
-            params = searchBeforeRes;
+        that.$nextTick(() => {
+          let params = {};
+          params[searchField] = retainSearchValue ? that.selectValueText : "";
+          if (searchBefore) {
+            const searchBeforeRes = searchBefore && searchBefore(params);
+            if (searchBeforeRes === false) {
+              return false;
+            } else if (searchBeforeRes) {
+              params = searchBeforeRes;
+            }
           }
-        }
-        this.$nextTick(() => {
-          const dataTable = this.$refs.table;
+          const dataTable = that.$refs.table;
           dataTable.onSearchSubmit(params);
         });
-      } else if (this.tableData.length > 0) {
-        const dataTable = this.$refs.table;
-        dataTable.setCurrentRow(this.tableData[0]);
+      } else if (that.tableData.length > 0) {
+        const dataTable = that.$refs.table;
+        dataTable.setCurrentRow(that.tableData[0]);
       }
     },
     onInputChangeBefore(e) {
@@ -289,8 +303,6 @@ export default {
       const tableSelectedRow = dataTable.getCurrentRecord();
       if (tableSelectedRow && pulldown.isPanelVisible()) {
         this.onTableRowSelect({ row: tableSelectedRow });
-      } else {
-        this.onInputFocus();
       }
     },
     // 快捷键上下切换选中行
@@ -302,11 +314,14 @@ export default {
         onInputFocus
         // valueField
       } = this;
+      let isVisible = this.$refs.pulldownTable.isPanelVisible();
       if (key == "Enter") {
-        onInputEnter();
-        return false;
+        if (isVisible) {
+          onInputEnter();
+          this.$emit("inputPressEnter", e);
+        }
       }
-      if (!this.$refs.pulldownTable.isPanelVisible() && key == "ArrowDown") {
+      if (!isVisible && key == "ArrowDown") {
         onInputFocus();
       }
       //  else if (key == "ArrowDown" || key == "ArrowUp") {
@@ -343,8 +358,11 @@ export default {
     onPulldownHide() {
       let that = this;
       if (that.allowInputValue) {
-        that.selectValue = that.currentValue;
-        that.$emit("change", that.selectValue, {});
+        if (that.currentValue == that.selectValueText) {
+          that.$emit("change", that.selectValue, {});
+        } else {
+          that.$emit("change", that.currentValue, {});
+        }
       } else {
         // that.selectValue = that.inputChangeValue;
         that.$nextTick(() => {

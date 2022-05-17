@@ -1,11 +1,6 @@
 <template>
   <div>
     <div style="width:300px">
-      <a-date-picker
-        @change="onChange"
-        @panelChange="onpanelChange"
-        mode="year"
-      />
       <DataForm
         ref="dataForm"
         :items="items"
@@ -17,6 +12,7 @@
         titleWidth="auto"
       >
       </DataForm>
+      <a-button @click="onSetData">赋值</a-button>
     </div>
   </div>
 </template>
@@ -72,7 +68,6 @@ function getData(arr = {}) {
   console.log("请求");
   return new Promise(resolve => {
     setTimeout(() => {
-      console.log(arr);
       const size = arr.pageSize ? arr.pageSize : 20;
       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
       let list = Array.from({ length: size }, (_, key) => ({
@@ -119,7 +114,10 @@ export default {
             }
           }
         },
-
+        {
+          title: "输入框",
+          field: "input"
+        },
         {
           field: "pulldown",
           title: "下拉面板",
@@ -209,6 +207,15 @@ export default {
               change: this.onChangeTrackId
             }
           }
+        },
+        {
+          title: "输入框1",
+          field: "input1"
+        },
+
+        {
+          title: "输入框2",
+          field: "input2"
         }
       ]
       // selectGroupOptions: [
@@ -259,7 +266,11 @@ export default {
       console.log(b);
       console.log(c);
       console.log(d);
-      debugger;
+    },
+    onSetData() {
+      this.$refs.dataForm.setData({
+        pulldown: "6666下拉"
+      });
     }
   }
 };

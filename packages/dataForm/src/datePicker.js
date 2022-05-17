@@ -36,7 +36,6 @@ export default {
           ...ons,
           change: this.updateValue,
           panelChange: e => {
-            console.log(propsData);
             if (propsData.mode == "year") {
               this.updateValue(e);
             }
