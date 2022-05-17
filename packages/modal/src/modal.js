@@ -1,7 +1,5 @@
 import { Modal } from "vxe-table";
 import { utils } from "../../init";
-
-console.log(Modal);
 export default {
   name: "Modal",
   components: {},
@@ -84,7 +82,6 @@ export default {
           );
         }
       };
-      console.log(propsData.showFooter, showFooter);
       if (showFooter && !$scopedSlots.footer) {
         let okButton = (
           <a-button
@@ -156,10 +153,11 @@ export default {
     }
   },
   render(h) {
-    const { modalProps } = this;
+    const { modalProps, visible } = this;
     return h("vxe-modal", {
       ...modalProps,
       ...{
+        props: { ...modalProps.props, value: visible },
         on: { ...modalProps.on }
       }
     });

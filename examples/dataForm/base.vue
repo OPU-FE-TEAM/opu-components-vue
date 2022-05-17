@@ -430,7 +430,7 @@ export default {
           field: "pulldown",
           title: "下拉面板",
           option: {
-            initialValue: "桂林"
+            // initialValue: "桂林"
           },
           itemRender: {
             name: "pulldown-table",
