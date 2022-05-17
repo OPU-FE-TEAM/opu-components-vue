@@ -133,7 +133,7 @@ export default {
               table: {
                 props: {
                   columns: [
-                    // { type: "checkbox", width: 50 },
+                    { type: "checkbox", width: 50 },
                     { type: "seq", title: "Number", width: 80 },
                     {
                       field: "name",
