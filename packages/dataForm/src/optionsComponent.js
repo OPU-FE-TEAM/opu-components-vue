@@ -61,7 +61,8 @@ export default {
   },
   data() {
     return {
-      optionsData: []
+      optionsData: [],
+      visible: false
     };
   },
   computed: {
@@ -82,6 +83,13 @@ export default {
           this.$emit(type, ...args);
         };
       });
+      //a-cascader 独有需求
+      if (renderName == "a-cascader") {
+        ons.popupVisibleChange = value => {
+          this.visible = value;
+        };
+      }
+
       let currentValue = value;
       if (value && utils.isNumber(value)) {
         currentValue = value + "";
@@ -150,6 +158,9 @@ export default {
       // if (box && box.length) {
       //   box[0].click();
       // }
+    },
+    getVisible() {
+      return this.visible;
     }
   },
   render(h) {

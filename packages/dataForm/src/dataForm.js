@@ -9,10 +9,18 @@ const optionsComponents = ["a-radio-group", "a-checkbox-group", "a-cascader"];
 // 回车跳转下一个focus
 function nextItemFocus(item, _vm, e = {}) {
   const { enterToNextItemFocusList, setFieldFocus } = _vm;
-  if (item.itemRender && item.itemRender.on && item.itemRender.on.enter) {
-    const enterRes = item.itemRender.on.enter(e);
-    if (enterRes == false) {
-      return;
+  if (item.itemRender) {
+    if (
+      item.itemRender.name == "a-cascader" &&
+      _vm.$refs["input_" + item.field].getVisible()
+    ) {
+      return false;
+    }
+    if (item.itemRender.on && item.itemRender.on.enter) {
+      const enterRes = item.itemRender.on.enter(e);
+      if (enterRes == false) {
+        return;
+      }
     }
   }
   const fieldIndex = enterToNextItemFocusList.indexOf(item.field);
@@ -347,7 +355,8 @@ function renderItemInput(item, h, _vm) {
         "a-time-picker",
         "a-range-picker-split",
         "pulldown-table",
-        "a-input-number-split"
+        "a-input-number-split",
+        "a-cascader"
       ].includes(renderName)
     ) {
       if (props.on && utils.isObject(props.on)) {
