@@ -120,9 +120,16 @@ export default {
     }
   },
   render(h) {
-    const { hasLimit, separator } = this;
+    const { hasLimit, separator, $listeners } = this;
     const propsData = utils.clone(this.$options.propsData);
     delete propsData.value;
+    const ons = {};
+    utils.each($listeners, (cb, type) => {
+      ons[type] = (...args) => {
+        this.$emit(type, ...args);
+      };
+    });
+
     const start = {
       ref: "startDatePicker",
       props: {
@@ -133,6 +140,7 @@ export default {
         width: "100%"
       },
       on: {
+        ...ons,
         change: e => {
           this.onStartChange(e);
         },
@@ -157,6 +165,7 @@ export default {
         width: "100%"
       },
       on: {
+        ...ons,
         change: e => {
           this.onEndChange(e);
         },
