@@ -6,11 +6,22 @@
       show-overflow
       ref="dataTable"
       :data="data"
-      :columns="columns"
+      :columns="longColumns"
       :pager-config="false"
       size="mini"
+      height="600px"
+      :editConfig="{
+        trigger: 'click',
+        mode: 'cell',
+        showStatus: true,
+        icon: 'fa fa-file-text-o'
+      }"
       :edit-config="{ trigger: 'click', mode: 'row' }"
+      @edit-actived="onActived"
     >
+      <template #name_edit="{ row }">
+        <vxe-input v-model="row.name" ref="input"></vxe-input>
+      </template>
       <template v-slot:operate="{ row }">
         <a-button @click="editRow(row)">删除</a-button>
       </template>
@@ -19,12 +30,27 @@
     <a-button @click="onAdd">新增</a-button>
     <a-button @click="onChange">改变</a-button>
     <a-button @click="getData">获取数据</a-button>
-    <p>{{ data }}</p>
+    <a-button @click="updateDate">赋值</a-button>
+    <!-- <p>{{ data }}</p> -->
   </div>
 </template>
 
 <script>
 import moment from "moment";
+
+let step = 0;
+const updateDate = () => {
+  let data = [];
+  for (let i = 0; i < 90; i++) {
+    let row = {};
+    for (let j = 0; j < 30; j++) {
+      row["name" + j] = i + "_" + step;
+    }
+    data.push(row);
+  }
+  step++;
+  return data;
+};
 
 function getData() {
   return new Promise(resolve => {
@@ -46,7 +72,33 @@ function getData() {
 export default {
   components: {},
   data() {
+    const longColumns = [];
+    for (let i = 0; i < 30; i++) {
+      let row = {
+        field: "name" + i,
+        align: "left",
+        title: "名称" + i,
+        width: 100,
+        editRender: {},
+        slots: {
+          edit: "name_edit",
+          default: ({ row }) => {
+            return [<div class="aa">{row.name0}</div>];
+          }
+        }
+        // itemRender: {
+        //   name: "AInput"
+        //   // props: {
+        //   //   disabled: row => {
+        //   //     return row.orderType == 1;
+        //   //   }
+        //   // }
+        // }
+      };
+      longColumns.push(row);
+    }
     return {
+      longColumns,
       columns: [
         {
           field: "type1",
@@ -372,7 +424,9 @@ export default {
       ]
     };
   },
-  created() {},
+  created() {
+    // this.updateDate();
+  },
   methods: {
     onAdd() {
       this.data.push({
@@ -409,6 +463,24 @@ export default {
           };
         })
       );
+    },
+    updateDate() {
+      let data = updateDate();
+      console.log("生成data完成" + moment().format("HH:mm:ss"));
+      setTimeout(() => {
+        console.log("开始赋值" + moment().format("HH:mm:ss"));
+        this.data = data;
+        this.$nextTick(() => {
+          console.log("赋值完成", moment().format("HH:mm:ss"));
+        });
+      }, 3000);
+    },
+    onActived(e) {
+      console.log(e);
+      this.$nextTick(() => {
+        this.$refs.input.focus();
+        console.log(this.$refs.input);
+      });
     }
   }
 };

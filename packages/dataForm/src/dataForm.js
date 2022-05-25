@@ -9,10 +9,18 @@ const optionsComponents = ["a-radio-group", "a-checkbox-group", "a-cascader"];
 // 回车跳转下一个focus
 function nextItemFocus(item, _vm, e = {}) {
   const { enterToNextItemFocusList, setFieldFocus } = _vm;
-  if (item.itemRender && item.itemRender.on && item.itemRender.on.enter) {
-    const enterRes = item.itemRender.on.enter(e);
-    if (enterRes == false) {
-      return;
+  if (item.itemRender) {
+    if (
+      item.itemRender.name == "a-cascader" &&
+      _vm.$refs["input_" + item.field].getVisible()
+    ) {
+      return false;
+    }
+    if (item.itemRender.on && item.itemRender.on.enter) {
+      const enterRes = item.itemRender.on.enter(e);
+      if (enterRes == false) {
+        return;
+      }
     }
   }
   const fieldIndex = enterToNextItemFocusList.indexOf(item.field);
@@ -228,7 +236,14 @@ function renderItemTitle(item, h, _vm) {
 
 // 渲染input表单项
 function renderItemInput(item, h, _vm) {
-  const { $slots, $scopedSlots, readonly, onButtonClick, items } = _vm;
+  const {
+    $slots,
+    $scopedSlots,
+    readonly,
+    onButtonClick,
+    items,
+    renderNameKeys
+  } = _vm;
   const vDecorator = [item.field];
   if (item.option) {
     vDecorator.push(item.option);
@@ -334,7 +349,32 @@ function renderItemInput(item, h, _vm) {
       ...props.props
     };
     // }
-    if (renderName === "buttons") {
+    if (
+      [
+        "a-date-picker",
+        "a-time-picker",
+        "a-range-picker-split",
+        "pulldown-table",
+        "a-input-number-split",
+        "a-cascader"
+      ].includes(renderName)
+    ) {
+      if (props.on && utils.isObject(props.on)) {
+        props.on.inputPressEnter = e => {
+          nextItemFocus(item, _vm, e);
+        };
+      } else {
+        props.on = {
+          inputPressEnter: e => {
+            nextItemFocus(item, _vm, e);
+          }
+        };
+      }
+    }
+    if (renderNameKeys[renderName]) {
+      renderName = renderNameKeys[renderName] || renderName;
+      props.props.componentPropsData = props.props;
+    } else if (renderName === "buttons") {
       if (props.props) {
         props.props.itemClick = onButtonClick;
       } else {
@@ -343,70 +383,58 @@ function renderItemInput(item, h, _vm) {
         };
       }
       props.props.items = item.itemRender.items;
-    } else if (renderName == "a-select") {
-      // 有可选数据的组件
-      renderName = "opu-select";
-    } else if (renderName === "a-date-picker") {
-      renderName = "opu-date-picker";
-      if (props.on && utils.isObject(props.on)) {
-        props.on.inputPressEnter = e => {
-          nextItemFocus(item, _vm, e);
-        };
-      } else {
-        props.on = {
-          inputPressEnter: e => {
-            nextItemFocus(item, _vm, e);
-          }
-        };
-      }
-    } else if (renderName === "a-time-picker") {
-      renderName = "opu-time-picker";
-      if (props.on && utils.isObject(props.on)) {
-        props.on.inputPressEnter = e => {
-          nextItemFocus(item, _vm, e);
-        };
-      } else {
-        props.on = {
-          inputPressEnter: e => {
-            nextItemFocus(item, _vm, e);
-          }
-        };
-      }
-    } else if (renderName === "a-range-picker-split") {
-      if (props.on && utils.isObject(props.on)) {
-        props.on.inputPressEnter = e => {
-          nextItemFocus(item, _vm, e);
-        };
-      } else {
-        props.on = {
-          inputPressEnter: e => {
-            nextItemFocus(item, _vm, e);
-          }
-        };
-      }
-    } else if (renderName === "a-input-number-split") {
-      if (props.on && utils.isObject(props.on)) {
-        props.on.inputPressEnter = e => {
-          nextItemFocus(item, _vm, e);
-        };
-      } else {
-        props.on = {
-          inputPressEnter: e => {
-            nextItemFocus(item, _vm, e);
-          }
-        };
-      }
-    } else if (renderName === "a-switch") {
-      renderName = "opu-switch";
-    } else if (renderName === "a-checkbox") {
-      renderName = "opu-checkbox";
-    } else if (renderName === "a-tree-select") {
-      renderName = "opu-tree-select";
-    } else if (renderName === "a-select-group") {
-      renderName = "opu-select-group";
-    } else if (renderName === "a-auto-complete") {
-      renderName = "opu-auto-complete";
-      props.props.componentPropsData = props.props;
+      // } else if (renderName == "a-select") {
+      //   // 有可选数据的组件
+      //   renderName = "opu-select";
+      // } else if (renderName === "a-date-picker") {
+      //   renderName = "opu-date-picker";
+      //   if (props.on && utils.isObject(props.on)) {
+      //     props.on.inputPressEnter = e => {
+      //       nextItemFocus(item, _vm, e);
+      //     };
+      //   } else {
+      //     props.on = {
+      //       inputPressEnter: e => {
+      //         nextItemFocus(item, _vm, e);
+      //       }
+      //     };
+      //   }
+      // } else if (renderName === "a-time-picker") {
+      //   renderName = "opu-time-picker";
+      //   if (props.on && utils.isObject(props.on)) {
+      //     props.on.inputPressEnter = e => {
+      //       nextItemFocus(item, _vm, e);
+      //     };
+      //   } else {
+      //     props.on = {
+      //       inputPressEnter: e => {
+      //         nextItemFocus(item, _vm, e);
+      //       }
+      //     };
+      //   }
+      // } else if (renderName === "a-input-number-split") {
+      //   if (props.on && utils.isObject(props.on)) {
+      //     props.on.inputPressEnter = e => {
+      //       nextItemFocus(item, _vm, e);
+      //     };
+      //   } else {
+      //     props.on = {
+      //       inputPressEnter: e => {
+      //         nextItemFocus(item, _vm, e);
+      //       }
+      //     };
+      //   }
+      // } else if (renderName === "a-switch") {
+      //   renderName = "opu-switch";
+      // } else if (renderName === "a-checkbox") {
+      //   renderName = "opu-checkbox";
+      // } else if (renderName === "a-tree-select") {
+      //   renderName = "opu-tree-select";
+      // } else if (renderName === "a-select-group") {
+      //   renderName = "opu-select-group";
+      // } else if (renderName === "a-auto-complete") {
+      //   renderName = "opu-auto-complete";
+      //   props.props.componentPropsData = props.props;
     } else if (optionsComponents.includes(renderName)) {
       // 有可选数据的组件
       props.props.componentPropsData = props.props;
@@ -917,6 +945,16 @@ export default {
         "a-radio-group",
         "a-checkbox-group"
       ],
+      renderNameKeys: {
+        "a-select": "opu-select",
+        "a-date-picker": "opu-date-picker",
+        "a-time-picker": "opu-time-picker",
+        "a-switch": "opu-switch",
+        "a-checkbox": "opu-checkbox",
+        "a-tree-select": "opu-tree-select",
+        "a-select-group": "opu-select-group",
+        "a-auto-complete": "opu-auto-complete"
+      },
       //有返回数据的item集合索引
       optionsItemIndexs: {},
       unifyApiGetOptions: [],
