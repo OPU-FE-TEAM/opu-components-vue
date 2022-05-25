@@ -6,7 +6,7 @@
       show-overflow
       ref="dataTable"
       :data="data"
-      :columns="longColumns"
+      :columns="columns"
       :pager-config="false"
       size="mini"
       height="600px"
@@ -170,33 +170,10 @@ export default {
               ]
             },
             on: {
-              change: (value, option, row, rowIndex) => {
+              change: (value, row, pRow) => {
                 console.log(value);
-                console.log(option);
-                console.log(rowIndex);
-                if (value == 1) {
-                  row.oneSelectList = [
-                    { value: 11, label: "广西" },
-                    { value: 22, label: "广东" }
-                  ];
-                } else if (value == 2) {
-                  row.oneSelectList = [
-                    { value: 1, label: "桂林" },
-                    { value: 2, label: "贺州" }
-                  ];
-                  this.$refs.dataTable.setEditOptions({
-                    apiSelect: [
-                      { value: 1, label: "桂林" },
-                      { value: 2, label: "贺州" }
-                    ]
-                  });
-                } else {
-                  row.oneSelectList = [
-                    { value: 99, label: "象山" },
-                    { value: 88, label: "叠彩" }
-                  ];
-                }
-                row.oneSelect = "";
+                console.log(row);
+                console.log(pRow);
               }
             }
           }

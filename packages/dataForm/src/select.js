@@ -154,7 +154,7 @@ export default {
       const { vF, optionsData, childrenField } = this;
       const optionsList = utils.treeTransArray(optionsData, childrenField);
       const row = optionsList.find(p => p[vF] == value);
-      let pRow = "";
+      let pRow;
       if (row && row._pValue) {
         pRow = optionsList.find(p => p[vF] == row._pValue);
       }
