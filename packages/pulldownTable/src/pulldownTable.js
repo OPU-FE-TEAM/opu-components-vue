@@ -117,12 +117,10 @@ export default {
         props: {
           modelValue: true,
           transfer: true,
-          // "destroy-on-close": true,
           ...propsData
         }
       });
       props.ref = "pulldownTable";
-      // props.scopedSlots = $scopedSlots;
       props.class = "pulldown";
       props.on = {
         "hide-panel": this.onPulldownHide
@@ -135,7 +133,6 @@ export default {
         table,
         tableData,
         $scopedSlots,
-        // onCurrentChange,
         onTableRowSelect,
         onTableCheckboxChange
       } = that;
@@ -153,7 +150,6 @@ export default {
         },
         on: {
           "cell-click": onTableRowSelect,
-          // "current-change": onCurrentChange,
           "checkbox-change": onTableCheckboxChange,
           "checkbox-all": onTableCheckboxChange
         },
@@ -184,21 +180,10 @@ export default {
     this.onChange = utils.debounce(this.onInputChange, 400);
     this.currentValue = this.value;
     this.selectValue = this.value;
-    // this.inputChangeValue = this.value;
   },
-
   methods: {
-    // onCurrentChange({ row }) {
-    //   console.log(row);
-    //   // let text = row[this.textField];
-    //   // this.currentValue = row;
-    //   // this.selectValue = row;
-    //   // console.log(text, "text");
-    //   // this.$emit("input", row);
-    //   // this.$emit("change", text, row);
-    //   //   // this.$refs.pulldownTable.hidePanel();
-    // },
     focus() {
+      console.log(this.$refs.input);
       this.$refs.input.focus();
     },
     onTableRowSelect({ row, columnIndex }) {
@@ -225,10 +210,6 @@ export default {
       if (!retainSearchValue) {
         that.currentValue = "";
       }
-      // if (that.allowInputValue) {
-      // } else {
-      //   that.inputChangeValue = that.selectValue;
-      // }
       if (
         table.props.proxyConfig &&
         table.props.proxyConfig.ajax &&
@@ -287,7 +268,6 @@ export default {
           const dataTable = this.$refs.table;
           dataTable.onSearchSubmit(params);
         }
-        // this.inputChangeValue = value;
 
         this.$emit("inputChange", e);
       }, 300);
@@ -308,52 +288,18 @@ export default {
     // 快捷键上下切换选中行
     onInputKeyUp(e) {
       const { key } = e;
-      const {
-        // $refs,
-        onInputEnter,
-        onInputFocus
-        // valueField
-      } = this;
+      const { onInputEnter, onInputFocus } = this;
       let isVisible = this.$refs.pulldownTable.isPanelVisible();
       if (key == "Enter") {
         if (isVisible) {
           onInputEnter();
+          this.$refs.pulldownTable.hidePanel();
           this.$emit("inputPressEnter", e);
         }
       }
       if (!isVisible && key == "ArrowDown") {
         onInputFocus();
       }
-      //  else if (key == "ArrowDown" || key == "ArrowUp") {
-      //   const dataTable = $refs.table;
-      //   const tableData = dataTable.getData();
-      //   const tableSelectedRow = dataTable.getCurrentRecord();
-
-      //   if (!tableSelectedRow && tableData && tableData.length) {
-      //     // 不存在选中的值，默认选中第一行
-      //     dataTable.setCurrentRow(tableData[0]);
-      //     dataTable.focus();
-      //   }
-      // }
-
-      //  else if (tableData && tableData.length) {
-      //   const index = tableData.findIndex(
-      //     p => p[valueField] === tableSelectedRow[valueField]
-      //   );
-      //   let nextIndex = 0;
-      //   if (key === "ArrowUp") {
-      //     nextIndex = index - 1;
-      //     if (nextIndex < 0) {
-      //       nextIndex = 0;
-      //     }
-      //   } else {
-      //     nextIndex = index + 1;
-      //   }
-
-      //   if (tableData[nextIndex]) {
-      //     dataTable.setCurrentRow(tableData[nextIndex]);
-      //   }
-      // }
     },
     onPulldownHide() {
       let that = this;
@@ -364,7 +310,6 @@ export default {
           that.$emit("change", that.currentValue, {});
         }
       } else {
-        // that.selectValue = that.inputChangeValue;
         that.$nextTick(() => {
           that.currentValue = that.selectValue;
         });

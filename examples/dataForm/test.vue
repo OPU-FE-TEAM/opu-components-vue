@@ -129,7 +129,6 @@ export default {
             props: {
               valueField: "name",
               textField: "age",
-              // allowInputValue: true,
               table: {
                 props: {
                   columns: [
@@ -153,8 +152,6 @@ export default {
                   ],
                   size: "mini",
                   height: 300,
-                  highlightHoverRow: true,
-                  highlightCurrentRow: true,
                   proxyConfig: {
                     autoLoad: false,
                     ajax: {
@@ -163,11 +160,6 @@ export default {
                   }
                 }
               }
-              // inputProps: {
-              // allowClear: true
-              // size: "small"
-              // disabled: true
-              // }
             },
             on: {
               change(val, sel) {
@@ -176,14 +168,59 @@ export default {
               inputChange(sel) {
                 console.log("inputChange", sel);
               }
-              // showPanel(e) {
-              //   if (e.target.value) {
-              //     e.target.select();
-              //   }
-              // }
-              // "hide-panel"() {
-              //   debugger;
-              // }
+            }
+          }
+        },
+        {
+          field: "pulldown1",
+          title: "下拉面板1",
+          option: {
+            initialValue: "桂林1"
+          },
+          itemRender: {
+            name: "pulldown-table",
+            props: {
+              valueField: "name",
+              textField: "age",
+              table: {
+                props: {
+                  columns: [
+                    { type: "checkbox", width: 50 },
+                    { type: "seq", title: "Number", width: 80 },
+                    {
+                      field: "name",
+                      title: "Name",
+                      width: 200
+                    },
+                    {
+                      field: "sex",
+                      title: "Sex",
+                      width: 200
+                    },
+                    {
+                      field: "age",
+                      title: "Age",
+                      width: 200
+                    }
+                  ],
+                  size: "mini",
+                  height: 300,
+                  proxyConfig: {
+                    autoLoad: false,
+                    ajax: {
+                      query: getData
+                    }
+                  }
+                }
+              }
+            },
+            on: {
+              change(val, sel) {
+                console.log("change", val, sel);
+              },
+              inputChange(sel) {
+                console.log("inputChange", sel);
+              }
             }
           }
         },
@@ -253,6 +290,13 @@ export default {
       //   }
       // ]
     };
+  },
+  mounted() {
+    let that = this;
+    setTimeout(() => {
+      console.log("触发");
+      that.$refs.dataForm.setFieldFocus("pulldown");
+    }, 1000);
   },
   methods: {
     onChange(e) {
