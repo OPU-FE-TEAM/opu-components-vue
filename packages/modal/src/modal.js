@@ -143,6 +143,7 @@ export default {
   methods: {
     onHide() {
       this.$emit("update", false);
+      this.onCancel();
     },
     onCancel() {
       this.visible = false;

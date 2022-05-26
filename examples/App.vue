@@ -11,6 +11,7 @@
       <setColumns v-else-if="tab == 8" />
       <dataTableBase1 v-else-if="tab == 9" />
       <modalDemo v-else-if="tab == 10" />
+      <dataTableBase2 v-else-if="tab == 11" />
     </a-config-provider>
   </div>
 </template>
@@ -19,7 +20,7 @@
 import dataFormBase from "./dataForm/test";
 // import dataFormBase from "./dataForm/base";
 // import dataFormBase from "./dataForm/select";
-// import dataTableBase from "./dataTable/base";
+import dataTableBase2 from "./dataTable/base";
 import dataTableBase1 from "./dataTable/data";
 
 // import dataTableBase from "./dataTable/Grid";
@@ -48,11 +49,12 @@ export default {
     dataTableJsx,
     setColumns,
     dataTableBase1,
-    modalDemo
+    modalDemo,
+    dataTableBase2
   },
   data() {
     return {
-      tab: 2,
+      tab: 8,
       locale: zh_CN
     };
   }
