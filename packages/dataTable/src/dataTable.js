@@ -1,4 +1,4 @@
-import Vue from "vue";
+// import Vue from "vue";
 import "vxe-table/lib/index.css";
 import utils from "../../utils";
 import { Table } from "vxe-table";
@@ -543,7 +543,6 @@ export default {
   mixins: [editRenderMixin],
   watch: {
     columns(val) {
-      // this.tableColumns = val;
       this.setTableColumns(val);
     }
   },
@@ -555,7 +554,8 @@ export default {
       searchData: {},
       tableHeight: "",
       currentRow: {},
-      hasAjaxQuery: false
+      hasAjaxQuery: false,
+      hasCheckbox: false //是否存在checkbox
     };
   },
   computed: {
@@ -668,13 +668,13 @@ export default {
         $scopedSlots,
         tableExtendProps,
         handleTableQuery,
-        tableColumns,
-        renderCheckbox,
         pagerConfigOpt,
         proxyConfigOpt,
-        renderPulldownTable,
-        renderPulldownTableView,
-        renderSwitch,
+        // tableColumns,
+        // renderCheckbox,
+        // renderPulldownTable,
+        // renderPulldownTableView,
+        // renderSwitch,
         height,
         highlightCurrentUnselect,
         onCurrentRowCellClick,
@@ -683,64 +683,9 @@ export default {
         handleServerSort,
         keyboardSpace
       } = that;
-      let hasCheckbox = false;
+      // let hasCheckbox = false;
       const propsData = that.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
-
-      const columns = tableColumns.map(item => {
-        if (!hasCheckbox && item.type == "checkbox") {
-          hasCheckbox = true;
-        }
-        if (item.cellRender) {
-          if (propsData && propsData.size == "mini") {
-            if (item.cellRender.props) {
-              item.cellRender.props.size = "default";
-            } else {
-              item.cellRender.props = {
-                size: "default"
-              };
-            }
-          }
-        }
-        if (item.editRender) {
-          if (propsData && propsData.size == "mini") {
-            if (item.editRender.props) {
-              item.editRender.props.size = "default";
-            } else {
-              item.editRender.props = {
-                size: "default"
-              };
-            }
-          }
-          if (item.editRender.name && item.editRender.name === "ACheckbox") {
-            item.slots = {
-              default: "a_checkbox",
-              edit: "a_checkbox"
-            };
-            that.$scopedSlots["a_checkbox"] = renderCheckbox;
-          } else if (
-            item.editRender.name &&
-            item.editRender.name === "ASwitch"
-          ) {
-            item.slots = {
-              default: "a_switch",
-              edit: "a_switch"
-            };
-            that.$scopedSlots["a_switch"] = renderSwitch;
-          } else if (
-            item.editRender.name &&
-            item.editRender.name === "pulldownTable"
-          ) {
-            item.slots = {
-              default: "pulldownTableView",
-              edit: "pulldownTable"
-            };
-            that.$scopedSlots["pulldownTableView"] = renderPulldownTableView;
-            that.$scopedSlots["pulldownTable"] = renderPulldownTable;
-          }
-        }
-        return item;
-      });
 
       Object.assign(props, {
         props: {
@@ -748,7 +693,7 @@ export default {
           ...propsData,
           data: proxyConfigOpt ? null : propsData.data,
           proxyConfig: utils.clone(proxyConfigOpt, true),
-          columns: columns,
+          // columns: columns,
           loading: propsData.loading
         }
       });
@@ -772,7 +717,7 @@ export default {
       if (isKeyboardSpace) {
         ons["keydown"] = e => {
           let event = e.$event;
-          if (hasCheckbox && event.code == "Space") {
+          if (this.hasCheckbox && event.code == "Space") {
             event.preventDefault();
             event.stopPropagation();
             onKeyDownSpace(e);
@@ -989,6 +934,7 @@ export default {
     setTableColumns(data) {
       const { proxyColumns, fetchColumns, sortable } = this;
       if (data) {
+        this.backupColumns = columnsData;
         let columnsData = utils.clone(data);
         if (sortable) {
           columnsData = columnsData.map(p => {
@@ -996,117 +942,121 @@ export default {
             return p;
           });
         }
-        this.backupColumns = columnsData;
         const configProps =
           proxyColumns &&
           proxyColumns.props &&
           utils.isObject(proxyColumns.props)
             ? { ...config.proxyColumns.props, ...proxyColumns.props }
             : config.proxyColumns.props;
+        let hasCheckbox = false;
         this.tableColumns = this.editColumnsRender(columnsData, p => {
+          if (!hasCheckbox && p.type == "checkbox") {
+            hasCheckbox = true;
+          }
+
           return p[configProps.show] !== false;
         });
-        // this.tableColumns = data.filter(p => p[configProps.show] !== false);
+        this.hasCheckbox = hasCheckbox;
       } else if (proxyColumns) {
         fetchColumns(proxyColumns);
       }
     },
-    // 渲染ACheckbox编辑组件
-    renderCheckbox(scope) {
-      const vm = new Vue();
-      const h = vm.$createElement;
-      const currentColumn = this.tableColumns[scope.columnIndex];
-      return h("a-checkbox", {
-        props: {
-          ...currentColumn.editRender.props,
-          checked: scope.row[scope.column.property]
-        },
-        on: {
-          input(val) {
-            scope.row[scope.column.property] = val;
-            if (
-              currentColumn.editRender.on &&
-              currentColumn.editRender.on.change
-            ) {
-              currentColumn.editRender.on.change(scope);
-            }
-          }
-        }
-      });
-    },
-    // 渲染ASwitch编辑组件
-    renderSwitch(scope) {
-      const vm = new Vue();
-      const h = vm.$createElement;
-      const currentColumn = this.tableColumns[scope.columnIndex];
-      return h("a-switch", {
-        props: {
-          ...currentColumn.editRender.props,
-          checked: scope.row[scope.column.property]
-        },
-        on: {
-          input: val => {
-            scope.row[scope.column.property] = val;
-          },
-          update: val => {
-            scope.row[scope.column.property] = val;
-          },
-          change(val) {
-            scope.row[scope.column.property] = val;
-            if (
-              currentColumn.editRender.on &&
-              currentColumn.editRender.on.change
-            ) {
-              currentColumn.editRender.on.change(scope);
-            }
-          }
-        }
-      });
-    },
-    // 渲染下拉面板显示组件
-    renderPulldownTableView(scope) {
-      const vm = new Vue();
-      const h = vm.$createElement;
-      const value = scope.row[scope.column.property];
-      const currentColumn = this.tableColumns[scope.columnIndex];
-      const taxtField =
-        currentColumn.editRender.props &&
-        currentColumn.editRender.props.textField
-          ? currentColumn.editRender.props.textField
-          : "name";
-      let text = "";
-      if (value && utils.isArray(value)) {
-        text = value.map(p => p[taxtField]).join(",");
-      } else if (value && utils.isObject(value)) {
-        text = value[taxtField];
-      } else if (value) {
-        text = value;
-      }
-      return h("div", {}, [text]);
-    },
-    // 渲染下拉面板组件
-    renderPulldownTable(scope) {
-      // const { handlePulldownTableChange } = this;
-      const vm = new Vue();
-      const h = vm.$createElement;
-      const currentColumn = this.tableColumns[scope.columnIndex];
-      return h("pulldownTable", {
-        props: {
-          ...currentColumn.editRender.props
-        },
-        on: {
-          change(val) {
-            scope.row[scope.column.property] = val;
-            if (
-              currentColumn.editRender.on &&
-              currentColumn.editRender.on.change
-            ) {
-              currentColumn.editRender.on.change(scope);
-            }
-          }
-        }
-      });
-    },
+    // // 渲染ACheckbox编辑组件
+    // renderCheckbox(scope) {
+    //   const vm = new Vue();
+    //   const h = vm.$createElement;
+    //   const currentColumn = this.tableColumns[scope.columnIndex];
+    //   return h("a-checkbox", {
+    //     props: {
+    //       ...currentColumn.editRender.props,
+    //       checked: scope.row[scope.column.property]
+    //     },
+    //     on: {
+    //       input(val) {
+    //         scope.row[scope.column.property] = val;
+    //         if (
+    //           currentColumn.editRender.on &&
+    //           currentColumn.editRender.on.change
+    //         ) {
+    //           currentColumn.editRender.on.change(scope);
+    //         }
+    //       }
+    //     }
+    //   });
+    // },
+    // // 渲染ASwitch编辑组件
+    // renderSwitch(scope) {
+    //   const vm = new Vue();
+    //   const h = vm.$createElement;
+    //   const currentColumn = this.tableColumns[scope.columnIndex];
+    //   return h("a-switch", {
+    //     props: {
+    //       ...currentColumn.editRender.props,
+    //       checked: scope.row[scope.column.property]
+    //     },
+    //     on: {
+    //       input: val => {
+    //         scope.row[scope.column.property] = val;
+    //       },
+    //       update: val => {
+    //         scope.row[scope.column.property] = val;
+    //       },
+    //       change(val) {
+    //         scope.row[scope.column.property] = val;
+    //         if (
+    //           currentColumn.editRender.on &&
+    //           currentColumn.editRender.on.change
+    //         ) {
+    //           currentColumn.editRender.on.change(scope);
+    //         }
+    //       }
+    //     }
+    //   });
+    // },
+    // // 渲染下拉面板显示组件
+    // renderPulldownTableView(scope) {
+    //   const vm = new Vue();
+    //   const h = vm.$createElement;
+    //   const value = scope.row[scope.column.property];
+    //   const currentColumn = this.tableColumns[scope.columnIndex];
+    //   const taxtField =
+    //     currentColumn.editRender.props &&
+    //     currentColumn.editRender.props.textField
+    //       ? currentColumn.editRender.props.textField
+    //       : "name";
+    //   let text = "";
+    //   if (value && utils.isArray(value)) {
+    //     text = value.map(p => p[taxtField]).join(",");
+    //   } else if (value && utils.isObject(value)) {
+    //     text = value[taxtField];
+    //   } else if (value) {
+    //     text = value;
+    //   }
+    //   return h("div", {}, [text]);
+    // },
+    // // 渲染下拉面板组件
+    // renderPulldownTable(scope) {
+    //   // const { handlePulldownTableChange } = this;
+    //   const vm = new Vue();
+    //   const h = vm.$createElement;
+    //   const currentColumn = this.tableColumns[scope.columnIndex];
+    //   return h("pulldownTable", {
+    //     props: {
+    //       ...currentColumn.editRender.props
+    //     },
+    //     on: {
+    //       change(val) {
+    //         scope.row[scope.column.property] = val;
+    //         if (
+    //           currentColumn.editRender.on &&
+    //           currentColumn.editRender.on.change
+    //         ) {
+    //           currentColumn.editRender.on.change(scope);
+    //         }
+    //       }
+    //     }
+    //   });
+    // },
     // api获取表头
     fetchColumns(opt) {
       const { columns } = this;
@@ -1143,7 +1093,13 @@ export default {
           // this.tableColumns = tableColumns.filter(
           //   p => p[configProps.show] !== false
           // );
+
+          let hasCheckbox = false;
           this.tableColumns = this.editColumnsRender(tableColumns, p => {
+            if (!hasCheckbox && p.type == "checkbox") {
+              hasCheckbox = true;
+            }
+
             return p[configProps.show] !== false;
           });
         });
@@ -1254,7 +1210,12 @@ export default {
               "table-index": this.tableIndex.toString()
             }
           },
-          [h("vxe-grid", { ...tableProps })]
+          [
+            h("vxe-grid", {
+              ...tableProps,
+              props: { ...tableProps.props, columns: this.tableColumns }
+            })
+          ]
         )
       ].concat(nodes)
     );
