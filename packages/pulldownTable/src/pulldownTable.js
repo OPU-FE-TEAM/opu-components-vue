@@ -4,6 +4,7 @@ import { utils } from "../../init";
 function renderInput(h, _vm) {
   const {
     onInputFocus,
+    onInputKeDown,
     onInputChangeBefore,
     text,
     selectValueText,
@@ -22,6 +23,7 @@ function renderInput(h, _vm) {
     ref: "input",
     on: {
       focus: onInputFocus,
+      keydown: onInputKeDown,
       keyup: onInputKeyUp,
       change: onInputChangeBefore
     }
@@ -142,6 +144,8 @@ export default {
       );
       const props = {
         props: {
+          highlightHoverRow: true,
+          highlightCurrentRow: true,
           defaultSelectFristRow: true,
           "show-overflow": true,
           ...table.props,
@@ -183,8 +187,10 @@ export default {
   },
   methods: {
     focus() {
-      console.log(this.$refs.input);
       this.$refs.input.focus();
+    },
+    select() {
+      this.$refs.input.$refs.input.select();
     },
     onTableRowSelect({ row, columnIndex }) {
       let { checkboxIndex } = this;
@@ -277,13 +283,22 @@ export default {
       this.$emit("input", value);
       this.$emit("change", value, {});
     },
-    onInputEnter() {
+    onInputEnter(e) {
       const dataTable = this.$refs.table;
       const pulldown = this.$refs.pulldownTable;
       const tableSelectedRow = dataTable.getCurrentRecord();
       if (tableSelectedRow && pulldown.isPanelVisible()) {
         this.onTableRowSelect({ row: tableSelectedRow });
       }
+      this.$refs.pulldownTable.hidePanel();
+      this.$emit("inputPressEnter", e);
+    },
+    onInputKeDown(e) {
+      const { key } = e;
+      if (key == "Tab") {
+        this.$refs.pulldownTable.hidePanel();
+      }
+      this.$emit("keydown", e);
     },
     // 快捷键上下切换选中行
     onInputKeyUp(e) {
@@ -292,9 +307,7 @@ export default {
       let isVisible = this.$refs.pulldownTable.isPanelVisible();
       if (key == "Enter") {
         if (isVisible) {
-          onInputEnter();
-          this.$refs.pulldownTable.hidePanel();
-          this.$emit("inputPressEnter", e);
+          onInputEnter(e);
         }
       }
       if (!isVisible && key == "ArrowDown") {

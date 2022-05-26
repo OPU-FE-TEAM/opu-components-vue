@@ -7,12 +7,14 @@
         :foldingButtonProps="false"
         autoSetDefaultValue
         autoSetDefaultFirst
+        autoEnterSelectInput
         autoFocus="name3"
         loadOptionsIdField="id"
         titleWidth="auto"
       >
       </DataForm>
       <a-button @click="onSetData">赋值</a-button>
+      <a-button @click="onGetData">获取</a-button>
     </div>
   </div>
 </template>
@@ -62,6 +64,7 @@ let data = [
     ]
   }
 ];
+console.log(data);
 
 function getData(arr = {}) {
   console.log(arr);
@@ -94,6 +97,33 @@ function getData(arr = {}) {
   });
 }
 
+function getSelectGroupData() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const data1 = [
+        {
+          Id: 2,
+          Text: "男",
+          code: "boy"
+        },
+        {
+          Id: 3,
+          Text: "女",
+          isSelected: true,
+          code: "girl"
+        },
+        {
+          Id: 4,
+          Text: "未知"
+        }
+      ];
+      resolve({
+        data: data1
+      });
+    }, 500);
+  });
+}
+
 export default {
   components: {
     // test1
@@ -115,8 +145,59 @@ export default {
           }
         },
         {
-          title: "输入框",
-          field: "input"
+          field: "ordinary11",
+          title: "请求下拉123",
+          itemRender: {
+            name: "a-select",
+            props: {
+              defaultField: "isSelected",
+              valueField: "Id",
+              labelField: "Text",
+              api: getSelectGroupData
+            }
+          }
+        },
+        // {
+        //   title: "输入框",
+        //   field: "input"
+        // },
+        {
+          title: "日期",
+          field: "date",
+          itemRender: {
+            name: "a-date-picker",
+            // YearPicker
+            // name: "a-date-picker",
+            props: {}
+          }
+        },
+        {
+          field: "ordinary1",
+          title: "请求下拉123",
+          itemRender: {
+            name: "a-select",
+            props: {
+              defaultField: "isSelected",
+              valueField: "Id",
+              labelField: "Text",
+              api: getSelectGroupData
+            }
+          }
+        },
+        {
+          title: "数组",
+          field: "number",
+          option: {
+            initialValue: "0"
+          },
+          itemRender: {
+            name: "a-input-number",
+            on: {
+              change: e => {
+                console.log(e);
+              }
+            }
+          }
         },
         {
           field: "pulldown",
@@ -224,27 +305,27 @@ export default {
             }
           }
         },
-        {
-          title: "出库去向",
-          field: "trackId",
-          itemRender: {
-            name: "a-cascader",
-            props: {
-              placeholder: "请选择",
-              options: data,
-              labelField: "label",
-              valueField: "value",
-              fieldNames: {
-                label: "label",
-                value: "value",
-                children: "children"
-              }
-            },
-            on: {
-              change: this.onChangeTrackId
-            }
-          }
-        },
+        // {
+        //   title: "出库去向",
+        //   field: "trackId",
+        //   itemRender: {
+        //     name: "a-cascader",
+        //     props: {
+        //       placeholder: "请选择",
+        //       options: data,
+        //       labelField: "label",
+        //       valueField: "value",
+        //       fieldNames: {
+        //         label: "label",
+        //         value: "value",
+        //         children: "children"
+        //       }
+        //     },
+        //     on: {
+        //       change: this.onChangeTrackId
+        //     }
+        //   }
+        // },
         {
           title: "输入框1",
           field: "input1"
@@ -292,11 +373,10 @@ export default {
     };
   },
   mounted() {
-    let that = this;
-    setTimeout(() => {
-      console.log("触发");
-      that.$refs.dataForm.setFieldFocus("pulldown");
-    }, 1000);
+    // let that = this;
+    // setTimeout(() => {
+    //   that.$refs.dataForm.setFieldFocus("pulldown");
+    // }, 1000);
   },
   methods: {
     onChange(e) {
@@ -315,6 +395,9 @@ export default {
       this.$refs.dataForm.setData({
         pulldown: "6666下拉"
       });
+    },
+    onGetData() {
+      console.log(this.$refs.dataForm.getData());
     }
   }
 };

@@ -74,6 +74,12 @@ export default {
       }
       this.onInputEvent();
     },
+    onKeyUpEnter(e) {
+      if (e.key === "Enter") {
+        e.stopPropagation();
+        this.$emit("inputPressEnter", e);
+      }
+    },
     // 监听输入事件
     onInputEvent() {
       const { componentProps } = this;
@@ -84,12 +90,8 @@ export default {
           const inputDom = input[input.length - 1];
           inputDom.selectionStart = 0; // 选中开始位置
           inputDom.selectionEnd = inputDom.value.length;
-          inputDom.addEventListener("keyup", function(e) {
-            if (e.key === "Enter") {
-              e.stopPropagation();
-              that.$emit("inputPressEnter", e);
-            }
-          });
+          inputDom.removeEventListener("keyup", that.onKeyUpEnter);
+          inputDom.addEventListener("keyup", that.onKeyUpEnter);
           inputDom.oninput = function(e) {
             if (e.target.value && e.inputType !== "deleteContentBackward") {
               const value = e.target.value;

@@ -8,6 +8,7 @@ import actionModal from "./actionModal";
 const optionsComponents = ["a-radio-group", "a-checkbox-group", "a-cascader"];
 // 回车跳转下一个focus
 function nextItemFocus(item, _vm, e = {}) {
+  if (e && e.type != "keyup") return;
   const { enterToNextItemFocusList, setFieldFocus } = _vm;
   if (item.itemRender) {
     if (
@@ -351,6 +352,7 @@ function renderItemInput(item, h, _vm) {
     // }
     if (
       [
+        "a-input-number",
         "a-date-picker",
         "a-time-picker",
         "a-range-picker-split",
@@ -383,58 +385,6 @@ function renderItemInput(item, h, _vm) {
         };
       }
       props.props.items = item.itemRender.items;
-      // } else if (renderName == "a-select") {
-      //   // 有可选数据的组件
-      //   renderName = "opu-select";
-      // } else if (renderName === "a-date-picker") {
-      //   renderName = "opu-date-picker";
-      //   if (props.on && utils.isObject(props.on)) {
-      //     props.on.inputPressEnter = e => {
-      //       nextItemFocus(item, _vm, e);
-      //     };
-      //   } else {
-      //     props.on = {
-      //       inputPressEnter: e => {
-      //         nextItemFocus(item, _vm, e);
-      //       }
-      //     };
-      //   }
-      // } else if (renderName === "a-time-picker") {
-      //   renderName = "opu-time-picker";
-      //   if (props.on && utils.isObject(props.on)) {
-      //     props.on.inputPressEnter = e => {
-      //       nextItemFocus(item, _vm, e);
-      //     };
-      //   } else {
-      //     props.on = {
-      //       inputPressEnter: e => {
-      //         nextItemFocus(item, _vm, e);
-      //       }
-      //     };
-      //   }
-      // } else if (renderName === "a-input-number-split") {
-      //   if (props.on && utils.isObject(props.on)) {
-      //     props.on.inputPressEnter = e => {
-      //       nextItemFocus(item, _vm, e);
-      //     };
-      //   } else {
-      //     props.on = {
-      //       inputPressEnter: e => {
-      //         nextItemFocus(item, _vm, e);
-      //       }
-      //     };
-      //   }
-      // } else if (renderName === "a-switch") {
-      //   renderName = "opu-switch";
-      // } else if (renderName === "a-checkbox") {
-      //   renderName = "opu-checkbox";
-      // } else if (renderName === "a-tree-select") {
-      //   renderName = "opu-tree-select";
-      // } else if (renderName === "a-select-group") {
-      //   renderName = "opu-select-group";
-      // } else if (renderName === "a-auto-complete") {
-      //   renderName = "opu-auto-complete";
-      //   props.props.componentPropsData = props.props;
     } else if (optionsComponents.includes(renderName)) {
       // 有可选数据的组件
       props.props.componentPropsData = props.props;
@@ -911,6 +861,10 @@ export default {
     autoSetDefaultFirstRequired: {
       type: Boolean,
       default: false
+    },
+    autoEnterSelectInput: {
+      type: [Boolean, String],
+      default: ""
     }
   },
   data() {
@@ -1051,6 +1005,14 @@ export default {
         clearUndefinedValue = config.clearUndefinedValue;
       }
       return clearUndefinedValue;
+    },
+    //是否清空找不到的值
+    formAutoEnterSelectInput() {
+      let autoEnterSelectInput = this.autoEnterSelectInput;
+      if (autoEnterSelectInput === "") {
+        autoEnterSelectInput = config.autoEnterSelectInput;
+      }
+      return autoEnterSelectInput;
     }
   },
   watch: {
@@ -1417,6 +1379,7 @@ export default {
       const item = this.$refs[refName];
       if (item && item.focus) {
         item.focus();
+        this.formAutoEnterSelectInput && item.select && item.select();
       }
     },
     // 设置一组字段的options数据
