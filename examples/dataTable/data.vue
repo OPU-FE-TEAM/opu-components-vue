@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-button @click="$refs.xGrid.showSetColumns()">设置表头1</a-button>
+    <a-button @click="showSetColumns">设置表头1</a-button>
     <a-button @click="onScroll">滚动</a-button>
     <DataTable
       ref="xGrid"
@@ -198,6 +198,9 @@ export default {
       console.log(a);
       console.log(b);
       console.log(c);
+    },
+    showSetColumns() {
+      this.$refs.xGrid.showSetColumns();
     }
   }
 };

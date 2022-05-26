@@ -463,11 +463,13 @@ function handleColumnsData(data, columns, configProps, _vm) {
         obj[key] = value;
       }
     }
+    let copyColumnChildren = [];
     // 合并传入的定义
     if (copyColumns && copyColumns.length) {
       const findIndex = copyColumns.findIndex(p => p.field === obj.field);
       if (findIndex > -1) {
         const find = copyColumns[findIndex];
+        copyColumnChildren = find.children ? find.children : [];
         obj = { ...obj, ...find };
         copyColumns.splice(findIndex, 1);
       }
@@ -475,7 +477,7 @@ function handleColumnsData(data, columns, configProps, _vm) {
     if (obj.children && obj.children.length) {
       obj.children = handleColumnsData(
         obj.children,
-        obj.children,
+        copyColumnChildren,
         configProps,
         _vm
       );
@@ -927,8 +929,9 @@ export default {
     },
     // 显示表头设置窗口
     showSetColumns() {
-      // const toolbar = this.$refs.headToolbar;
-      this.$refs.setColumsModal.show();
+      if (this.$refs.setColumsModal) {
+        this.$refs.setColumsModal.show();
+      }
     },
     // 设置表头
     setTableColumns(data) {
@@ -1083,18 +1086,22 @@ export default {
               ? { ...config.proxyColumns.props, ...opt.props }
               : config.proxyColumns.props;
           const data = utils.getObjData(configProps.list, res);
+          console.log(data);
           const tableColumns = handleColumnsData(
             data,
             columns,
             configProps,
             that
           );
+          console.log(tableColumns);
           this.backupColumns = utils.clone(tableColumns);
           // this.tableColumns = tableColumns.filter(
           //   p => p[configProps.show] !== false
           // );
 
           let hasCheckbox = false;
+          console.log(tableColumns);
+
           this.tableColumns = this.editColumnsRender(tableColumns, p => {
             if (!hasCheckbox && p.type == "checkbox") {
               hasCheckbox = true;
