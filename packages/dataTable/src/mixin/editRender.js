@@ -89,9 +89,9 @@ const editRender = {
       for (const key in data) {
         let item = data[key];
         if (editFieldList[key]) {
-          editOptions[key] = item;
+          // editOptions[key] = item;
+          editOptions[key] = item.map(p => this.optionDataRender(p, key));
         }
-        editOptions[key] = item.map(p => this.optionDataRender(p, key));
       }
       this.editOptions = editOptions;
       this.$refs.dataGrid.updateData();
@@ -105,7 +105,7 @@ const editRender = {
     editColumnsRender(data, filterCallback) {
       let { editType, editOptions, toHump, editDefaultOption } = this;
       let apiList = [];
-      let editFieldList = [];
+      let editFieldList = {};
       let getSelectOptions = config.getSelectOptions;
       data = data.filter(p => {
         if (filterCallback && !filterCallback(p)) {
@@ -208,23 +208,25 @@ const editRender = {
     },
     optionDataRender(o, field, pValue = "", editFieldList) {
       if (!editFieldList) editFieldList = this.editFieldList;
-      let { labelField, valueField, childrenField } = editFieldList[field];
-      if (o.value && !o[config.originalValueKey]) {
-        o[config.originalValueKey || "originalValueKey"] = o.value;
-      }
-      if (labelField != "label") {
-        o.label = o[labelField];
-      }
-      if (valueField != "value") {
-        o.value = o[valueField];
-      }
-      if (pValue) {
-        o._pValue = pValue;
-      }
-      if (childrenField != "children" && o[childrenField].length > 0) {
-        o.children = o[childrenField].map(p => {
-          return this.optionDataRender(p, field, o.value);
-        });
+      if (editFieldList[field]) {
+        let { labelField, valueField, childrenField } = editFieldList[field];
+        if (o.value && !o[config.originalValueKey]) {
+          o[config.originalValueKey || "originalValueKey"] = o.value;
+        }
+        if (labelField != "label") {
+          o.label = o[labelField];
+        }
+        if (valueField != "value") {
+          o.value = o[valueField];
+        }
+        if (pValue) {
+          o._pValue = pValue;
+        }
+        if (childrenField != "children" && o[childrenField].length > 0) {
+          o.children = o[childrenField].map(p => {
+            return this.optionDataRender(p, field, o.value);
+          });
+        }
       }
       return o;
     },
