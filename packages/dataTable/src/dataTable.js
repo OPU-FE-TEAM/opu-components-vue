@@ -931,7 +931,6 @@ export default {
     setTableColumns(data) {
       const { proxyColumns, fetchColumns, sortable } = this;
       if (data) {
-        this.backupColumns = columnsData;
         let columnsData = utils.clone(data);
         if (sortable) {
           columnsData = columnsData.map(p => {
@@ -939,6 +938,7 @@ export default {
             return p;
           });
         }
+        this.backupColumns = columnsData;
         const configProps =
           proxyColumns &&
           proxyColumns.props &&

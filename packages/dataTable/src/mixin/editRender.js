@@ -277,8 +277,14 @@ const editRender = {
         .catch(() => {});
     },
     selectFilterRender(props, field) {
-      let { labelField, valueField, searchFields } = this.editFieldList[field];
-      if (props.showSearch && !props.filterOption) {
+      if (
+        this.editFieldList[field] &&
+        props.showSearch &&
+        !props.filterOption
+      ) {
+        let { labelField, valueField, searchFields } = this.editFieldList[
+          field
+        ];
         let optionsData = props.options || [];
         props.filterOption = (input, option) => {
           const value = option.componentOptions.propsData.value;
@@ -314,7 +320,7 @@ const editRender = {
       delete props.dataSource;
       let { labelField, valueField } = this.editFieldList[field];
       if (props.search) {
-        dataSource = props.search(value, dataSource, row);
+        dataSource = props.search(value, dataSource, row, field);
       } else {
         const searchFields = props.searchFields || [];
         dataSource = dataSource.filter(p => {
@@ -502,7 +508,7 @@ const editRender = {
                               p => p[valueField] == row._pValue
                             );
                           }
-                          itemRender.on.change(value, row, pRow);
+                          itemRender.on.change(value, row, event, pRow);
                         }
                       }
                     }
