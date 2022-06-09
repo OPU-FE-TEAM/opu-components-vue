@@ -20,6 +20,11 @@ export default {
       optionsData: []
     };
   },
+  watch: {
+    treeData(val) {
+      this.setOptionsData(val);
+    }
+  },
   computed: {
     componentProps() {
       const {
@@ -85,7 +90,6 @@ export default {
       this.$emit("update", value);
       this.$emit("change", value);
     },
-
     setOptionsData(data) {
       this.optionsData = data;
       return data;

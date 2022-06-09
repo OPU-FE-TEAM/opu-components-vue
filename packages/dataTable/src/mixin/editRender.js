@@ -391,7 +391,7 @@ const editRender = {
           props = {
             size: this.editItemSize,
             ...props,
-            value: row[field],
+            value: utils.getObjData(field, row),
             disabled
           };
           let attr = {
@@ -399,12 +399,13 @@ const editRender = {
             style: this.editSlotItemRender(itemRender.style, event)
           };
 
-          var optionsField, value, options, trueValue, falseValue;
+          var optionsField, options, trueValue, falseValue;
 
           let ons = {
             ...itemRender.on,
             change: e => {
-              row[field] = e;
+              utils.setObjData(field, row, e);
+              // row[field] = e;
               row.ISEDIT = true;
               if (itemRender.on && itemRender.on.change) {
                 itemRender.on.change(e, event);
@@ -428,7 +429,8 @@ const editRender = {
                       ...ons,
                       change: e => {
                         let value = e.target.value;
-                        row[field] = value;
+                        utils.setObjData(field, row, value);
+                        // row[field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, event);
@@ -458,7 +460,8 @@ const editRender = {
                       ...ons,
                       change: e => {
                         let value = e;
-                        row[field] = value;
+                        utils.setObjData(field, row, value);
+                        // row[field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(value, event);
@@ -471,12 +474,11 @@ const editRender = {
               break;
             case "ASelect":
               optionsField = (props && props.optionsField) || "";
-              value = row[field];
               options = optionsField
                 ? row[optionsField]
                 : this.editOptions[field];
               if (props.optionsFilter) {
-                options = props.optionsFilter(cloneDeep(options), value);
+                options = props.optionsFilter(cloneDeep(options), props.value);
               }
               props = this.selectFilterRender(
                 {
@@ -497,7 +499,8 @@ const editRender = {
                     on: {
                       ...ons,
                       change: value => {
-                        row[field] = value;
+                        utils.setObjData(field, row, value);
+                        // row[field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           let { valueField } = this.editFieldList[field];
@@ -521,15 +524,13 @@ const editRender = {
               options = optionsField
                 ? row[optionsField]
                 : this.editOptions[field];
-              value = row[field];
               if (props.optionsFilter) {
-                options = props.optionsFilter(cloneDeep(options), value);
+                options = props.optionsFilter(cloneDeep(options), props.value);
               }
               var filterData = this.autoCompleteFilterRender(
                 {
                   size: this.editItemSize,
                   ...itemRender.props,
-                  value,
                   dataSource: options || [],
                   disabled
                 },
@@ -556,7 +557,12 @@ const editRender = {
                           value,
                           filterData.valueField
                         );
-                        row[field] = optionRow[filterData.labelField] || value;
+                        utils.setObjData(
+                          field,
+                          row,
+                          optionRow[filterData.labelField] || value
+                        );
+                        // row[field] = optionRow[filterData.labelField] || value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.select) {
                           itemRender.on.select(value, optionRow, event);
@@ -572,17 +578,18 @@ const editRender = {
               );
               break;
             case "ADatePicker":
+              var dateValue = !props.value
+                ? null
+                : props.value.format
+                ? props.value
+                : moment(props.value);
               element = (
                 <a-date-picker
                   {...{
                     ...attr,
                     props: {
                       ...props,
-                      value: !row[field]
-                        ? null
-                        : row[field].format
-                        ? row[field]
-                        : moment(row[field])
+                      value: dateValue
                     },
                     on: {
                       ...ons
@@ -599,7 +606,6 @@ const editRender = {
                     props: {
                       clearIcon: true,
                       ...props,
-                      value: row[field],
                       disabled
                     },
                     on: {
@@ -625,7 +631,8 @@ const editRender = {
                       ...ons,
                       change: e => {
                         let value = e ? trueValue : falseValue;
-                        row[field] = value;
+                        utils.setObjData(field, row, value);
+                        // row[field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, event);
@@ -652,7 +659,8 @@ const editRender = {
                       ...ons,
                       change: e => {
                         let value = e.target.checked ? trueValue : falseValue;
-                        row[field] = value;
+                        utils.setObjData(field, row, value);
+                        // row[field] = value;
                         row.ISEDIT = true;
                         if (itemRender.on && itemRender.on.change) {
                           itemRender.on.change(e, event);
