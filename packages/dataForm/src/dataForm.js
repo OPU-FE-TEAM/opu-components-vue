@@ -923,13 +923,11 @@ export default {
       return this.items
         .map(item => {
           if (
-            (item.itemRender &&
-              item.itemRender.props &&
-              item.itemRender.props.disabled) ||
-            (item.itemRender &&
-              ((item.itemRender.name && item.itemRender.name == "hidden") ||
-                item.itemRender.slot ||
-                item.itemRender.customRender))
+            item.itemRender &&
+            ((item.itemRender.props && item.itemRender.props.disabled) ||
+              (item.itemRender.name && item.itemRender.name == "hidden") ||
+              item.itemRender.slot ||
+              item.itemRender.customRender)
           ) {
             return "";
           } else if (
