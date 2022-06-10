@@ -173,30 +173,30 @@ export default {
               return [<div>222222</div>];
             }
           }
+        },
+        {
+          field: "orderType.name",
+          align: "left",
+          title: "下拉框",
+          minWidth: 150,
+          itemRender: {
+            name: "ASelect",
+            props: {
+              options: [
+                { value: "1", label: "省份" },
+                { value: "2", label: "城市" },
+                { value: "3", label: "区域" }
+              ]
+            },
+            on: {
+              change: (value, row, pRow) => {
+                console.log(value);
+                console.log(row);
+                console.log(pRow);
+              }
+            }
+          }
         }
-        // {
-        //   field: "orderType",
-        //   align: "left",
-        //   title: "下拉框",
-        //   minWidth: 150,
-        //   itemRender: {
-        //     name: "ASelect",
-        //     props: {
-        //       options: [
-        //         { value: "1", label: "省份" },
-        //         { value: "2", label: "城市" },
-        //         { value: "3", label: "区域" }
-        //       ]
-        //     },
-        //     on: {
-        //       change: (value, row, pRow) => {
-        //         console.log(value);
-        //         console.log(row);
-        //         console.log(pRow);
-        //       }
-        //     }
-        //   }
-        // },
         // {
         //   field: "switch",
         //   align: "left",
@@ -401,7 +401,9 @@ export default {
           checkbox1: "1",
           name: "123",
           number: "333",
-          orderType: "",
+          orderType: {
+            name: ""
+          },
           apiSelect: "",
           apiSelect1: "",
           date: moment(),

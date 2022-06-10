@@ -58,7 +58,7 @@ XEUtils.mixin({
       const keysArr = key.split(".");
       for (let i = 0; i < keysArr.length; i++) {
         const k = keysArr[i];
-        if (value[k]) {
+        if (value[k] !== undefined) {
           value = value[k];
         } else {
           break;
@@ -68,6 +68,29 @@ XEUtils.mixin({
       value = value[key];
     }
     return value;
+  },
+  /**
+   * @description: 对象中指定key的值 更改
+   * @param {*} key
+   * @param {*} obj
+   * @param {*} value
+   * @return {*}
+   */
+  setObjData(key, obj, value) {
+    let target = obj;
+    if (key && key.indexOf(".") > -1) {
+      const keysArr = key.split(".");
+      for (let i = 0; i < keysArr.length; i++) {
+        const k = keysArr[i];
+        if (i + 1 == keysArr.length) {
+          target[k] = value;
+        } else {
+          target = target[k];
+        }
+      }
+    } else if (key) {
+      target[key] = value;
+    }
   },
   /**
    * 判断两个数组中是否存在相同值

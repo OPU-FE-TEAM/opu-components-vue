@@ -672,11 +672,6 @@ export default {
         handleTableQuery,
         pagerConfigOpt,
         proxyConfigOpt,
-        // tableColumns,
-        // renderCheckbox,
-        // renderPulldownTable,
-        // renderPulldownTableView,
-        // renderSwitch,
         height,
         highlightCurrentUnselect,
         onCurrentRowCellClick,
@@ -685,7 +680,6 @@ export default {
         handleServerSort,
         keyboardSpace
       } = that;
-      // let hasCheckbox = false;
       const propsData = that.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
 
@@ -937,7 +931,6 @@ export default {
     setTableColumns(data) {
       const { proxyColumns, fetchColumns, sortable } = this;
       if (data) {
-        this.backupColumns = columnsData;
         let columnsData = utils.clone(data);
         if (sortable) {
           columnsData = columnsData.map(p => {
@@ -945,6 +938,7 @@ export default {
             return p;
           });
         }
+        this.backupColumns = columnsData;
         const configProps =
           proxyColumns &&
           proxyColumns.props &&
@@ -1086,21 +1080,18 @@ export default {
               ? { ...config.proxyColumns.props, ...opt.props }
               : config.proxyColumns.props;
           const data = utils.getObjData(configProps.list, res);
-          console.log(data);
           const tableColumns = handleColumnsData(
             data,
             columns,
             configProps,
             that
           );
-          console.log(tableColumns);
           this.backupColumns = utils.clone(tableColumns);
           // this.tableColumns = tableColumns.filter(
           //   p => p[configProps.show] !== false
           // );
 
           let hasCheckbox = false;
-          console.log(tableColumns);
 
           this.tableColumns = this.editColumnsRender(tableColumns, p => {
             if (!hasCheckbox && p.type == "checkbox") {
@@ -1109,6 +1100,7 @@ export default {
 
             return p[configProps.show] !== false;
           });
+          this.hasCheckbox = hasCheckbox;
         });
       }
     },
