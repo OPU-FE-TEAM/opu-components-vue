@@ -54,7 +54,7 @@ export default {
   },
   data() {
     return {
-      tab: 1,
+      tab: 10,
       locale: zh_CN
     };
   }
