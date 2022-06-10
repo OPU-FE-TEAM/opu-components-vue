@@ -82,7 +82,7 @@ export default {
     focus() {
       // const that = this;
       const input = this.$refs.inputComponent;
-      input.focus();
+      input && input.focus && input.focus();
       // const el = input.$el;
       // // select获得输入焦点，弹出下拉面板
       // const box = el.getElementsByClassName("ant-select-selection__rendered");

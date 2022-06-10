@@ -171,12 +171,18 @@ export default {
     },
     focus() {
       const input = this.$refs.inputComponent;
-      input.focus();
-      const el = input.$el;
-      // select获得输入焦点，弹出下拉面板
-      const box = el.getElementsByClassName("ant-select-selection__rendered");
-      if (box && box.length) {
-        box[0].click();
+      if (input) {
+        input.focus && input.focus();
+        const el = input.$el;
+        if (el) {
+          // select获得输入焦点，弹出下拉面板
+          const box = el.getElementsByClassName(
+            "ant-select-selection__rendered"
+          );
+          if (box && box.length) {
+            box[0].click();
+          }
+        }
       }
     },
     renderOptGroup(h) {
