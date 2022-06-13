@@ -931,14 +931,11 @@ export default {
           ) {
             return "";
           } else if (
-            item.itemRender &&
-            this.focusItemTypes.includes(item.itemRender.name) &&
-            (!(
-              item.itemRender.props &&
-              (item.itemRender.props.disabled == true ||
-                item.itemRender.props.readonly == true)
-            ) ||
-              !item.itemRender.props)
+            !item.itemRender ||
+            (this.focusItemTypes.includes(item.itemRender.name) &&
+              (!item.itemRender.props ||
+                item.itemRender.props.disabled == true ||
+                item.itemRender.props.readonly == true))
           ) {
             // 可获得焦点的组件
             return item.field;
