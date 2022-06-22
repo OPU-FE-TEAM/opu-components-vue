@@ -876,6 +876,7 @@ export default {
       focusItemTypes: [
         "a-input",
         "a-password",
+        "a-input-password",
         "a-auto-complete",
         "a-input-number",
         "a-select",
@@ -924,18 +925,17 @@ export default {
         .map(item => {
           if (
             item.itemRender &&
-            ((item.itemRender.props && item.itemRender.props.disabled) ||
-              (item.itemRender.name && item.itemRender.name == "hidden") ||
+            ((item.itemRender.props &&
+              (item.itemRender.props.disabled ||
+                item.itemRender.props.readonly)) ||
+              item.itemRender.name == "hidden" ||
               item.itemRender.slot ||
               item.itemRender.customRender)
           ) {
             return "";
           } else if (
             !item.itemRender ||
-            (this.focusItemTypes.includes(item.itemRender.name) &&
-              (!item.itemRender.props ||
-                item.itemRender.props.disabled == true ||
-                item.itemRender.props.readonly == true))
+            this.focusItemTypes.includes(item.itemRender.name)
           ) {
             // 可获得焦点的组件
             return item.field;
