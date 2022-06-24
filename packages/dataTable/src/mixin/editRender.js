@@ -530,7 +530,7 @@ const editRender = {
               var filterData = this.autoCompleteFilterRender(
                 {
                   size: this.editItemSize,
-                  ...itemRender.props,
+                  ...props,
                   dataSource: options || [],
                   disabled
                 },
