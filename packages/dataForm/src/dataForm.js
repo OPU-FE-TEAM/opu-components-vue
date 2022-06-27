@@ -926,19 +926,20 @@ export default {
     enterToNextItemFocusList() {
       return this.items
         .map(item => {
+          let itemRender = item.itemRender;
           if (
-            item.itemRender &&
-            ((item.itemRender.props &&
-              (item.itemRender.props.disabled ||
-                item.itemRender.props.readonly)) ||
-              item.itemRender.name == "hidden" ||
-              item.itemRender.slot ||
-              item.itemRender.customRender)
+            itemRender &&
+            ((itemRender.props &&
+              (itemRender.props.disabled || itemRender.props.readonly)) ||
+              itemRender.name == "hidden" ||
+              itemRender.slot ||
+              itemRender.customRender)
           ) {
             return "";
           } else if (
-            !item.itemRender ||
-            this.focusItemTypes.includes(item.itemRender.name)
+            !itemRender ||
+            !itemRender.name ||
+            this.focusItemTypes.includes(itemRender.name)
           ) {
             // 可获得焦点的组件
             return item.field;
