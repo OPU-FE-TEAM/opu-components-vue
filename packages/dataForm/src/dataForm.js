@@ -107,18 +107,21 @@ const fetchItemPropsOptionsApiList = async function(
       list = beforeRes;
     }
   }
+  let fields = [];
   let promises = list.map(item => {
     const { api, param } = item;
+    const field = item.field;
     // 添加表单字段参数
     if (
-      item.field &&
+      field &&
       formData &&
-      formData[item.field] &&
+      formData[field] &&
       config.getSelectOptions &&
       config.getSelectOptions.loadOptionsIdField &&
       ((item.props && item.props.autoLoadOptionsId !== false) || !item.props)
     ) {
-      param[config.getSelectOptions.loadOptionsIdField] = formData[item.field];
+      fields.push(fields);
+      param[config.getSelectOptions.loadOptionsIdField] = formData[field];
     }
     return api(param);
   });
@@ -154,7 +157,7 @@ const fetchItemPropsOptionsApiList = async function(
       setFieldsOptions(json);
       let defaultFormData = {};
       if (autoSetDefaultValue) {
-        defaultFormData = setFieldsOptionsDefaultValues();
+        defaultFormData = setFieldsOptionsDefaultValues(fields);
       }
       onOptionsLoadAfter(json, defaultFormData);
       callback && callback(json);
@@ -1191,9 +1194,18 @@ export default {
           formData,
           callback
         );
-      } else if (this.autoSetDefaultValue) {
-        this.setFieldsOptionsDefaultValues();
       }
+    },
+    /**
+     * @description: 修改items内容
+     * @param {*}
+     * @return {*}
+     */
+    reviseItems(data) {
+      this.itemsOptions = this.itemsOptions.map(p => {
+        let field = p.field;
+        return data[field] ? data[field] : p;
+      });
     },
     // 获取表单数据，不验证
     getData() {
