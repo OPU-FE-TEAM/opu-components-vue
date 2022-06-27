@@ -38,6 +38,7 @@ export default {
     DataTable
   },
   props: {
+    ...Pulldown.props,
     table: Object,
     valueField: {
       type: String,
@@ -115,10 +116,12 @@ export default {
       const { pulldownExtendProps } = this;
       const propsData = this.$options.propsData;
       const props = Object.assign({}, pulldownExtendProps);
+      delete propsData.value;
       Object.assign(props, {
         props: {
           modelValue: true,
           transfer: true,
+          destroyOnClose: true,
           ...propsData
         }
       });

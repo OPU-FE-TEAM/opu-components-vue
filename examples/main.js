@@ -46,187 +46,125 @@ function getSelectData(arr) {
 
 function getColumns(arr) {
   return new Promise(resolve => {
-    console.log(arr);
+    console.log("获取表头", arr);
     setTimeout(() => {
       // const code = arr && arr.code ? arr.code : "";
       const list = [
         {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "HIS编码",
-          drag: true,
-          freeze: "none",
-          isHide: false,
-          name: "hisId",
-          parentCode: "",
-          rowSpan: null,
+          name: "name",
+          sort: 0,
           show: true,
-          sort: 2,
-          sysColumnName: "HIS编码",
-          width: 120
-        },
-        {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品编码",
+          width: 180,
           drag: true,
-          freeze: null,
-          isHide: false,
-          name: "code",
-          parentCode: "",
-          rowSpan: null,
-          show: true,
-          sort: 3,
-          sysColumnName: "物品编码",
-          width: 180
-        },
-        {
           align: "left",
-          children: [],
-          colSpan: null,
+          parentCode: "",
           customName: "物品名称",
-          drag: true,
           freeze: null,
-          isHide: false,
-          name: "name",
-          parentCode: "",
-          rowSpan: null,
-          show: true,
-          sort: 4,
+          children: [],
           sysColumnName: "物品名称",
-          width: 180
+          isHide: false,
+          rowSpan: null,
+          colSpan: null
         },
         {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品名称1",
-          drag: true,
-          freeze: null,
-          isHide: false,
-          name: "name",
-          parentCode: "",
-          rowSpan: null,
+          name: "goodsCode",
+          sort: 1,
           show: true,
-          sort: 4,
-          sysColumnName: "物品名称1",
-          width: 180
+          width: 180,
+          drag: true,
+          align: "left",
+          parentCode: "",
+          customName: "物品编码",
+          freeze: null,
+          children: [],
+          sysColumnName: "物品编码",
+          isHide: false,
+          rowSpan: null,
+          colSpan: null
         },
         {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品名称2",
-          drag: true,
-          freeze: null,
-          isHide: false,
-          name: "name",
-          parentCode: "",
-          rowSpan: null,
+          name: "ending",
+          sort: 26,
           show: true,
-          sort: 4,
-          sysColumnName: "物品名称2",
-          width: 180
-        },
-        {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品名称3",
+          width: 80,
           drag: true,
-          freeze: null,
-          isHide: false,
-          name: "name",
-          parentCode: "",
-          rowSpan: null,
-          show: true,
-          sort: 4,
-          sysColumnName: "物品名称3",
-          width: 180
-        },
-        {
           align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品名称4",
-          drag: true,
+          parentCode: null,
+          customName: "期末",
           freeze: null,
+          children: [
+            {
+              name: "endingQuantity",
+              sort: 60,
+              show: true,
+              width: 100,
+              drag: true,
+              align: "right",
+              parentCode: "ending",
+              customName: "期末数量",
+              freeze: "",
+              children: [],
+              sysColumnName: "期末数量",
+              isHide: false,
+              rowSpan: null,
+              colSpan: null
+            },
+            {
+              name: "endingAvgPrice",
+              sort: 61,
+              show: true,
+              width: 160,
+              drag: true,
+              align: "right",
+              parentCode: "ending",
+              customName: "期末进货均价",
+              freeze: null,
+              children: [],
+              sysColumnName: "期末进货均价",
+              isHide: false,
+              rowSpan: null,
+              colSpan: null
+            },
+            {
+              name: "endingTotalPrice",
+              sort: 62,
+              show: true,
+              width: 160,
+              drag: true,
+              align: "right",
+              parentCode: "ending",
+              customName: "期末进货金额",
+              freeze: null,
+              children: [],
+              sysColumnName: "期末进货金额",
+              isHide: false,
+              rowSpan: null,
+              colSpan: null
+            },
+            {
+              name: "endingRetailPrice",
+              sort: 63,
+              show: true,
+              width: 160,
+              drag: true,
+              align: "right",
+              parentCode: "ending",
+              customName: "期末售价金额",
+              freeze: null,
+              children: [],
+              sysColumnName: "期末售价金额",
+              isHide: false,
+              rowSpan: null,
+              colSpan: null
+            }
+          ],
+          sysColumnName: "期末",
           isHide: false,
-          name: "name",
-          parentCode: "",
           rowSpan: null,
-          show: true,
-          sort: 4,
-          sysColumnName: "物品名称4",
-          width: 180
-        },
-        {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品名称5",
-          drag: true,
-          freeze: null,
-          isHide: false,
-          name: "name",
-          parentCode: "",
-          rowSpan: null,
-          show: true,
-          sort: 4,
-          sysColumnName: "物品名称5",
-          width: 180
-        },
-        {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品名称6",
-          drag: true,
-          freeze: null,
-          isHide: false,
-          name: "name",
-          parentCode: "",
-          rowSpan: null,
-          show: true,
-          sort: 4,
-          sysColumnName: "物品名称6",
-          width: 180
-        },
-        {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品名称7",
-          drag: true,
-          freeze: null,
-          isHide: false,
-          name: "name",
-          parentCode: "",
-          rowSpan: null,
-          show: true,
-          sort: 4,
-          sysColumnName: "物品名称7",
-          width: 180
-        },
-        {
-          align: "left",
-          children: [],
-          colSpan: null,
-          customName: "物品名称8",
-          drag: true,
-          freeze: null,
-          isHide: false,
-          name: "name",
-          parentCode: "",
-          rowSpan: null,
-          show: true,
-          sort: 4,
-          sysColumnName: "物品名称8",
-          width: 180
+          colSpan: 4
         }
       ];
+
       const json = {
         // data: [...list],
         // total: 100
@@ -250,6 +188,17 @@ function getColumns(arr) {
 //     }, 500);
 //   });
 // }
+function handleTableSetColumnsData(data) {
+  return data.map((item, index) => {
+    item.sort = index;
+    item.customName = item.title;
+    item.freeze = item.fixed ? item.fixed : "";
+    if (item.children && item.children.length) {
+      item.children = handleTableSetColumnsData(item.children);
+    }
+    return item;
+  });
+}
 
 DataForm.setup({
   titleColon: false,
@@ -345,6 +294,14 @@ DataTable.setup({
       }
     }
   },
+  proxyConfig: {
+    seq: true, // 启用动态序号代理
+    props: {
+      result: "data.datas",
+      total: "data.total",
+      list: "data.datas"
+    }
+  },
   proxyColumns: {
     props: {
       list: "data",
@@ -375,15 +332,17 @@ DataTable.setup({
         defaultTitle: "sysColumnName"
       },
       defaultAjax: {
-        query: getColumns
-        // submit: saveColumns
+        query: getColumns,
+        submit: json => {
+          console.log(json);
+          debugger;
+        }
       },
       on: {
         submitBefore: values => {
-          console.log(values);
           return {
-            code: values.code,
-            list: values.data
+            checkType: values.typeCode,
+            configList: handleTableSetColumnsData(values.data)
           };
         }
       }

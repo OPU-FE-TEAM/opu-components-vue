@@ -1,15 +1,19 @@
 <template>
   <div>
-    <pulldownTable
-      :table="table"
-      :searchBefore="onSearchBefore"
-      searchField="key"
-      v-model="value"
-      style="width:300px"
-      @inputChange="onInputChange"
-      @change="onChange"
-      textField="sex"
-    />
+    <button @click="onShow">显示</button>
+    <modal v-model="show" :width="800">
+      <!-- <pulldownTable
+        :table="table"
+        :searchBefore="onSearchBefore"
+        searchField="key"
+        v-model="value"
+        style="width:300px"
+        @inputChange="onInputChange"
+        @change="onChange"
+        textField="sex"
+      /> -->
+      <data-form :items="formItems" />
+    </modal>
   </div>
 </template>
 
@@ -43,6 +47,11 @@ export default {
     return {
       table: {
         props: {
+          proxyColumns: {
+            params: {
+              queryFlag: true
+            }
+          },
           setcolumnsConfig: {
             modal: {
               props: {
@@ -223,7 +232,78 @@ export default {
           }
         }
       },
-      value: "123"
+      value: "123",
+      show: false,
+      formItems: [
+        {
+          title: "物品",
+          field: "goodsName",
+          itemRender: {
+            name: "pulldown-table",
+            props: {
+              valueField: "name",
+              searchField: "keyword",
+              allowInputValue: false,
+              retainSearchValue: false,
+              table: {
+                props: {
+                  sortable: true,
+                  sortConfig: { remote: true },
+                  columns: [],
+                  height: "400px",
+                  highlightHoverRow: true,
+                  highlightCurrentRow: true,
+                  proxyColumns: {
+                    params: {
+                      queryFlag: true
+                    }
+                  },
+                  setcolumnsConfig: {
+                    proxyConfig: {
+                      params: {
+                        queryFlag: false
+                      }
+                    }
+                  },
+                  proxyConfig: {
+                    autoLoad: true,
+                    ajax: {
+                      query: () => {
+                        return new Promise(resolve => {
+                          console.log("请求数据");
+                          resolve({
+                            code: 0,
+                            data: {
+                              datas: [
+                                {
+                                  id: 1,
+                                  name: "aaaa",
+                                  endingQuantity: "111",
+                                  endingAvgPrice: "22"
+                                },
+                                {
+                                  id: 2,
+                                  endingQuantity: "aaa",
+                                  endingAvgPrice: "bbb",
+                                  name: "bbbb"
+                                }
+                              ]
+                            }
+                          });
+                        });
+                      }
+                    }
+                  }
+                },
+                style: {
+                  width: "calc(65vw)"
+                }
+              }
+            },
+            on: {}
+          }
+        }
+      ]
     };
   },
   methods: {
@@ -237,6 +317,9 @@ export default {
     },
     onChange(e) {
       console.log(e);
+    },
+    onShow() {
+      this.show = true;
     }
   }
 };

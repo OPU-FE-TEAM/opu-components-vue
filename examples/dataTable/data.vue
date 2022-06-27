@@ -12,6 +12,9 @@
       highlightCurrentUnselect
       :columns="tableColumn"
       @current-change="change"
+      :setcolumns-config="setColumnsConfig"
+      :proxy-columns="proxyColumns"
+      :head-toolbar="headToolbar"
     >
       <!-- :checkboxConfig="{ highlight: true, trigger: 'row' }" -->
     </DataTable>
@@ -19,72 +22,219 @@
 </template>
 
 <script>
-// import {utils} from '../../index'
-
 export default {
   components: {},
   data() {
+    const goodsItem = {
+      title: "物品",
+      field: "goodsName",
+      itemRender: {
+        name: "pulldown-table",
+        props: {
+          valueField: "name",
+          searchField: "keyword",
+          allowInputValue: false,
+          retainSearchValue: false,
+          table: {
+            props: {
+              sortable: true,
+              sortConfig: { remote: true },
+              columns: [
+                // {
+                //   field: "name",
+                //   title: "物品名称"
+                // },
+                // {
+                //   field: "goodsCode",
+                //   title: "物品编码"
+                // },
+                // {
+                //   field: "ending",
+                //   title: "期末",
+                //   children: [
+                //     {
+                //       field: "endingQuantity",
+                //       title: "期末数量"
+                //     },
+                //     {
+                //       field: "endingAvgPrice",
+                //       title: "期末进货均价"
+                //     },
+                //     {
+                //       field: "endingTotalPrice",
+                //       title: "期末进货金额"
+                //     },
+                //     {
+                //       field: "endingRetailPrice",
+                //       title: "期末售价金额"
+                //     }
+                //   ]
+                // }
+              ],
+              height: "400px",
+              highlightHoverRow: true,
+              highlightCurrentRow: true,
+              proxyColumns: {
+                params: {
+                  queryFlag: true
+                }
+              },
+              setcolumnsConfig: {
+                proxyConfig: {
+                  params: {
+                    queryFlag: false
+                  }
+                }
+              },
+
+              proxyConfig: {
+                autoLoad: true,
+                ajax: {
+                  query: () => {
+                    return new Promise(resolve => {
+                      console.log("请求数据");
+                      resolve({
+                        code: 0,
+                        data: {
+                          datas: [
+                            {
+                              id: 1,
+                              name: "aaaa",
+                              endingQuantity: "111",
+                              endingAvgPrice: "22"
+                            },
+                            {
+                              id: 2,
+                              endingQuantity: "aaa",
+                              endingAvgPrice: "bbb",
+                              name: "bbbb"
+                            }
+                          ]
+                        }
+                      });
+                    });
+                  }
+                }
+              }
+            },
+            style: {
+              width: "calc(65vw)"
+            }
+          }
+        },
+        on: {}
+      }
+    };
     return {
       loading: false,
+      headToolbar: {
+        search: {
+          layout: "inline",
+          titleWidth: "auto",
+          items: [
+            goodsItem,
+            {
+              field: "keyword",
+              title: "关键字",
+              folding: true,
+              itemRender: {}
+            }
+          ],
+          advancedSearchModal: {
+            props: {
+              width: 800,
+              title: "高级搜索"
+            }
+          },
+          advancedSearchForm: {
+            props: {
+              layout: "flex",
+              colspan: 2
+            }
+          },
+          advancedSearchButtonProps: {
+            content: "高级搜索"
+          },
+          submitButtonProps: { content: "搜索" }
+        }
+      },
+      // proxyColumns: {
+      //   params: {
+      //     queryFlag: false,
+      //     typeCode: "abc"
+      //   }
+      // },
+      setColumnsConfig: {
+        proxyConfig: {
+          params: { queryFlag: false, typeCode: "StatisticList" }
+        }
+      },
       proxyColumns: {
-        params: {
-          queryFlag: false,
-          typeCode: "abc"
+        params: { queryFlag: true, typeCode: "StatisticList" }
+      },
+      setColumns: {
+        // modal: {
+        //   props: {
+        //     title: "自定义标题"
+        //   }
+        // },
+        proxyConfig: {
+          props: {}
         }
       },
 
       tableColumn: [
-        {
-          type: "checkbox",
-          title: "",
-          width: 30,
-          fixed: "left"
-        },
+        // {
+        //   type: "checkbox",
+        //   title: "",
+        //   width: 30,
+        //   fixed: "left"
+        // },
         // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         {
-          title: "Name",
-          field: "name",
-          sortable: true,
-          width: 200
-        },
-        {
-          title: "Nex",
-          field: "sex",
-          align: "left",
-          itemRender: {
-            name: "ADatePicker",
-            props: {
-              format: "YYYY-MM-DD",
-              inputReadOnly: true,
-              allowClear: false
+          field: "ending",
+          children: [
+            {
+              field: "endingQuantity",
+
+              slots: {
+                default: ({ row }) => {
+                  return [<b>{row.endingQuantity}</b>];
+                }
+              }
             },
-            on: {
-              change: this.onCheckOutDateChange
+            {
+              field: "endingAvgPrice",
+              slots: {
+                default: ({ row }) => {
+                  return [<b>{row.endingAvgPrice}</b>];
+                }
+              }
             }
-          }
-        },
-        {
-          title: "Age",
-          field: "age",
-          align: "left"
+          ]
         }
-        // { title: "操作", width: 200, slots: { default: "operate" } }
       ],
       tableData: [
         {
           id: 1,
           name: "a1",
-          sex: 1
+          sex: 1,
+          endingQuantity: "111",
+          endingAvgPrice: "22"
         },
         {
           id: 2,
           name: "a2",
-          sex: 1
+          sex: 1,
+          endingQuantity: "44",
+          endingAvgPrice: "2332"
         },
         {
           id: 3,
           name: "a3",
-          sex: 1
+          sex: 1,
+          endingQuantity: "11441",
+          endingAvgPrice: "222"
         }
       ],
       setcolumnsConfig: {
@@ -171,12 +321,12 @@ export default {
     };
   },
   created() {
-    const list = Array.from({ length: 110 }, (_, key) => ({
-      id: key,
-      name: `abc_${key}`,
-      age: key
-    }));
-    this.tableData = list;
+    // const list = Array.from({ length: 110 }, (_, key) => ({
+    //   id: key,
+    //   name: `abc_${key}`,
+    //   age: key
+    // }));
+    // this.tableData = list;
   },
   methods: {
     onSortChange(e) {

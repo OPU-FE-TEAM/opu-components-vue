@@ -470,7 +470,7 @@ function handleColumnsData(data, columns, configProps, _vm) {
       if (findIndex > -1) {
         const find = copyColumns[findIndex];
         copyColumnChildren = find.children ? find.children : [];
-        obj = { ...obj, ...find };
+        obj = { ...obj, ...find, children: obj.children };
         copyColumns.splice(findIndex, 1);
       }
     }
