@@ -12,7 +12,7 @@
       highlightCurrentUnselect
       :columns="tableColumn"
       @current-change="change"
-      :setcolumns-config="setColumnsConfig"
+      :setcolumns-config="setcolumnsConfig"
       :proxy-columns="proxyColumns"
       :head-toolbar="headToolbar"
     >
@@ -192,6 +192,12 @@ export default {
         // },
         // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         {
+          field: "name",
+          itemRender: {
+            name: "a-input"
+          }
+        },
+        {
           field: "ending",
           children: [
             {
@@ -260,62 +266,70 @@ export default {
           }
         },
         tableConfig: {
-          columns: [
-            {
-              width: 60,
-              align: "center",
-              slots: {
-                default: "btn_default",
-                header: () => {
-                  return "排序";
-                }
-              }
-            },
-            {
-              field: "title",
-              title: "显示标题",
-              align: "center",
-              editRender: { name: "AInput" }
-            },
-            {
-              field: "width",
-              title: "列宽",
-              align: "center",
-              editRender: { name: "AInputNumber" }
-            },
-            {
-              field: "align",
-              title: "对齐方式",
-              align: "center",
-              editRender: {
-                name: "ASelect",
-                options: [
-                  { label: "居左", value: "left" },
-                  { label: "居中", value: "center" },
-                  { label: "居右", value: "right" }
-                ]
-              }
-            },
-            {
-              field: "show",
-              title: "显示",
-              align: "center",
-              slots: { default: "show_default" }
-            },
-            {
-              field: "fixed",
-              title: "固定",
-              align: "center",
-              editRender: {
-                name: "ASelect",
-                options: [
-                  { label: "不固定", value: "" },
-                  { label: "靠左", value: "left" },
-                  { label: "靠右", value: "right" }
-                ]
-              }
-            }
-          ]
+          // columns: [
+          //   {
+          //     width: 60,
+          //     align: "center",
+          //     slots: {
+          //       default: "btn_default",
+          //       header: () => {
+          //         return "排序";
+          //       }
+          //     }
+          //   },
+          //   {
+          //     field: "defaultTitle",
+          //     title: "666",
+          //     itemRender: {
+          //       name: "a-input"
+          //     }
+          //   },
+          //   // {
+          //   //   field: "title",
+          //   //   title: "显示标题",
+          //   //   align: "center",
+          //   //   itemRender: { name: "AInput" }
+          //   // },
+          //   {
+          //     field: "width",
+          //     title: "列宽",
+          //     align: "center",
+          //     itemRender: { name: "AInputNumber" }
+          //   },
+          //   {
+          //     field: "align",
+          //     title: "对齐方式",
+          //     align: "center",
+          //     itemRender: {
+          //       name: "ASelect",
+          //       options: [
+          //         { label: "居左", value: "left" },
+          //         { label: "居中", value: "center" },
+          //         { label: "居右", value: "right" }
+          //       ]
+          //     }
+          //   },
+          //   {
+          //     field: "show",
+          //     title: "显示",
+          //     align: "center",
+          //     // slots: { default: "show_default" }
+          //     itemRender: { name: "ACheckbox" }
+          //   },
+          //   {
+          //     field: "fixed",
+          //     title: "固定01",
+          //     align: "center",
+          //     itemRender: {
+          //       name: "ASelect",
+          //       options: [
+          //         { label: "不固定", value: "" },
+          //         { label: "靠左", value: "left" },
+          //         { label: "靠右", value: "right" }
+          //       ]
+          //     }
+          //   }
+          // ]
         }
       }
     };
