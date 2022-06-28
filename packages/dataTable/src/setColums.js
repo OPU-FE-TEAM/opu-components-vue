@@ -375,6 +375,8 @@ export default {
         itemRender: {
           name: "a-select",
           props: {
+            valueField: "value",
+            labelField: "label",
             options: [
               { label: "居左", value: "left" },
               { label: "居中", value: "center" },
@@ -405,6 +407,8 @@ export default {
         itemRender: {
           name: "a-select",
           props: {
+            valueField: "value",
+            labelField: "label",
             options: [
               { label: "不固定", value: "" },
               { label: "靠左", value: "left" },
