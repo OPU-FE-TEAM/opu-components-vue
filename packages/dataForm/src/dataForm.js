@@ -893,7 +893,8 @@ export default {
         "a-textarea",
         "a-range-picker-split",
         "a-input-number-split",
-        "a-select-group"
+        "a-select-group",
+        "pulldown-table"
       ],
       //有返回数据的Form组件名称
       optionsFormTypes: [
