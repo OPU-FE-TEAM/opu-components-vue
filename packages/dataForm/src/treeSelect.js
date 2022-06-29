@@ -100,6 +100,11 @@ export default {
     focus() {
       const input = this.$refs.inputComponent;
       input.focus();
+    },
+    blur() {
+      const input = this.$refs.inputComponent;
+      input.blur();
+      input.$refs.vcTreeSelect.onDropdownVisibleChange(false);
     }
   },
   render(h) {

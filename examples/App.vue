@@ -17,8 +17,8 @@
 </template>
 
 <script>
-import dataFormBase from "./dataForm/test";
-// import dataFormBase from "./dataForm/base";
+// import dataFormBase from "./dataForm/test";
+import dataFormBase from "./dataForm/base";
 // import dataFormBase from "./dataForm/select";
 import dataTableBase2 from "./dataTable/base";
 import dataTableBase1 from "./dataTable/data";

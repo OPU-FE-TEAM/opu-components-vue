@@ -172,19 +172,6 @@ export default {
           }
         },
         {
-          field: "ordinary1",
-          title: "请求下拉123",
-          itemRender: {
-            name: "a-select",
-            props: {
-              defaultField: "isSelected",
-              valueField: "Id",
-              labelField: "Text",
-              api: getSelectGroupData
-            }
-          }
-        },
-        {
           title: "数组",
           field: "number",
           option: {
@@ -249,6 +236,19 @@ export default {
               inputChange(sel) {
                 console.log("inputChange", sel);
               }
+            }
+          }
+        },
+        {
+          field: "ordinary1",
+          title: "请求下拉123",
+          itemRender: {
+            name: "a-select",
+            props: {
+              defaultField: "isSelected",
+              valueField: "Id",
+              labelField: "Text",
+              api: getSelectGroupData
             }
           }
         },
