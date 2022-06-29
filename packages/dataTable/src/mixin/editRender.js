@@ -115,20 +115,12 @@ const editRender = {
           let name = toHump(p.itemRender.name || editType[0]);
           if (editType.indexOf(toHump(p.itemRender.name || editType[0])) > -1) {
             if (!p.slots) p.slots = {};
-            p.slots.default = ({ row, rowIndex, columnIndex }) => {
+            p.slots.default = e => {
               return [
                 <div style="display:flex;align-items: center;">
-                  {p.itemRender.before &&
-                    p.itemRender.before({ row, rowIndex, columnIndex })}
-                  <div style="flex:1">
-                    {this.editSlotRender(name)({
-                      row,
-                      rowIndex,
-                      columnIndex
-                    })}
-                  </div>
-                  {p.itemRender.after &&
-                    p.itemRender.after({ row, rowIndex, columnIndex })}
+                  {p.itemRender.before && p.itemRender.before(e)}
+                  <div style="flex:1">{this.editSlotRender(name)(e)}</div>
+                  {p.itemRender.after && p.itemRender.after(e)}
                 </div>
               ];
             };

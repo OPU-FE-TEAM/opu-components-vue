@@ -73,6 +73,7 @@ export default {
   },
   methods: {
     show() {
+      console.log(this.option);
       this.visible = true;
       const { query, columns, handelColumns, option } = this;
       if (
@@ -226,6 +227,7 @@ export default {
       });
     },
     renderShowEdit(scope) {
+      const that = this;
       const vm = new Vue();
       const h = vm.$createElement;
       return h("a-checkbox", {
@@ -235,6 +237,7 @@ export default {
         on: {
           input: function(checked) {
             scope.row.show = checked;
+            console.log(that.option);
           }
         }
       });
@@ -302,6 +305,12 @@ export default {
         this.visible = false;
         this.$emit("submit", newTableData);
       }
+    },
+    onCellEditChange(...args) {
+      // console.log(e, a);
+      if (this.option.tableConfig && this.option.tableConfig.onCellEditChange) {
+        this.option.tableConfig.onCellEditChange(...args);
+      }
     }
   },
   render(h) {
@@ -312,9 +321,9 @@ export default {
       visible,
       onSubmit,
       onCancel,
-      option
+      option,
+      onCellEditChange
     } = this;
-
     const dropBtn = (
       <span class="drag-btn">
         <i class="vxe-icon--menu"></i>
@@ -341,44 +350,74 @@ export default {
         field: "title",
         title: "显示标题",
         align: "center",
-        editRender: { name: "AInput" }
+        itemRender: {
+          name: "AInput",
+          on: {
+            change: onCellEditChange
+          }
+        }
       },
       {
         field: "width",
         title: "列宽",
         align: "center",
-        editRender: { name: "AInputNumber" }
+        itemRender: {
+          name: "AInputNumber",
+          on: {
+            change: onCellEditChange
+          }
+        }
       },
       {
         field: "align",
         title: "对齐方式",
         align: "center",
-        editRender: {
-          name: "ASelect",
-          options: [
-            { label: "居左", value: "left" },
-            { label: "居中", value: "center" },
-            { label: "居右", value: "right" }
-          ]
+        itemRender: {
+          name: "a-select",
+          props: {
+            valueField: "value",
+            labelField: "label",
+            options: [
+              { label: "居左", value: "left" },
+              { label: "居中", value: "center" },
+              { label: "居右", value: "right" }
+            ]
+          },
+          on: {
+            change: onCellEditChange
+          }
         }
       },
       {
         field: "show",
         title: "显示",
         align: "center",
-        slots: { default: "show_default" }
+        itemRender: {
+          name: "a-checkbox",
+          on: {
+            change: onCellEditChange
+          }
+        }
+        // slots: { default: "show_default" }
       },
       {
         field: "fixed",
         title: "固定",
         align: "center",
-        editRender: {
-          name: "ASelect",
-          options: [
-            { label: "不固定", value: "" },
-            { label: "靠左", value: "left" },
-            { label: "靠右", value: "right" }
-          ]
+        itemRender: {
+          name: "a-select",
+          props: {
+            valueField: "value",
+            labelField: "label",
+            options: [
+              { label: "不固定", value: "" },
+              { label: "靠左", value: "left" },
+              { label: "靠右", value: "right" }
+            ]
+          },
+          on: {
+            change: onCellEditChange
+          }
         }
       }
     ];
@@ -406,7 +445,7 @@ export default {
       },
       [
         h(
-          "vxe-grid",
+          "data-table",
           {
             class: "columns-table",
             ref: "table",
@@ -416,7 +455,7 @@ export default {
               columns: tableColumn,
               data: tableData,
               treeConfig: { children: "children" },
-              editConfig: { trigger: "click", mode: "row" },
+              // editConfig: { trigger: "click", mode: "row" },
               checkboxConfig: { checkStrictly: true },
               height: "600px"
             },

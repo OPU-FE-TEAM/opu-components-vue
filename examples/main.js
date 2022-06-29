@@ -69,7 +69,7 @@ function getColumns(arr) {
         {
           name: "goodsCode",
           sort: 1,
-          show: true,
+          show: false,
           width: 180,
           drag: true,
           align: "left",
@@ -346,6 +346,49 @@ DataTable.setup({
           };
         }
       }
+    },
+    tableConfig: {
+      onCellEditChange: (e, event) => {
+        console.log(e, event);
+        if (
+          event.field == "show" &&
+          event.row.children &&
+          event.row.children.length
+        ) {
+          for (let i = 0; i < event.row.children.length; i++) {
+            let item = event.row.children[i];
+            item.show = event.row[event.field];
+          }
+        }
+        if (event.row.parentCode) {
+          const parentFind = event.data.find(
+            p => p.name == event.row.parentCode
+          );
+          if (parentFind && parentFind.children && parentFind.children.length) {
+            const parentShow = parentFind.children.some(p => p.show === true);
+            parentFind.show = parentShow;
+          }
+        }
+      }
+      // columns: [
+      //   {
+      //     width: 60,
+      //     align: "center",
+      //     slots: {
+      //       default: "btn_default",
+      //       header: () => {
+      //         return "排序";
+      //       }
+      //     }
+      //   },
+      //   {
+      //     field: "defaultTitle",
+      //     title: "666",
+      //     itemRender: {
+      //       name: "a-input"
+      //     }
+      //   }
+      // ]
     }
   },
   sortConfig: {
