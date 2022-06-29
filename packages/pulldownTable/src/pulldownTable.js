@@ -283,6 +283,7 @@ export default {
     },
     onClear(value) {
       this.selectValue = {};
+      this.currentValue = {};
       this.$emit("input", value);
       this.$emit("change", value, {});
     },
