@@ -26,6 +26,10 @@ function nextItemFocus(item, _vm, e = {}) {
   }
   const fieldIndex = enterToNextItemFocusList.indexOf(item.field);
   if (fieldIndex > -1 && fieldIndex < enterToNextItemFocusList.length - 1) {
+    if (item.itemRender && item.itemRender.name == "a-tree-select") {
+      const item = _vm.$refs[`input_${enterToNextItemFocusList[fieldIndex]}`];
+      item.blur && item.blur();
+    }
     const nextField = enterToNextItemFocusList[fieldIndex + 1];
     setFieldFocus(nextField);
   }
@@ -246,7 +250,8 @@ function renderItemInput(item, h, _vm) {
     readonly,
     onButtonClick,
     items,
-    renderNameKeys
+    renderNameKeys,
+    componentsFocusItemTypes
   } = _vm;
   const vDecorator = [item.field];
   if (item.option) {
@@ -353,28 +358,15 @@ function renderItemInput(item, h, _vm) {
       ...props.props
     };
     // }
-    if (
-      [
-        "a-input-number",
-        "a-date-picker",
-        "a-time-picker",
-        "a-range-picker-split",
-        "pulldown-table",
-        "a-input-number-split",
-        "a-cascader"
-      ].includes(renderName)
-    ) {
-      if (props.on && utils.isObject(props.on)) {
-        props.on.inputPressEnter = e => {
+    if (componentsFocusItemTypes.includes(renderName)) {
+      props.on = {
+        ...props.on,
+        inputPressEnter: e => {
+          e.stopPropagation();
+          console.log("inputPressEnter11111111111111111");
           nextItemFocus(item, _vm, e);
-        };
-      } else {
-        props.on = {
-          inputPressEnter: e => {
-            nextItemFocus(item, _vm, e);
-          }
-        };
-      }
+        }
+      };
     }
     if (renderNameKeys[renderName]) {
       renderName = renderNameKeys[renderName] || renderName;
@@ -516,7 +508,7 @@ function renderItems(h, _vm) {
     formLayout,
     currentColspan,
     $scopedSlots,
-    focusItemTypes,
+    wrapperFocusItemTypes,
     currentScreen
     // $listeners,
     // submitButtonProps
@@ -597,7 +589,8 @@ function renderItems(h, _vm) {
           on: {}
         };
         if (
-          ((item.itemRender && focusItemTypes.includes(item.itemRender.name)) ||
+          ((item.itemRender &&
+            wrapperFocusItemTypes.includes(item.itemRender.name)) ||
             !(item.itemRender && item.itemRender.name)) &&
           !(item.itemRender && item.itemRender.name == "a-input-number-split")
         ) {
@@ -605,6 +598,7 @@ function renderItems(h, _vm) {
             const { keyCode } = e;
             e.stopPropagation();
             if (keyCode === 13) {
+              console.log("wrapperEnter");
               nextItemFocus(item, _vm, e);
             }
           };
@@ -876,26 +870,44 @@ export default {
       itemsOptions: [],
       expand: false, //折叠展开
       // 支持回车活动焦点的组件
-      focusItemTypes: [
-        "a-input",
-        "a-password",
-        "a-input-password",
-        "a-auto-complete",
-        "a-input-number",
-        "a-select",
+      componentsFocusItemTypes: [
         "a-date-picker",
         "a-time-picker",
         "a-month-picker",
         "a-week-picker",
         "a-range-picker",
-        "a-cascader",
+        "a-range-picker-split",
+        "pulldown-table",
+        "a-input-number-split",
+        "a-cascader"
+      ],
+      wrapperFocusItemTypes: [
+        "a-input-number",
+        "a-input",
+        "a-password",
+        "a-input-password",
+        "a-auto-complete",
+        "a-select",
         "a-tree-select",
         "a-textarea",
-        "a-range-picker-split",
-        "a-input-number-split",
-        "a-select-group",
-        "pulldown-table"
+        "a-select-group"
       ],
+      // focusItemTypes: [
+      //   "a-input-number",
+      //   "a-select",
+      //   "a-date-picker",
+      //   "a-time-picker",
+      //   "a-month-picker",
+      //   "a-week-picker",
+      //   "a-range-picker",
+      //   "a-cascader",
+      //   "a-tree-select",
+      //   "a-textarea",
+      //   "a-range-picker-split",
+      //   "a-input-number-split",
+      //   "a-select-group",
+      //   "pulldown-table"
+      // ],
       //有返回数据的Form组件名称
       optionsFormTypes: [
         "a-select",
@@ -940,7 +952,10 @@ export default {
           } else if (
             !itemRender ||
             !itemRender.name ||
-            this.focusItemTypes.includes(itemRender.name)
+            [
+              ...this.wrapperFocusItemTypes,
+              ...this.componentsFocusItemTypes
+            ].includes(itemRender.name)
           ) {
             // 可获得焦点的组件
             return item.field;
@@ -1380,6 +1395,7 @@ export default {
     setFieldFocus(field) {
       const refName = `input_${field}`;
       const item = this.$refs[refName];
+      console.log(item);
       if (item && item.focus) {
         item.focus();
         this.formAutoEnterSelectInput && item.select && item.select();

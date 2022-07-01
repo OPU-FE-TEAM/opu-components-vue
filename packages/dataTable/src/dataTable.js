@@ -744,13 +744,15 @@ export default {
                     );
                     if (data && data.length) {
                       let grid = that.$refs.dataGrid;
-                      grid.setCurrentRow(data[0]);
-                      grid.focus();
-                      that.onCurrentRowChange({
-                        row: data[0],
-                        rowIndex: 0,
-                        $rowIndex: 0
-                      });
+                      if (grid) {
+                        grid.setCurrentRow(data[0]);
+                        grid.focus();
+                        that.onCurrentRowChange({
+                          row: data[0],
+                          rowIndex: 0,
+                          $rowIndex: 0
+                        });
+                      }
                     }
                   });
                 }
