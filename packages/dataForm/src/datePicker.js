@@ -146,7 +146,7 @@ export default {
       if (this.min && current) {
         return current < this.min || (this.max && current > this.max);
       } else if (this.min || this.max) {
-        return current < this.min || current > this.max;
+        return current < this.min || current > this.max.endOf("day");
       }
     }
   },

@@ -100,7 +100,7 @@ export default {
       } else if (this.maxDate && current) {
         return current > this.maxDate || (this.min && current < this.min);
       } else if (this.min || this.max) {
-        return current < this.min || current > this.max;
+        return current < this.min || current > this.max.endOf("day");
       }
     },
     endDisabledDateFuc(current) {
@@ -112,7 +112,7 @@ export default {
       } else if (this.minDate && current) {
         return current < this.minDate || (this.max && current > this.max);
       } else if (this.min || this.max) {
-        return current < this.min || current > this.max;
+        return current < this.min || current > this.max.endOf("day");
       }
     },
     focus() {

@@ -76,6 +76,7 @@ import { DataForm } from "../../index";
 // import moment from "moment";
 import modelTable from "../other/modelTable";
 import { utils } from "../../index";
+import moment from "moment";
 
 // function getSelectData() {
 //     return new Promise(resolve => {
@@ -916,10 +917,12 @@ export default {
           itemRender: {
             name: "a-range-picker-split",
             props: {
-              hasLimit: false,
+              hasLimit: true,
               separator: () => {
                 return <div style="color:red;width:70px">结束日期：</div>;
-              }
+              },
+              min: moment(),
+              max: moment().add(2, "day")
               // showTime: { format: "HH:mm" }
             }
           }
