@@ -394,6 +394,7 @@ DataTable.setup({
   sortConfig: {
     handleServerSortParams: e => {
       console.log(e);
+      return { aaaa: 123 };
     }
   }
 });

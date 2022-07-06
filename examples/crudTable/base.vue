@@ -61,51 +61,51 @@ function getData(arr) {
     }, 500);
   });
 }
-function getColumns() {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const list = [
-        {
-          field: "name"
-        },
-        {
-          id: "2",
-          field: "address",
-          title: "Address",
-          width: 100,
-          align: "left",
-          show: true
-        },
-        {
-          id: "3",
-          field: "area",
-          title: "Area",
-          width: 100,
-          align: "left",
-          show: false
-        },
-        {
-          id: "4",
-          field: "city",
-          title: "City",
-          width: 100,
-          align: "left",
-          show: true
-        }
-      ];
-      const json = {
-        // data: [...list],
-        // total: 100
-        code: 0,
-        data: {
-          data: [...list],
-          total: 100
-        }
-      };
-      resolve(json);
-    }, 500);
-  });
-}
+// function getColumns() {
+//   return new Promise(resolve => {
+//     setTimeout(() => {
+//       const list = [
+//         {
+//           field: "name"
+//         },
+//         {
+//           id: "2",
+//           field: "address",
+//           title: "Address",
+//           width: 100,
+//           align: "left",
+//           show: true
+//         },
+//         {
+//           id: "3",
+//           field: "area",
+//           title: "Area",
+//           width: 100,
+//           align: "left",
+//           show: false
+//         },
+//         {
+//           id: "4",
+//           field: "city",
+//           title: "City",
+//           width: 100,
+//           align: "left",
+//           show: true
+//         }
+//       ];
+//       const json = {
+//         // data: [...list],
+//         // total: 100
+//         code: 0,
+//         data: {
+//           data: [...list],
+//           total: 100
+//         }
+//       };
+//       resolve(json);
+//     }, 500);
+//   });
+// }
 
 function saveData() {
   return new Promise(resolve => {
@@ -386,10 +386,10 @@ export default {
       table: {
         props: {
           editConfig: { trigger: "click", mode: "cell" },
-          "sort-config": {
-            // remote: true,
-            trigger: "cell",
-            orders: ["desc", "asc", null]
+          sortConfig: {
+            remote: false
+            // trigger: "cell",
+            // orders: ["desc", "asc", null]
           },
           columns: [
             { type: "seq", title: "Number", width: 80 },
@@ -592,31 +592,31 @@ export default {
                 });
               }
             }
-          },
-          setcolumnsConfig: {
-            modal: {
-              props: {
-                title: "自定义标题"
-              }
-            },
-            proxyConfig: {
-              props: {},
-              ajax: {
-                query: json => {
-                  return new Promise(resolve => {
-                    console.log(json);
-                    getColumns({
-                      ...json,
-                      code: "aaaa"
-                    }).then(res => {
-                      resolve(res);
-                    });
-                  });
-                },
-                submit: getColumns
-              }
-            }
           }
+          // setcolumnsConfig: {
+          //   modal: {
+          //     props: {
+          //       title: "自定义标题"
+          //     }
+          //   },
+          //   proxyConfig: {
+          //     props: {},
+          //     ajax: {
+          //       query: json => {
+          //         return new Promise(resolve => {
+          //           console.log(json);
+          //           getColumns({
+          //             ...json,
+          //             code: "aaaa"
+          //           }).then(res => {
+          //             resolve(res);
+          //           });
+          //         });
+          //       },
+          //       submit: getColumns
+          //     }
+          //   }
+          // }
         },
         on: {
           "edit-closed": e => {

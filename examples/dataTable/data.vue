@@ -15,6 +15,8 @@
       :setcolumns-config="setcolumnsConfig"
       :proxy-columns="proxyColumns"
       :head-toolbar="headToolbar"
+      :sortable="true"
+      :sortConfig="{ remote: true }"
     >
       <!-- :checkboxConfig="{ highlight: true, trigger: 'row' }" -->
     </DataTable>

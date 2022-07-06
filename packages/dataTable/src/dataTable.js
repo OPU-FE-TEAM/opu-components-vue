@@ -677,7 +677,7 @@ export default {
         onCurrentRowCellClick,
         onCurrentRowChange,
         onKeyDownSpace,
-        handleServerSort,
+        // handleServerSort,
         keyboardSpace
       } = that;
       const propsData = that.$options.propsData;
@@ -731,6 +731,8 @@ export default {
           } else if (json) {
             arr = json;
           }
+          arr = that.handleServerSort(arr);
+
           return new Promise((resolve, reject) => {
             proxyConfigOpt.ajax
               .query(arr)
@@ -781,13 +783,13 @@ export default {
         }
       }
       // 全局处理服务端排序
-      if (
-        props.props.sortConfig &&
-        props.props.sortConfig.remote &&
-        !$listeners["sort-change"]
-      ) {
-        ons["sort-change"] = handleServerSort;
-      }
+      // if (
+      //   props.props.sortConfig &&
+      //   props.props.sortConfig.remote &&
+      //   !$listeners["sort-change"]
+      // ) {
+      //   ons["sort-change"] = handleServerSort;
+      // }
       props.on = ons;
       props.ref = "dataGrid";
       props.scopedSlots = $scopedSlots;
@@ -1152,17 +1154,18 @@ export default {
       }
       this.$emit("cell-click", e);
     },
-    handleServerSort(e) {
+    handleServerSort(params) {
       const { tableProps } = this;
       if (
         tableProps.props.sortConfig &&
         tableProps.props.sortConfig.handleServerSortParams
       ) {
-        const params = tableProps.props.sortConfig.handleServerSortParams(e);
-        if (params) {
-          this.query(params);
-        }
+        params = tableProps.props.sortConfig.handleServerSortParams(params);
+        // if (params) {
+        //   this.query(params);
+        // }
       }
+      return params;
     }
   },
   beforeDestroy() {},

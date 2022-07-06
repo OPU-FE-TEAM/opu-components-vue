@@ -326,7 +326,7 @@ export default {
         props: {
           editConfig: { trigger: "click", mode: "cell" },
           "sort-config": {
-            // remote: true,
+            remote: true,
             trigger: "cell",
             orders: ["desc", "asc", null]
           },
