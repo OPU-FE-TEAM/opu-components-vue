@@ -73,7 +73,6 @@ export default {
   },
   methods: {
     show() {
-      console.log(this.option);
       this.visible = true;
       const { query, columns, handelColumns, option } = this;
       if (
@@ -227,7 +226,6 @@ export default {
       });
     },
     renderShowEdit(scope) {
-      const that = this;
       const vm = new Vue();
       const h = vm.$createElement;
       return h("a-checkbox", {
@@ -237,7 +235,6 @@ export default {
         on: {
           input: function(checked) {
             scope.row.show = checked;
-            console.log(that.option);
           }
         }
       });
@@ -307,7 +304,6 @@ export default {
       }
     },
     onCellEditChange(...args) {
-      // console.log(e, a);
       if (this.option.tableConfig && this.option.tableConfig.onCellEditChange) {
         this.option.tableConfig.onCellEditChange(...args);
       }

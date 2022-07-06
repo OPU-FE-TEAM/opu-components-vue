@@ -363,7 +363,6 @@ function renderItemInput(item, h, _vm) {
         ...props.on,
         inputPressEnter: e => {
           e.stopPropagation();
-          console.log("inputPressEnter11111111111111111");
           nextItemFocus(item, _vm, e);
         }
       };
@@ -598,7 +597,6 @@ function renderItems(h, _vm) {
             const { keyCode } = e;
             e.stopPropagation();
             if (keyCode === 13) {
-              console.log("wrapperEnter");
               nextItemFocus(item, _vm, e);
             }
           };
@@ -1395,7 +1393,6 @@ export default {
     setFieldFocus(field) {
       const refName = `input_${field}`;
       const item = this.$refs[refName];
-      console.log(item);
       if (item && item.focus) {
         item.focus();
         this.formAutoEnterSelectInput && item.select && item.select();

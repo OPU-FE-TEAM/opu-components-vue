@@ -1161,9 +1161,6 @@ export default {
         tableProps.props.sortConfig.handleServerSortParams
       ) {
         params = tableProps.props.sortConfig.handleServerSortParams(params);
-        // if (params) {
-        //   this.query(params);
-        // }
       }
       return params;
     }
