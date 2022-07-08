@@ -161,7 +161,6 @@ const fetchItemPropsOptionsApiList = async function(
       setFieldsOptions(json);
       let defaultFormData = {};
       if (autoSetDefaultValue) {
-        debugger;
         defaultFormData = setFieldsOptionsDefaultValues(fields);
       }
       onOptionsLoadAfter(json, defaultFormData);
