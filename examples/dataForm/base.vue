@@ -185,50 +185,50 @@ function getSelectGroupData() {
   });
 }
 
-// function getTreeData() {
-//   return new Promise(resolve => {
-//     setTimeout(() => {
-//       const data = [
-//         {
-//           value: "zhejiang",
-//           label: "Zhejiang",
-//           children: [
-//             {
-//               value: "hangzhou",
-//               label: "Hangzhou",
-//               children: [
-//                 {
-//                   value: "xihu",
-//                   label: "West Lake"
-//                 }
-//               ]
-//             }
-//           ]
-//         },
-//         {
-//           value: "jiangsu",
-//           label: "Jiangsu",
-//           children: [
-//             {
-//               value: "nanjing",
-//               label: "Nanjing",
-//               children: [
-//                 {
-//                   value: "zhonghuamen",
-//                   label: "Zhong Hua Men"
-//                 }
-//               ]
-//             }
-//           ]
-//         }
-//       ];
-//       resolve({
-//         code: 0,
-//         data: data
-//       });
-//     }, 500);
-//   });
-// }
+function getTreeData() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const data = [
+        {
+          value: "zhejiang",
+          label: "Zhejiang",
+          children: [
+            {
+              value: "hangzhou",
+              label: "Hangzhou",
+              children: [
+                {
+                  value: "xihu",
+                  label: "West Lake"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          value: "jiangsu",
+          label: "Jiangsu",
+          children: [
+            {
+              value: "nanjing",
+              label: "Nanjing",
+              children: [
+                {
+                  value: "zhonghuamen",
+                  label: "Zhong Hua Men"
+                }
+              ]
+            }
+          ]
+        }
+      ];
+      resolve({
+        code: 0,
+        data: data
+      });
+    }, 500);
+  });
+}
 
 export default {
   components: {
@@ -969,18 +969,18 @@ export default {
         //     }
         //   }
         // },
-        // {
-        //   field: "cascader",
-        //   title: "级联选择",
-        //   itemRender: {
-        //     name: "a-cascader",
-        //     props: {
-        //       api: getTreeData,
-        //       valueField: "value",
-        //       labelField: "label"
-        //     }
-        //   }
-        // },
+        {
+          field: "cascader",
+          title: "级联选择",
+          itemRender: {
+            name: "a-cascader",
+            props: {
+              api: getTreeData,
+              valueField: "value",
+              labelField: "label"
+            }
+          }
+        },
         // {
         //   field: "treeelect",
         //   title: "树形选择器",

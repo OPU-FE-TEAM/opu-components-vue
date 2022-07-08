@@ -66,59 +66,104 @@ let data = [
 ];
 console.log(data);
 
-function getData(arr = {}) {
-  console.log(arr);
-  console.log("请求");
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const size = arr.pageSize ? arr.pageSize : 20;
-      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
-      let list = Array.from({ length: size }, (_, key) => ({
-        id: key,
-        name: `name_${pageIndex}_${key}`,
-        sex: key < 3 ? 1 : 2,
-        age: key
-      }));
-      if (arr && arr.keyword == "123") {
-        list = [];
-      }
-      const json = {
-        // data: [...list],
-        // total: 100
-        code: 0,
-        data: {
-          datas: [...list],
-          total: 100
-        }
-      };
-      console.log(json);
-      resolve(json);
-    }, 500);
-  });
-}
+// function getData(arr = {}) {
+//   console.log(arr);
+//   console.log("请求");
+//   return new Promise(resolve => {
+//     setTimeout(() => {
+//       const size = arr.pageSize ? arr.pageSize : 20;
+//       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+//       let list = Array.from({ length: size }, (_, key) => ({
+//         id: key,
+//         name: `name_${pageIndex}_${key}`,
+//         sex: key < 3 ? 1 : 2,
+//         age: key
+//       }));
+//       if (arr && arr.keyword == "123") {
+//         list = [];
+//       }
+//       const json = {
+//         // data: [...list],
+//         // total: 100
+//         code: 0,
+//         data: {
+//           datas: [...list],
+//           total: 100
+//         }
+//       };
+//       console.log(json);
+//       resolve(json);
+//     }, 500);
+//   });
+// }
 
-function getSelectGroupData() {
+// function getSelectGroupData() {
+//   return new Promise(resolve => {
+//     setTimeout(() => {
+//       const data1 = [
+//         {
+//           Id: 2,
+//           Text: "男",
+//           code: "boy"
+//         },
+//         {
+//           Id: 3,
+//           Text: "女",
+//           isSelected: true,
+//           code: "girl"
+//         },
+//         {
+//           Id: 4,
+//           Text: "未知"
+//         }
+//       ];
+//       resolve({
+//         data: data1
+//       });
+//     }, 500);
+//   });
+// }
+
+function getTreeData() {
   return new Promise(resolve => {
     setTimeout(() => {
-      const data1 = [
+      const data = [
         {
-          Id: 2,
-          Text: "男",
-          code: "boy"
+          value: "zhejiang",
+          label: "Zhejiang",
+          children: [
+            {
+              value: "hangzhou",
+              label: "Hangzhou",
+              children: [
+                {
+                  value: "xihu",
+                  label: "West Lake"
+                }
+              ]
+            }
+          ]
         },
         {
-          Id: 3,
-          Text: "女",
-          isSelected: true,
-          code: "girl"
-        },
-        {
-          Id: 4,
-          Text: "未知"
+          value: "jiangsu",
+          label: "Jiangsu",
+          children: [
+            {
+              value: "nanjing",
+              label: "Nanjing",
+              children: [
+                {
+                  value: "zhonghuamen",
+                  label: "Zhong Hua Men"
+                }
+              ]
+            }
+          ]
         }
       ];
       resolve({
-        data: data1
+        code: 0,
+        data: data
       });
     }, 500);
   });
@@ -132,244 +177,263 @@ export default {
     return {
       items: [
         {
-          title: "年份",
-          field: "year",
+          field: "cascader",
+          title: "级联选择",
           itemRender: {
-            name: "a-date-picker",
-            // YearPicker
-            // name: "a-date-picker",
+            name: "a-cascader",
             props: {
-              mode: "year",
-              format: "YYYY"
-            }
-          }
-        },
-        {
-          field: "ordinary11",
-          title: "请求下拉123",
-          itemRender: {
-            name: "a-select",
-            props: {
-              defaultField: "isSelected",
-              valueField: "Id",
-              labelField: "Text",
-              api: getSelectGroupData
-            }
-          }
-        },
-        // {
-        //   title: "输入框",
-        //   field: "input"
-        // },
-        {
-          title: "日期",
-          field: "date",
-          itemRender: {
-            name: "a-date-picker",
-            // YearPicker
-            // name: "a-date-picker",
-            props: {}
-          }
-        },
-        {
-          title: "数组",
-          field: "number",
-          option: {
-            initialValue: "0"
-          },
-          itemRender: {
-            name: "a-input-number",
-            on: {
-              change: e => {
-                console.log(e);
-              }
-            }
-          }
-        },
-        {
-          field: "pulldown",
-          title: "下拉面板",
-          option: {
-            initialValue: "桂林"
-          },
-          itemRender: {
-            name: "pulldown-table",
-            props: {
-              valueField: "name",
-              textField: "age",
-              table: {
-                props: {
-                  columns: [
-                    { type: "checkbox", width: 50 },
-                    { type: "seq", title: "Number", width: 80 },
-                    {
-                      field: "name",
-                      title: "Name",
-                      width: 200
-                    },
-                    {
-                      field: "sex",
-                      title: "Sex",
-                      width: 200
-                    },
-                    {
-                      field: "age",
-                      title: "Age",
-                      width: 200
-                    }
-                  ],
-                  size: "mini",
-                  height: 300,
-                  proxyConfig: {
-                    autoLoad: false,
-                    ajax: {
-                      query: getData
-                    }
-                  }
+              api: getTreeData,
+              valueField: "value",
+              labelField: "label",
+              showSearch: {
+                filter: e => {
+                  console.log(e);
+                  return true;
                 }
               }
-            },
-            on: {
-              change(val, sel) {
-                console.log("change", val, sel);
-              },
-              inputChange(sel) {
-                console.log("inputChange", sel);
-              }
             }
           }
-        },
-        {
-          field: "ordinary1",
-          title: "请求下拉123",
-          itemRender: {
-            name: "a-select",
-            props: {
-              defaultField: "isSelected",
-              valueField: "Id",
-              labelField: "Text",
-              api: getSelectGroupData
-            }
-          }
-        },
-        {
-          field: "pulldown1",
-          title: "下拉面板1",
-          option: {
-            initialValue: "桂林1"
-          },
-          itemRender: {
-            name: "pulldown-table",
-            props: {
-              valueField: "name",
-              textField: "age",
-              table: {
-                props: {
-                  columns: [
-                    { type: "checkbox", width: 50 },
-                    { type: "seq", title: "Number", width: 80 },
-                    {
-                      field: "name",
-                      title: "Name",
-                      width: 200
-                    },
-                    {
-                      field: "sex",
-                      title: "Sex",
-                      width: 200
-                    },
-                    {
-                      field: "age",
-                      title: "Age",
-                      width: 200
-                    }
-                  ],
-                  size: "mini",
-                  height: 300,
-                  proxyConfig: {
-                    autoLoad: false,
-                    ajax: {
-                      query: getData
-                    }
-                  }
-                }
-              }
-            },
-            on: {
-              change(val, sel) {
-                console.log("change", val, sel);
-              },
-              inputChange(sel) {
-                console.log("inputChange", sel);
-              }
-            }
-          }
-        },
-        // {
-        //   title: "出库去向",
-        //   field: "trackId",
-        //   itemRender: {
-        //     name: "a-cascader",
-        //     props: {
-        //       placeholder: "请选择",
-        //       options: data,
-        //       labelField: "label",
-        //       valueField: "value",
-        //       fieldNames: {
-        //         label: "label",
-        //         value: "value",
-        //         children: "children"
-        //       }
-        //     },
-        //     on: {
-        //       change: this.onChangeTrackId
-        //     }
-        //   }
-        // },
-        {
-          title: "输入框1",
-          field: "input1"
-        },
-
-        {
-          title: "输入框2",
-          field: "input2"
         }
+        //,
+        //   {
+        //     title: "年份",
+        //     field: "year",
+        //     itemRender: {
+        //       name: "a-date-picker",
+        //       // YearPicker
+        //       // name: "a-date-picker",
+        //       props: {
+        //         mode: "year",
+        //         format: "YYYY"
+        //       }
+        //     }
+        //   },
+        //   {
+        //     field: "ordinary11",
+        //     title: "请求下拉123",
+        //     itemRender: {
+        //       name: "a-select",
+        //       props: {
+        //         defaultField: "isSelected",
+        //         valueField: "Id",
+        //         labelField: "Text",
+        //         api: getSelectGroupData
+        //       }
+        //     }
+        //   },
+        //   // {
+        //   //   title: "输入框",
+        //   //   field: "input"
+        //   // },
+        //   {
+        //     title: "日期",
+        //     field: "date",
+        //     itemRender: {
+        //       name: "a-date-picker",
+        //       // YearPicker
+        //       // name: "a-date-picker",
+        //       props: {}
+        //     }
+        //   },
+        //   {
+        //     title: "数组",
+        //     field: "number",
+        //     option: {
+        //       initialValue: "0"
+        //     },
+        //     itemRender: {
+        //       name: "a-input-number",
+        //       on: {
+        //         change: e => {
+        //           console.log(e);
+        //         }
+        //       }
+        //     }
+        //   },
+        //   {
+        //     field: "pulldown",
+        //     title: "下拉面板",
+        //     option: {
+        //       initialValue: "桂林"
+        //     },
+        //     itemRender: {
+        //       name: "pulldown-table",
+        //       props: {
+        //         valueField: "name",
+        //         textField: "age",
+        //         table: {
+        //           props: {
+        //             columns: [
+        //               { type: "checkbox", width: 50 },
+        //               { type: "seq", title: "Number", width: 80 },
+        //               {
+        //                 field: "name",
+        //                 title: "Name",
+        //                 width: 200
+        //               },
+        //               {
+        //                 field: "sex",
+        //                 title: "Sex",
+        //                 width: 200
+        //               },
+        //               {
+        //                 field: "age",
+        //                 title: "Age",
+        //                 width: 200
+        //               }
+        //             ],
+        //             size: "mini",
+        //             height: 300,
+        //             proxyConfig: {
+        //               autoLoad: false,
+        //               ajax: {
+        //                 query: getData
+        //               }
+        //             }
+        //           }
+        //         }
+        //       },
+        //       on: {
+        //         change(val, sel) {
+        //           console.log("change", val, sel);
+        //         },
+        //         inputChange(sel) {
+        //           console.log("inputChange", sel);
+        //         }
+        //       }
+        //     }
+        //   },
+        //   {
+        //     field: "ordinary1",
+        //     title: "请求下拉123",
+        //     itemRender: {
+        //       name: "a-select",
+        //       props: {
+        //         defaultField: "isSelected",
+        //         valueField: "Id",
+        //         labelField: "Text",
+        //         api: getSelectGroupData
+        //       }
+        //     }
+        //   },
+        //   {
+        //     field: "pulldown1",
+        //     title: "下拉面板1",
+        //     option: {
+        //       initialValue: "桂林1"
+        //     },
+        //     itemRender: {
+        //       name: "pulldown-table",
+        //       props: {
+        //         valueField: "name",
+        //         textField: "age",
+        //         table: {
+        //           props: {
+        //             columns: [
+        //               { type: "checkbox", width: 50 },
+        //               { type: "seq", title: "Number", width: 80 },
+        //               {
+        //                 field: "name",
+        //                 title: "Name",
+        //                 width: 200
+        //               },
+        //               {
+        //                 field: "sex",
+        //                 title: "Sex",
+        //                 width: 200
+        //               },
+        //               {
+        //                 field: "age",
+        //                 title: "Age",
+        //                 width: 200
+        //               }
+        //             ],
+        //             size: "mini",
+        //             height: 300,
+        //             proxyConfig: {
+        //               autoLoad: false,
+        //               ajax: {
+        //                 query: getData
+        //               }
+        //             }
+        //           }
+        //         }
+        //       },
+        //       on: {
+        //         change(val, sel) {
+        //           console.log("change", val, sel);
+        //         },
+        //         inputChange(sel) {
+        //           console.log("inputChange", sel);
+        //         }
+        //       }
+        //     }
+        //   },
+        //   // {
+        //   //   title: "出库去向",
+        //   //   field: "trackId",
+        //   //   itemRender: {
+        //   //     name: "a-cascader",
+        //   //     props: {
+        //   //       placeholder: "请选择",
+        //   //       options: data,
+        //   //       labelField: "label",
+        //   //       valueField: "value",
+        //   //       fieldNames: {
+        //   //         label: "label",
+        //   //         value: "value",
+        //   //         children: "children"
+        //   //       }
+        //   //     },
+        //   //     on: {
+        //   //       change: this.onChangeTrackId
+        //   //     }
+        //   //   }
+        //   // },
+        //   {
+        //     title: "输入框1",
+        //     field: "input1"
+        //   },
+
+        //   {
+        //     title: "输入框2",
+        //     field: "input2"
+        //   }
+        // ]
+        // // selectGroupOptions: [
+        // //   {
+        // //     id: 1,
+        // //     text: "男",
+        // //     code: "boy",
+        // //     children: [
+        // //       { id: 11, text: "0-10岁", code: "b10" },
+        // //       { id: 12, text: "11-20岁", code: "b20" },
+        // //       { id: 13, text: "21-30岁", code: "b30" },
+        // //       { id: 14, text: "辣鸡", code: "b40" },
+        // //       { id: 15, text: "草割肉", code: "cgr" },
+        // //       { id: 16, text: "牛扒", code: "np" }
+        // //     ]
+        // //   },
+        // //   {
+        // //     id: 2,
+        // //     text: "女",
+        // //     code: "girl",
+        // //     children: [
+        // //       { id: 21, text: "0-10岁", code: "g10" },
+        // //       { id: 22, text: "11-20岁", code: "g20" },
+        // //       { id: 23, text: "21-30岁", code: "g30" }
+        // //     ]
+        // //   },
+        // //   {
+        // //     id: 3,
+        // //     text: "未知",
+        // //     children: [
+        // //       { id: 31, text: "0-10岁", code: "g10" },
+        // //       { id: 32, text: "11-20岁", code: "g20" },
+        // //       { id: 33, text: "21-30岁", code: "g30" }
+        // //     ]
+        // //   }
       ]
-      // selectGroupOptions: [
-      //   {
-      //     id: 1,
-      //     text: "男",
-      //     code: "boy",
-      //     children: [
-      //       { id: 11, text: "0-10岁", code: "b10" },
-      //       { id: 12, text: "11-20岁", code: "b20" },
-      //       { id: 13, text: "21-30岁", code: "b30" },
-      //       { id: 14, text: "辣鸡", code: "b40" },
-      //       { id: 15, text: "草割肉", code: "cgr" },
-      //       { id: 16, text: "牛扒", code: "np" }
-      //     ]
-      //   },
-      //   {
-      //     id: 2,
-      //     text: "女",
-      //     code: "girl",
-      //     children: [
-      //       { id: 21, text: "0-10岁", code: "g10" },
-      //       { id: 22, text: "11-20岁", code: "g20" },
-      //       { id: 23, text: "21-30岁", code: "g30" }
-      //     ]
-      //   },
-      //   {
-      //     id: 3,
-      //     text: "未知",
-      //     children: [
-      //       { id: 31, text: "0-10岁", code: "g10" },
-      //       { id: 32, text: "11-20岁", code: "g20" },
-      //       { id: 33, text: "21-30岁", code: "g30" }
-      //     ]
-      //   }
-      // ]
     };
   },
   mounted() {

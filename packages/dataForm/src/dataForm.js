@@ -161,6 +161,7 @@ const fetchItemPropsOptionsApiList = async function(
       setFieldsOptions(json);
       let defaultFormData = {};
       if (autoSetDefaultValue) {
+        debugger;
         defaultFormData = setFieldsOptionsDefaultValues(fields);
       }
       onOptionsLoadAfter(json, defaultFormData);
@@ -1308,10 +1309,11 @@ export default {
             let json = {
               ...values
             };
-            const hasFilterNullValues =
-              !filterNullValues && filterNullValues !== false
-                ? config.filterNullValues
-                : false;
+
+            let hasFilterNullValues = filterNullValues;
+            if (hasFilterNullValues === "") {
+              hasFilterNullValues = config.filterNullValues;
+            }
             if (hasFilterNullValues) {
               for (const key in json) {
                 if (!(json[key] || json[key] == 0)) {
@@ -1468,7 +1470,11 @@ export default {
                 });
                 if (defaultValue && defaultValue.length) {
                   let value = defaultValue;
-                  const valueArrayTypes = ["a-checkbox-group", "a-radio-group"];
+                  const valueArrayTypes = [
+                    "a-checkbox-group",
+                    "a-radio-group",
+                    "a-cascader"
+                  ];
                   const isSeletctMultiple =
                     (item.itemRender.name == "a-select" &&
                       props &&
