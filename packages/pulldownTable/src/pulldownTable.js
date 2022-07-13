@@ -274,7 +274,6 @@ export default {
               params = searchBeforeRes;
             }
           }
-          console.log(11);
           const dataTable = this.$refs.table;
           dataTable.onSearchSubmit(params);
         }
