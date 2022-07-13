@@ -265,7 +265,7 @@ export default {
           pulldown.isPanelVisible()
         ) {
           let params = {};
-          params[searchField] = value;
+          params[searchField] = value.replace(/(^\s*)|(\s*$)/g, "");
           if (searchBefore) {
             const searchBeforeRes = searchBefore && searchBefore(params);
             if (searchBeforeRes === false) {
