@@ -4,6 +4,7 @@ import CrudTable from "./crudTable";
 import Cell from "./cell";
 import PageWraper from "./pageWraper";
 import PulldownTable from "./pulldownTable";
+import CascaderEx from "./dataForm/src/extend/cascader";
 import Modal from "./modal";
 
 const cellGroup = Cell.Group;
@@ -16,6 +17,7 @@ const components = [
   cellGroup,
   PageWraper,
   PulldownTable,
+  CascaderEx,
   Modal
 ];
 

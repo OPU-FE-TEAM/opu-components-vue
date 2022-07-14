@@ -8,6 +8,7 @@ import datePicker from "./src/datePicker";
 import timePicker from "./src/timePicker";
 import checkbox from "./src/checkbox";
 import treeSelect from "./src/treeSelect";
+import cascaderEx from "./src/extend/cascader";
 
 import setup from "./conf/setup";
 dataForm.install = function(Vue) {
@@ -23,6 +24,7 @@ dataForm.datePicker = datePicker;
 dataForm.timePicker = timePicker;
 dataForm.checkbox = checkbox;
 dataForm.treeSelect = treeSelect;
+dataForm.cascaderEx = cascaderEx;
 
 export const DataForm = dataForm;
 

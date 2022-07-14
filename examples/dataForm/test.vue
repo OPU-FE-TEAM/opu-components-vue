@@ -176,11 +176,53 @@ export default {
   data() {
     return {
       items: [
+        // {
+        //   field: "cascader",
+        //   title: "级联选择",
+        //   itemRender: {
+        //     name: "a-cascader",
+        //     props: {
+        //       api: getTreeData,
+        //       valueField: "value",
+        //       labelField: "label",
+        //       showSearch: {
+        //         filter: e => {
+        //           console.log(e);
+        //           return true;
+        //         }
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "input1111",
+        //   title: "shur",
+        //   itemRender: {}
+        // },
         {
-          field: "cascader",
-          title: "级联选择",
+          field: "cascader11",
+          title: "半选",
           itemRender: {
-            name: "a-cascader",
+            name: "a-cascader-ex",
+            props: {
+              api: getTreeData,
+              valueField: "value",
+              labelField: "label",
+              changeOnSelect: true,
+              showSearch: {
+                filter: e => {
+                  console.log(e);
+                  return true;
+                }
+              }
+            }
+          }
+        },
+        {
+          field: "cascader1666",
+          title: "全选",
+          itemRender: {
+            name: "a-cascader-ex",
             props: {
               api: getTreeData,
               valueField: "value",
@@ -193,6 +235,11 @@ export default {
               }
             }
           }
+        },
+        {
+          field: "input",
+          title: "shur",
+          itemRender: {}
         }
         //,
         //   {

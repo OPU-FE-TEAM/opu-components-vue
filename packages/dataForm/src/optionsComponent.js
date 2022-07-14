@@ -84,7 +84,7 @@ export default {
         };
       });
       //a-cascader 独有需求
-      if (renderName == "a-cascader") {
+      if (["a-cascader", "a-cascader-ex"].includes(renderName)) {
         ons.popupVisibleChange = value => {
           this.visible = value;
         };
@@ -152,6 +152,17 @@ export default {
       // const that = this;
       const input = this.$refs.inputComponent;
       input && input.focus && input.focus();
+      // const el = input.$el;
+      // // select获得输入焦点，弹出下拉面板
+      // const box = el.getElementsByClassName("ant-select-selection__rendered");
+      // if (box && box.length) {
+      //   box[0].click();
+      // }
+    },
+    blur() {
+      // const that = this;
+      const input = this.$refs.inputComponent;
+      input && input.blur && input.blur();
       // const el = input.$el;
       // // select获得输入焦点，弹出下拉面板
       // const box = el.getElementsByClassName("ant-select-selection__rendered");

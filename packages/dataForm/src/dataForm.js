@@ -5,14 +5,19 @@ import enquire from "enquire.js";
 import actionModal from "./actionModal";
 
 // import { Button } from "ant-design-vue";
-const optionsComponents = ["a-radio-group", "a-checkbox-group", "a-cascader"];
+const optionsComponents = [
+  "a-radio-group",
+  "a-checkbox-group",
+  "a-cascader",
+  "a-cascader-ex"
+];
 // 回车跳转下一个focus
 function nextItemFocus(item, _vm, e = {}) {
   if (e && e.type != "keyup") return;
   const { enterToNextItemFocusList, setFieldFocus } = _vm;
   if (item.itemRender) {
     if (
-      item.itemRender.name == "a-cascader" &&
+      ["a-cascader"].includes(item.itemRender.name) &&
       _vm.$refs["input_" + item.field].getVisible()
     ) {
       return false;
@@ -24,9 +29,13 @@ function nextItemFocus(item, _vm, e = {}) {
       }
     }
   }
+
   const fieldIndex = enterToNextItemFocusList.indexOf(item.field);
   if (fieldIndex > -1 && fieldIndex < enterToNextItemFocusList.length - 1) {
-    if (item.itemRender && item.itemRender.name == "a-tree-select") {
+    if (
+      item.itemRender &&
+      ["a-tree-select", "a-cascader-ex"].includes(item.itemRender.name)
+    ) {
       const item = _vm.$refs[`input_${enterToNextItemFocusList[fieldIndex]}`];
       item.blur && item.blur();
     }
@@ -877,7 +886,8 @@ export default {
         "a-range-picker-split",
         "pulldown-table",
         "a-input-number-split",
-        "a-cascader"
+        "a-cascader",
+        "a-cascader-ex"
       ],
       wrapperFocusItemTypes: [
         "a-input-number",
@@ -888,7 +898,8 @@ export default {
         "a-select",
         "a-tree-select",
         "a-textarea",
-        "a-select-group"
+        "a-select-group",
+        "a-cascader-ex"
       ],
       // focusItemTypes: [
       //   "a-input-number",
@@ -1436,7 +1447,8 @@ export default {
           ((fields.length && fields.includes(item.field)) ||
             fields.length === 0)
         ) {
-          let props = item.itemRender.props;
+          let itemRender = item.itemRender;
+          let props = itemRender.props;
           const defaultKey = props.defaultField
             ? props.defaultField
             : config.getSelectOptions.defaultField;
@@ -1449,64 +1461,66 @@ export default {
             const options = input.getOptionsData();
             if (options.length > 0) {
               let defaultRows = [];
-              if (autoSetDefaultFirst) {
-                if (!autoSetDefaultFirstRequired) {
-                  defaultRows = [options[0]];
-                } else if (
-                  item.option &&
-                  item.option.rules &&
-                  item.option.rules[0] &&
-                  item.option.rules[0].required
-                ) {
-                  defaultRows = [options[0]];
-                }
-              } else {
-                defaultRows = options.filter(p => p[defaultKey]);
-              }
-              if (defaultRows.length > 0) {
-                const defaultValue = defaultRows.map(p => {
-                  return p[valueField];
-                });
-                if (defaultValue && defaultValue.length) {
-                  let value = defaultValue;
-                  const valueArrayTypes = [
-                    "a-checkbox-group",
-                    "a-radio-group",
-                    "a-cascader"
-                  ];
-                  const isSeletctMultiple =
-                    (item.itemRender.name == "a-select" &&
-                      props &&
-                      props.mode == "multiple") ||
-                    valueArrayTypes.includes(item.itemRender.name);
-                  if (!isSeletctMultiple) {
-                    value = defaultValue[0];
-                    defaultRows = defaultRows[0];
+              let itemName = itemRender.name;
+              if (!["a-cascader", "a-cascader-ex"].includes(itemName)) {
+                if (autoSetDefaultFirst) {
+                  if (!autoSetDefaultFirstRequired) {
+                    defaultRows = [options[0]];
+                  } else if (
+                    item.option &&
+                    item.option.rules &&
+                    item.option.rules[0] &&
+                    item.option.rules[0].required
+                  ) {
+                    defaultRows = [options[0]];
                   }
-                  if (!isSeletctMultiple && props.linkage) {
-                    if (props.linkage instanceof Array) {
-                      props.linkage.forEach(linkItem => {
-                        linkageFormData[linkItem.key] = utils.getObjData(
-                          linkItem.value,
-                          defaultRows
-                        );
-                      });
-                    } else {
-                      for (let linkItem in props.linkage) {
-                        linkageFormData[linkItem] = utils.getObjData(
-                          props.linkage[linkItem],
-                          defaultRows
-                        );
+                } else {
+                  defaultRows = options.filter(p => p[defaultKey]);
+                }
+                if (defaultRows.length > 0) {
+                  const defaultValue = defaultRows.map(p => {
+                    return p[valueField];
+                  });
+                  if (defaultValue && defaultValue.length) {
+                    let value = defaultValue;
+                    const valueArrayTypes = [
+                      "a-checkbox-group",
+                      "a-radio-group"
+                    ];
+                    const isSeletctMultiple =
+                      (itemRender.name == "a-select" &&
+                        props &&
+                        props.mode == "multiple") ||
+                      valueArrayTypes.includes(itemRender.name);
+                    if (!isSeletctMultiple) {
+                      value = defaultValue[0];
+                      defaultRows = defaultRows[0];
+                    }
+                    if (!isSeletctMultiple && props.linkage) {
+                      if (props.linkage instanceof Array) {
+                        props.linkage.forEach(linkItem => {
+                          linkageFormData[linkItem.key] = utils.getObjData(
+                            linkItem.value,
+                            defaultRows
+                          );
+                        });
+                      } else {
+                        for (let linkItem in props.linkage) {
+                          linkageFormData[linkItem] = utils.getObjData(
+                            props.linkage[linkItem],
+                            defaultRows
+                          );
+                        }
                       }
                     }
-                  }
-                  formData[item.field] = value;
-                  defaultFormData[item.field] = defaultRows;
-                  if (callback) {
-                    formData = {
-                      ...formData,
-                      ...callback(item.field, defaultRows)
-                    };
+                    formData[item.field] = value;
+                    defaultFormData[item.field] = defaultRows;
+                    if (callback) {
+                      formData = {
+                        ...formData,
+                        ...callback(item.field, defaultRows)
+                      };
+                    }
                   }
                 }
               }
