@@ -444,16 +444,14 @@ function renderHeadToolbar(h, _vm) {
 
 //处理api获取的表头数据
 function handleColumnsData(data, columns, configProps, _vm) {
-  const { sortable } = _vm;
+  const { sortable, notSortableFields, tableProps } = _vm;
   let copyColumns = utils.clone(columns);
   const apiColumns = data.map(item => {
     // 替换字段
     let obj = {
       ...item
     };
-    if (sortable) {
-      obj.sortable = true;
-    }
+
     for (const key in configProps) {
       if (key !== "list") {
         let value = item[configProps[key]];
@@ -461,6 +459,23 @@ function handleColumnsData(data, columns, configProps, _vm) {
           value = "";
         }
         obj[key] = value;
+      }
+    }
+    if (sortable) {
+      const currentNotSortableFields =
+        notSortableFields && notSortableFields.length ? notSortableFields : [];
+      const configNotSortableFields =
+        tableProps.props &&
+        tableProps.props.sortConfig &&
+        tableProps.props.sortConfig.notSortableFields
+          ? tableProps.props.sortConfig.notSortableFields
+          : [];
+      const allNotSortableFields = [
+        ...configNotSortableFields,
+        ...currentNotSortableFields
+      ];
+      if (!allNotSortableFields.includes(obj.field) && obj.sortable !== false) {
+        obj.sortable = true;
       }
     }
     let copyColumnChildren = [];
@@ -536,7 +551,8 @@ export default {
     defaultSelectFristRow: { type: Boolean, default: false },
     tableIndex: { type: String, default: "" },
     sortable: { type: Boolean, default: false },
-    keyboardSpace: { type: [Boolean, String], default: null }
+    keyboardSpace: { type: [Boolean, String], default: null },
+    notSortableFields: Array
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -933,12 +949,29 @@ export default {
     },
     // 设置表头
     setTableColumns(data) {
-      const { proxyColumns, fetchColumns, sortable } = this;
+      const { proxyColumns, fetchColumns, sortable, notSortableFields } = this;
       if (data) {
         let columnsData = utils.clone(data);
         if (sortable) {
+          const currentNotSortableFields =
+            notSortableFields && notSortableFields.length
+              ? notSortableFields
+              : [];
+          const configNotSortableFields =
+            config.sortConfig && config.sortConfig.notSortableFields
+              ? config.sortConfig.notSortableFields
+              : [];
+          const allNotSortableFields = [
+            ...configNotSortableFields,
+            ...currentNotSortableFields
+          ];
           columnsData = columnsData.map(p => {
-            p.sortable = true;
+            if (
+              !allNotSortableFields.includes(p.field) &&
+              p.sortable !== false
+            ) {
+              p.sortable = true;
+            }
             return p;
           });
         }

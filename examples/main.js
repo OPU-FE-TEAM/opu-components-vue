@@ -69,7 +69,6 @@ function getColumns(arr) {
         {
           name: "goodsCode",
           sort: 1,
-          show: false,
           width: 180,
           drag: true,
           align: "left",
@@ -81,6 +80,7 @@ function getColumns(arr) {
           isHide: false,
           rowSpan: null,
           colSpan: null
+          // sortable: false
         },
         {
           name: "ending",
@@ -395,7 +395,8 @@ DataTable.setup({
     handleServerSortParams: e => {
       console.log(e);
       return { aaaa: 123 };
-    }
+    },
+    notSortableFields: ["goodsCode"]
   }
 });
 
