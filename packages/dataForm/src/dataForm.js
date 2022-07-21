@@ -1444,6 +1444,7 @@ export default {
           item &&
           item.itemRender &&
           item.itemRender.props &&
+          !item.itemRender.props.unDefaultSelected &&
           ((fields.length && fields.includes(item.field)) ||
             fields.length === 0)
         ) {
