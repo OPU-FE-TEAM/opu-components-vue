@@ -140,11 +140,17 @@ export default {
       return props;
     }
   },
+  watch: {
+    options() {
+      this.init();
+    }
+  },
   created() {
     this.init();
   },
   methods: {
     init() {
+      console.log("select init");
       const { options } = this;
       if (options && options.length) {
         this.optionsData = handleItemPropsOptions(options, this);

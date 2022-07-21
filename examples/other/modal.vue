@@ -19,6 +19,14 @@
         <pulldownTable />
       </div>
     </modal>
+    <div>
+      <opu-select
+        :options="selectOptions"
+        style="width:300px"
+        valueField="value"
+        labelField="label"
+      />
+    </div>
   </div>
 </template>
 
@@ -26,12 +34,14 @@
 import BaseForm from "../dataForm/base.vue";
 import DataTable from "../dataTable/data.vue";
 import pulldownTable from "../other/pulldownTable.vue";
+import { DataForm } from "../../index";
 
 export default {
   components: {
     BaseForm,
     DataTable,
-    pulldownTable
+    pulldownTable,
+    OpuSelect: DataForm.select
   },
   data() {
     return {
@@ -45,11 +55,19 @@ export default {
         { label: "审核弹出", value: "messageAuditIsPop" },
         { label: "其他", value: "messageNoticeIsPop" }
       ],
-      value: []
+      value: [],
+      selectOptions: []
     };
   },
 
-  created() {},
+  created() {
+    setTimeout(() => {
+      this.selectOptions = [
+        { label: "公共", value: "messageCommonIsPop" },
+        { label: "我提交的", value: "messageSubmitIsPop" }
+      ];
+    }, 3000);
+  },
   methods: {
     open() {
       this.visible = true;
