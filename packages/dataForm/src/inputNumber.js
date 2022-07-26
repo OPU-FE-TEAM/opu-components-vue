@@ -31,7 +31,15 @@ export default {
     }
   },
   render() {
+    const { $listeners } = this;
+    const that = this;
     let propsData = this.$options.propsData;
+    let listeners = {};
+    for (const key in $listeners) {
+      listeners[key] = (...arg) => {
+        that.$emit(key, ...arg);
+      };
+    }
     let props = {
       style: { width: "100%" },
       ref: "inputNumber",
@@ -39,6 +47,7 @@ export default {
         ...propsData
       },
       on: {
+        ...listeners,
         change: value => {
           this.$emit("update", value);
           this.$emit("change", value);

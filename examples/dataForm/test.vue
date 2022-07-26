@@ -15,12 +15,17 @@
       </DataForm>
       <a-button @click="onSetData">赋值</a-button>
       <a-button @click="onGetData">获取</a-button>
+      <div>
+        <a-input v-model="dateValue" @change="onDateValueChange"></a-input>
+        <a-button @click="onFormatDate">格式化</a-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 // import test1 from "./test1";
+import dateFormat from "../../packages/utils/dateFormat";
 
 let data = [
   {
@@ -240,63 +245,61 @@ export default {
           field: "input",
           title: "shur",
           itemRender: {}
+        },
+        {
+          title: "年份",
+          field: "year",
+          itemRender: {
+            name: "a-date-picker",
+            // YearPicker
+            // name: "a-date-picker",
+            props: {
+              mode: "year",
+              format: "YYYY"
+            }
+          }
+        },
+        {
+          title: "日期",
+          field: "date",
+          itemRender: {
+            name: "a-date-picker",
+            // YearPicker
+            // name: "a-date-picker",
+            props: {}
+          }
+        },
+        {
+          title: "时间",
+          field: "dateTime",
+          itemRender: {
+            name: "a-date-picker",
+            // YearPicker
+            // name: "a-date-picker",
+            props: {
+              showTime: true,
+              format: "YYYY/MM/DD HH:mm"
+            }
+          }
+        },
+        {
+          title: "数字",
+          field: "number",
+          option: {
+            initialValue: "0"
+          },
+          itemRender: {
+            name: "a-input-number",
+            on: {
+              change: e => {
+                console.log(e);
+              },
+              blur: e => {
+                console.log("blur", e);
+              }
+            }
+          }
         }
-        //,
-        //   {
-        //     title: "年份",
-        //     field: "year",
-        //     itemRender: {
-        //       name: "a-date-picker",
-        //       // YearPicker
-        //       // name: "a-date-picker",
-        //       props: {
-        //         mode: "year",
-        //         format: "YYYY"
-        //       }
-        //     }
-        //   },
-        //   {
-        //     field: "ordinary11",
-        //     title: "请求下拉123",
-        //     itemRender: {
-        //       name: "a-select",
-        //       props: {
-        //         defaultField: "isSelected",
-        //         valueField: "Id",
-        //         labelField: "Text",
-        //         api: getSelectGroupData
-        //       }
-        //     }
-        //   },
-        //   // {
-        //   //   title: "输入框",
-        //   //   field: "input"
-        //   // },
-        //   {
-        //     title: "日期",
-        //     field: "date",
-        //     itemRender: {
-        //       name: "a-date-picker",
-        //       // YearPicker
-        //       // name: "a-date-picker",
-        //       props: {}
-        //     }
-        //   },
-        //   {
-        //     title: "数组",
-        //     field: "number",
-        //     option: {
-        //       initialValue: "0"
-        //     },
-        //     itemRender: {
-        //       name: "a-input-number",
-        //       on: {
-        //         change: e => {
-        //           console.log(e);
-        //         }
-        //       }
-        //     }
-        //   },
         //   {
         //     field: "pulldown",
         //     title: "下拉面板",
@@ -480,7 +483,8 @@ export default {
         // //       { id: 33, text: "21-30岁", code: "g30" }
         // //     ]
         // //   }
-      ]
+      ],
+      dateValue: ""
     };
   },
   mounted() {
@@ -509,6 +513,14 @@ export default {
     },
     onGetData() {
       console.log(this.$refs.dataForm.getData());
+    },
+    onFormatDate() {
+      const res = dateFormat("20220726083056", "YYYY-MM-DD HH:mm:ss");
+    },
+    onDateValueChange(e) {
+      const { value } = e.target;
+      const res = dateFormat(value, "YYYY-MM-DD HH:mm:ss");
+      console.log(res);
     }
   }
 };

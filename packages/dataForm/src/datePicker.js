@@ -1,5 +1,6 @@
 import { DatePickerProps } from "ant-design-vue/lib/date-picker/interface";
 import utils from "../../utils";
+import dateFormat from "../../utils/dateFormat";
 // import moment from "moment";
 
 export default {
@@ -82,8 +83,16 @@ export default {
     },
     // 监听输入事件
     onInputEvent() {
-      const { componentProps } = this;
       const that = this;
+      let format = "YYYY-MM-DD";
+      if (that.componentProps.props && that.componentProps.props.format) {
+        format = that.componentProps.props.format;
+      } else if (
+        that.componentProps.props &&
+        that.componentProps.props.showTime
+      ) {
+        format = format + " HH:mm:ss";
+      }
       setTimeout(() => {
         const input = document.getElementsByClassName("ant-calendar-input");
         if (input && input.length) {
@@ -93,44 +102,10 @@ export default {
           inputDom.removeEventListener("keyup", that.onKeyUpEnter);
           inputDom.addEventListener("keyup", that.onKeyUpEnter);
           inputDom.oninput = function(e) {
+            const { value } = e.target;
             if (e.target.value && e.inputType !== "deleteContentBackward") {
-              const value = e.target.value;
-              let dayFh = "-";
-              if (componentProps.props && componentProps.props.format) {
-                dayFh = componentProps.props.format.split("")[4];
-              }
-              if (value.length === 4 && value.indexOf(dayFh) < 0) {
-                // 输入4位不存在-
-                e.target.value = value + dayFh;
-              } else if (
-                value.length === 7 &&
-                value.indexOf(dayFh) > -1 &&
-                value.split(dayFh).length === 2
-              ) {
-                // 输入7位不存在两个-
-                e.target.value = value + dayFh;
-              }
-              if (componentProps.props && componentProps.props.showTime) {
-                // 输入时间
-                let timeFh = ":";
-                if (componentProps.props && componentProps.props.format) {
-                  timeFh = componentProps.props.format.split("")[13];
-                }
-                if (value.length === 10 && value.indexOf(" ") < 0) {
-                  // 输入10位不存在空格
-                  e.target.value = value + " ";
-                } else if (value.length === 13 && value.indexOf(timeFh) < 0) {
-                  // 输入13位不存在:
-                  e.target.value = value + timeFh;
-                } else if (
-                  value.length === 16 &&
-                  value.indexOf(timeFh) > -1 &&
-                  value.split(timeFh).length === 2
-                ) {
-                  // 输入16位不存在两个:
-                  e.target.value = value + timeFh;
-                }
-              }
+              let newValue = dateFormat(value, format);
+              e.target.value = newValue;
             }
           };
         }
