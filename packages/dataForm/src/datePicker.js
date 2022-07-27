@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     componentProps() {
-      const { $listeners, $options, value } = this;
+      const { $listeners, $options, value, ok } = this;
       const propsData = $options.propsData;
       const ons = {};
       utils.each($listeners, (cb, type) => {
@@ -43,7 +43,8 @@ export default {
               this.updateValue(e);
             }
           },
-          openChange: this.onOpenChange
+          openChange: this.onOpenChange,
+          ok: ok
         }
       };
       if (this.min || (this.max && !props.props.disabledDate)) {
@@ -92,16 +93,19 @@ export default {
     onKeyUpEnter(e) {
       if (e.key === "Enter") {
         e.stopPropagation();
-        const val = mergeInputDate(
-          this.inputValue,
-          this.value.format(this.currentFormat),
-          this.currentFormat
-        );
-        const newVal = moment(val, this.currentFormat);
-        if (newVal.format(this.currentFormat) !== "Invalid date") {
-          this.updateValue(newVal);
-        }
+        this.ok();
         this.$emit("inputPressEnter", e);
+      }
+    },
+    ok() {
+      const val = mergeInputDate(
+        this.inputValue,
+        this.value.format(this.currentFormat),
+        this.currentFormat
+      );
+      const newVal = moment(val, this.currentFormat);
+      if (newVal.format(this.currentFormat) !== "Invalid date") {
+        this.updateValue(newVal);
       }
     },
     // 监听输入事件
