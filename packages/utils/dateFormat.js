@@ -1,4 +1,4 @@
-export default (value, format = "YYYY-MM-DD") => {
+const getBlocks = (format = "YYYY-MM-DD") => {
   let blocks = [];
   let datePatterns = [];
   let delimiters = [];
@@ -24,7 +24,15 @@ export default (value, format = "YYYY-MM-DD") => {
       formatItemStr = "";
     }
   });
+  return {
+    blocks,
+    datePatterns,
+    delimiters
+  };
+};
 
+export const formatInputDate = (value, format = "YYYY-MM-DD") => {
+  const { blocks, datePatterns, delimiters } = getBlocks(format);
   let result = "";
   value = value.replace(/[^\d]/g, "");
   blocks.forEach((length, index) => {
@@ -67,5 +75,34 @@ export default (value, format = "YYYY-MM-DD") => {
       value = rest;
     }
   });
+  return result;
+};
+
+export const mergeInputDate = (date1, date2, format) => {
+  if (date1 === date2) {
+    return date1;
+  }
+  const { blocks, delimiters } = getBlocks(format);
+  let result = "";
+  let value1 = date1.replace(/[^\d]/g, "");
+  let value2 = date2.replace(/[^\d]/g, "");
+
+  blocks.forEach((length, index) => {
+    let date1Sub = value1.slice(0, length);
+    value1 = value1.slice(length);
+    let date2Sub = value2.slice(0, length);
+    value2 = value2.slice(length);
+    let val = "";
+    let delimiter = delimiters[index] ? delimiters[index] : "";
+    if (date1Sub.length === length) {
+      val = date1Sub;
+    } else {
+      val = date2Sub;
+    }
+    if (val) {
+      result += val + delimiter;
+    }
+  });
+
   return result;
 };

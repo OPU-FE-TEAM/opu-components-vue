@@ -25,7 +25,7 @@
 
 <script>
 // import test1 from "./test1";
-import dateFormat from "../../packages/utils/dateFormat";
+import { formatInputDate } from "../../packages/utils/dateFormat";
 
 let data = [
   {
@@ -278,7 +278,7 @@ export default {
             // name: "a-date-picker",
             props: {
               showTime: true,
-              format: "YYYY/MM/DD HH:mm"
+              format: "YYYY-MM-DD HH:mm"
             }
           }
         },
@@ -515,11 +515,11 @@ export default {
       console.log(this.$refs.dataForm.getData());
     },
     onFormatDate() {
-      const res = dateFormat("20220726083056", "YYYY-MM-DD HH:mm:ss");
+      // const res = dateFormat("20220726083056", "YYYY-MM-DD HH:mm:ss");
     },
     onDateValueChange(e) {
       const { value } = e.target;
-      const res = dateFormat(value, "YYYY-MM-DD HH:mm:ss");
+      const res = formatInputDate(value, "YYYY-MM-DD HH:mm:ss");
       console.log(res);
     }
   }

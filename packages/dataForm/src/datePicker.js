@@ -1,7 +1,7 @@
 import { DatePickerProps } from "ant-design-vue/lib/date-picker/interface";
 import utils from "../../utils";
-import dateFormat from "../../utils/dateFormat";
-// import moment from "moment";
+import { formatInputDate, mergeInputDate } from "../../utils/dateFormat";
+import moment from "moment";
 
 export default {
   name: "OpuDatePicker",
@@ -16,7 +16,9 @@ export default {
     event: "update"
   },
   data() {
-    return {};
+    return {
+      inputValue: ""
+    };
   },
   computed: {
     componentProps() {
@@ -51,6 +53,18 @@ export default {
       }
 
       return props;
+    },
+    currentFormat() {
+      let format = "YYYY-MM-DD";
+      if (this.componentProps.props && this.componentProps.props.format) {
+        format = this.componentProps.props.format;
+      } else if (
+        this.componentProps.props &&
+        this.componentProps.props.showTime
+      ) {
+        format = format + " HH:mm:ss";
+      }
+      return format;
     }
   },
   created() {
@@ -78,21 +92,21 @@ export default {
     onKeyUpEnter(e) {
       if (e.key === "Enter") {
         e.stopPropagation();
+        const val = mergeInputDate(
+          this.inputValue,
+          this.value.format(this.currentFormat),
+          this.currentFormat
+        );
+        const newVal = moment(val, this.currentFormat);
+        if (newVal.format(this.currentFormat) !== "Invalid date") {
+          this.updateValue(newVal);
+        }
         this.$emit("inputPressEnter", e);
       }
     },
     // 监听输入事件
     onInputEvent() {
       const that = this;
-      let format = "YYYY-MM-DD";
-      if (that.componentProps.props && that.componentProps.props.format) {
-        format = that.componentProps.props.format;
-      } else if (
-        that.componentProps.props &&
-        that.componentProps.props.showTime
-      ) {
-        format = format + " HH:mm:ss";
-      }
       setTimeout(() => {
         const input = document.getElementsByClassName("ant-calendar-input");
         if (input && input.length) {
@@ -104,9 +118,10 @@ export default {
           inputDom.oninput = function(e) {
             const { value } = e.target;
             if (e.target.value && e.inputType !== "deleteContentBackward") {
-              let newValue = dateFormat(value, format);
+              let newValue = formatInputDate(value, that.currentFormat);
               e.target.value = newValue;
             }
+            that.inputValue = e.target.value;
           };
         }
       }, 100);
