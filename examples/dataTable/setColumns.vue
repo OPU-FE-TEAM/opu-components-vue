@@ -1305,7 +1305,6 @@ export default {
       console.log(str);
     },
     onAdd() {
-      debugger;
       this.$refs.crudTable.reloadTable();
     },
     setSearchData() {

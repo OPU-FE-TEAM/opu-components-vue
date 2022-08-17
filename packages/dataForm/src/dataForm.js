@@ -15,27 +15,22 @@ const optionsComponents = [
 function nextItemFocus(item, _vm, e = {}) {
   if (e && e.type != "keyup") return;
   const { enterToNextItemFocusList, setFieldFocus } = _vm;
-  if (item.itemRender) {
-    if (
-      ["a-cascader"].includes(item.itemRender.name) &&
-      _vm.$refs["input_" + item.field].getVisible()
-    ) {
-      return false;
-    }
-    if (item.itemRender.on && item.itemRender.on.enter) {
-      const enterRes = item.itemRender.on.enter(e);
-      if (enterRes == false) {
-        return;
-      }
+  if (
+    ["a-cascader"].includes(item.itemRender.name) &&
+    _vm.$refs["input_" + item.field].getVisible()
+  ) {
+    return false;
+  }
+  if (item.itemRender.on && item.itemRender.on.enter) {
+    const enterRes = item.itemRender.on.enter(e);
+    if (enterRes == false) {
+      return;
     }
   }
 
   const fieldIndex = enterToNextItemFocusList.indexOf(item.field);
   if (fieldIndex > -1 && fieldIndex < enterToNextItemFocusList.length - 1) {
-    if (
-      item.itemRender &&
-      ["a-tree-select", "a-cascader-ex"].includes(item.itemRender.name)
-    ) {
+    if (["a-tree-select", "a-cascader-ex"].includes(item.itemRender.name)) {
       const item = _vm.$refs[`input_${enterToNextItemFocusList[fieldIndex]}`];
       item.blur && item.blur();
     }
@@ -49,8 +44,7 @@ function handeUnifyApiGetOptions(
   unifyList,
   optionsApiList,
   _vm,
-  formData = {},
-  callback
+  formData = {}
 ) {
   const { getSelectOptions } = _vm;
   // 处理同一请求参数
@@ -94,16 +88,11 @@ function handeUnifyApiGetOptions(
       fields
     });
   }
-  fetchItemPropsOptionsApiList(optionsApiList, _vm, formData, callback);
+  fetchItemPropsOptionsApiList(optionsApiList, _vm, formData);
 }
 
 // 请求表单项可选数据
-const fetchItemPropsOptionsApiList = async function(
-  list,
-  _vm,
-  formData,
-  callback
-) {
+const fetchItemPropsOptionsApiList = async function(list, _vm, formData) {
   const {
     setFieldsOptions,
     onOptionsAllLoad,
@@ -120,7 +109,7 @@ const fetchItemPropsOptionsApiList = async function(
       list = beforeRes;
     }
   }
-  let fields = [];
+
   let promises = list.map(item => {
     const { api, param } = item;
     const field = item.field;
@@ -133,7 +122,6 @@ const fetchItemPropsOptionsApiList = async function(
       config.getSelectOptions.loadOptionsIdField &&
       ((item.props && item.props.autoLoadOptionsId !== false) || !item.props)
     ) {
-      fields.push(fields);
       param[config.getSelectOptions.loadOptionsIdField] = formData[field];
     }
     return api(param);
@@ -141,23 +129,26 @@ const fetchItemPropsOptionsApiList = async function(
   Promise.all(promises)
     .then(res => {
       let json = {};
+      let apiFields = [];
       list.forEach((item, index) => {
         const { field, fields } = item;
         const itemData = res[index];
         if (fields && fields.length) {
           // 统一请求可选数据 赋值到指定字段的处理
-          fields.forEach(element => {
+          fields.forEach(p => {
             const optionsData = handlefieldOptionsDataField(
-              element.field,
+              p.field,
               itemData,
               _vm
             );
-            json[element.field] = optionsData;
+            json[p.field] = optionsData;
+            apiFields.push(p.field);
           });
         } else {
           // 字段单独配置api的可选数据的处理
           const optionsData = handlefieldOptionsDataField(field, itemData, _vm);
           json[field] = optionsData;
+          apiFields.push(field);
           // json[field] = itemData;
         }
       });
@@ -170,10 +161,9 @@ const fetchItemPropsOptionsApiList = async function(
       setFieldsOptions(json);
       let defaultFormData = {};
       if (autoSetDefaultValue) {
-        defaultFormData = setFieldsOptionsDefaultValues(fields);
+        defaultFormData = setFieldsOptionsDefaultValues(apiFields);
       }
       onOptionsLoadAfter(json, defaultFormData);
-      callback && callback(json);
     })
     .catch(() => {});
 };
@@ -257,20 +247,22 @@ function renderItemInput(item, h, _vm) {
     $slots,
     $scopedSlots,
     readonly,
-    onButtonClick,
     items,
+    onButtonClick,
     renderNameKeys,
+    optionsItemIndexs,
     componentsFocusItemTypes
   } = _vm;
   const vDecorator = [item.field];
   if (item.option) {
     vDecorator.push(item.option);
   }
+  let itemRender = item.itemRender;
   const props = {
     props: {
       fieldName: item.field
     },
-    ...item.itemRender,
+    ...itemRender,
     ref: "input_" + item.field,
     directives: [
       {
@@ -281,10 +273,7 @@ function renderItemInput(item, h, _vm) {
   };
 
   // 只读
-  if (
-    readonly ||
-    (item.itemRender && item.itemRender.props && item.itemRender.props.readonly)
-  ) {
+  if (readonly || itemRender.props.readonly) {
     if (props.class) {
       if (utils.isArray(props.class)) {
         props.class.push("input_readonly");
@@ -294,24 +283,17 @@ function renderItemInput(item, h, _vm) {
     } else {
       props.class = ["input_readonly"];
     }
-    if (props.props) {
-      props.props.disabled = true;
-      props.props.placeholder = null;
-    } else {
-      props.props = {
-        disabled: true,
-        placeholder: ""
-      };
-    }
+    props.props.disabled = true;
+    props.props.placeholder = null;
   } else {
-    const find = items.find(p => p.field === item.field);
+    const find = items[optionsItemIndexs[item.field]];
     if (
       find &&
       find.itemRender &&
       find.itemRender.props &&
       find.itemRender.props.disabled
     ) {
-      props.props.disabled = find.itemRender.props.disabled;
+      props.props.disabled = itemRender.props.disabled;
     } else {
       props.props.disabled = false;
     }
@@ -323,33 +305,31 @@ function renderItemInput(item, h, _vm) {
   }
 
   let inputDom = "";
-  if (item.itemRender && item.itemRender.slot) {
+  if (itemRender.slot) {
     // 插槽
-    if ($slots[item.itemRender.slot]) {
-      inputDom = $slots[item.itemRender.slot];
-    } else if ($scopedSlots[item.itemRender.slot]) {
+    if ($slots[itemRender.slot]) {
+      inputDom = $slots[itemRender.slot];
+    } else if ($scopedSlots[itemRender.slot]) {
       (props.scopedSlots = {
-        default: $scopedSlots[item.itemRender.slot]
+        default: $scopedSlots[itemRender.slot]
       }),
         (inputDom = h("a-scopedSlots", props));
     }
-  } else if (item.itemRender && item.itemRender.customRender) {
+  } else if (itemRender.customRender) {
     // 自定义渲染内容
-    if (item.itemRender && item.itemRender.props) {
-      props.props["customRender"] = item.itemRender.customRender;
+    if (itemRender.props) {
+      props.props["customRender"] = itemRender.customRender;
     } else {
       props.props = {
-        customRender: item.itemRender.customRender
+        customRender: itemRender.customRender
       };
     }
     inputDom = h("a-customRender", props);
   } else {
     // 根据name渲染组件
     let renderName =
-      item.itemRender &&
-      item.itemRender.name &&
-      item.itemRender.name !== "hidden"
-        ? `${item.itemRender.name}`
+      itemRender.name && itemRender.name !== "hidden"
+        ? `${itemRender.name}`
         : "a-input";
     // if (renderName.indexOf("a-") > -1) {
     let configKey = "";
@@ -377,8 +357,7 @@ function renderItemInput(item, h, _vm) {
       };
     }
     if (renderNameKeys[renderName]) {
-      renderName = renderNameKeys[renderName] || renderName;
-      props.props.componentPropsData = props.props;
+      renderName = renderNameKeys[renderName];
     } else if (renderName === "buttons") {
       if (props.props) {
         props.props.itemClick = onButtonClick;
@@ -387,7 +366,7 @@ function renderItemInput(item, h, _vm) {
           itemClick: onButtonClick
         };
       }
-      props.props.items = item.itemRender.items;
+      props.props.items = itemRender.items;
     } else if (optionsComponents.includes(renderName)) {
       // 有可选数据的组件
       props.props.componentPropsData = props.props;
@@ -404,23 +383,11 @@ function renderItemInput(item, h, _vm) {
 // 渲染每个表单项内容
 function renderItemContent(item, h, _vm) {
   const { formTitleWidth, $scopedSlots } = _vm;
-  const before =
-    item.itemRender && item.itemRender.before ? item.itemRender.before() : "";
-  let after =
-    item.itemRender && item.itemRender.after ? item.itemRender.after() : "";
-  let extend =
-    item.itemRender && item.itemRender.extend
-      ? item.itemRender.extend(item)
-      : "";
-  if (
-    item.actions &&
-    item.actions.length &&
-    !(
-      item.itemRender &&
-      item.itemRender.props &&
-      item.itemRender.props.disabled
-    )
-  ) {
+  const itemRender = item.itemRender;
+  const before = itemRender.before ? itemRender.before() : "";
+  let after = itemRender.after ? itemRender.after() : "";
+  let extend = itemRender.extend ? itemRender.extend(item) : "";
+  if (item.actions && item.actions.length && !itemRender.props.disabled) {
     after = item.actions.map(p => {
       let actionButton = "";
       if (utils.isFunction(p.button)) {
@@ -471,8 +438,7 @@ function renderItemContent(item, h, _vm) {
       style: { width: formTitleWidth },
       class: {
         "data-form-item-content": true,
-        "form-item-buttons":
-          item.itemRender && item.itemRender.name == "buttons"
+        "form-item-buttons": itemRender && itemRender.name == "buttons"
       }
     },
     [
@@ -556,7 +522,7 @@ function renderItems(h, _vm) {
               }
             ]
           });
-        } else if (item.itemRender && item.itemRender.name === "hidden") {
+        } else if (item.itemRender.name === "hidden") {
           formItemContent = [renderItemContent(item, h, _vm)];
           formItemProps.style["display"] = "none";
         } else {
@@ -597,13 +563,14 @@ function renderItems(h, _vm) {
           on: {}
         };
         if (
-          ((item.itemRender &&
-            wrapperFocusItemTypes.includes(item.itemRender.name)) ||
-            !(item.itemRender && item.itemRender.name)) &&
-          !(item.itemRender && item.itemRender.name == "a-input-number-split")
+          (wrapperFocusItemTypes.includes(item.itemRender.name) ||
+            !item.itemRender.name) &&
+          !(item.itemRender.name == "a-input-number-split")
         ) {
           wrapperProps.on.keyup = e => {
             const { keyCode } = e;
+            if (e.shiftKey && item.itemRender.name == "a-textarea")
+              return false;
             e.stopPropagation();
             if (keyCode === 13) {
               nextItemFocus(item, _vm, e);
@@ -862,10 +829,6 @@ export default {
       type: Boolean,
       default: false
     },
-    autoSetDefaultFirstRequired: {
-      type: Boolean,
-      default: false
-    },
     autoEnterSelectInput: {
       type: [Boolean, String],
       default: ""
@@ -901,22 +864,6 @@ export default {
         "a-select-group",
         "a-cascader-ex"
       ],
-      // focusItemTypes: [
-      //   "a-input-number",
-      //   "a-select",
-      //   "a-date-picker",
-      //   "a-time-picker",
-      //   "a-month-picker",
-      //   "a-week-picker",
-      //   "a-range-picker",
-      //   "a-cascader",
-      //   "a-tree-select",
-      //   "a-textarea",
-      //   "a-range-picker-split",
-      //   "a-input-number-split",
-      //   "a-select-group",
-      //   "pulldown-table"
-      // ],
       //有返回数据的Form组件名称
       optionsFormTypes: [
         "a-select",
@@ -937,6 +884,7 @@ export default {
       },
       //有返回数据的item集合索引
       optionsItemIndexs: {},
+      optionsItemDataIndexs: {},
       unifyApiGetOptions: [],
       getItemPropsOptionsApiList: [],
       config: config,
@@ -946,20 +894,19 @@ export default {
   computed: {
     // 回车跳转下一个表单项获得焦点的字段列表
     enterToNextItemFocusList() {
-      return this.items
+      return this.itemsOptions
         .map(item => {
           let itemRender = item.itemRender;
+          let itemProps = itemRender.props;
           if (
-            itemRender &&
-            ((itemRender.props &&
-              (itemRender.props.disabled || itemRender.props.readonly)) ||
-              itemRender.name == "hidden" ||
-              itemRender.slot ||
-              itemRender.customRender)
+            itemProps.disabled ||
+            itemProps.readonly ||
+            itemRender.name == "hidden" ||
+            itemRender.slot ||
+            itemRender.customRender
           ) {
             return "";
           } else if (
-            !itemRender ||
             !itemRender.name ||
             [
               ...this.wrapperFocusItemTypes,
@@ -1081,145 +1028,116 @@ export default {
     );
   },
   methods: {
-    cloneItems(items) {
+    cloneItems(items, type) {
       const {
         expand,
         autoLoadOptionsData,
         isPartRequest,
-        formClearUndefinedValue
+        optionsItemDataIndexs
       } = this;
       const clone = utils.clone(items, true);
       const getItemPropsOptionsApiList = [];
       const unifyApiGetOptions = [];
-      let cloneData = [];
       const isAutoLoadOptionsData =
         (autoLoadOptionsData === true || autoLoadOptionsData === false) &&
         autoLoadOptionsData !== config.getSelectOptions.autoLoadOptionsData
           ? autoLoadOptionsData
           : config.getSelectOptions.autoLoadOptionsData;
-      if (!expand) {
-        cloneData = clone.filter(p => !p.folding);
-      } else {
-        cloneData = clone;
-      }
-      let newOptionsItemIndexs = this.optionsItemIndexs;
+
+      let cloneData = expand ? clone : clone.filter(p => !p.folding);
+      let optionsItemIndexs = {};
       const isFormPartRequest =
         isPartRequest !== ""
           ? isPartRequest
           : config.getSelectOptions.isPartRequest;
+
       const data = cloneData.map((item, index) => {
-        const oldItem = this.itemsOptions.find(p => p.field === item.field);
-        if (
-          oldItem &&
-          oldItem.itemRender &&
-          oldItem.itemRender.props &&
-          item.itemRender &&
-          item.itemRender.props &&
-          oldItem.itemRender.props.api === item.itemRender.props.api &&
-          utils.isEqual(
-            oldItem.itemRender.props.param,
-            item.itemRender.props.param
-          ) &&
-          isAutoLoadOptionsData
-        ) {
-          return item;
-        }
-        if (
-          item.itemRender &&
-          item.itemRender.props &&
-          (item.itemRender.props.api ||
-            (item.itemRender.props.param && isFormPartRequest === true))
-        ) {
-          if (!item.itemRender.props.api) {
-            item.itemRender.props.api = config.getSelectOptions.api;
+        let field = item.field;
+        optionsItemIndexs[field] = index;
+        if (!type && optionsItemDataIndexs[field]) return item;
+        item.itemRender = item.itemRender || {};
+        let itemRender = item.itemRender;
+        itemRender.props = itemRender.props || {};
+        let itemProps = itemRender.props;
+        if (itemProps.api || itemProps.param) {
+          if (isFormPartRequest === true && !itemProps.api) {
+            itemProps.api = config.getSelectOptions.api;
           }
-          getItemPropsOptionsApiList.push({
-            field: item.field,
-            api: item.itemRender.props.api,
-            param: item.itemRender.props.param,
-            props: item.itemRender.props
-          });
-        } else if (
-          item.itemRender &&
-          item.itemRender.props &&
-          item.itemRender.props.param &&
-          !item.itemRender.props.api &&
-          isFormPartRequest !== true
-        ) {
-          unifyApiGetOptions.push(item);
-        }
-
-        if (formClearUndefinedValue) {
-          let row = this.initOptionsItemIndex(item, index);
-          if (row) {
-            newOptionsItemIndexs[item.field] = row;
+          if (itemProps.api) {
+            getItemPropsOptionsApiList.push({
+              field: field,
+              api: itemProps.api,
+              param: itemProps.param,
+              props: itemProps
+            });
+          } else if (itemProps.param) {
+            unifyApiGetOptions.push(item);
           }
         }
-
+        let row = this.initOptionsItemIndex(item, index);
+        if (row) {
+          optionsItemDataIndexs[field] = row;
+        }
         return item;
       });
 
-      this.optionsItemIndexs = newOptionsItemIndexs;
+      this.optionsItemIndexs = optionsItemIndexs;
+      this.optionsItemDataIndexs = optionsItemDataIndexs;
       this.unifyApiGetOptions = unifyApiGetOptions;
       this.getItemPropsOptionsApiList = getItemPropsOptionsApiList;
-      if (isAutoLoadOptionsData) {
+      this.itemsOptions = data;
+      if (isAutoLoadOptionsData || type) {
         this.loadOptionsData();
       }
-
-      this.itemsOptions = data;
     },
     //初始化 optionsItem 索引数据
     initOptionsItemIndex(item, index) {
-      let { optionsItemIndexs, optionsFormTypes } = this;
+      let { optionsItemDataIndexs, optionsFormTypes } = this;
       let row;
-      if (
-        item.itemRender &&
-        item.itemRender.name &&
-        optionsFormTypes.indexOf(item.itemRender.name) > -1
-      )
-        if (optionsItemIndexs[item.field]) {
+      let itemRender = item.itemRender || {};
+      if (itemRender.name && optionsFormTypes.indexOf(itemRender.name) > -1)
+        if (optionsItemDataIndexs[item.field]) {
           row = {
-            ...optionsItemIndexs[item.field],
+            ...optionsItemDataIndexs[item.field],
             index
           };
         } else {
-          let itemProps = item.itemRender.props || {};
+          let itemProps = itemRender.props;
           row = {
-            name: item.itemRender.name,
-            valueField: config.getSelectOptions.valueField,
-            labelField: config.getSelectOptions.labelField,
+            name: itemRender.name,
             options: [],
             ...itemProps,
             index
           };
           if (
-            item.itemRender.name == "a-tree-select" &&
-            item.itemRender.props &&
-            item.itemRender.props.treeData &&
-            item.itemRender.props.treeData.length > 0
+            itemRender.name == "a-tree-select" &&
+            itemProps.treeData &&
+            itemProps.treeData.length > 0
           ) {
-            row.options = item.itemRender.props.treeData;
+            row.options = itemProps.treeData;
           }
         }
       return row;
     },
-    loadOptionsData(formData = {}, callback) {
-      const { unifyApiGetOptions, getItemPropsOptionsApiList } = this;
-      if (unifyApiGetOptions.length) {
-        handeUnifyApiGetOptions(
-          unifyApiGetOptions,
-          getItemPropsOptionsApiList,
-          this,
-          formData,
-          callback
-        );
-      } else if (getItemPropsOptionsApiList.length) {
-        fetchItemPropsOptionsApiList(
-          getItemPropsOptionsApiList,
-          this,
-          formData,
-          callback
-        );
+    loadOptionsData(formData = {}, isAll) {
+      if (isAll) {
+        this.cloneItems(this.tableColumns, isAll);
+      } else {
+        const { unifyApiGetOptions, getItemPropsOptionsApiList } = this;
+        if (unifyApiGetOptions.length) {
+          handeUnifyApiGetOptions(
+            unifyApiGetOptions,
+            getItemPropsOptionsApiList,
+            this,
+            formData
+          );
+        } else if (getItemPropsOptionsApiList.length) {
+          fetchItemPropsOptionsApiList(
+            getItemPropsOptionsApiList,
+            this,
+            formData
+          );
+        }
       }
     },
     /**
@@ -1239,13 +1157,19 @@ export default {
     },
     // 设置表单值
     setData(values) {
-      const { items, optionsItemIndexs, formClearUndefinedValue } = this;
+      const { items, optionsItemDataIndexs, formClearUndefinedValue } = this;
+      const {
+        getSelectOptions: {
+          valueField: configValueField,
+          childrenField: configChildrenField
+        }
+      } = config;
       // 过滤掉formitems未定义的字段
       const formFields = items.map(item => item.field);
       let formData = {};
       for (const key in values) {
         if (formFields.includes(key)) {
-          let item = optionsItemIndexs[key];
+          let item = optionsItemDataIndexs[key];
           if (formClearUndefinedValue && item) {
             let is = false;
             if (item.options.length > 0) {
@@ -1254,13 +1178,11 @@ export default {
                 item.name == "a-select-group"
               ) {
                 let valueField = item.replaceFields
-                  ? item.replaceFields.value ||
-                    config.getSelectOptions.valueField
-                  : config.getSelectOptions.valueField;
+                  ? item.replaceFields.value || configValueField
+                  : configValueField;
                 let childrenField = item.replaceFields
-                  ? item.replaceFields.children ||
-                    config.getSelectOptions.childrenField
-                  : config.getSelectOptions.childrenField;
+                  ? item.replaceFields.children || configChildrenField
+                  : configChildrenField;
                 if (utils.isArray(values[key])) {
                   values[key] = utils.hasOptionsValue(
                     item.options,
@@ -1279,9 +1201,9 @@ export default {
                   );
                 }
               } else {
+                const vF = item.valueField || configValueField;
                 if (utils.isArray(values[key])) {
                   const arrValue = [];
-                  const vF = item.valueField;
                   for (let i = 0; i < item.options.length; i++) {
                     const el = item.options[i];
                     if (values[key].includes(el[vF])) {
@@ -1292,10 +1214,7 @@ export default {
                   is = true;
                   values[key] = arrValue;
                 } else {
-                  is =
-                    item.options.findIndex(
-                      p => p[item.valueField] == values[key]
-                    ) > -1;
+                  is = item.options.findIndex(p => p[vF] == values[key]) > -1;
                 }
               }
             } else {
@@ -1412,38 +1331,42 @@ export default {
     },
     // 设置一组字段的options数据
     setFieldsOptions(data) {
-      let { optionsItemIndexs, formClearUndefinedValue } = this;
+      let { optionsItemDataIndexs, optionsItemIndexs } = this;
       const formData = this.getData();
       for (const key in data) {
         const options = data[key];
-        const item = this.itemsOptions.find(p => p.field === key);
-        if (item && item.itemRender && item.itemRender.props) {
-          const inputRef = "input_" + item.field;
-          const input = this.$refs[inputRef];
-          if (input && input.setOptionsData) {
-            input.setOptionsData(options);
-            if (formClearUndefinedValue && optionsItemIndexs[item.field]) {
-              optionsItemIndexs[item.field].options = options;
+        const index = optionsItemIndexs[key];
+        if (index > -1) {
+          const item = this.itemsOptions[index];
+          if (item && item.itemRender && item.itemRender.props) {
+            const inputRef = "input_" + item.field;
+            const input = this.$refs[inputRef];
+            if (input && input.setOptionsData) {
+              input.setOptionsData(options);
+              if (optionsItemDataIndexs[key]) {
+                optionsItemDataIndexs[item.field].options = options;
+              }
             }
           }
         }
       }
-
       // 清除赋值字段的值
       this.setData(formData);
     },
+    //获取表单字段options数据
+    getFieldsOptions(fields) {
+      if (!fields) {
+        return;
+      }
+    },
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}, callback) {
-      let { autoSetDefaultFirst, autoSetDefaultFirstRequired } = this;
+      let { autoSetDefaultFirst } = this;
       let formData = {};
       let linkageFormData = {};
       let defaultFormData = {};
-
       this.itemsOptions.forEach(item => {
         if (
-          item &&
-          item.itemRender &&
-          item.itemRender.props &&
           !item.itemRender.props.unDefaultSelected &&
           ((fields.length && fields.includes(item.field)) ||
             fields.length === 0)
@@ -1463,18 +1386,16 @@ export default {
             if (options.length > 0) {
               let defaultRows = [];
               let itemName = itemRender.name;
-              if (!["a-cascader", "a-cascader-ex"].includes(itemName)) {
+              if (
+                ![
+                  "a-cascader",
+                  "a-cascader-ex",
+                  "a-select-group",
+                  "a-tree-select"
+                ].includes(itemName)
+              ) {
                 if (autoSetDefaultFirst) {
-                  if (!autoSetDefaultFirstRequired) {
-                    defaultRows = [options[0]];
-                  } else if (
-                    item.option &&
-                    item.option.rules &&
-                    item.option.rules[0] &&
-                    item.option.rules[0].required
-                  ) {
-                    defaultRows = [options[0]];
-                  }
+                  defaultRows = [options[0]];
                 } else {
                   defaultRows = options.filter(p => p[defaultKey]);
                 }
@@ -1593,20 +1514,16 @@ export default {
     // 加载表单项的下拉数据
     loadItemOptionsData(field, params) {
       const formItem = this.itemsOptions.find(p => p.field === field);
-      if (
-        formItem &&
-        formItem.itemRender &&
-        formItem.itemRender.props &&
-        (formItem.itemRender.props.api || formItem.itemRender.props.param)
-      ) {
+      let itemProps = formItem.itemRender.props;
+      if (itemProps.api || itemProps.param) {
         let api = "";
-        if (formItem.itemRender.props.api) {
-          api = formItem.itemRender.props.api;
+        if (itemProps.api) {
+          api = itemProps.api;
         } else {
           api = config.getSelectOptions.api;
         }
         api({
-          ...formItem.itemRender.props.param,
+          ...itemProps.param,
           ...params
         }).then(res => {
           const optionsData = handlefieldOptionsDataField(field, res, this);

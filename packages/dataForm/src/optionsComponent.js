@@ -72,8 +72,7 @@ export default {
         $options,
         optionsData,
         renderName,
-        componentPropsData,
-        value
+        componentPropsData
       } = this;
       const propsData = $options.propsData;
 
@@ -90,17 +89,10 @@ export default {
         };
       }
 
-      let currentValue = value;
-      if (value && utils.isNumber(value)) {
-        currentValue = value + "";
-      } else if (value && utils.isArray(value)) {
-        currentValue = value.map(p => p + "");
-      }
       const props = {
         props: {
           ...componentPropsData,
-          ...propsData,
-          value: currentValue
+          ...propsData
         },
         on: {
           ...ons,
@@ -175,13 +167,20 @@ export default {
     }
   },
   render(h) {
-    const { renderName, componentProps } = this;
+    const { renderName, componentProps, value } = this;
+    let currentValue = value;
+    if (value && utils.isNumber(value)) {
+      currentValue = value + "";
+    } else if (value && utils.isArray(value)) {
+      currentValue = value.map(p => p + "");
+    }
     return h(
       renderName,
       {
         ref: "inputComponent",
         props: {
-          ...componentProps.props
+          ...componentProps.props,
+          value: currentValue
         },
         on: {
           ...componentProps.on

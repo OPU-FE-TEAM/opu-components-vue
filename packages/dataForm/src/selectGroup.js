@@ -72,8 +72,7 @@ export default {
       const {
         $listeners,
         $options,
-        optionsData,
-        value
+        optionsData
         // searchFields,
         // vF,
         // lF,
@@ -87,16 +86,10 @@ export default {
           this.$emit(type, ...args);
         };
       });
-      let currentValue = value;
-      if (value && utils.isNumber(value)) {
-        currentValue = value + "";
-      } else if (value && utils.isArray(value)) {
-        currentValue = value.map(p => p + "");
-      }
+
       const props = {
         props: {
-          ...propsData,
-          value: currentValue
+          ...propsData
         },
         on: {
           ...ons,
@@ -248,17 +241,24 @@ export default {
     }
   },
   render(h) {
-    const { componentProps, renderOptGroup } = this;
+    const { componentProps, renderOptGroup, value } = this;
     const optGroup = renderOptGroup(h);
     if (optGroup) {
       componentProps.props.options = null;
+    }
+    let currentValue = value;
+    if (value && utils.isNumber(value)) {
+      currentValue = value + "";
+    } else if (value && utils.isArray(value)) {
+      currentValue = value.map(p => p + "");
     }
     return h(
       "a-select",
       {
         ref: "inputComponent",
         props: {
-          ...componentProps.props
+          ...componentProps.props,
+          value: currentValue
         },
         on: {
           ...componentProps.on

@@ -241,6 +241,33 @@ DataForm.setup({
     }
   }
 });
+
+const getTableSelectData = fields => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      let data = {
+        data: {}
+      };
+      fields = fields.code;
+      for (let i = 0; i < fields.length; i++) {
+        data.data[fields[i]] = initTableFieldData(fields[i]);
+      }
+      resolve(data);
+    }, 2000);
+  });
+};
+
+const initTableFieldData = field => {
+  let data = [];
+  for (let i = 0; i < 10; i++) {
+    data.push({
+      id: i,
+      name: field + i
+    });
+  }
+  return data;
+};
+
 DataTable.setup({
   pagerConfig: {
     pageIndex: 0,
@@ -315,6 +342,9 @@ DataTable.setup({
       query: getColumns
     }
   },
+  getSelectOptions: {
+    api: getTableSelectData
+  },
   setColumns: {
     modal: {
       props: {
@@ -335,7 +365,6 @@ DataTable.setup({
         query: getColumns,
         submit: json => {
           console.log(json);
-          debugger;
         }
       },
       on: {

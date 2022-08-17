@@ -4,7 +4,7 @@ import config from "../conf";
 
 // 处理表单项的可选数据结构为 antd所需的
 function handleItemPropsOptions(options, _vm, pValue = "") {
-  const { vF, lF, childrenField } = _vm;
+  const { vF, lF, childrenField, optionsFilter, value } = _vm;
   if (options && utils.isArray(options)) {
     const cloneOptions = utils.clone(options);
     return cloneOptions.map(item => {
@@ -30,6 +30,9 @@ function handleItemPropsOptions(options, _vm, pValue = "") {
       return item;
     });
   }
+  if (optionsFilter) {
+    options = optionsFilter(options, value);
+  }
   return options;
 }
 
@@ -48,7 +51,8 @@ export default {
       default: () => []
     },
     childrenField: String,
-    renderOptionLabel: Function
+    renderOptionLabel: Function,
+    optionsFilter: Function
   },
   model: {
     prop: "value",
@@ -150,7 +154,6 @@ export default {
   },
   methods: {
     init() {
-      console.log("select init");
       const { options } = this;
       if (options && options.length) {
         this.optionsData = handleItemPropsOptions(options, this);
@@ -192,14 +195,15 @@ export default {
       }
     },
     renderOptGroup(h) {
-      const { childrenField, optionsData } = this;
+      const { childrenField, optionsData, renderOptionLabel } = this;
       if (this.childrenField) {
         return optionsData.map(group => {
           let options = "";
           if (group[childrenField] && group[childrenField].length) {
             options = group[childrenField].map(p => {
+              const label = renderOptionLabel(p);
               return h("a-select-option", { props: { value: p.value } }, [
-                p.label
+                label
               ]);
             });
             return h(

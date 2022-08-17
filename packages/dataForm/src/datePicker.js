@@ -1,6 +1,10 @@
 import { DatePickerProps } from "ant-design-vue/lib/date-picker/interface";
 import utils from "../../utils";
-import { formatInputDate, mergeInputDate } from "../../utils/dateFormat";
+import {
+  formatInputDate,
+  mergeInputDate,
+  getBlocks
+} from "../../utils/dateFormat";
 import moment from "moment";
 
 export default {
@@ -17,12 +21,17 @@ export default {
   },
   data() {
     return {
-      inputValue: ""
+      inputValue: "",
+      blocksData: {
+        blocks: [],
+        datePatterns: [],
+        delimiters: []
+      }
     };
   },
   computed: {
     componentProps() {
-      const { $listeners, $options, value, ok } = this;
+      const { $listeners, $options, ok } = this;
       const propsData = $options.propsData;
       const ons = {};
       utils.each($listeners, (cb, type) => {
@@ -32,8 +41,7 @@ export default {
       });
       const props = {
         props: {
-          ...propsData,
-          value: value
+          ...propsData
         },
         on: {
           ...ons,
@@ -68,7 +76,13 @@ export default {
       return format;
     }
   },
+  watch: {
+    currentFormat() {
+      this.blocksData = getBlocks(this.currentFormat);
+    }
+  },
   created() {
+    this.blocksData = getBlocks(this.currentFormat);
     this.focus = utils.throttle(function() {
       this.onFocus();
     }, 100);
@@ -121,8 +135,9 @@ export default {
           inputDom.addEventListener("keyup", that.onKeyUpEnter);
           inputDom.oninput = function(e) {
             const { value } = e.target;
+            console.log(that.blocksData);
             if (e.target.value && e.inputType !== "deleteContentBackward") {
-              let newValue = formatInputDate(value, that.currentFormat);
+              let newValue = formatInputDate(value, that.blocksData);
               e.target.value = newValue;
             }
             that.inputValue = e.target.value;
@@ -145,13 +160,14 @@ export default {
     }
   },
   render(h) {
-    const { componentProps, $scopedSlots } = this;
+    const { componentProps, $scopedSlots, value } = this;
     return h(
       "a-date-picker",
       {
         ref: "inputComponent",
         props: {
-          ...componentProps.props
+          ...componentProps.props,
+          value: value
         },
         on: {
           ...componentProps.on

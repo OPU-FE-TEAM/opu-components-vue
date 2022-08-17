@@ -57,13 +57,13 @@ export default {
   },
   render(h) {
     const { componentProps, $scopedSlots, checked, trueValue } = this;
-    componentProps.props.checked = checked === trueValue ? true : false;
     return h(
       "a-checkbox",
       {
         ref: "inputComponent",
         props: {
-          ...componentProps.props
+          ...componentProps.props,
+          checked: checked === trueValue ? true : false
         },
         on: {
           ...componentProps.on

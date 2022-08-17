@@ -630,9 +630,7 @@ export default {
     // this.findList()
   },
   methods: {
-    onChange() {
-      debugger;
-    },
+    onChange() {},
     onAdd() {
       this.$refs.crudTable.add();
     },
@@ -646,7 +644,6 @@ export default {
     },
     reload() {
       this.aaa = 456;
-      debugger;
       this.$refs.crudTable.reloadTable();
     }
   }

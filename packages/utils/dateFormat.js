@@ -1,4 +1,4 @@
-const getBlocks = (format = "YYYY-MM-DD") => {
+export const getBlocks = (format = "YYYY-MM-DD") => {
   let blocks = [];
   let datePatterns = [];
   let delimiters = [];
@@ -31,8 +31,8 @@ const getBlocks = (format = "YYYY-MM-DD") => {
   };
 };
 
-export const formatInputDate = (value, format = "YYYY-MM-DD") => {
-  const { blocks, datePatterns, delimiters } = getBlocks(format);
+export const formatInputDate = (value, blocksData) => {
+  const { blocks, datePatterns, delimiters } = blocksData;
   let result = "";
   value = value.replace(/[^\d]/g, "");
   blocks.forEach((length, index) => {

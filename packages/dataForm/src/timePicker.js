@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     componentProps() {
-      const { $listeners, $options, value } = this;
+      const { $listeners, $options } = this;
       const propsData = $options.propsData;
 
       const ons = {};
@@ -29,8 +29,7 @@ export default {
       });
       const props = {
         props: {
-          ...propsData,
-          value: value
+          ...propsData
         },
         on: {
           ...ons,
@@ -113,14 +112,15 @@ export default {
     }
   },
   render(h) {
-    const { componentProps, $scopedSlots, isOpen } = this;
+    const { componentProps, $scopedSlots, isOpen, value } = this;
     return h(
       "a-time-picker",
       {
         ref: "inputComponent",
         props: {
           ...componentProps.props,
-          open: isOpen
+          open: isOpen,
+          value
         },
         on: {
           ...componentProps.on

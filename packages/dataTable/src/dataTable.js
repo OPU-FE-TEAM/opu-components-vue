@@ -572,6 +572,7 @@ export default {
       searchData: {},
       tableHeight: "",
       currentRow: {},
+      currentCell: {},
       hasAjaxQuery: false,
       hasCheckbox: false //是否存在checkbox
     };
@@ -689,7 +690,6 @@ export default {
         pagerConfigOpt,
         proxyConfigOpt,
         height,
-        highlightCurrentUnselect,
         onCurrentRowCellClick,
         onCurrentRowChange,
         onKeyDownSpace,
@@ -718,12 +718,9 @@ export default {
           that.$emit(type, ...args);
         };
       });
-      //高亮行反选
-      if (highlightCurrentUnselect) {
-        ons["cell-click"] = onCurrentRowCellClick;
-      }
-      ons["current-change"] = onCurrentRowChange;
 
+      ons["cell-click"] = onCurrentRowCellClick;
+      ons["current-change"] = onCurrentRowChange;
       let isKeyboardSpace =
         keyboardSpace !== null ? keyboardSpace : config.keyboardSpace;
       if (isKeyboardSpace) {
@@ -1169,6 +1166,12 @@ export default {
       }, 10);
       this.$emit("current-change", e);
     },
+    // 允许反选高亮行时接管，高亮行选中事件
+    onCellClick(e) {
+      const that = this;
+      that.currentCell = e;
+      this.$emit("cell-click", e);
+    },
     //当表格被激活且键盘被按下空格时
     onKeyDownSpace: utils.debounce(function() {
       let grid = this.$refs.dataGrid;
@@ -1180,10 +1183,13 @@ export default {
     }, 300),
     // 允许反选高亮行时接管，单元格点击事件
     onCurrentRowCellClick(e) {
-      if (this.currentRow._XID && e.row._XID === this.currentRow._XID) {
-        this.$refs.dataGrid.clearCurrentRow();
-        this.currentRow = {};
-        this.$emit("current-change", { ...e, row: null });
+      this.currentCell = e;
+      if (this.highlightCurrentUnselect) {
+        if (this.currentRow._XID && e.row._XID === this.currentRow._XID) {
+          this.$refs.dataGrid.clearCurrentRow();
+          this.currentRow = {};
+          this.$emit("current-change", { ...e, row: null });
+        }
       }
       this.$emit("cell-click", e);
     },

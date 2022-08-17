@@ -394,7 +394,6 @@ export default {
               open: (advancedSearchForm, formData) => {
                 console.log(advancedSearchForm);
                 console.log(formData);
-                debugger;
               }
             }
           },
@@ -846,7 +845,6 @@ export default {
       console.log(str);
     },
     onAdd() {
-      debugger;
       this.$refs.crudTable.reloadTable();
     },
     setSearchData() {
