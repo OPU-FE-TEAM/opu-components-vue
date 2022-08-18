@@ -572,7 +572,7 @@ export default {
       searchData: {},
       tableHeight: "",
       currentRow: {},
-      currentCell: {},
+      currentCell: null,
       hasAjaxQuery: false,
       hasCheckbox: false //是否存在checkbox
     };
@@ -698,7 +698,6 @@ export default {
       } = that;
       const propsData = that.$options.propsData;
       const props = Object.assign({}, tableExtendProps);
-
       Object.assign(props, {
         props: {
           ...config.props,
@@ -1166,12 +1165,6 @@ export default {
       }, 10);
       this.$emit("current-change", e);
     },
-    // 允许反选高亮行时接管，高亮行选中事件
-    onCellClick(e) {
-      const that = this;
-      that.currentCell = e;
-      this.$emit("cell-click", e);
-    },
     //当表格被激活且键盘被按下空格时
     onKeyDownSpace: utils.debounce(function() {
       let grid = this.$refs.dataGrid;
@@ -1183,15 +1176,31 @@ export default {
     }, 300),
     // 允许反选高亮行时接管，单元格点击事件
     onCurrentRowCellClick(e) {
-      this.currentCell = e;
-      if (this.highlightCurrentUnselect) {
-        if (this.currentRow._XID && e.row._XID === this.currentRow._XID) {
-          this.$refs.dataGrid.clearCurrentRow();
-          this.currentRow = {};
-          this.$emit("current-change", { ...e, row: null });
+      let that = this;
+
+      if (that.highlightCurrentUnselect) {
+        if (that.currentRow._XID && e.row._XID === that.currentRow._XID) {
+          that.$refs.dataGrid.clearCurrentRow();
+          that.currentRow = {};
+          that.$emit("current-change", { ...e, row: null });
         }
       }
-      this.$emit("cell-click", e);
+      that.$emit("cell-click", e);
+
+      //表格  行编辑 专用
+      if (this.editLine) {
+        let currentCell = that.currentCell || {};
+        let { rowIndex: currentRowIndex } = currentCell;
+        let { columnIndex, rowIndex } = e;
+        if (rowIndex === currentRowIndex) {
+          return;
+        }
+        that.currentCell = e;
+        that.$nextTick(() => {
+          let input = that.$refs["input-" + rowIndex + "-" + columnIndex];
+          input && input.focus && input.focus();
+        });
+      }
     },
     handleServerSort(params) {
       const { tableProps } = this;

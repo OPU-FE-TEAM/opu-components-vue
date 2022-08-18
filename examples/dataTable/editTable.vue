@@ -10,6 +10,8 @@
       :pager-config="false"
       size="mini"
       height="600px"
+      highlight-current-row
+      :keyboard-config="{ isArrow: false }"
     >
       <template #name_edit="{ row }">
         <vxe-input v-model="row.name" ref="input"></vxe-input>
@@ -114,7 +116,8 @@ let defaultRow = {
     { value: 11, label: "广西1" },
     { value: 22, label: "广东1" }
   ],
-  time: moment("12:08:23", "HH:mm:ss")
+  time: moment("12:08:23", "HH:mm:ss"),
+  time1: undefined
 };
 
 export default {
@@ -148,6 +151,24 @@ export default {
     return {
       longColumns,
       columns: [
+        {
+          field: "date",
+          title: "日期111",
+          minWidth: 150,
+          itemRender: {
+            name: "ADatePicker",
+            props: {
+              format: "YYYY-MM-DD"
+              // format: "YYYY-MM-DD HH:mm:ss",
+              // showTime: true,
+            },
+            on: {
+              change: e => {
+                console.log(e);
+              }
+            }
+          }
+        },
         {
           field: "pulldown",
           title: "下拉面板",
@@ -360,29 +381,11 @@ export default {
           }
         },
         {
-          field: "date",
-          title: "日期111",
-          minWidth: 150,
-          itemRender: {
-            name: "ADatePicker",
-            props: {
-              format: "YYYY-MM-DD"
-              // format: "YYYY-MM-DD HH:mm:ss",
-              // showTime: true,
-            },
-            on: {
-              change: e => {
-                console.log(e);
-              }
-            }
-          }
-        },
-        {
           field: "time",
           title: "时间",
           minWidth: 150,
           itemRender: {
-            name: "ATimePicker",
+            name: "a-time-picker",
             props: {
               format: "HH:mm"
             },
@@ -506,12 +509,32 @@ export default {
           align: "left",
           title: "行内数据下拉",
           minWidth: 150,
+          fixed: "left",
           itemRender: {
             name: "ASelect",
             props: {
               optionsField: "oneSelectList",
-              valueField: "id",
-              labelField: "text"
+              valueField: "value",
+              labelField: "label",
+              default: ({ row }) => {
+                return [row.oneSelectName];
+              }
+            },
+            on: {
+              change: (value, option, { row, rowIndex }) => {
+                console.log(row);
+                console.log(rowIndex);
+                let that = this;
+                let data = {};
+                for (let i = 0; i < 30; i++) {
+                  data["input-" + i] = i + "" + i;
+                }
+                that.data.splice(rowIndex, 1, {
+                  ...row,
+                  ...data
+                });
+                row.oneSelectName = option.label;
+              }
             }
           }
         },
@@ -520,22 +543,24 @@ export default {
           align: "left",
           title: "行内数据下拉1",
           minWidth: 150,
+          fixed: "right",
           itemRender: {
-            name: "ASelect",
+            name: "a-select",
             props: {
               optionsField: "oneSelectList1",
-              valueField: "id",
-              labelField: "text"
+              valueField: "value",
+              labelField: "label"
             }
           }
         },
         {
           field: "time1",
           align: "left",
-          title: "时间",
+          title: "时间3333",
           minWidth: 150,
+          fixed: "right",
           itemRender: {
-            name: "ATimePicker",
+            name: "a-time-picker",
             props: {
               format: "HH:mm",
               showTime: true,
@@ -544,7 +569,13 @@ export default {
               }
             },
             on: {
-              change: () => {}
+              change: () => {},
+              blur: (a, b, c, d) => {
+                console.log(a);
+                console.log(b);
+                console.log(c);
+                console.log(d);
+              }
             }
           }
         }
@@ -575,14 +606,15 @@ export default {
             { value: 11, label: "广西1" },
             { value: 22, label: "广东1" }
           ],
-          time: moment("12:08:23", "HH:mm:ss")
+          time: moment("12:08:23", "HH:mm:ss"),
+          time1: undefined
         }
       ]
     };
   },
   created() {
     let columns = cloneDeep(this.columns);
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
       let row = {
         field: "input-" + i,
         align: "left",
@@ -592,7 +624,9 @@ export default {
           name: "a-input-number"
         }
       };
-
+      if (i % 2 == 0) {
+        delete row.itemRender;
+      }
       columns.unshift(row);
       defaultRow["input-" + i] = i;
     }
@@ -604,25 +638,26 @@ export default {
     this.columns = columns;
   },
   mounted() {
-    debugger;
     let data = [];
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 1; i++) {
       data.push(cloneDeep(defaultRow));
     }
-    debugger;
-    console.log(moment().format("HH:mm:ss"));
     this.data = data;
   },
   methods: {
     onAdd() {
       this.data.push({
+        type1: "",
         switch: false,
-        switch1: "0",
-        checkbox: true,
-        checkbox1: "0",
+        switch1: "1",
+        checkbox: false,
+        checkbox1: "1",
         name: "123",
         number: "333",
         orderType: "",
+        vip: "",
+        input: "",
+        market: "",
         apiSelect: "",
         apiSelect1: "",
         date: moment(),
@@ -677,6 +712,12 @@ export default {
           }
         }
       ];
+    },
+    onFocus() {
+      console.log("onFocus");
+    },
+    onBlur() {
+      console.log("onBlur");
     }
   }
 };

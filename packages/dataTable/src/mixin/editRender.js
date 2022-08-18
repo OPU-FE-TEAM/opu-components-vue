@@ -2,6 +2,7 @@ import moment from "moment";
 import { cloneDeep } from "lodash";
 import utils from "../../../utils";
 import config from "../../conf";
+import OpuInputNumber from "../../../dataForm/src/inputNumber";
 import OpuSelect from "../../../dataForm/src/select";
 import OpuDatePicker from "../../../dataForm/src/datePicker";
 import OpuTimePicker from "../../../dataForm/src/timePicker";
@@ -73,6 +74,26 @@ function toLine(name) {
   return name[0] == "-" ? name.slice(1) : name;
 }
 
+//单行编辑时 数据转换
+function dataFormat(value, props, name, event) {
+  if (props.default) {
+    value = props.default(event);
+  } else if (value.format) {
+    if (props.format) {
+      value = value.format(props.format);
+    } else if (name == "a-date-picker") {
+      if (props.showTime) {
+        value = value.format("YYYY-MM-DD HH:mm:ss");
+      } else {
+        value = value.format("YYYY-MM-DD");
+      }
+    } else {
+      value = value.format("HH:mm:ss");
+    }
+  }
+  return value;
+}
+
 //根据路径参数 查找对应数据
 function handlefieldOptionsDataField(item, json) {
   let optionData = json;
@@ -106,6 +127,7 @@ function editSlotPropInit(row, props, key, field, defaultKey = false) {
 
 const editRender = {
   components: {
+    OpuInputNumber,
     OpuSelect,
     OpuDatePicker,
     OpuTimePicker,
@@ -127,6 +149,10 @@ const editRender = {
     onOptionsAllLoad: {
       type: Function,
       default: null
+    },
+    editLine: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -142,6 +168,13 @@ const editRender = {
         "a-checkbox",
         "pulldown-table"
       ],
+      editTypeTargetName: {
+        "a-input-number": "OpuInputNumber",
+        "a-select": "OpuSelect",
+        "a-auto-complete": "OpuAutoComplete",
+        "a-date-picker": "OpuDatePicker",
+        "a-time-picker": "OpuTimePicker"
+      },
       componentsFocusItemTypes: [
         "a-input",
         "a-input-number",
@@ -150,6 +183,24 @@ const editRender = {
         "a-date-picker",
         "a-time-picker",
         "pulldown-table"
+      ],
+      lineEditTypes: [
+        "pulldown-table",
+        "a-input",
+        "a-input-number",
+        "a-auto-complete",
+        "a-select",
+        "a-date-picker",
+        "a-time-picker"
+      ],
+      enterTypes: [
+        "pulldown-table",
+        "a-input",
+        "a-input-number",
+        "a-auto-complete",
+        "a-select",
+        "a-date-picker",
+        "a-time-picker"
       ],
       pressEnterItemIndexs: [],
       editOptions: {},
@@ -173,7 +224,7 @@ const editRender = {
      * @param {*} data
      * @return {*}
      */
-    setFieldsOptions(data) {
+    setFieldsOptions(data, callback) {
       let { editOptions, editFieldList } = this;
       for (const key in data) {
         let item = data[key];
@@ -184,6 +235,10 @@ const editRender = {
       }
       this.editOptions = editOptions;
       this.$refs.dataGrid.updateData();
+
+      this.$nextTick(() => {
+        callback && callback();
+      });
     },
     /**
      * @description: 获取下拉数据
@@ -240,7 +295,8 @@ const editRender = {
      * @return {*}
      */
     editColumnsRender(data, filterCallback) {
-      let { editType, editOptions, editDefaultOption, editFieldList } = this;
+      let that = this;
+      let { editType, editOptions, editDefaultOption, editFieldList } = that;
       let otherApiList = [];
       let pressEnterItemIndexs = [];
       let getSelectOptions = config.getSelectOptions;
@@ -262,9 +318,37 @@ const editRender = {
             if (!p.slots) p.slots = {};
             p.slots.default = e => {
               return [
-                <div style="display:flex;align-items: center;">
+                <div
+                  {...{
+                    on: {
+                      click: event => {
+                        let { currentCell } = that;
+                        if (currentCell) {
+                          let {
+                            columnIndex: currentColumnIndex,
+                            rowIndex: currentRowIndex
+                          } = currentCell;
+                          let { columnIndex, rowIndex } = e;
+                          if (
+                            currentRowIndex !== undefined &&
+                            currentColumnIndex !== undefined &&
+                            columnIndex === currentColumnIndex &&
+                            rowIndex === currentRowIndex
+                          ) {
+                            event.stopPropagation();
+                            event.preventDefault();
+                            return;
+                          }
+                        }
+                      }
+                    },
+                    style: "display:flex;align-items: center;"
+                  }}
+                >
                   {p.itemRender.before && p.itemRender.before(e)}
-                  <div style="flex:1">{this.editSlotRender(name)(e)}</div>
+                  <div style="flex:1;max-width: 100%;">
+                    {that.editSlotRender(name)(e)}
+                  </div>
                   {p.itemRender.after && p.itemRender.after(e)}
                 </div>
               ];
@@ -307,7 +391,7 @@ const editRender = {
 
                 if (props.options) {
                   editOptions[field] = cloneDeep(props.options).map(o => {
-                    o = this.optionDataRender(o, field, "", {
+                    o = that.optionDataRender(o, field, "", {
                       [field]: {
                         valueField,
                         labelField,
@@ -360,14 +444,14 @@ const editRender = {
         otherApiList = otherApiList.concat(unifyApiList);
       }
 
-      this.editDefaultOption = editDefaultOption;
-      this.pressEnterItemIndexs = pressEnterItemIndexs;
-      this.editOptions = editOptions;
+      that.editDefaultOption = editDefaultOption;
+      that.pressEnterItemIndexs = pressEnterItemIndexs;
+      that.editOptions = editOptions;
 
-      this.editApiList = otherApiList;
-      this.editFieldList = editFieldList;
+      that.editApiList = otherApiList;
+      that.editFieldList = editFieldList;
       if (otherApiList.length > 0) {
-        this.loadOptionsData();
+        that.loadOptionsData();
       }
       return data;
     },
@@ -386,11 +470,14 @@ const editRender = {
     nextItemFocus(event) {
       console.log(event, "enter-----------------------------------");
     },
+    //单行编辑 模板渲染
+    lineEditCellRender(name, value) {
+      return <div class={`edit-input ${name}`}>{value}</div>;
+    },
     editSlotRender(name) {
       return event => {
         let that = this;
-        let { currentCell } = that;
-        currentCell = false;
+        let { currentCell, editLine, lineEditTypes } = that;
         let { columnIndex, rowIndex, row } = event;
         let item = that.tableColumns[columnIndex];
         let itemRender = item.itemRender || {};
@@ -399,8 +486,19 @@ const editRender = {
         let element;
         if (typeof disabled == "object") {
           return [disabled];
-        } else if (currentCell && currentCell.rowIndex != rowIndex) {
-          return [utils.getObjData(item.field, row) || ""];
+        } else if (
+          editLine &&
+          (!currentCell || currentCell.rowIndex != rowIndex) &&
+          lineEditTypes.includes(name)
+        ) {
+          let value = dataFormat(
+            utils.getObjData(item.field, row) || "",
+            props,
+            name,
+            event
+          );
+          // return <div class={`a-input ${name}`}>{value}</div>;
+          return [this.lineEditCellRender(name, value)];
         } else {
           let field = item.field;
           event.field = field;
@@ -412,94 +510,84 @@ const editRender = {
           };
           let attr = {
             class: editSlotItemRender(itemRender.class, event),
-            style: editSlotItemRender(itemRender.style, event)
+            style: editSlotItemRender(itemRender.style, event),
+            ref: "input-" + rowIndex + "-" + columnIndex
           };
 
           var optionsField, options, trueValue, falseValue;
           let ons = {
-            ...itemRender.on,
             change: e => {
               utils.setObjData(field, row, e);
               row.ISEDIT = true;
               if (itemRender.on && itemRender.on.change) {
                 itemRender.on.change(e, event);
               }
-            },
-            blur: e => {
-              if (itemRender.on && itemRender.on.blur) {
-                itemRender.on.blur(e, event);
-              }
             }
           };
 
+          for (let i in itemRender.on) {
+            if (i != "change") {
+              let fuc = itemRender.on[i];
+              ons[i] = (...arg) => {
+                fuc(...arg, event);
+              };
+            }
+          }
+
+          let elementAttribute = {};
+
           switch (name) {
             case "a-input":
-              element = (
-                <a-input
-                  {...{
-                    ...attr,
-                    props,
-                    on: {
-                      ...ons,
-                      change: e => {
-                        let value = e.target.value;
-                        utils.setObjData(field, row, value);
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, event);
-                        }
-                      },
-                      keydown: async e => {
-                        let res = true;
-                        if (itemRender.on && itemRender.on.keydown) {
-                          res = await itemRender.on.keydown(e, event);
-                        }
-                        if (res && e.keyCode == 13) {
-                          that.nextItemFocus(event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props,
+                on: {
+                  ...ons,
+                  change: e => {
+                    let value = e.target.value;
+                    utils.setObjData(field, row, value);
+                    row.ISEDIT = true;
+                    if (itemRender.on && itemRender.on.change) {
+                      itemRender.on.change(e, event);
                     }
-                  }}
-                />
-              );
+                  },
+                  keydown: async e => {
+                    if (itemRender.on && itemRender.on.keydown) {
+                      let res = await itemRender.on.keydown(e, event);
+                      if (res === false) return;
+                    }
+                    if (e.keyCode == 13) {
+                      that.nextItemFocus(event);
+                    }
+                  }
+                }
+              };
               break;
             case "a-input-number":
-              element = (
-                <a-input-number
-                  {...{
-                    ...attr,
-                    props: {
-                      ...props,
-                      max: editSlotPropInit(row, props, "max", field, Infinity),
-                      min: editSlotPropInit(row, props, "min", field, -Infinity)
-                    },
-                    style: {
-                      width: "100%",
-                      ...attr.style
-                    },
-                    on: {
-                      ...ons,
-                      change: e => {
-                        let value = e;
-                        utils.setObjData(field, row, value);
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(value, event);
-                        }
-                      },
-                      pressEnter: async e => {
-                        let res = true;
-                        if (itemRender.on && itemRender.on.keydown) {
-                          res = await itemRender.on.pressEnter(e, event);
-                        }
-                        if (res) {
-                          that.nextItemFocus(event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props: {
+                  ...props,
+                  max: editSlotPropInit(row, props, "max", field, Infinity),
+                  min: editSlotPropInit(row, props, "min", field, -Infinity)
+                },
+                style: {
+                  width: "100%",
+                  ...attr.style
+                },
+                on: {
+                  ...ons,
+                  pressEnter: async e => {
+                    let res = true;
+                    if (itemRender.on && itemRender.on.pressEnter) {
+                      res = await itemRender.on.pressEnter(e, event);
                     }
-                  }}
-                />
-              );
+                    if (res) {
+                      that.nextItemFocus(event);
+                    }
+                  }
+                }
+              };
               break;
             case "a-select":
               optionsField = (props && props.optionsField) || "";
@@ -514,41 +602,37 @@ const editRender = {
                 );
                 delete props.optionsFilter;
               }
-              element = (
-                <OpuSelect
-                  {...{
-                    ...attr,
-                    props: {
-                      showSearch: true,
-                      ...props,
-                      options
-                    },
-                    style: {
-                      width: "100%",
-                      ...attr.style
-                    },
-                    on: {
-                      ...ons,
-                      change: (value, option, pOption) => {
-                        utils.setObjData(field, row, value);
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(value, option, event, pOption);
-                        }
-                      },
-                      inputKeydown: async e => {
-                        let res = true;
-                        if (itemRender.on && itemRender.on.keydown) {
-                          res = await itemRender.on.inputKeydown(e, event);
-                        }
-                        if (res && e.keyCode == 13) {
-                          that.nextItemFocus(event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props: {
+                  showSearch: true,
+                  ...props,
+                  options
+                },
+                style: {
+                  width: "100%",
+                  ...attr.style
+                },
+                on: {
+                  ...ons,
+                  change: (value, option, pOption) => {
+                    utils.setObjData(field, row, value);
+                    row.ISEDIT = true;
+                    if (itemRender.on && itemRender.on.change) {
+                      itemRender.on.change(value, option, event, pOption);
                     }
-                  }}
-                />
-              );
+                  },
+                  inputKeydown: async e => {
+                    if (itemRender.on && itemRender.on.inputKeydown) {
+                      let res = await itemRender.on.inputKeydown(e, event);
+                      if (res === false) return;
+                    }
+                    if (e.keyCode == 13) {
+                      that.nextItemFocus(event);
+                    }
+                  }
+                }
+              };
               break;
             case "a-auto-complete":
               optionsField = (props && props.optionsField) || "";
@@ -564,50 +648,46 @@ const editRender = {
                 delete props.optionsFilter;
               }
 
-              if (ons.search) {
-                ons.saerch = (value, dataSource) => {
-                  itemRender.on.search(value, dataSource, row, event);
+              if (props.search) {
+                props.saerch = (value, dataSource) => {
+                  itemRender.props.search(value, dataSource, row, event);
                 };
               }
 
-              element = (
-                <OpuAutoComplete
-                  {...{
-                    ...attr,
-                    props: {
-                      ...props,
-                      options
-                    },
-                    style: {
-                      width: "100%",
-                      ...itemRender.style
-                    },
-                    on: {
-                      ...ons,
-                      select: (value, optionRow) => {
-                        utils.setObjData(
-                          field,
-                          row,
-                          props.valueField ? optionRow[props.valueField] : value
-                        );
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.select) {
-                          itemRender.on.select(value, optionRow, event);
-                        }
-                      },
-                      inputPressEnter: async e => {
-                        let res = true;
-                        if (itemRender.on && itemRender.on.keydown) {
-                          res = await itemRender.on.inputPressEnter(e, event);
-                        }
-                        if (res) {
-                          that.nextItemFocus(event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props: {
+                  ...props,
+                  options
+                },
+                style: {
+                  width: "100%",
+                  ...itemRender.style
+                },
+                on: {
+                  ...ons,
+                  select: (value, optionRow) => {
+                    utils.setObjData(
+                      field,
+                      row,
+                      props.valueField ? optionRow[props.valueField] : value
+                    );
+                    row.ISEDIT = true;
+                    if (itemRender.on && itemRender.on.select) {
+                      itemRender.on.select(value, optionRow, event);
                     }
-                  }}
-                />
-              );
+                  },
+                  inputPressEnter: async e => {
+                    if (itemRender.on && itemRender.on.inputPressEnter) {
+                      let res = await itemRender.on.inputPressEnter(e, event);
+                      if (res === false) return;
+                    }
+                    if (e.keyCode == 13) {
+                      that.nextItemFocus(event);
+                    }
+                  }
+                }
+              };
               break;
             case "a-date-picker":
               var dateValue = !props.value
@@ -615,79 +695,78 @@ const editRender = {
                 : props.value.format
                 ? props.value
                 : moment(props.value);
-              element = (
-                <OpuDatePicker
-                  {...{
-                    ...attr,
-                    props: {
-                      ...props,
-                      value: dateValue
-                    },
-                    on: {
-                      ...ons,
-                      inputPressEnter: async e => {
-                        let res = true;
-                        if (itemRender.on && itemRender.on.keydown) {
-                          res = await itemRender.on.inputPressEnter(e, event);
-                        }
-                        if (res) {
-                          that.nextItemFocus(event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props: {
+                  ...props,
+                  value: dateValue
+                },
+                on: {
+                  ...ons,
+                  inputPressEnter: async e => {
+                    if (itemRender.on && itemRender.on.inputPressEnter) {
+                      let res = await itemRender.on.inputPressEnter(e, event);
+                      if (res === false) return;
                     }
-                  }}
-                />
-              );
+                    if (e.keyCode == 13) {
+                      that.nextItemFocus(event);
+                    }
+                  }
+                }
+              };
               break;
             case "a-time-picker":
-              element = (
-                <OpuTimePicker
-                  {...{
-                    ...attr,
-                    props: {
-                      clearIcon: true,
-                      ...props,
-                      disabled
-                    },
-                    on: {
-                      ...ons,
-                      inputPressEnter: async e => {
-                        let res = true;
-                        if (itemRender.on && itemRender.on.keydown) {
-                          res = await itemRender.on.inputPressEnter(e, event);
-                        }
-                        if (res) {
-                          that.nextItemFocus(event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props: {
+                  clearIcon: true,
+                  ...props,
+                  disabled
+                },
+                style: {
+                  width: "100%",
+                  ...attr.style
+                },
+                on: {
+                  ...ons,
+                  inputPressEnter: async e => {
+                    if (itemRender.on && itemRender.on.inputPressEnter) {
+                      let res = await itemRender.on.inputPressEnter(e, event);
+                      if (res === false) return;
                     }
-                  }}
-                />
-              );
+                    if (e.keyCode == 13) {
+                      that.nextItemFocus(event);
+                    }
+                  }
+                }
+              };
               break;
             case "pulldown-table":
-              element = (
-                <pulldown-table
-                  {...{
-                    ...attr,
-                    props: {
-                      ...props
-                    },
-                    on: {
-                      ...ons,
-                      inputPressEnter: async e => {
-                        let res = true;
-                        if (itemRender.on && itemRender.on.keydown) {
-                          res = await itemRender.on.inputPressEnter(e, event);
-                        }
-                        if (res) {
-                          that.nextItemFocus(event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props: {
+                  ...props
+                },
+                on: {
+                  ...ons,
+                  change: (e, option) => {
+                    utils.setObjData(field, row, e);
+                    row.ISEDIT = true;
+                    if (itemRender.on && itemRender.on.change) {
+                      itemRender.on.change(e, option, event);
                     }
-                  }}
-                />
-              );
+                  },
+                  inputPressEnter: async e => {
+                    if (itemRender.on && itemRender.on.inputPressEnter) {
+                      let res = await itemRender.on.inputPressEnter(e, event);
+                      if (res === false) return;
+                    }
+                    if (e.keyCode == 13) {
+                      that.nextItemFocus(event);
+                    }
+                  }
+                }
+              };
               break;
             case "a-switch":
               trueValue = props.trueValue ? props.trueValue : true;
@@ -744,6 +823,10 @@ const editRender = {
               );
               break;
           }
+          element = that.$createElement(
+            that.editTypeTargetName[name] || name,
+            elementAttribute
+          );
         }
         return [element];
       };

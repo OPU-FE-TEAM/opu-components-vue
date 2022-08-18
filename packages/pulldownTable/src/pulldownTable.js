@@ -142,9 +142,8 @@ export default {
         onTableCheckboxChange
       } = that;
       //是否存在多选  若存在  多选checkbox索引
-      that.checkboxIndex = table.props.columns.findIndex(
-        p => p.type == "checkbox"
-      );
+      let columns = (table && table.props && table.props.columns) || [];
+      that.checkboxIndex = columns.findIndex(p => p.type == "checkbox");
       const props = {
         props: {
           highlightHoverRow: true,
@@ -153,7 +152,7 @@ export default {
           "show-overflow": true,
           ...table.props,
           data: tableData,
-          columns: table.props.columns
+          columns: columns
         },
         on: {
           "cell-click": onTableRowSelect,
@@ -212,6 +211,10 @@ export default {
       this.$emit("change", this.selectValue);
     },
     onInputFocus(e) {
+      this.$emit("focus", e);
+      this.onInputFocusBefore(e);
+    },
+    onInputFocusBefore(e) {
       let that = this;
       const { table, searchBefore, searchField, retainSearchValue } = that;
       that.$refs.pulldownTable.showPanel();
@@ -307,7 +310,7 @@ export default {
     // 快捷键上下切换选中行
     onInputKeyUp(e) {
       const { key } = e;
-      const { onInputEnter, onInputFocus } = this;
+      const { onInputEnter, onInputFocusBefore } = this;
       let isVisible = this.$refs.pulldownTable.isPanelVisible();
       if (key == "Enter") {
         if (isVisible) {
@@ -315,7 +318,7 @@ export default {
         }
       }
       if (!isVisible && key == "ArrowDown") {
-        onInputFocus();
+        onInputFocusBefore(e);
       }
     },
     onPulldownHide() {

@@ -59,6 +59,7 @@ export default {
       if (box && box.length) {
         box[0].click();
       }
+      debugger;
       this.onInputEvent();
     },
     // 监听输入事件
@@ -84,8 +85,10 @@ export default {
               const value = e.target.value;
               // 输入时间
               let timeFh = ":";
-              if (componentProps.props && componentProps.props.format) {
-                timeFh = componentProps.props.format.split("")[3];
+              let format =
+                (componentProps.props && componentProps.props.format) || "";
+              if (format) {
+                timeFh = componentProps.props.format.split("")[2];
               }
               if (value.length === 2 && value.indexOf(timeFh) < 0) {
                 // 输入2位不存在:
@@ -93,7 +96,8 @@ export default {
               } else if (
                 value.length === 5 &&
                 value.indexOf(timeFh) > -1 &&
-                value.split(timeFh).length === 2
+                value.split(timeFh).length === 2 &&
+                format.length != value.length
               ) {
                 // 输入5位不存在两个:
                 e.target.value = value + timeFh;
