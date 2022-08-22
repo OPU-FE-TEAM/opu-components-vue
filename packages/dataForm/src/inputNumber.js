@@ -53,7 +53,7 @@ export default {
           this.$emit("change", value);
         },
         pressEnter: e => {
-          this.$emit("inputPressEnter", e);
+          this.$emit("pressEnter", e);
         }
       }
     };

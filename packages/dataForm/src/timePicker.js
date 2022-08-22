@@ -1,5 +1,6 @@
 import { TimePickerProps } from "ant-design-vue/lib/time-picker/index";
 import utils from "../../utils";
+import { formatInputDate, getBlocks } from "../../utils/dateFormat";
 
 export default {
   name: "OpuTimePicker",
@@ -39,9 +40,22 @@ export default {
       };
 
       return props;
+    },
+    currentFormat() {
+      let format = "HH:mm:ss";
+      if (this.componentProps.props && this.componentProps.props.format) {
+        format = this.componentProps.props.format;
+      }
+      return format;
+    }
+  },
+  watch: {
+    currentFormat() {
+      this.blocksData = getBlocks(this.currentFormat);
     }
   },
   created() {
+    this.blocksData = getBlocks(this.currentFormat);
     this.focus = utils.throttle(function() {
       this.onFocus();
     }, 100);
@@ -59,12 +73,10 @@ export default {
       if (box && box.length) {
         box[0].click();
       }
-      debugger;
       this.onInputEvent();
     },
     // 监听输入事件
     onInputEvent() {
-      const { componentProps } = this;
       const that = this;
       setTimeout(() => {
         const input = document.getElementsByClassName(
@@ -81,27 +93,10 @@ export default {
             }
           });
           input[0].oninput = function(e) {
+            const { value } = e.target;
             if (e.target.value && e.inputType !== "deleteContentBackward") {
-              const value = e.target.value;
-              // 输入时间
-              let timeFh = ":";
-              let format =
-                (componentProps.props && componentProps.props.format) || "";
-              if (format) {
-                timeFh = componentProps.props.format.split("")[2];
-              }
-              if (value.length === 2 && value.indexOf(timeFh) < 0) {
-                // 输入2位不存在:
-                e.target.value = value + timeFh;
-              } else if (
-                value.length === 5 &&
-                value.indexOf(timeFh) > -1 &&
-                value.split(timeFh).length === 2 &&
-                format.length != value.length
-              ) {
-                // 输入5位不存在两个:
-                e.target.value = value + timeFh;
-              }
+              let newValue = formatInputDate(value, that.blocksData);
+              e.target.value = newValue;
             }
           };
         }

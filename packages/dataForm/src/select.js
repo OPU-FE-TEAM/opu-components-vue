@@ -102,7 +102,8 @@ export default {
       const props = {
         props: {
           ...propsData,
-          value: currentValue
+          value: currentValue,
+          defaultActiveFirstOption: false
           // getPopupContainer: triggerNode => triggerNode.parentNode
         },
         on: {

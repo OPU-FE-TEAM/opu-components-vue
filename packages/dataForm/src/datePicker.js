@@ -135,7 +135,6 @@ export default {
           inputDom.addEventListener("keyup", that.onKeyUpEnter);
           inputDom.oninput = function(e) {
             const { value } = e.target;
-            console.log(that.blocksData);
             if (e.target.value && e.inputType !== "deleteContentBackward") {
               let newValue = formatInputDate(value, that.blocksData);
               e.target.value = newValue;

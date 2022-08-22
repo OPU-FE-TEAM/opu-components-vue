@@ -202,7 +202,10 @@ const editRender = {
         "a-date-picker",
         "a-time-picker"
       ],
-      pressEnterItemIndexs: [],
+      //enter  数组
+      pressEnterItems: [],
+      //用于加减field
+      leftPressEnterItems: [],
       editOptions: {},
       editApiList: [],
       editDefaultOption: {},
@@ -218,6 +221,7 @@ const editRender = {
       return editSize;
     }
   },
+  mounted() {},
   methods: {
     /**
      * @description: 设置下拉数据
@@ -255,6 +259,72 @@ const editRender = {
      */
     getEditDefaultOption() {
       return this.editDefaultOption;
+    },
+    /**
+     * @description: 表格编辑行点击
+     * @param {*}
+     * @return {*}
+     */
+    onEditTableCurrentRowCellClick(e) {
+      let that = this;
+      let currentCell = that.currentCell || {};
+      let { rowIndex: currentRowIndex } = currentCell;
+      that.currentCell = e;
+      if (this.editLine) {
+        let { columnIndex, rowIndex } = e;
+        if (rowIndex === currentRowIndex) {
+          return;
+        }
+        that.itemFocus(rowIndex, columnIndex);
+        setTimeout(() => {
+          document.body.removeEventListener("click", that.onBlurEditTable);
+          document.body.addEventListener("click", that.onBlurEditTable, false);
+        }, 50);
+      }
+    },
+    /**
+     * @description: 离开行编辑
+     * @param {*}
+     * @return {*}
+     */
+    onBlurEditLine() {
+      this.currentCell = null;
+    },
+    onBlurEditTable(e) {
+      let that = this;
+      let event = e || window.event;
+      let target = event.target || event.srcElement;
+      let pathIndex = 0;
+      while (target.parentNode === null) {
+        pathIndex++;
+        target = event.path[pathIndex];
+      }
+      this.$nextTick(() => {
+        //时间
+        let timeEl = document.getElementsByClassName("ant-time-picker-panel");
+        //日期
+        let dateEl = document.getElementsByClassName(
+          "ant-calendar-picker-container"
+        );
+        //下拉
+        let selectEl = document.getElementsByClassName("ant-select-dropdown");
+        //下拉表格
+        let tableEl = document.getElementsByClassName("vxe-pulldown--panel");
+        //特殊处理数组
+        let specialEl = [...timeEl, ...dateEl, ...selectEl, ...tableEl];
+        let isContains = false;
+        for (let i = 0; i < specialEl.length; i++) {
+          let el = specialEl[i];
+          isContains = el.contains(target);
+          if (isContains) {
+            break;
+          }
+        }
+        if (!isContains && !that.$refs.dataGrid.$el.contains(target)) {
+          that.onBlurEditLine();
+          document.body.removeEventListener("click", that.onBlurEditTable);
+        }
+      });
     },
     /**
      * @description: 重构下拉数据option
@@ -296,9 +366,17 @@ const editRender = {
      */
     editColumnsRender(data, filterCallback) {
       let that = this;
-      let { editType, editOptions, editDefaultOption, editFieldList } = that;
+      let {
+        editType,
+        editOptions,
+        editDefaultOption,
+        editFieldList,
+        enterTypes
+      } = that;
       let otherApiList = [];
-      let pressEnterItemIndexs = [];
+      let pressEnterItems = [];
+      let leftPressEnterItems = [];
+      let rightPressEnterItems = [];
       let getSelectOptions = config.getSelectOptions;
       let unifyApiList = {
         api:
@@ -308,7 +386,7 @@ const editRender = {
         param: {},
         fields: []
       };
-      data = data.filter(p => {
+      data = data.filter((p, i) => {
         if (filterCallback && !filterCallback(p)) {
           return false;
         }
@@ -316,6 +394,17 @@ const editRender = {
           let name = toLine(p.itemRender.name || editType[0]);
           if (editType.includes(name)) {
             if (!p.slots) p.slots = {};
+            const field = p.field;
+            if (enterTypes.includes(name)) {
+              let enterItem = { field, item: p, columnIndex: i };
+              if (p.fixed == "left") {
+                leftPressEnterItems.push(enterItem);
+              } else if (p.fixed == "right") {
+                rightPressEnterItems.push(enterItem);
+              } else {
+                pressEnterItems.push(enterItem);
+              }
+            }
             p.slots.default = e => {
               return [
                 <div
@@ -340,6 +429,17 @@ const editRender = {
                             return;
                           }
                         }
+                      },
+                      keydown: event => {
+                        if (name == "a-select" && event.keyCode == 13) {
+                          let { currentCell } = that;
+                          let { rowIndex, row } = currentCell;
+                          that.pressEnterItem({
+                            columnIndex: i,
+                            rowIndex,
+                            row
+                          });
+                        }
                       }
                     },
                     style: "display:flex;align-items: center;"
@@ -353,13 +453,10 @@ const editRender = {
                 </div>
               ];
             };
-            pressEnterItemIndexs.push(p.field);
 
             if (name == "a-switch" || name == "a-checkbox") p.align = "center";
             let props = p.itemRender.props || {};
             if (["a-select", "a-auto-complete"].includes(name) && props) {
-              const field = p.field;
-
               let valueField = props.valueField || getSelectOptions.valueField;
               let labelField = props.labelField || getSelectOptions.labelField;
               let childrenField =
@@ -445,7 +542,15 @@ const editRender = {
       }
 
       that.editDefaultOption = editDefaultOption;
-      that.pressEnterItemIndexs = pressEnterItemIndexs;
+      that.leftPressEnterItems = leftPressEnterItems;
+      that.pressEnterItems = [
+        ...leftPressEnterItems,
+        ...pressEnterItems,
+        ...rightPressEnterItems
+      ].map((p, i) => {
+        p.index = i;
+        return p;
+      });
       that.editOptions = editOptions;
 
       that.editApiList = otherApiList;
@@ -463,12 +568,85 @@ const editRender = {
       }
     },
     /**
-     * @description: 选中下一个
+     * @description: 选中某一行 并且触发表格编辑
+     * @param {*} rowIndex
+     * @return {*}
+     */
+    focusEditRow(rowIndex) {
+      let { pressEnterItems } = this;
+      let dataGrid = this.$refs.dataGrid;
+      let data = this.data || dataGrid.getData();
+      let row = data[rowIndex];
+      if (row && pressEnterItems.length > 0) {
+        dataGrid.setCurrentRow(row);
+        this.onEditTableCurrentRowCellClick({
+          row,
+          rowIndex: 0,
+          columnIndex: pressEnterItems[0].columnIndex
+        });
+        // dataGrid.setEditCell(row, pressEnterItems[0]);
+      }
+    },
+    /**
+     * @description: 表格编辑 选中元素 按下enter
      * @param {*}
      * @return {*}
      */
-    nextItemFocus(event) {
-      console.log(event, "enter-----------------------------------");
+    pressEnterItem(event) {
+      let that = this;
+      let { pressEnterItems, tableColumns } = that;
+      let { columnIndex, rowIndex, row } = event;
+      let item = tableColumns[columnIndex];
+      let field = item.field;
+      let index = pressEnterItems.findIndex(p => p.field == field);
+      //换下一行
+      if (index == pressEnterItems.length - 1) {
+        let data = that.data || that.$refs.dataGrid.getData();
+        //如果是最后一个
+        if (data.length == rowIndex + 1) {
+          this.$emit("enterLastItem");
+        } else {
+          event.rowIndex = event.rowIndex + 1;
+          event.columnIndex = pressEnterItems[0].columnIndex;
+          event.row = data[event.rowIndex];
+          that.$refs.dataGrid.setCurrentRow(event.row);
+          that.onEditTableCurrentRowCellClick(event);
+          // that.$nextTick(() => {
+          //   that.pressEnterItem(event);
+          // });
+        }
+      } else {
+        let nextIndex = index + 1;
+        let nextData = pressEnterItems[nextIndex];
+        let nextItem = nextData.item;
+        let props = nextItem.itemRender.props || {};
+        let disabled = editSlotPropInit(row, props, "disabled", nextItem.field);
+        //如果禁用 跳转下一个
+        if (disabled) {
+          event.columnIndex = nextData.columnIndex;
+          that.pressEnterItem(event);
+        } else {
+          that.itemFocus(rowIndex, nextData.columnIndex, nextData.field);
+        }
+      }
+    },
+    /**
+     * @description: 选中某个表格编辑项
+     * @param {*} rowIndex
+     * @param {*} columnIndex
+     * @param {*} field
+     * @return {*}
+     */
+    itemFocus(rowIndex, columnIndex, field) {
+      let that = this;
+      if (field) {
+        that.$refs.dataGrid.scrollToColumn(field);
+      }
+      that.$nextTick(() => {
+        let input = that.$refs["input-" + rowIndex + "-" + columnIndex];
+        input;
+        input && input.focus && input.focus();
+      });
     },
     //单行编辑 模板渲染
     lineEditCellRender(name, value) {
@@ -480,7 +658,7 @@ const editRender = {
         let { currentCell, editLine, lineEditTypes } = that;
         let { columnIndex, rowIndex, row } = event;
         let item = that.tableColumns[columnIndex];
-        let itemRender = item.itemRender || {};
+        let itemRender = item.itemRender;
         let props = itemRender.props || {};
         let disabled = editSlotPropInit(row, props, "disabled", item.field);
         let element;
@@ -557,7 +735,7 @@ const editRender = {
                       if (res === false) return;
                     }
                     if (e.keyCode == 13) {
-                      that.nextItemFocus(event);
+                      that.pressEnterItem(event);
                     }
                   }
                 }
@@ -583,7 +761,7 @@ const editRender = {
                       res = await itemRender.on.pressEnter(e, event);
                     }
                     if (res) {
-                      that.nextItemFocus(event);
+                      that.pressEnterItem(event);
                     }
                   }
                 }
@@ -621,16 +799,16 @@ const editRender = {
                     if (itemRender.on && itemRender.on.change) {
                       itemRender.on.change(value, option, event, pOption);
                     }
-                  },
-                  inputKeydown: async e => {
-                    if (itemRender.on && itemRender.on.inputKeydown) {
-                      let res = await itemRender.on.inputKeydown(e, event);
-                      if (res === false) return;
-                    }
-                    if (e.keyCode == 13) {
-                      that.nextItemFocus(event);
-                    }
                   }
+                  // inputKeydown: async e => {
+                  //   if (itemRender.on && itemRender.on.inputKeydown) {
+                  //     let res = await itemRender.on.inputKeydown(e, event);
+                  //     if (res === false) return;
+                  //   }
+                  //   if (e.keyCode == 13) {
+                  //     that.pressEnterItem(event);
+                  //   }
+                  // }
                 }
               };
               break;
@@ -683,7 +861,7 @@ const editRender = {
                       if (res === false) return;
                     }
                     if (e.keyCode == 13) {
-                      that.nextItemFocus(event);
+                      that.pressEnterItem(event);
                     }
                   }
                 }
@@ -709,7 +887,7 @@ const editRender = {
                       if (res === false) return;
                     }
                     if (e.keyCode == 13) {
-                      that.nextItemFocus(event);
+                      that.pressEnterItem(event);
                     }
                   }
                 }
@@ -720,8 +898,7 @@ const editRender = {
                 ...attr,
                 props: {
                   clearIcon: true,
-                  ...props,
-                  disabled
+                  ...props
                 },
                 style: {
                   width: "100%",
@@ -735,7 +912,7 @@ const editRender = {
                       if (res === false) return;
                     }
                     if (e.keyCode == 13) {
-                      that.nextItemFocus(event);
+                      that.pressEnterItem(event);
                     }
                   }
                 }
@@ -744,9 +921,7 @@ const editRender = {
             case "pulldown-table":
               elementAttribute = {
                 ...attr,
-                props: {
-                  ...props
-                },
+                props,
                 on: {
                   ...ons,
                   change: (e, option) => {
@@ -762,7 +937,7 @@ const editRender = {
                       if (res === false) return;
                     }
                     if (e.keyCode == 13) {
-                      that.nextItemFocus(event);
+                      that.pressEnterItem(event);
                     }
                   }
                 }

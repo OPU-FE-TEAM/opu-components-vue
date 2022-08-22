@@ -464,6 +464,22 @@ export default {
           title: "请求下拉123",
           itemRender: {
             name: "a-select",
+            props: {}
+          }
+        },
+        {
+          field: "ordinary12",
+          title: "请求下拉123",
+          itemRender: {
+            name: "a-select",
+            props: {}
+          }
+        },
+        {
+          field: "ordinary13",
+          title: "请求下拉123",
+          itemRender: {
+            name: "a-select",
             props: {
               defaultField: "isSelected",
               valueField: "Id",

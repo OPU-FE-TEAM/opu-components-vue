@@ -12,6 +12,7 @@
       height="600px"
       highlight-current-row
       :keyboard-config="{ isArrow: false }"
+      editLine
     >
       <template #name_edit="{ row }">
         <vxe-input v-model="row.name" ref="input"></vxe-input>
@@ -27,6 +28,7 @@
     <a-button @click="getData">获取数据</a-button>
     <!-- <a-button @click="updateDate">赋值</a-button> -->
     <a-button @click="onChangeColumns">改变表格列</a-button>
+    <a-button @click="onFocusEditRow">选中行</a-button>
     <!-- <p>{{ data }}</p> -->
   </div>
 </template>
@@ -156,7 +158,7 @@ export default {
           title: "日期111",
           minWidth: 150,
           itemRender: {
-            name: "ADatePicker",
+            name: "a-date-picker",
             props: {
               format: "YYYY-MM-DD"
               // format: "YYYY-MM-DD HH:mm:ss",
@@ -321,7 +323,7 @@ export default {
         {
           field: "orderType",
           align: "left",
-          title: "下拉框",
+          title: "下拉框666666",
           minWidth: 150,
           itemRender: {
             name: "ASelect",
@@ -482,8 +484,9 @@ export default {
           itemRender: {
             name: "ASelect",
             props: {
-              valueField: "id",
-              labelField: "text",
+              // optionsField: "oneSelectList1",
+              // valueField: "value",
+              // labelField: "label",
               disabled: row => {
                 return row.orderType == 3;
               }
@@ -493,11 +496,14 @@ export default {
         {
           field: "apiSelect1",
           align: "left",
-          title: "请求下拉",
+          title: "请求下拉1",
           minWidth: 150,
           itemRender: {
             name: "ASelect",
             props: {
+              optionsField: "oneSelectList1",
+              valueField: "value",
+              labelField: "label",
               disabled: row => {
                 return row.orderType == 3;
               }
@@ -614,7 +620,7 @@ export default {
   },
   created() {
     let columns = cloneDeep(this.columns);
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 1; i++) {
       let row = {
         field: "input-" + i,
         align: "left",
@@ -624,9 +630,9 @@ export default {
           name: "a-input-number"
         }
       };
-      if (i % 2 == 0) {
-        delete row.itemRender;
-      }
+      // if (i % 2 == 0) {
+      //   delete row.itemRender;
+      // }
       columns.unshift(row);
       defaultRow["input-" + i] = i;
     }
@@ -639,7 +645,7 @@ export default {
   },
   mounted() {
     let data = [];
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 5; i++) {
       data.push(cloneDeep(defaultRow));
     }
     this.data = data;
@@ -676,9 +682,8 @@ export default {
     },
     onChange() {},
     onChangeSelect() {
-      getTableSelectData("vip", 50).then(res => {
+      getTableSelectData({ code: "vip" }, 50).then(res => {
         let data = res.data;
-        debugger;
         this.$refs.dataTable.setFieldsOptions({ vip: data.vip });
       });
     },
@@ -712,6 +717,9 @@ export default {
           }
         }
       ];
+    },
+    onFocusEditRow() {
+      this.$refs.dataTable.focusEditRow(0);
     },
     onFocus() {
       console.log("onFocus");

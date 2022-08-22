@@ -1186,21 +1186,8 @@ export default {
         }
       }
       that.$emit("cell-click", e);
-
       //表格  行编辑 专用
-      if (this.editLine) {
-        let currentCell = that.currentCell || {};
-        let { rowIndex: currentRowIndex } = currentCell;
-        let { columnIndex, rowIndex } = e;
-        if (rowIndex === currentRowIndex) {
-          return;
-        }
-        that.currentCell = e;
-        that.$nextTick(() => {
-          let input = that.$refs["input-" + rowIndex + "-" + columnIndex];
-          input && input.focus && input.focus();
-        });
-      }
+      that.onEditTableCurrentRowCellClick(e);
     },
     handleServerSort(params) {
       const { tableProps } = this;
