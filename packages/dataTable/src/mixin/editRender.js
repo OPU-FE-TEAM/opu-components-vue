@@ -385,6 +385,7 @@ const editRender = {
         param: {},
         fields: []
       };
+      let index = 0;
       data = data.filter((p, i) => {
         if (filterCallback && !filterCallback(p)) {
           return false;
@@ -395,7 +396,7 @@ const editRender = {
             if (!p.slots) p.slots = {};
             const field = p.field;
             if (enterTypes.includes(name)) {
-              let enterItem = { field, item: p, columnIndex: i };
+              let enterItem = { field, item: p, columnIndex: index };
               if (p.fixed == "left") {
                 leftPressEnterItems.push(enterItem);
               } else if (p.fixed == "right") {
@@ -429,23 +430,21 @@ const editRender = {
                           }
                         }
                       },
-                      keyup:async event => {
-                        let res = true;
+                      keyup: async event => {
                         if (p.itemRender.on && p.itemRender.on.keyup) {
-                          res = await p.itemRender.on.keyup(e, event);
+                          let res = await p.itemRender.on.keyup(e, event);
+                          if (res === false) return;
                         }
                         if (name == "a-select" && event.keyCode == 13) {
-                          if (res) {
-                            let { currentCell } = that;
-                            let { rowIndex, row } = currentCell;
-                            setTimeout(() => {
-                              that.pressEnterItem({
-                                columnIndex: i,
-                                rowIndex,
-                                row
-                              });
-                            }, 50);
-                          }
+                          let { currentCell } = that;
+                          let { rowIndex, row } = currentCell;
+                          setTimeout(() => {
+                            that.pressEnterItem({
+                              columnIndex: i,
+                              rowIndex,
+                              row
+                            });
+                          }, 50);
                         }
                       }
                     },
@@ -542,6 +541,7 @@ const editRender = {
             }
           }
         }
+        index++;
         return true;
       });
       if (unifyApiList.fields.length > 0) {
@@ -763,11 +763,11 @@ const editRender = {
                 on: {
                   ...ons,
                   keyup: async e => {
-                    let res = true;
                     if (itemRender.on && itemRender.on.keyup) {
-                      res = await itemRender.on.keyup(e, event);
+                      let res = await itemRender.on.keyup(e, event);
+                      if (res === false) return;
                     }
-                    if (res) {
+                    if (e.keyCode == 13) {
                       that.pressEnterItem(event);
                     }
                   }
