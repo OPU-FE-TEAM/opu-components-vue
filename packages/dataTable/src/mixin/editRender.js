@@ -295,6 +295,7 @@ const editRender = {
       let event = e || window.event;
       let target = event.target || event.srcElement;
       let pathIndex = 0;
+      let dataGrid = this.$refs.dataGrid;
       while (target.parentNode === null) {
         pathIndex++;
         target = event.path[pathIndex];
@@ -316,15 +317,9 @@ const editRender = {
         for (let i = 0; i < specialEl.length; i++) {
           let el = specialEl[i];
           isContains = el.contains(target);
-          if (isContains) {
-            break;
-          }
+          if (isContains) break;
         }
-        if (
-          !isContains &&
-          that.$refs.dataGrid &&
-          !that.$refs.dataGrid.$el.contains(target)
-        ) {
+        if (!isContains && dataGrid && !dataGrid.$el.contains(target)) {
           that.onBlurEditLine();
           document.body.removeEventListener("click", that.onBlurEditTable);
         }
@@ -951,55 +946,47 @@ const editRender = {
               trueValue = props.trueValue ? props.trueValue : true;
               falseValue = props.falseValue ? props.falseValue : false;
               if (editSlotPropInit(row, props, "hidden", field)) return "";
-              element = (
-                <a-switch
-                  {...{
-                    ...attr,
-                    props: {
-                      ...props,
-                      checked: row[field] == trueValue
-                    },
-                    on: {
-                      ...ons,
-                      change: e => {
-                        let value = e ? trueValue : falseValue;
-                        utils.setObjData(field, row, value);
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props: {
+                  ...props,
+                  checked: row[field] == trueValue
+                },
+                on: {
+                  ...ons,
+                  change: e => {
+                    let value = e ? trueValue : falseValue;
+                    utils.setObjData(field, row, value);
+                    row.ISEDIT = true;
+                    if (itemRender.on && itemRender.on.change) {
+                      itemRender.on.change(e, event);
                     }
-                  }}
-                />
-              );
+                  }
+                }
+              };
               break;
             case "a-checkbox":
               trueValue = props.trueValue ? props.trueValue : true;
               falseValue = props.falseValue ? props.falseValue : false;
               if (editSlotPropInit(row, props, "hidden", field)) return "";
-              element = (
-                <a-checkbox
-                  {...{
-                    ...attr,
-                    props: {
-                      ...props,
-                      checked: row[field] == trueValue
-                    },
-                    on: {
-                      ...ons,
-                      change: e => {
-                        let value = e.target.checked ? trueValue : falseValue;
-                        utils.setObjData(field, row, value);
-                        row.ISEDIT = true;
-                        if (itemRender.on && itemRender.on.change) {
-                          itemRender.on.change(e, event);
-                        }
-                      }
+              elementAttribute = {
+                ...attr,
+                props: {
+                  ...props,
+                  checked: row[field] == trueValue
+                },
+                on: {
+                  ...ons,
+                  change: e => {
+                    let value = e.target.checked ? trueValue : falseValue;
+                    utils.setObjData(field, row, value);
+                    row.ISEDIT = true;
+                    if (itemRender.on && itemRender.on.change) {
+                      itemRender.on.change(e, event);
                     }
-                  }}
-                />
-              );
+                  }
+                }
+              };
               break;
           }
           element = that.$createElement(

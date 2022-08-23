@@ -1,8 +1,8 @@
-import Vue from "vue";
-import utils from "../../utils";
+import utils from "../../../..//utils";
 import Sortable from "sortablejs";
-import config from "../conf";
-import { Modal } from "../../modal";
+import config from "../../../conf";
+import { Modal } from "../../../../modal";
+import { cloneDeep } from "lodash";
 
 export default {
   name: "SetColumns",
@@ -10,16 +10,21 @@ export default {
     Modal
   },
   props: {
-    option: {
+    data: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
-    columns: Array
+    submit: {
+      type: Function,
+      default: null
+    }
   },
   data() {
     return {
       visible: false,
-      tableData: []
+      tableData: [],
+      option: {},
+      columns: []
     };
   },
   computed: {
@@ -44,7 +49,7 @@ export default {
           }
         : config.setColumns.proxyConfig.props;
     },
-    submit() {
+    submitAfter() {
       const { option } = this;
       return option.proxyConfig &&
         option.proxyConfig.ajax &&
@@ -70,6 +75,12 @@ export default {
     if (this.sortable) {
       this.sortable.destroy();
     }
+  },
+  created() {
+    let data = cloneDeep(this.data);
+    this.option = data.option;
+    this.columns = data.columns;
+    this.show();
   },
   methods: {
     show() {
@@ -225,20 +236,20 @@ export default {
         );
       });
     },
-    renderShowEdit(scope) {
-      const vm = new Vue();
-      const h = vm.$createElement;
-      return h("a-checkbox", {
-        props: {
-          checked: scope.row.show
-        },
-        on: {
-          input: function(checked) {
-            scope.row.show = checked;
-          }
-        }
-      });
-    },
+    // renderShowEdit(scope) {
+    //   const vm = new Vue();
+    //   const h = vm.$createElement;
+    //   return h("a-checkbox", {
+    //     props: {
+    //       checked: scope.row.show
+    //     },
+    //     on: {
+    //       input: function(checked) {
+    //         scope.row.show = checked;
+    //       }
+    //     }
+    //   });
+    // },
     getData() {
       const table = this.$refs.table;
       return table.getTableData();
@@ -247,7 +258,7 @@ export default {
       this.visible = false;
     },
     onSubmit() {
-      const { submit, onConfig, option } = this;
+      const { submitAfter, onConfig, option } = this;
       const data = this.getData();
       const { tableData } = data;
       const opt = option.proxyConfig ? option.proxyConfig : {};
@@ -269,8 +280,8 @@ export default {
           ? config.setColumns.proxyConfig.defaultAjax
           : {};
 
-      let submitApi = submit;
-      if (defaultAjax && defaultAjax.submit && !submitApi) {
+      let submitApi = submitAfter;
+      if (!submitApi && defaultAjax && defaultAjax.submit) {
         submitApi = defaultAjax.submit;
       }
       let json = { ...params, data: newTableData };
@@ -285,7 +296,8 @@ export default {
         }
         submitApi(json).then(() => {
           this.visible = false;
-          this.$emit("submit");
+          this.submit && this.submit();
+          // this.$emit("submit");
         });
       } else {
         //转换数据到原来
@@ -300,7 +312,8 @@ export default {
           }
         }
         this.visible = false;
-        this.$emit("submit", newTableData);
+        this.submit && this.submit(newTableData);
+        // this.$emit("submit", newTableData);
       }
     },
     onCellEditChange(...args) {
@@ -312,7 +325,7 @@ export default {
   render(h) {
     const {
       tableData,
-      renderShowEdit,
+      // renderShowEdit,
       modalOpt,
       visible,
       onSubmit,
@@ -431,7 +444,8 @@ export default {
           title: modalProps.title ? modalProps.title : "设置表头",
           width: 800,
           ...modalProps,
-          value: visible
+          value: visible,
+          transfer: true
         },
         on: {
           cancel: onCancel,
@@ -458,8 +472,8 @@ export default {
             scopedSlots: {
               btn_default: () => {
                 return dropBtn;
-              },
-              show_default: renderShowEdit
+              }
+              // show_default: renderShowEdit
             }
           },
           []

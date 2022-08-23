@@ -1,18 +1,20 @@
 <template>
   <div>
-    <DataTable
-      show-overflow
-      keep-source
-      ref="xGrid"
-      height="calc(100vh - 100px)"
-      :data="tableData"
-      :setcolumns-config="setColumns"
-      class="abc-table"
-      :proxy-columns="proxyColumns"
-    >
-    </DataTable>
+    <div style="height:600px;width:1000px">
+      <DataTable
+        show-overflow
+        keep-source
+        ref="xGrid"
+        height="300px"
+        :data="tableData"
+        :setcolumns-config="setColumns"
+        class="abc-table"
+        :proxy-columns="proxyColumns"
+      >
+      </DataTable>
 
-    <a-button @click="showSetColumns">设置表头</a-button>
+      <a-button @click="showSetColumns">设置表头</a-button>
+    </div>
   </div>
 </template>
 

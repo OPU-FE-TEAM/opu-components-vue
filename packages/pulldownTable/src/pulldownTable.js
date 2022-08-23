@@ -71,6 +71,7 @@ export default {
 
   data() {
     return {
+      visible: false,
       multiple: false,
       tableData: [],
       selectValue: "",
@@ -119,7 +120,6 @@ export default {
       delete propsData.value;
       Object.assign(props, {
         props: {
-          modelValue: true,
           transfer: true,
           destroyOnClose: true,
           ...propsData
@@ -128,7 +128,7 @@ export default {
       props.ref = "pulldownTable";
       props.class = "pulldown";
       props.on = {
-        "hide-panel": this.onPulldownHide
+        "hide-panel": this.onPulldownHideBefore
       };
       return props;
     },
@@ -202,7 +202,7 @@ export default {
         this.currentValue = row;
         this.$emit("input", text);
         this.$emit("change", text, row);
-        this.$refs.pulldownTable.hidePanel();
+        this.visible = false;
       }
     },
     onTableCheckboxChange({ records }) {
@@ -217,7 +217,8 @@ export default {
     onInputFocusBefore(e) {
       let that = this;
       const { table, searchBefore, searchField, retainSearchValue } = that;
-      that.$refs.pulldownTable.showPanel();
+      that.visible = true;
+      // that.$refs.pulldownTable.showPanel();
       that.$emit("showPanel", e);
       if (!retainSearchValue) {
         that.currentValue = "";
@@ -297,29 +298,61 @@ export default {
       if (tableSelectedRow && pulldown.isPanelVisible()) {
         this.onTableRowSelect({ row: tableSelectedRow });
       }
-      this.$refs.pulldownTable.hidePanel();
+      this.visible = false;
       this.$emit("inputPressEnter", e);
     },
     onInputKeDown(e) {
       const { key } = e;
       if (key == "Tab") {
-        this.$refs.pulldownTable.hidePanel();
+        this.visible = false;
       }
       this.$emit("keydown", e);
     },
     // 快捷键上下切换选中行
     onInputKeyUp(e) {
       const { key } = e;
-      const { onInputEnter, onInputFocusBefore } = this;
-      let isVisible = this.$refs.pulldownTable.isPanelVisible();
+      const { onInputEnter, onInputFocusBefore, visible } = this;
       if (key == "Enter") {
-        if (isVisible) {
+        if (visible) {
           onInputEnter(e);
         }
       }
-      if (!isVisible && key == "ArrowDown") {
+      if (!visible && key == "ArrowDown") {
         onInputFocusBefore(e);
       }
+    },
+    onPulldownHideBefore({ $event: e }) {
+      let that = this;
+      that.onPulldownHide();
+      console.log(e);
+      // let isContains = false;
+
+      // let event = e || window.event;
+      // let target = event.target || event.srcElement;
+      // let pathIndex = 0;
+      // while (target.parentNode === null) {
+      //   pathIndex++;
+      //   target = event.path[pathIndex];
+      // }
+      // //下拉
+      // let selectEl = document.getElementsByClassName("ant-select-dropdown");
+      // //表头
+      // let setTableColumnEl = document.getElementsByClassName(
+      //   "set-columns-modal"
+      // );
+      // //特殊处理数组
+      // let specialEl = [...setTableColumnEl, ...selectEl];
+
+      // for (let i = 0; i < specialEl.length; i++) {
+      //   let el = specialEl[i];
+      //   isContains = el.contains(target);
+      //   if (isContains) {
+      //     break;
+      //   }
+      // }
+      // if (!isContains) {
+      //   that.onPulldownHide();
+      // }
     },
     onPulldownHide() {
       let that = this;
@@ -334,14 +367,20 @@ export default {
           that.currentValue = that.selectValue;
         });
       }
+
+      this.visible = false;
     }
   },
   render(h) {
-    const { tableProps, pulldownProps } = this;
+    const { tableProps, pulldownProps, visible } = this;
     return h(
       "vxe-pulldown",
       {
         ...pulldownProps,
+        props: {
+          ...pulldownProps.props,
+          value: visible
+        },
         ...{
           on: { ...pulldownProps.on }
         }

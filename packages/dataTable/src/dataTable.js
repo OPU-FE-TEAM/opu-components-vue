@@ -4,7 +4,7 @@ import utils from "../../utils";
 import { Table } from "vxe-table";
 import { DataForm } from "../../dataForm";
 import config from "../conf";
-import SetColums from "./setColums";
+import SetColumns from "./components/setColumns";
 import editRenderMixin from "./mixin/editRender";
 import { Modal } from "../../modal";
 
@@ -211,19 +211,19 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
 }
 
 // 渲染设置表头窗口
-function renderColumnsModal(h, _vm) {
-  const { backupColumns, setTableColumns, setColumnsOpt } = _vm;
-  return h("SetColums", {
-    ref: "setColumsModal",
-    props: {
-      option: setColumnsOpt,
-      columns: backupColumns
-    },
-    on: {
-      submit: setTableColumns
-    }
-  });
-}
+// function renderColumnsModal(h, _vm) {
+//   const { backupColumns, setTableColumns, setColumnsOpt } = _vm;
+//   return h("SetColums", {
+//     ref: "setColumsModal",
+//     props: {
+//       option: setColumnsOpt,
+//       columns: backupColumns
+//     },
+//     on: {
+//       submit: setTableColumns
+//     }
+//   });
+// }
 
 // 渲染工具栏按钮
 function renderButton(item, h, hasDropdown, _vm) {
@@ -332,7 +332,7 @@ function renderHeadToolbar(h, _vm) {
     $nextTick,
     $refs,
     showSetColumns,
-    setcolumnsConfig,
+    // setcolumnsConfig,
     $slots
   } = _vm;
   if (!headToolbar) {
@@ -385,7 +385,7 @@ function renderHeadToolbar(h, _vm) {
   }
 
   // 渲染头部工具
-  let setColumnsModal = "";
+  // let setColumnsModal = "";
   if (headToolbar.tools) {
     headToolbarProps.props = {
       ...headToolbar.tools
@@ -424,9 +424,9 @@ function renderHeadToolbar(h, _vm) {
           return setColumnsBtn;
         };
       }
-      if (!setcolumnsConfig) {
-        setColumnsModal = renderColumnsModal(h, _vm);
-      }
+      // if (!setcolumnsConfig) {
+      //   setColumnsModal = renderColumnsModal(h, _vm);
+      // }
     }
     $nextTick(() => {
       $refs.dataGrid.connect($refs.headToolbar);
@@ -438,7 +438,10 @@ function renderHeadToolbar(h, _vm) {
     {
       class: "head-toolbar-box"
     },
-    [h("vxe-toolbar", headToolbarProps, []), advancedSearch, setColumnsModal]
+    [
+      h("vxe-toolbar", headToolbarProps, []),
+      advancedSearch /*, setColumnsModal*/
+    ]
   );
 }
 
@@ -528,7 +531,7 @@ export default {
   name: "DataTable",
   components: {
     DataForm,
-    SetColums,
+    // SetColums,
     Modal
   },
   props: {
@@ -939,9 +942,27 @@ export default {
     },
     // 显示表头设置窗口
     showSetColumns() {
-      if (this.$refs.setColumsModal) {
-        this.$refs.setColumsModal.show();
-      }
+      const { backupColumns, setTableColumns, setColumnsOpt } = this;
+      //   return h("SetColums", {
+      //     ref: "setColumsModal",
+      //     props: {
+      //       option: setColumnsOpt,
+      //       columns: backupColumns
+      //     },
+      //     on: {
+      //       submit: setTableColumns
+      //     }
+      //   });
+      SetColumns({
+        data: {
+          option: setColumnsOpt,
+          columns: backupColumns
+        },
+        submit: setTableColumns
+      });
+      // if (this.$refs.setColumsModal) {
+      //   this.$refs.setColumsModal.show();
+      // }
     },
     // 设置表头
     setTableColumns(data) {
@@ -1204,18 +1225,18 @@ export default {
   render(h) {
     const {
       tableProps,
-      headToolbar,
-      setcolumnsConfig,
+      // headToolbar,
+      // setcolumnsConfig,
       height,
       searchConfig
     } = this;
     const nodes = [];
-    if (
-      (headToolbar && headToolbar.tools && headToolbar.tools.setColumns) ||
-      setcolumnsConfig
-    ) {
-      nodes.push(renderColumnsModal(h, this));
-    }
+    // if (
+    //   (headToolbar && headToolbar.tools && headToolbar.tools.setColumns) ||
+    //   setcolumnsConfig
+    // ) {
+    //   nodes.push(renderColumnsModal(h, this));
+    // }
     let tableHeight = "";
     if (height && utils.isString(height) && height.indexOf("calc") > -1) {
       tableHeight = height;

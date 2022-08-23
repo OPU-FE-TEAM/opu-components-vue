@@ -71,36 +71,36 @@ let data = [
 ];
 console.log(data);
 
-// function getData(arr = {}) {
-//   console.log(arr);
-//   console.log("请求");
-//   return new Promise(resolve => {
-//     setTimeout(() => {
-//       const size = arr.pageSize ? arr.pageSize : 20;
-//       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
-//       let list = Array.from({ length: size }, (_, key) => ({
-//         id: key,
-//         name: `name_${pageIndex}_${key}`,
-//         sex: key < 3 ? 1 : 2,
-//         age: key
-//       }));
-//       if (arr && arr.keyword == "123") {
-//         list = [];
-//       }
-//       const json = {
-//         // data: [...list],
-//         // total: 100
-//         code: 0,
-//         data: {
-//           datas: [...list],
-//           total: 100
-//         }
-//       };
-//       console.log(json);
-//       resolve(json);
-//     }, 500);
-//   });
-// }
+function getData(arr = {}) {
+  console.log(arr);
+  console.log("请求");
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const size = arr.pageSize ? arr.pageSize : 20;
+      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+      let list = Array.from({ length: size }, (_, key) => ({
+        id: key,
+        name: `name_${pageIndex}_${key}`,
+        sex: key < 3 ? 1 : 2,
+        age: key
+      }));
+      if (arr && arr.keyword == "123") {
+        list = [];
+      }
+      const json = {
+        // data: [...list],
+        // total: 100
+        code: 0,
+        data: {
+          datas: [...list],
+          total: 100
+        }
+      };
+      console.log(json);
+      resolve(json);
+    }, 500);
+  });
+}
 
 function getSelectGroupData() {
   return new Promise(resolve => {
@@ -406,59 +406,59 @@ export default {
         //     }
         //   }
         // }
-        //   {
-        //     field: "pulldown",
-        //     title: "下拉面板",
-        //     option: {
-        //       initialValue: "桂林"
-        //     },
-        //     itemRender: {
-        //       name: "pulldown-table",
-        //       props: {
-        //         valueField: "name",
-        //         textField: "age",
-        //         table: {
-        //           props: {
-        //             columns: [
-        //               { type: "checkbox", width: 50 },
-        //               { type: "seq", title: "Number", width: 80 },
-        //               {
-        //                 field: "name",
-        //                 title: "Name",
-        //                 width: 200
-        //               },
-        //               {
-        //                 field: "sex",
-        //                 title: "Sex",
-        //                 width: 200
-        //               },
-        //               {
-        //                 field: "age",
-        //                 title: "Age",
-        //                 width: 200
-        //               }
-        //             ],
-        //             size: "mini",
-        //             height: 300,
-        //             proxyConfig: {
-        //               autoLoad: false,
-        //               ajax: {
-        //                 query: getData
-        //               }
-        //             }
-        //           }
-        //         }
-        //       },
-        //       on: {
-        //         change(val, sel) {
-        //           console.log("change", val, sel);
-        //         },
-        //         inputChange(sel) {
-        //           console.log("inputChange", sel);
-        //         }
-        //       }
-        //     }
-        //   },
+        {
+          field: "pulldown",
+          title: "下拉面板",
+          option: {
+            initialValue: "桂林"
+          },
+          itemRender: {
+            name: "pulldown-table",
+            props: {
+              valueField: "name",
+              textField: "age",
+              table: {
+                props: {
+                  columns: [
+                    { type: "checkbox", width: 50 },
+                    { type: "seq", title: "Number", width: 80 },
+                    {
+                      field: "name",
+                      title: "Name",
+                      width: 200
+                    },
+                    {
+                      field: "sex",
+                      title: "Sex",
+                      width: 200
+                    },
+                    {
+                      field: "age",
+                      title: "Age",
+                      width: 200
+                    }
+                  ],
+                  size: "mini",
+                  height: 300,
+                  proxyConfig: {
+                    autoLoad: false,
+                    ajax: {
+                      query: getData
+                    }
+                  }
+                }
+              }
+            },
+            on: {
+              change(val, sel) {
+                console.log("change", val, sel);
+              },
+              inputChange(sel) {
+                console.log("inputChange", sel);
+              }
+            }
+          }
+        },
         {
           field: "ordinary1",
           title: "请求下拉123",
