@@ -320,7 +320,11 @@ const editRender = {
             break;
           }
         }
-        if (!isContains && !that.$refs.dataGrid.$el.contains(target)) {
+        if (
+          !isContains &&
+          that.$refs.dataGrid &&
+          !that.$refs.dataGrid.$el.contains(target)
+        ) {
           that.onBlurEditLine();
           document.body.removeEventListener("click", that.onBlurEditTable);
         }
