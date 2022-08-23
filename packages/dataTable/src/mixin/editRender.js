@@ -508,9 +508,10 @@ const editRender = {
                     return o;
                   });
                 } else if (
-                  !props.optionsField &&
-                  (props.api || props.dataField || props.param) &&
-                  (!editOptions[field] || isAll)
+                  (!props.optionsField &&
+                    (props.api || props.dataField || props.param) &&
+                    !editOptions[field]) ||
+                  isAll
                 ) {
                   let item = {
                     field,
@@ -570,7 +571,7 @@ const editRender = {
     },
     loadOptionsData(isAll) {
       if (isAll) {
-        this.setTableColumns(this.columns);
+        this.setTableColumns(this.columns, isAll);
       } else {
         fetchItemPropsOptionsApiList(this);
       }

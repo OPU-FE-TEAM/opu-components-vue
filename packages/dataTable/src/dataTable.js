@@ -965,7 +965,7 @@ export default {
       // }
     },
     // 设置表头
-    setTableColumns(data) {
+    setTableColumns(data, type) {
       const { proxyColumns, fetchColumns, sortable, notSortableFields } = this;
       if (data) {
         let columnsData = utils.clone(data);
@@ -1000,13 +1000,17 @@ export default {
             ? { ...config.proxyColumns.props, ...proxyColumns.props }
             : config.proxyColumns.props;
         let hasCheckbox = false;
-        this.tableColumns = this.editColumnsRender(columnsData, p => {
-          if (!hasCheckbox && p.type == "checkbox") {
-            hasCheckbox = true;
-          }
+        this.tableColumns = this.editColumnsRender(
+          columnsData,
+          p => {
+            if (!hasCheckbox && p.type == "checkbox") {
+              hasCheckbox = true;
+            }
 
-          return p[configProps.show] !== false;
-        });
+            return p[configProps.show] !== false;
+          },
+          type
+        );
         this.hasCheckbox = hasCheckbox;
       } else if (proxyColumns) {
         fetchColumns(proxyColumns);
