@@ -361,9 +361,10 @@ const editRender = {
      * @description: 表格列重构
      * @param {*} data
      * @param {*} filterCallback
+     * @param {*} isAll
      * @return {*}
      */
-    editColumnsRender(data, filterCallback) {
+    editColumnsRender(data, filterCallback, isAll) {
       let that = this;
       let {
         editType,
@@ -509,7 +510,7 @@ const editRender = {
                 } else if (
                   !props.optionsField &&
                   (props.api || props.dataField || props.param) &&
-                  !editOptions[field]
+                  (!editOptions[field] || isAll)
                 ) {
                   let item = {
                     field,
