@@ -429,15 +429,23 @@ const editRender = {
                           }
                         }
                       },
-                      keydown: event => {
+                      keyup:async event => {
+                        let res = true;
+                        if (p.itemRender.on && p.itemRender.on.keyup) {
+                          res = await p.itemRender.on.keyup(e, event);
+                        }
                         if (name == "a-select" && event.keyCode == 13) {
-                          let { currentCell } = that;
-                          let { rowIndex, row } = currentCell;
-                          that.pressEnterItem({
-                            columnIndex: i,
-                            rowIndex,
-                            row
-                          });
+                          if (res) {
+                            let { currentCell } = that;
+                            let { rowIndex, row } = currentCell;
+                            setTimeout(() => {
+                              that.pressEnterItem({
+                                columnIndex: i,
+                                rowIndex,
+                                row
+                              });
+                            }, 50);
+                          }
                         }
                       }
                     },
@@ -728,9 +736,9 @@ const editRender = {
                       itemRender.on.change(e, event);
                     }
                   },
-                  keydown: async e => {
-                    if (itemRender.on && itemRender.on.keydown) {
-                      let res = await itemRender.on.keydown(e, event);
+                  keyup: async e => {
+                    if (itemRender.on && itemRender.on.keyup) {
+                      let res = await itemRender.on.keyup(e, event);
                       if (res === false) return;
                     }
                     if (e.keyCode == 13) {
@@ -754,10 +762,10 @@ const editRender = {
                 },
                 on: {
                   ...ons,
-                  pressEnter: async e => {
+                  keyup: async e => {
                     let res = true;
-                    if (itemRender.on && itemRender.on.pressEnter) {
-                      res = await itemRender.on.pressEnter(e, event);
+                    if (itemRender.on && itemRender.on.keyup) {
+                      res = await itemRender.on.keyup(e, event);
                     }
                     if (res) {
                       that.pressEnterItem(event);

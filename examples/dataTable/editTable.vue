@@ -172,6 +172,19 @@ export default {
           }
         },
         {
+          field: "market",
+          align: "left",
+          title: "市场",
+          minWidth: 150,
+          itemRender: {
+            name: "ASelect",
+            props: {
+              param: { code: "Market" },
+              dataField: "data.Market"
+            }
+          }
+        },
+        {
           field: "pulldown",
           title: "下拉面板",
           minWidth: 150,
@@ -356,9 +369,9 @@ export default {
           }
         },
         {
-          field: "market",
+          field: "market11",
           align: "left",
-          title: "市场",
+          title: "市场11",
           minWidth: 150,
           itemRender: {
             name: "ASelect",
