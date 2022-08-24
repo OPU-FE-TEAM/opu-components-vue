@@ -572,7 +572,6 @@ export default {
       searchData: {},
       tableHeight: "",
       currentRow: {},
-      currentCell: null,
       hasAjaxQuery: false,
       hasCheckbox: false //是否存在checkbox
     };

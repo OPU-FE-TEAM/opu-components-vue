@@ -213,7 +213,8 @@ const editRender = {
       editOptions: {},
       editApiList: [],
       editDefaultOption: {},
-      editFieldList: {}
+      editFieldList: {},
+      currentCell: null
     };
   },
   computed: {
@@ -275,11 +276,10 @@ const editRender = {
       let { rowIndex: currentRowIndex } = currentCell;
       that.currentCell = e;
       if (this.editLine) {
-        let { columnIndex, rowIndex } = e;
-        if (rowIndex === currentRowIndex) {
+        if (e.rowIndex === currentRowIndex) {
           return;
         }
-        that.itemFocus(rowIndex, columnIndex);
+        that.itemFocus(e);
         setTimeout(() => {
           document.body.removeEventListener("click", that.onBlurEditTable);
           document.body.addEventListener("click", that.onBlurEditTable, false);
@@ -442,8 +442,9 @@ const editRender = {
                           if (res === false) return;
                         }
                         if (name == "a-select" && event.keyCode == 13) {
-                          let { currentCell } = that;
-                          let { rowIndex, row } = currentCell;
+                          let {
+                            currentCell: { rowIndex, row }
+                          } = that;
                           setTimeout(() => {
                             that.pressEnterItem({
                               columnIndex: i,
@@ -585,18 +586,21 @@ const editRender = {
      * @param {*} rowIndex
      * @return {*}
      */
-    focusEditRow(rowIndex) {
+    focusEditRow(rowIndex = 0) {
       let { pressEnterItems } = this;
       let dataGrid = this.$refs.dataGrid;
       let data = this.data || dataGrid.getData();
       let row = data[rowIndex];
       if (row && pressEnterItems.length > 0) {
         dataGrid.setCurrentRow(row);
-        this.onEditTableCurrentRowCellClick({
-          row,
-          rowIndex: 0,
-          columnIndex: pressEnterItems[0].columnIndex
-        });
+        setTimeout(() => {
+          this.onEditTableCurrentRowCellClick({
+            row,
+            rowIndex: 0,
+            columnIndex: pressEnterItems[0].columnIndex,
+            field: pressEnterItems[0].field
+          });
+        }, 50);
         // dataGrid.setEditCell(row, pressEnterItems[0]);
       }
     },
@@ -615,31 +619,37 @@ const editRender = {
       //换下一行
       if (index == pressEnterItems.length - 1) {
         let data = that.data || that.$refs.dataGrid.getData();
+        rowIndex += 1;
         //如果是最后一个
-        if (data.length == rowIndex + 1) {
+        if (data.length == rowIndex) {
           this.$emit("enterLastItem");
         } else {
-          event.rowIndex = event.rowIndex + 1;
-          event.columnIndex = pressEnterItems[0].columnIndex;
-          event.row = data[event.rowIndex];
-          that.$refs.dataGrid.setCurrentRow(event.row);
-          that.onEditTableCurrentRowCellClick(event);
-          // that.$nextTick(() => {
-          //   that.pressEnterItem(event);
-          // });
+          let row = data[rowIndex];
+          that.$refs.dataGrid.setCurrentRow(row);
+          that.onEditTableCurrentRowCellClick({
+            row,
+            rowIndex,
+            columnIndex: pressEnterItems[0].columnIndex,
+            field: pressEnterItems[0].field
+          });
         }
       } else {
-        let nextIndex = index + 1;
-        let nextData = pressEnterItems[nextIndex];
+        let nextData = pressEnterItems[index + 1];
         let nextItem = nextData.item;
         let props = nextItem.itemRender.props || {};
         let disabled = editSlotPropInit(row, props, "disabled", nextItem.field);
+        let nextEvent = {
+          row: event.row,
+          rowIndex: event.rowIndex,
+          columnIndex: nextData.columnIndex,
+          field: event.field
+        };
         //如果禁用 跳转下一个
         if (disabled) {
-          event.columnIndex = nextData.columnIndex;
-          that.pressEnterItem(event);
+          that.pressEnterItem(nextEvent);
         } else {
-          that.itemFocus(rowIndex, nextData.columnIndex, nextData.field);
+          nextEvent.field = nextData.field;
+          that.itemFocus(nextEvent);
         }
       }
     },
@@ -650,15 +660,19 @@ const editRender = {
      * @param {*} field
      * @return {*}
      */
-    itemFocus(rowIndex, columnIndex, field) {
+    itemFocus(event) {
       let that = this;
-      if (field) {
-        that.$refs.dataGrid.scrollToColumn(field);
-      }
       that.$nextTick(() => {
-        let input = that.$refs["input-" + rowIndex + "-" + columnIndex];
+        let input =
+          that.$refs["input-" + event.rowIndex + "-" + event.columnIndex];
         input;
-        input && input.focus && input.focus();
+        if (input) {
+          let field = event.field;
+          if (field) that.$refs.dataGrid.scrollToColumn(field);
+          input.focus && input.focus();
+        } else {
+          this.pressEnterItem(event);
+        }
       });
     },
     //单行编辑 模板渲染
