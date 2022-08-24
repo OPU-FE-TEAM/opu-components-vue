@@ -275,7 +275,7 @@ const editRender = {
       let currentCell = that.currentCell || {};
       let { rowIndex: currentRowIndex } = currentCell;
       that.currentCell = e;
-      if (this.editLine) {
+      if (e && this.editLine) {
         if (e.rowIndex === currentRowIndex) {
           return;
         }
