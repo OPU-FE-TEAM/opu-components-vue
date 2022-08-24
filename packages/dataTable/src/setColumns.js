@@ -1,8 +1,8 @@
-import utils from "../../../..//utils";
+import Vue from "vue";
+import utils from "../../utils";
 import Sortable from "sortablejs";
-import config from "../../../conf";
-import { Modal } from "../../../../modal";
-import { cloneDeep } from "lodash";
+import config from "../conf";
+import { Modal } from "../../modal";
 
 export default {
   name: "SetColumns",
@@ -10,21 +10,16 @@ export default {
     Modal
   },
   props: {
-    data: {
+    option: {
       type: Object,
-      default: () => ({})
+      default: () => {}
     },
-    submit: {
-      type: Function,
-      default: null
-    }
+    columns: Array
   },
   data() {
     return {
       visible: false,
-      tableData: [],
-      option: {},
-      columns: []
+      tableData: []
     };
   },
   computed: {
@@ -49,7 +44,7 @@ export default {
           }
         : config.setColumns.proxyConfig.props;
     },
-    submitAfter() {
+    submit() {
       const { option } = this;
       return option.proxyConfig &&
         option.proxyConfig.ajax &&
@@ -75,12 +70,6 @@ export default {
     if (this.sortable) {
       this.sortable.destroy();
     }
-  },
-  created() {
-    let data = cloneDeep(this.data);
-    this.option = data.option;
-    this.columns = data.columns;
-    this.show();
   },
   methods: {
     show() {
@@ -236,20 +225,20 @@ export default {
         );
       });
     },
-    // renderShowEdit(scope) {
-    //   const vm = new Vue();
-    //   const h = vm.$createElement;
-    //   return h("a-checkbox", {
-    //     props: {
-    //       checked: scope.row.show
-    //     },
-    //     on: {
-    //       input: function(checked) {
-    //         scope.row.show = checked;
-    //       }
-    //     }
-    //   });
-    // },
+    renderShowEdit(scope) {
+      const vm = new Vue();
+      const h = vm.$createElement;
+      return h("a-checkbox", {
+        props: {
+          checked: scope.row.show
+        },
+        on: {
+          input: function(checked) {
+            scope.row.show = checked;
+          }
+        }
+      });
+    },
     getData() {
       const table = this.$refs.table;
       return table.getTableData();
@@ -258,7 +247,7 @@ export default {
       this.visible = false;
     },
     onSubmit() {
-      const { submitAfter, onConfig, option } = this;
+      const { submit, onConfig, option } = this;
       const data = this.getData();
       const { tableData } = data;
       const opt = option.proxyConfig ? option.proxyConfig : {};
@@ -280,8 +269,8 @@ export default {
           ? config.setColumns.proxyConfig.defaultAjax
           : {};
 
-      let submitApi = submitAfter;
-      if (!submitApi && defaultAjax && defaultAjax.submit) {
+      let submitApi = submit;
+      if (defaultAjax && defaultAjax.submit && !submitApi) {
         submitApi = defaultAjax.submit;
       }
       let json = { ...params, data: newTableData };
@@ -296,8 +285,7 @@ export default {
         }
         submitApi(json).then(() => {
           this.visible = false;
-          this.submit && this.submit();
-          // this.$emit("submit");
+          this.$emit("submit");
         });
       } else {
         //转换数据到原来
@@ -312,8 +300,7 @@ export default {
           }
         }
         this.visible = false;
-        this.submit && this.submit(newTableData);
-        // this.$emit("submit", newTableData);
+        this.$emit("submit", newTableData);
       }
     },
     onCellEditChange(...args) {
@@ -325,7 +312,7 @@ export default {
   render(h) {
     const {
       tableData,
-      // renderShowEdit,
+      renderShowEdit,
       modalOpt,
       visible,
       onSubmit,
@@ -393,7 +380,9 @@ export default {
             ]
           },
           on: {
-            change: onCellEditChange
+            change: (value, option, event) => {
+              this.onCellEditChange(value, event);
+            }
           }
         }
       },
@@ -444,8 +433,7 @@ export default {
           title: modalProps.title ? modalProps.title : "设置表头",
           width: 800,
           ...modalProps,
-          value: visible,
-          transfer: true
+          value: visible
         },
         on: {
           cancel: onCancel,
@@ -465,15 +453,17 @@ export default {
               columns: tableColumn,
               data: tableData,
               treeConfig: { children: "children" },
+              "keyboard-config": { isArrow: false },
               // editConfig: { trigger: "click", mode: "row" },
               checkboxConfig: { checkStrictly: true },
-              height: "600px"
+              height: "600px",
+              transfer: true
             },
             scopedSlots: {
               btn_default: () => {
                 return dropBtn;
-              }
-              // show_default: renderShowEdit
+              },
+              show_default: renderShowEdit
             }
           },
           []

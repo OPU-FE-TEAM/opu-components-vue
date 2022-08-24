@@ -153,6 +153,10 @@ const editRender = {
     editLine: {
       type: Boolean,
       default: false
+    },
+    isCacheOption: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -371,7 +375,8 @@ const editRender = {
         editOptions,
         editDefaultOption,
         editFieldList,
-        enterTypes
+        enterTypes,
+        isCacheOption
       } = that;
       let otherApiList = [];
       let pressEnterItems = [];
@@ -508,10 +513,9 @@ const editRender = {
                     return o;
                   });
                 } else if (
-                  (!props.optionsField &&
-                    (props.api || props.dataField || props.param) &&
-                    !editOptions[field]) ||
-                  isAll
+                  !props.optionsField &&
+                  (props.api || props.dataField || props.param) &&
+                  (!isCacheOption || !editOptions[field] || isAll)
                 ) {
                   let item = {
                     field,

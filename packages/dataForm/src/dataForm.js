@@ -832,6 +832,11 @@ export default {
     autoEnterSelectInput: {
       type: [Boolean, String],
       default: ""
+    },
+    //是否缓存option
+    isCacheOption: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -1033,7 +1038,8 @@ export default {
         expand,
         autoLoadOptionsData,
         isPartRequest,
-        optionsItemDataIndexs
+        optionsItemDataIndexs,
+        isCacheOption
       } = this;
       const clone = utils.clone(items, true);
       const getItemPropsOptionsApiList = [];
@@ -1054,7 +1060,7 @@ export default {
       const data = cloneData.map((item, index) => {
         let field = item.field;
         optionsItemIndexs[field] = index;
-        if (!type && optionsItemDataIndexs[field]) return item;
+        if (!type && isCacheOption && optionsItemDataIndexs[field]) return item;
         item.itemRender = item.itemRender || {};
         let itemRender = item.itemRender;
         itemRender.props = itemRender.props || {};
