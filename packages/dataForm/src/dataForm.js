@@ -1127,7 +1127,7 @@ export default {
     },
     loadOptionsData(formData = {}, isAll) {
       if (isAll) {
-        this.cloneItems(this.tableColumns, isAll);
+        this.cloneItems(this.items, isAll);
       } else {
         const { unifyApiGetOptions, getItemPropsOptionsApiList } = this;
         if (unifyApiGetOptions.length) {
