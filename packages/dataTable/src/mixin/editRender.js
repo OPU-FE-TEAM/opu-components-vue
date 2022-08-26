@@ -116,12 +116,20 @@ function editSlotItemRender(name, e) {
   }
 }
 
-//查询对应属性 根据属性类型做对应处理
-function editSlotPropInit(row, props, key, field, defaultKey = false) {
+/**
+ * @description: 查询对应属性 根据属性类型做对应处理
+ * @param {*} row
+ * @param {*} props
+ * @param {*} key
+ * @param {*} event
+ * @param {*} defaultKey
+ * @return {*}
+ */
+function editSlotPropInit(row, props, key, event, defaultKey = false) {
   return !props[key] && props[key] != 0
     ? defaultKey
     : typeof props[key] == "function"
-    ? props[key](row, field)
+    ? props[key](row, event)
     : props[key];
 }
 
@@ -616,15 +624,17 @@ const editRender = {
       let item = tableColumns[columnIndex];
       let field = item.field;
       let index = pressEnterItems.findIndex(p => p.field == field);
+      let data = that.data || that.$refs.dataGrid.getData();
+      if (!row) row = data[rowIndex];
+
       //换下一行
       if (index == pressEnterItems.length - 1) {
-        let data = that.data || that.$refs.dataGrid.getData();
         rowIndex += 1;
         //如果是最后一个
         if (data.length == rowIndex) {
           this.$emit("enterLastItem");
         } else {
-          let row = data[rowIndex];
+          row = data[rowIndex];
           that.$refs.dataGrid.setCurrentRow(row);
           that.onEditTableCurrentRowCellClick({
             row,
@@ -637,19 +647,53 @@ const editRender = {
         let nextData = pressEnterItems[index + 1];
         let nextItem = nextData.item;
         let props = nextItem.itemRender.props || {};
-        let disabled = editSlotPropInit(row, props, "disabled", nextItem.field);
         let nextEvent = {
-          row: event.row,
+          row,
           rowIndex: event.rowIndex,
           columnIndex: nextData.columnIndex,
           field: event.field
         };
+        let disabled = editSlotPropInit(row, props, "disabled", nextEvent);
         //如果禁用 跳转下一个
         if (disabled) {
           that.pressEnterItem(nextEvent);
         } else {
           nextEvent.field = nextData.field;
           that.itemFocus(nextEvent);
+        }
+      }
+    },
+    /**
+     * @description: 指定行 field focus
+     * @param {*} event
+     * @return {*}
+     */
+    itemFieldFocus(event) {
+      let that = this;
+      let { pressEnterItems, editLine } = that;
+      let { field, rowIndex } = event;
+      let index = pressEnterItems.findIndex(p => p.field == field);
+      let newEvent = {
+        ...event,
+        rowIndex,
+        columnIndex: pressEnterItems[index].columnIndex
+      };
+      let dataGrid = that.$refs.dataGrid;
+      let data = that.data || dataGrid.getData();
+      let row = data[rowIndex];
+      if (row) {
+        document.body.removeEventListener("click", that.onBlurEditTable);
+        that.currentCell = newEvent;
+        dataGrid.setCurrentRow(row);
+        that.itemFocus(newEvent);
+        if (editLine) {
+          setTimeout(() => {
+            document.body.addEventListener(
+              "click",
+              that.onBlurEditTable,
+              false
+            );
+          }, 50);
         }
       }
     },
@@ -687,7 +731,7 @@ const editRender = {
         let item = that.tableColumns[columnIndex];
         let itemRender = item.itemRender;
         let props = itemRender.props || {};
-        let disabled = editSlotPropInit(row, props, "disabled", item.field);
+        let disabled = editSlotPropInit(row, props, "disabled", event);
         let element;
         if (typeof disabled == "object") {
           return [disabled];
@@ -773,8 +817,8 @@ const editRender = {
                 ...attr,
                 props: {
                   ...props,
-                  max: editSlotPropInit(row, props, "max", field, Infinity),
-                  min: editSlotPropInit(row, props, "min", field, -Infinity)
+                  max: editSlotPropInit(row, props, "max", event, Infinity),
+                  min: editSlotPropInit(row, props, "min", event, -Infinity)
                 },
                 style: {
                   width: "100%",
@@ -973,7 +1017,7 @@ const editRender = {
             case "a-switch":
               trueValue = props.trueValue ? props.trueValue : true;
               falseValue = props.falseValue ? props.falseValue : false;
-              if (editSlotPropInit(row, props, "hidden", field)) return "";
+              if (editSlotPropInit(row, props, "hidden", event)) return "";
               elementAttribute = {
                 ...attr,
                 props: {
@@ -996,7 +1040,7 @@ const editRender = {
             case "a-checkbox":
               trueValue = props.trueValue ? props.trueValue : true;
               falseValue = props.falseValue ? props.falseValue : false;
-              if (editSlotPropInit(row, props, "hidden", field)) return "";
+              if (editSlotPropInit(row, props, "hidden", event)) return "";
               elementAttribute = {
                 ...attr,
                 props: {

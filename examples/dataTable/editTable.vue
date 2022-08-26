@@ -180,7 +180,16 @@ export default {
             name: "ASelect",
             props: {
               param: { code: "Market" },
-              dataField: "data.Market"
+              dataField: "data.Market",
+              default: ({ row }) => {
+                return [<span style="color:red;">{row.market}</span>];
+              }
+            },
+            on: {
+              keyup: () => {
+                this.onFocusEditRow();
+                return false;
+              }
             }
           }
         },
@@ -732,7 +741,11 @@ export default {
       ];
     },
     onFocusEditRow() {
-      this.$refs.dataTable.focusEditRow(0);
+      this.$refs.dataTable.itemFieldFocus({
+        rowIndex: 0,
+        field: "market11"
+      });
+      // this.$refs.dataTable.focusEditRow(0);
     },
     onFocus() {
       console.log("onFocus");

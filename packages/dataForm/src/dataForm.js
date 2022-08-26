@@ -3,6 +3,7 @@ import inputs from "./index";
 import config from "../conf";
 import enquire from "enquire.js";
 import actionModal from "./actionModal";
+import { cloneDeep } from "lodash";
 
 // import { Button } from "ant-design-vue";
 const optionsComponents = [
@@ -832,12 +833,12 @@ export default {
     autoEnterSelectInput: {
       type: [Boolean, String],
       default: ""
-    },
-    //是否缓存option
-    isCacheOption: {
-      type: Boolean,
-      default: true
     }
+    // //是否缓存option
+    // isCacheOption: {
+    //   type: Boolean,
+    //   default: false
+    // }
   },
   data() {
     return {
@@ -887,6 +888,8 @@ export default {
         "a-select-group": "opu-select-group",
         "a-auto-complete": "opu-auto-complete"
       },
+      //老数据
+      oldItems: {},
       //有返回数据的item集合索引
       optionsItemIndexs: {},
       optionsItemDataIndexs: {},
@@ -1034,12 +1037,12 @@ export default {
   },
   methods: {
     cloneItems(items, type) {
-      const {
+      let {
         expand,
         autoLoadOptionsData,
         isPartRequest,
         optionsItemDataIndexs,
-        isCacheOption
+        oldItems: prevItems
       } = this;
       const clone = utils.clone(items, true);
       const getItemPropsOptionsApiList = [];
@@ -1052,19 +1055,28 @@ export default {
 
       let cloneData = expand ? clone : clone.filter(p => !p.folding);
       let optionsItemIndexs = {};
+      let oldItems = {};
       const isFormPartRequest =
         isPartRequest !== ""
           ? isPartRequest
           : config.getSelectOptions.isPartRequest;
-
       const data = cloneData.map((item, index) => {
         let field = item.field;
-        optionsItemIndexs[field] = index;
-        if (!type && isCacheOption && optionsItemDataIndexs[field]) return item;
-        item.itemRender = item.itemRender || {};
-        let itemRender = item.itemRender;
+        let itemRender = item.itemRender || {};
+        item.itemRender = itemRender;
         itemRender.props = itemRender.props || {};
         let itemProps = itemRender.props;
+        optionsItemIndexs[field] = index;
+        let oldItem = prevItems[field];
+        oldItems[field] = cloneDeep(item);
+        if (
+          !type &&
+          oldItem &&
+          oldItem.itemRender.props.api === itemProps.api &&
+          utils.isEqual(oldItem.itemRender.props.param, itemProps.param)
+        ) {
+          return item;
+        }
         if (itemProps.api || itemProps.param) {
           if (isFormPartRequest === true && !itemProps.api) {
             itemProps.api = config.getSelectOptions.api;
@@ -1092,6 +1104,7 @@ export default {
       this.unifyApiGetOptions = unifyApiGetOptions;
       this.getItemPropsOptionsApiList = getItemPropsOptionsApiList;
       this.itemsOptions = data;
+      this.oldItems = oldItems;
       if (isAutoLoadOptionsData || type) {
         this.loadOptionsData();
       }
