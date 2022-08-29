@@ -1070,6 +1070,7 @@ export default {
         let oldItem = prevItems[field];
         oldItems[field] = cloneDeep(item);
         if (
+          isAutoLoadOptionsData &&
           !type &&
           oldItem &&
           oldItem.itemRender.props.api === itemProps.api &&
