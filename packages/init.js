@@ -35,7 +35,7 @@ if (typeof window !== "undefined" && window.Vue && window.Vue.use) {
 
 export * from "./dataForm";
 export * from "./dataTable";
-export * from "./dataTable/src/setColumns";
+export { default as SetColumns } from "./dataTable/src/setColumns";
 export * from "./crudTable";
 export * from "./cell";
 export * from "./pageWraper";
