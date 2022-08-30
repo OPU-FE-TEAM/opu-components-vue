@@ -1067,14 +1067,14 @@ export default {
         itemRender.props = itemRender.props || {};
         let itemProps = itemRender.props;
         optionsItemIndexs[field] = index;
-        let oldItem = prevItems[field];
+        let prevItem = prevItems[field];
         oldItems[field] = cloneDeep(item);
         if (
           isAutoLoadOptionsData &&
           !type &&
-          oldItem &&
-          oldItem.itemRender.props.api === itemProps.api &&
-          utils.isEqual(oldItem.itemRender.props.param, itemProps.param)
+          prevItem &&
+          prevItem.itemRender.props.api === itemProps.api &&
+          utils.isEqual(prevItem.itemRender.props.param, itemProps.param)
         ) {
           return item;
         }

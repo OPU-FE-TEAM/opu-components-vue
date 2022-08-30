@@ -218,7 +218,6 @@ export default {
       let that = this;
       const { table, searchBefore, searchField, retainSearchValue } = that;
       that.visible = true;
-      // that.$refs.pulldownTable.showPanel();
       that.$emit("showPanel", e);
       if (!retainSearchValue) {
         that.currentValue = "";
@@ -259,6 +258,10 @@ export default {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
         this.currentValue = value;
+        if (!this.visible) {
+          this.visible = true;
+          this.$emit("showPanel", e);
+        }
         const pulldown = this.$refs.pulldownTable;
         const { table, searchBefore, searchField } = this;
         if (
