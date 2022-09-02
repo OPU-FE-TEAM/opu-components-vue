@@ -609,7 +609,6 @@ const editRender = {
             field: pressEnterItems[0].field
           });
         }, 50);
-        // dataGrid.setEditCell(row, pressEnterItems[0]);
       }
     },
     /**
@@ -619,10 +618,8 @@ const editRender = {
      */
     pressEnterItem(event) {
       let that = this;
-      let { pressEnterItems, tableColumns } = that;
-      let { columnIndex, rowIndex, row } = event;
-      let item = tableColumns[columnIndex];
-      let field = item.field;
+      let { pressEnterItems } = that;
+      let { rowIndex, row, field } = event;
       let index = pressEnterItems.findIndex(p => p.field == field);
       let data = that.data || that.$refs.dataGrid.getData();
       if (!row) row = data[rowIndex];
@@ -707,12 +704,11 @@ const editRender = {
     itemFocus(event) {
       let that = this;
       that.$nextTick(() => {
-        let input =
-          that.$refs["input-" + event.rowIndex + "-" + event.columnIndex];
+        let input = that.$refs["input-" + event.rowIndex + "-" + event.field];
         input;
         if (input) {
           let field = event.field;
-          if (field) that.$refs.dataGrid.scrollToColumn(field);
+          that.$refs.dataGrid.scrollToColumn(field);
           input.focus && input.focus();
         } else {
           this.pressEnterItem(event);
@@ -760,7 +756,7 @@ const editRender = {
           let attr = {
             class: editSlotItemRender(itemRender.class, event),
             style: editSlotItemRender(itemRender.style, event),
-            ref: "input-" + rowIndex + "-" + columnIndex
+            ref: "input-" + rowIndex + "-" + field
           };
 
           var optionsField, options, trueValue, falseValue;

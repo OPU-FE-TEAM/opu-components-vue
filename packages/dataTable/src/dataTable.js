@@ -446,7 +446,10 @@ function renderHeadToolbar(h, _vm) {
 function handleColumnsData(data, columns, configProps, _vm) {
   const { sortable, notSortableFields, tableProps } = _vm;
   let copyColumns = utils.clone(columns);
-  const apiColumns = data.map(item => {
+  let apiColumns = [];
+  let otherColumns = [];
+  for (let i = 0; i < data.length; i++) {
+    let item = data[i];
     // 替换字段
     let obj = {
       ...item
@@ -497,8 +500,70 @@ function handleColumnsData(data, columns, configProps, _vm) {
         _vm
       );
     }
+    if (obj.colIndex || obj.colIndex === 0) {
+      otherColumns.push(obj);
+    } else {
+      apiColumns.push(obj);
+    }
+  }
+
+  copyColumns = copyColumns.concat(otherColumns);
+  /*
+  data.map(item => {
+    // 替换字段
+    let obj = {
+      ...item
+    };
+
+    for (const key in configProps) {
+      if (key !== "list") {
+        let value = item[configProps[key]];
+        if (key === "fixed" && value == "none") {
+          value = "";
+        }
+        obj[key] = value;
+      }
+    }
+    if (sortable) {
+      const currentNotSortableFields =
+        notSortableFields && notSortableFields.length ? notSortableFields : [];
+      const configNotSortableFields =
+        tableProps.props &&
+        tableProps.props.sortConfig &&
+        tableProps.props.sortConfig.notSortableFields
+          ? tableProps.props.sortConfig.notSortableFields
+          : [];
+      const allNotSortableFields = [
+        ...configNotSortableFields,
+        ...currentNotSortableFields
+      ];
+      if (!allNotSortableFields.includes(obj.field) && obj.sortable !== false) {
+        obj.sortable = true;
+      }
+    }
+    let copyColumnChildren = [];
+    // 合并传入的定义
+    if (copyColumns && copyColumns.length) {
+      const findIndex = copyColumns.findIndex(p => p.field === obj.field);
+      if (findIndex > -1) {
+        const find = copyColumns[findIndex];
+        copyColumnChildren = find.children ? find.children : [];
+        obj = { ...obj, ...find, children: obj.children, copyIndex: findIndex };
+        find.copyIndex = findIndex;
+        copyColumns.splice(findIndex, 1);
+      }
+    }
+    if (obj.children && obj.children.length) {
+      obj.children = handleColumnsData(
+        obj.children,
+        copyColumnChildren,
+        configProps,
+        _vm
+      );
+    }
     return obj;
   });
+  */
 
   //处理插入指定位置的传入配置项
   if (copyColumns && copyColumns.length) {

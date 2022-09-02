@@ -326,8 +326,7 @@ export default {
     },
     onPulldownHideBefore({ $event: e }) {
       let that = this;
-      that.onPulldownHide();
-      console.log(e);
+      that.onPulldownHide(e);
       // let isContains = false;
 
       // let event = e || window.event;
