@@ -1,6 +1,6 @@
 import utils from "../../utils";
 import inputs from "./index";
-import config from "../conf";
+import DEFAULTCONFIG from "../conf";
 import enquire from "enquire.js";
 import actionModal from "./actionModal";
 import { cloneDeep } from "lodash";
@@ -70,18 +70,19 @@ function handeUnifyApiGetOptions(
     if (
       formData &&
       formData[item.field] &&
-      config.getSelectOptions &&
-      config.getSelectOptions.loadOptionsIdField &&
+      DEFAULTCONFIG.getSelectOptions &&
+      DEFAULTCONFIG.getSelectOptions.loadOptionsIdField &&
       autoLoadOptionsId !== false
     ) {
-      json[config.getSelectOptions.loadOptionsIdField] = formData[item.field];
+      json[DEFAULTCONFIG.getSelectOptions.loadOptionsIdField] =
+        formData[item.field];
     }
   });
 
   const unifyApi =
     getSelectOptions && getSelectOptions.api
       ? getSelectOptions.api
-      : config.getSelectOptions.api;
+      : DEFAULTCONFIG.getSelectOptions.api;
   if (unifyApi) {
     optionsApiList.push({
       api: unifyApi,
@@ -119,11 +120,12 @@ const fetchItemPropsOptionsApiList = async function(list, _vm, formData) {
       field &&
       formData &&
       formData[field] &&
-      config.getSelectOptions &&
-      config.getSelectOptions.loadOptionsIdField &&
+      DEFAULTCONFIG.getSelectOptions &&
+      DEFAULTCONFIG.getSelectOptions.loadOptionsIdField &&
       ((item.props && item.props.autoLoadOptionsId !== false) || !item.props)
     ) {
-      param[config.getSelectOptions.loadOptionsIdField] = formData[field];
+      param[DEFAULTCONFIG.getSelectOptions.loadOptionsIdField] =
+        formData[field];
     }
     return api(param);
   });
@@ -178,7 +180,7 @@ function handlefieldOptionsDataField(field, json, _vm) {
     const df =
       itemProps.dataField != undefined
         ? itemProps.dataField
-        : config.getSelectOptions.dataField;
+        : DEFAULTCONFIG.getSelectOptions.dataField;
     optionData = utils.getObjData(df, json);
   }
   return optionData;
@@ -340,8 +342,8 @@ function renderItemInput(item, h, _vm) {
     } else {
       configKey = utils.lineToUpperCase(renderName, "-");
     }
-    const configProps = config.defaultProps[configKey]
-      ? config.defaultProps[configKey]
+    const configProps = DEFAULTCONFIG.defaultProps[configKey]
+      ? DEFAULTCONFIG.defaultProps[configKey]
       : {};
     props.props = {
       ...configProps,
@@ -609,17 +611,17 @@ function renderActionButtons(h, _vm) {
     const submitText =
       submitButtonProps && submitButtonProps.content
         ? submitButtonProps.content
-        : config.submitButtonProps.content;
+        : DEFAULTCONFIG.submitButtonProps.content;
     const cancelText =
       cancelButtonProps && cancelButtonProps.content
         ? cancelButtonProps.content
-        : config.cancelButtonProps.content;
+        : DEFAULTCONFIG.cancelButtonProps.content;
 
     const submitButton = h(
       "a-button",
       {
         props: {
-          ...config.submitButtonProps,
+          ...DEFAULTCONFIG.submitButtonProps,
           ...submitButtonProps,
           loading: loading
         },
@@ -635,7 +637,7 @@ function renderActionButtons(h, _vm) {
         "a-button",
         {
           props: {
-            ...config.cancelButtonProps,
+            ...DEFAULTCONFIG.cancelButtonProps,
             ...cancelButtonProps
           },
           on: {
@@ -655,20 +657,20 @@ function renderActionButtons(h, _vm) {
       const openText =
         foldingButtonProps && foldingButtonProps.openText
           ? foldingButtonProps.openText
-          : config.foldingButtonProps.openText;
+          : DEFAULTCONFIG.foldingButtonProps.openText;
       const hideText =
         foldingButtonProps && foldingButtonProps.hideText
           ? foldingButtonProps.hideText
-          : config.foldingButtonProps.hideText;
+          : DEFAULTCONFIG.foldingButtonProps.hideText;
 
       const openIcon =
         foldingButtonProps && foldingButtonProps.openIcon
           ? foldingButtonProps.openIcon
-          : config.foldingButtonProps.openIcon;
+          : DEFAULTCONFIG.foldingButtonProps.openIcon;
       const hideIcon =
         foldingButtonProps && foldingButtonProps.hideIcon
           ? foldingButtonProps.hideIcon
-          : config.foldingButtonProps.hideIcon;
+          : DEFAULTCONFIG.foldingButtonProps.hideIcon;
 
       const foldingText = expand ? hideText : openText;
       const foldingIcon = expand ? hideIcon : openIcon;
@@ -676,7 +678,7 @@ function renderActionButtons(h, _vm) {
         "a-button",
         {
           props: {
-            ...config.foldingButtonProps,
+            ...DEFAULTCONFIG.foldingButtonProps,
             ...foldingButtonProps
           },
           on: {
@@ -730,7 +732,7 @@ export default {
     ...inputs
   },
   props: {
-    /* config 配置参数 开始 */
+    /* DEFAULTCONFIG 配置参数 开始 */
     // 布局，'horizontal'|'vertical'|'inline'|'grid'|'flex'
     layout: {
       type: String,
@@ -761,7 +763,7 @@ export default {
       type: [Boolean, String],
       default: ""
     },
-    /* config 配置参数 结束 */
+    /* DEFAULTCONFIG 配置参数 结束 */
     // 表单内容
     items: {
       type: Array,
@@ -895,7 +897,7 @@ export default {
       optionsItemDataIndexs: {},
       unifyApiGetOptions: [],
       getItemPropsOptionsApiList: [],
-      config: config,
+      DEFAULTCONFIG: DEFAULTCONFIG,
       currentScreen: "xl"
     };
   },
@@ -932,7 +934,7 @@ export default {
     formLayout() {
       let layout = this.layout;
       if (layout === "") {
-        layout = config.layout;
+        layout = DEFAULTCONFIG.layout;
       }
       return layout;
     },
@@ -940,7 +942,7 @@ export default {
     currentColspan() {
       let colspan = this.colspan;
       if (colspan === "") {
-        colspan = config.colspan;
+        colspan = DEFAULTCONFIG.colspan;
       }
       if (utils.isObject(colspan)) {
         colspan = colspan[this.currentScreen];
@@ -951,7 +953,7 @@ export default {
     formTitleAlign() {
       let titleAlign = this.titleAlign;
       if (titleAlign === "") {
-        titleAlign = config.titleAlign;
+        titleAlign = DEFAULTCONFIG.titleAlign;
       }
       return titleAlign;
     },
@@ -959,7 +961,7 @@ export default {
     formTitleWidth() {
       let titleWidth = this.titleWidth;
       if (titleWidth === "") {
-        titleWidth = config.titleWidth;
+        titleWidth = DEFAULTCONFIG.titleWidth;
       }
       return titleWidth;
     },
@@ -967,7 +969,7 @@ export default {
     formTitleColon() {
       let titleColon = this.titleColon;
       if (titleColon === "") {
-        titleColon = config.titleColon;
+        titleColon = DEFAULTCONFIG.titleColon;
       }
       return titleColon;
     },
@@ -975,7 +977,7 @@ export default {
     formClearUndefinedValue() {
       let clearUndefinedValue = this.clearUndefinedValue;
       if (clearUndefinedValue === "") {
-        clearUndefinedValue = config.clearUndefinedValue;
+        clearUndefinedValue = DEFAULTCONFIG.clearUndefinedValue;
       }
       return clearUndefinedValue;
     },
@@ -983,7 +985,7 @@ export default {
     formAutoEnterSelectInput() {
       let autoEnterSelectInput = this.autoEnterSelectInput;
       if (autoEnterSelectInput === "") {
-        autoEnterSelectInput = config.autoEnterSelectInput;
+        autoEnterSelectInput = DEFAULTCONFIG.autoEnterSelectInput;
       }
       return autoEnterSelectInput;
     }
@@ -1049,9 +1051,10 @@ export default {
       const unifyApiGetOptions = [];
       const isAutoLoadOptionsData =
         (autoLoadOptionsData === true || autoLoadOptionsData === false) &&
-        autoLoadOptionsData !== config.getSelectOptions.autoLoadOptionsData
+        autoLoadOptionsData !==
+          DEFAULTCONFIG.getSelectOptions.autoLoadOptionsData
           ? autoLoadOptionsData
-          : config.getSelectOptions.autoLoadOptionsData;
+          : DEFAULTCONFIG.getSelectOptions.autoLoadOptionsData;
 
       let cloneData = expand ? clone : clone.filter(p => !p.folding);
       let optionsItemIndexs = {};
@@ -1059,7 +1062,7 @@ export default {
       const isFormPartRequest =
         isPartRequest !== ""
           ? isPartRequest
-          : config.getSelectOptions.isPartRequest;
+          : DEFAULTCONFIG.getSelectOptions.isPartRequest;
       const data = cloneData.map((item, index) => {
         let field = item.field;
         let itemRender = item.itemRender || {};
@@ -1080,7 +1083,7 @@ export default {
         }
         if (itemProps.api || itemProps.param) {
           if (isFormPartRequest === true && !itemProps.api) {
-            itemProps.api = config.getSelectOptions.api;
+            itemProps.api = DEFAULTCONFIG.getSelectOptions.api;
           }
           if (itemProps.api) {
             getItemPropsOptionsApiList.push({
@@ -1183,7 +1186,7 @@ export default {
           valueField: configValueField,
           childrenField: configChildrenField
         }
-      } = config;
+      } = DEFAULTCONFIG;
       // 过滤掉formitems未定义的字段
       const formFields = items.map(item => item.field);
       let formData = {};
@@ -1261,7 +1264,7 @@ export default {
 
             let hasFilterNullValues = filterNullValues;
             if (hasFilterNullValues === "") {
-              hasFilterNullValues = config.filterNullValues;
+              hasFilterNullValues = DEFAULTCONFIG.filterNullValues;
             }
             if (hasFilterNullValues) {
               for (const key in json) {
@@ -1395,10 +1398,10 @@ export default {
           let props = itemRender.props;
           const defaultKey = props.defaultField
             ? props.defaultField
-            : config.getSelectOptions.defaultField;
+            : DEFAULTCONFIG.getSelectOptions.defaultField;
           const valueField = props.valueField
             ? props.valueField
-            : config.getSelectOptions.valueField;
+            : DEFAULTCONFIG.getSelectOptions.valueField;
           const inputRef = "input_" + item.field;
           const input = this.$refs[inputRef];
           if (input && input.getOptionsData) {
@@ -1540,7 +1543,7 @@ export default {
         if (itemProps.api) {
           api = itemProps.api;
         } else {
-          api = config.getSelectOptions.api;
+          api = DEFAULTCONFIG.getSelectOptions.api;
         }
         api({
           ...itemProps.param,
@@ -1559,7 +1562,7 @@ export default {
     // form表单的参数
     const formProps = {
       props: {
-        ...config.props,
+        ...DEFAULTCONFIG.props,
         form: form,
         layout: antdLayouts.includes(formLayout) ? formLayout : null
       },

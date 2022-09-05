@@ -287,7 +287,14 @@ const editRender = {
         if (e.rowIndex === currentRowIndex) {
           return;
         }
-        that.itemFocus(e);
+        let item = that.pressEnterItems.find(
+          p => p.columnIndex == e.columnIndex
+        );
+
+        if (item) {
+          e.field = item.field;
+          that.itemFocus(e, false);
+        }
         setTimeout(() => {
           document.body.removeEventListener("click", that.onBlurEditTable);
           document.body.addEventListener("click", that.onBlurEditTable, false);
@@ -648,7 +655,7 @@ const editRender = {
           row,
           rowIndex: event.rowIndex,
           columnIndex: nextData.columnIndex,
-          field: event.field
+          field: nextData.field
         };
         let disabled = editSlotPropInit(row, props, "disabled", nextEvent);
         //如果禁用 跳转下一个
@@ -701,7 +708,7 @@ const editRender = {
      * @param {*} field
      * @return {*}
      */
-    itemFocus(event) {
+    itemFocus(event, type = true) {
       let that = this;
       that.$nextTick(() => {
         let input = that.$refs["input-" + event.rowIndex + "-" + event.field];
@@ -710,7 +717,7 @@ const editRender = {
           let field = event.field;
           that.$refs.dataGrid.scrollToColumn(field);
           input.focus && input.focus();
-        } else {
+        } else if (type) {
           this.pressEnterItem(event);
         }
       });
@@ -726,343 +733,345 @@ const editRender = {
         let { columnIndex, rowIndex, row } = event;
         let item = that.tableColumns[columnIndex];
         let itemRender = item.itemRender;
-        let props = itemRender.props || {};
-        let disabled = editSlotPropInit(row, props, "disabled", event);
-        let element;
-        if (typeof disabled == "object") {
-          return [disabled];
-        } else if (
-          editLine &&
-          (!currentCell || currentCell.rowIndex != rowIndex) &&
-          lineEditTypes.includes(name)
-        ) {
-          let value = dataFormat(
-            utils.getObjData(item.field, row) || "",
-            props,
-            name,
-            event
-          );
-          // return <div class={`a-input ${name}`}>{value}</div>;
-          return [this.lineEditCellRender(name, value)];
-        } else {
-          let field = item.field;
-          event.field = field;
-          props = {
-            size: that.editItemSize,
-            ...props,
-            value: utils.getObjData(field, row),
-            disabled
-          };
-          let attr = {
-            class: editSlotItemRender(itemRender.class, event),
-            style: editSlotItemRender(itemRender.style, event),
-            ref: "input-" + rowIndex + "-" + field
-          };
+        if (itemRender) {
+          let props = itemRender.props || {};
+          let disabled = editSlotPropInit(row, props, "disabled", event);
+          let element;
+          if (typeof disabled == "object") {
+            return [disabled];
+          } else if (
+            editLine &&
+            (!currentCell || currentCell.rowIndex != rowIndex) &&
+            lineEditTypes.includes(name)
+          ) {
+            let value = dataFormat(
+              utils.getObjData(item.field, row) || "",
+              props,
+              name,
+              event
+            );
+            // return <div class={`a-input ${name}`}>{value}</div>;
+            return [this.lineEditCellRender(name, value)];
+          } else {
+            let field = item.field;
+            event.field = field;
+            props = {
+              size: that.editItemSize,
+              ...props,
+              value: utils.getObjData(field, row),
+              disabled
+            };
+            let attr = {
+              class: editSlotItemRender(itemRender.class, event),
+              style: editSlotItemRender(itemRender.style, event),
+              ref: "input-" + rowIndex + "-" + field
+            };
 
-          var optionsField, options, trueValue, falseValue;
-          let ons = {
-            change: e => {
-              utils.setObjData(field, row, e);
-              row.ISEDIT = true;
-              if (itemRender.on && itemRender.on.change) {
-                itemRender.on.change(e, event);
-              }
-            }
-          };
-
-          for (let i in itemRender.on) {
-            if (i != "change") {
-              let fuc = itemRender.on[i];
-              ons[i] = (...arg) => {
-                fuc(...arg, event);
-              };
-            }
-          }
-
-          let elementAttribute = {};
-
-          switch (name) {
-            case "a-input":
-              elementAttribute = {
-                ...attr,
-                props,
-                on: {
-                  ...ons,
-                  change: e => {
-                    let value = e.target.value;
-                    utils.setObjData(field, row, value);
-                    row.ISEDIT = true;
-                    if (itemRender.on && itemRender.on.change) {
-                      itemRender.on.change(e, event);
-                    }
-                  },
-                  keyup: async e => {
-                    if (itemRender.on && itemRender.on.keyup) {
-                      let res = await itemRender.on.keyup(e, event);
-                      if (res === false) return;
-                    }
-                    if (e.keyCode == 13) {
-                      that.pressEnterItem(event);
-                    }
-                  }
+            var optionsField, options, trueValue, falseValue;
+            let ons = {
+              change: e => {
+                utils.setObjData(field, row, e);
+                row.ISEDIT = true;
+                if (itemRender.on && itemRender.on.change) {
+                  itemRender.on.change(e, event);
                 }
-              };
-              break;
-            case "a-input-number":
-              elementAttribute = {
-                ...attr,
-                props: {
-                  ...props,
-                  max: editSlotPropInit(row, props, "max", event, Infinity),
-                  min: editSlotPropInit(row, props, "min", event, -Infinity)
-                },
-                style: {
-                  width: "100%",
-                  ...attr.style
-                },
-                on: {
-                  ...ons,
-                  keyup: async e => {
-                    if (itemRender.on && itemRender.on.keyup) {
-                      let res = await itemRender.on.keyup(e, event);
-                      if (res === false) return;
-                    }
-                    if (e.keyCode == 13) {
-                      that.pressEnterItem(event);
-                    }
-                  }
-                }
-              };
-              break;
-            case "a-select":
-              optionsField = (props && props.optionsField) || "";
-              options = optionsField
-                ? row[optionsField]
-                : that.editOptions[field];
-              if (props.optionsFilter) {
-                options = props.optionsFilter(
-                  cloneDeep(options),
-                  props.value,
-                  event
-                );
-                delete props.optionsFilter;
               }
-              elementAttribute = {
-                ...attr,
-                props: {
-                  showSearch: true,
-                  ...props,
-                  options
-                },
-                style: {
-                  width: "100%",
-                  ...attr.style
-                },
-                on: {
-                  ...ons,
-                  change: (value, option, pOption) => {
-                    utils.setObjData(field, row, value);
-                    row.ISEDIT = true;
-                    if (itemRender.on && itemRender.on.change) {
-                      itemRender.on.change(value, option, event, pOption);
-                    }
-                  }
-                  // inputKeydown: async e => {
-                  //   if (itemRender.on && itemRender.on.inputKeydown) {
-                  //     let res = await itemRender.on.inputKeydown(e, event);
-                  //     if (res === false) return;
-                  //   }
-                  //   if (e.keyCode == 13) {
-                  //     that.pressEnterItem(event);
-                  //   }
-                  // }
-                }
-              };
-              break;
-            case "a-auto-complete":
-              optionsField = (props && props.optionsField) || "";
-              options = optionsField
-                ? row[optionsField]
-                : that.editOptions[field];
-              if (props.optionsFilter) {
-                options = props.optionsFilter(
-                  cloneDeep(options),
-                  props.value,
-                  event
-                );
-                delete props.optionsFilter;
-              }
+            };
 
-              if (props.search) {
-                props.saerch = (value, dataSource) => {
-                  itemRender.props.search(value, dataSource, row, event);
+            for (let i in itemRender.on) {
+              if (i != "change") {
+                let fuc = itemRender.on[i];
+                ons[i] = (...arg) => {
+                  fuc(...arg, event);
                 };
               }
+            }
 
-              elementAttribute = {
-                ...attr,
-                props: {
-                  ...props,
-                  options
-                },
-                style: {
-                  width: "100%",
-                  ...itemRender.style
-                },
-                on: {
-                  ...ons,
-                  select: (value, optionRow) => {
-                    utils.setObjData(
-                      field,
-                      row,
-                      props.valueField ? optionRow[props.valueField] : value
-                    );
-                    row.ISEDIT = true;
-                    if (itemRender.on && itemRender.on.select) {
-                      itemRender.on.select(value, optionRow, event);
+            let elementAttribute = {};
+
+            switch (name) {
+              case "a-input":
+                elementAttribute = {
+                  ...attr,
+                  props,
+                  on: {
+                    ...ons,
+                    change: e => {
+                      let value = e.target.value;
+                      utils.setObjData(field, row, value);
+                      row.ISEDIT = true;
+                      if (itemRender.on && itemRender.on.change) {
+                        itemRender.on.change(e, event);
+                      }
+                    },
+                    keyup: async e => {
+                      if (itemRender.on && itemRender.on.keyup) {
+                        let res = await itemRender.on.keyup(e, event);
+                        if (res === false) return;
+                      }
+                      if (e.keyCode == 13) {
+                        that.pressEnterItem(event);
+                      }
                     }
+                  }
+                };
+                break;
+              case "a-input-number":
+                elementAttribute = {
+                  ...attr,
+                  props: {
+                    ...props,
+                    max: editSlotPropInit(row, props, "max", event, Infinity),
+                    min: editSlotPropInit(row, props, "min", event, -Infinity)
                   },
-                  inputPressEnter: async e => {
-                    if (itemRender.on && itemRender.on.inputPressEnter) {
-                      let res = await itemRender.on.inputPressEnter(e, event);
-                      if (res === false) return;
-                    }
-                    if (e.keyCode == 13) {
-                      that.pressEnterItem(event);
-                    }
-                  }
-                }
-              };
-              break;
-            case "a-date-picker":
-              var dateValue = !props.value
-                ? null
-                : props.value.format
-                ? props.value
-                : moment(props.value);
-              elementAttribute = {
-                ...attr,
-                props: {
-                  ...props,
-                  value: dateValue
-                },
-                on: {
-                  ...ons,
-                  inputPressEnter: async e => {
-                    if (itemRender.on && itemRender.on.inputPressEnter) {
-                      let res = await itemRender.on.inputPressEnter(e, event);
-                      if (res === false) return;
-                    }
-                    if (e.keyCode == 13) {
-                      that.pressEnterItem(event);
-                    }
-                  }
-                }
-              };
-              break;
-            case "a-time-picker":
-              elementAttribute = {
-                ...attr,
-                props: {
-                  clearIcon: true,
-                  ...props
-                },
-                style: {
-                  width: "100%",
-                  ...attr.style
-                },
-                on: {
-                  ...ons,
-                  inputPressEnter: async e => {
-                    if (itemRender.on && itemRender.on.inputPressEnter) {
-                      let res = await itemRender.on.inputPressEnter(e, event);
-                      if (res === false) return;
-                    }
-                    if (e.keyCode == 13) {
-                      that.pressEnterItem(event);
-                    }
-                  }
-                }
-              };
-              break;
-            case "pulldown-table":
-              elementAttribute = {
-                ...attr,
-                props,
-                on: {
-                  ...ons,
-                  change: (e, option) => {
-                    utils.setObjData(field, row, e);
-                    row.ISEDIT = true;
-                    if (itemRender.on && itemRender.on.change) {
-                      itemRender.on.change(e, option, event);
-                    }
+                  style: {
+                    width: "100%",
+                    ...attr.style
                   },
-                  inputPressEnter: async e => {
-                    if (itemRender.on && itemRender.on.inputPressEnter) {
-                      let res = await itemRender.on.inputPressEnter(e, event);
-                      if (res === false) return;
-                    }
-                    if (e.keyCode == 13) {
-                      that.pressEnterItem(event);
-                    }
-                  }
-                }
-              };
-              break;
-            case "a-switch":
-              trueValue = props.trueValue ? props.trueValue : true;
-              falseValue = props.falseValue ? props.falseValue : false;
-              if (editSlotPropInit(row, props, "hidden", event)) return "";
-              elementAttribute = {
-                ...attr,
-                props: {
-                  ...props,
-                  checked: row[field] == trueValue
-                },
-                on: {
-                  ...ons,
-                  change: e => {
-                    let value = e ? trueValue : falseValue;
-                    utils.setObjData(field, row, value);
-                    row.ISEDIT = true;
-                    if (itemRender.on && itemRender.on.change) {
-                      itemRender.on.change(e, event);
+                  on: {
+                    ...ons,
+                    keyup: async e => {
+                      if (itemRender.on && itemRender.on.keyup) {
+                        let res = await itemRender.on.keyup(e, event);
+                        if (res === false) return;
+                      }
+                      if (e.keyCode == 13) {
+                        that.pressEnterItem(event);
+                      }
                     }
                   }
+                };
+                break;
+              case "a-select":
+                optionsField = (props && props.optionsField) || "";
+                options = optionsField
+                  ? row[optionsField]
+                  : that.editOptions[field];
+                if (props.optionsFilter) {
+                  options = props.optionsFilter(
+                    cloneDeep(options),
+                    props.value,
+                    event
+                  );
+                  delete props.optionsFilter;
                 }
-              };
-              break;
-            case "a-checkbox":
-              trueValue = props.trueValue ? props.trueValue : true;
-              falseValue = props.falseValue ? props.falseValue : false;
-              if (editSlotPropInit(row, props, "hidden", event)) return "";
-              elementAttribute = {
-                ...attr,
-                props: {
-                  ...props,
-                  checked: row[field] == trueValue
-                },
-                on: {
-                  ...ons,
-                  change: e => {
-                    let value = e.target.checked ? trueValue : falseValue;
-                    utils.setObjData(field, row, value);
-                    row.ISEDIT = true;
-                    if (itemRender.on && itemRender.on.change) {
-                      itemRender.on.change(e, event);
+                elementAttribute = {
+                  ...attr,
+                  props: {
+                    showSearch: true,
+                    ...props,
+                    options
+                  },
+                  style: {
+                    width: "100%",
+                    ...attr.style
+                  },
+                  on: {
+                    ...ons,
+                    change: (value, option, pOption) => {
+                      utils.setObjData(field, row, value);
+                      row.ISEDIT = true;
+                      if (itemRender.on && itemRender.on.change) {
+                        itemRender.on.change(value, option, event, pOption);
+                      }
+                    }
+                    // inputKeydown: async e => {
+                    //   if (itemRender.on && itemRender.on.inputKeydown) {
+                    //     let res = await itemRender.on.inputKeydown(e, event);
+                    //     if (res === false) return;
+                    //   }
+                    //   if (e.keyCode == 13) {
+                    //     that.pressEnterItem(event);
+                    //   }
+                    // }
+                  }
+                };
+                break;
+              case "a-auto-complete":
+                optionsField = (props && props.optionsField) || "";
+                options = optionsField
+                  ? row[optionsField]
+                  : that.editOptions[field];
+                if (props.optionsFilter) {
+                  options = props.optionsFilter(
+                    cloneDeep(options),
+                    props.value,
+                    event
+                  );
+                  delete props.optionsFilter;
+                }
+
+                if (props.search) {
+                  props.saerch = (value, dataSource) => {
+                    itemRender.props.search(value, dataSource, row, event);
+                  };
+                }
+
+                elementAttribute = {
+                  ...attr,
+                  props: {
+                    ...props,
+                    options
+                  },
+                  style: {
+                    width: "100%",
+                    ...itemRender.style
+                  },
+                  on: {
+                    ...ons,
+                    select: (value, optionRow) => {
+                      utils.setObjData(
+                        field,
+                        row,
+                        props.valueField ? optionRow[props.valueField] : value
+                      );
+                      row.ISEDIT = true;
+                      if (itemRender.on && itemRender.on.select) {
+                        itemRender.on.select(value, optionRow, event);
+                      }
+                    },
+                    inputPressEnter: async e => {
+                      if (itemRender.on && itemRender.on.inputPressEnter) {
+                        let res = await itemRender.on.inputPressEnter(e, event);
+                        if (res === false) return;
+                      }
+                      if (e.keyCode == 13) {
+                        that.pressEnterItem(event);
+                      }
                     }
                   }
-                }
-              };
-              break;
+                };
+                break;
+              case "a-date-picker":
+                var dateValue = !props.value
+                  ? null
+                  : props.value.format
+                  ? props.value
+                  : moment(props.value);
+                elementAttribute = {
+                  ...attr,
+                  props: {
+                    ...props,
+                    value: dateValue
+                  },
+                  on: {
+                    ...ons,
+                    inputPressEnter: async e => {
+                      if (itemRender.on && itemRender.on.inputPressEnter) {
+                        let res = await itemRender.on.inputPressEnter(e, event);
+                        if (res === false) return;
+                      }
+                      if (e.keyCode == 13) {
+                        that.pressEnterItem(event);
+                      }
+                    }
+                  }
+                };
+                break;
+              case "a-time-picker":
+                elementAttribute = {
+                  ...attr,
+                  props: {
+                    clearIcon: true,
+                    ...props
+                  },
+                  style: {
+                    width: "100%",
+                    ...attr.style
+                  },
+                  on: {
+                    ...ons,
+                    inputPressEnter: async e => {
+                      if (itemRender.on && itemRender.on.inputPressEnter) {
+                        let res = await itemRender.on.inputPressEnter(e, event);
+                        if (res === false) return;
+                      }
+                      if (e.keyCode == 13) {
+                        that.pressEnterItem(event);
+                      }
+                    }
+                  }
+                };
+                break;
+              case "pulldown-table":
+                elementAttribute = {
+                  ...attr,
+                  props,
+                  on: {
+                    ...ons,
+                    change: (e, option) => {
+                      utils.setObjData(field, row, e);
+                      row.ISEDIT = true;
+                      if (itemRender.on && itemRender.on.change) {
+                        itemRender.on.change(e, option, event);
+                      }
+                    },
+                    inputPressEnter: async e => {
+                      if (itemRender.on && itemRender.on.inputPressEnter) {
+                        let res = await itemRender.on.inputPressEnter(e, event);
+                        if (res === false) return;
+                      }
+                      if (e.keyCode == 13) {
+                        that.pressEnterItem(event);
+                      }
+                    }
+                  }
+                };
+                break;
+              case "a-switch":
+                trueValue = props.trueValue ? props.trueValue : true;
+                falseValue = props.falseValue ? props.falseValue : false;
+                if (editSlotPropInit(row, props, "hidden", event)) return "";
+                elementAttribute = {
+                  ...attr,
+                  props: {
+                    ...props,
+                    checked: row[field] == trueValue
+                  },
+                  on: {
+                    ...ons,
+                    change: e => {
+                      let value = e ? trueValue : falseValue;
+                      utils.setObjData(field, row, value);
+                      row.ISEDIT = true;
+                      if (itemRender.on && itemRender.on.change) {
+                        itemRender.on.change(e, event);
+                      }
+                    }
+                  }
+                };
+                break;
+              case "a-checkbox":
+                trueValue = props.trueValue ? props.trueValue : true;
+                falseValue = props.falseValue ? props.falseValue : false;
+                if (editSlotPropInit(row, props, "hidden", event)) return "";
+                elementAttribute = {
+                  ...attr,
+                  props: {
+                    ...props,
+                    checked: row[field] == trueValue
+                  },
+                  on: {
+                    ...ons,
+                    change: e => {
+                      let value = e.target.checked ? trueValue : falseValue;
+                      utils.setObjData(field, row, value);
+                      row.ISEDIT = true;
+                      if (itemRender.on && itemRender.on.change) {
+                        itemRender.on.change(e, event);
+                      }
+                    }
+                  }
+                };
+                break;
+            }
+            element = that.$createElement(
+              that.editTypeTargetName[name] || name,
+              elementAttribute
+            );
           }
-          element = that.$createElement(
-            that.editTypeTargetName[name] || name,
-            elementAttribute
-          );
+          return [element];
         }
-        return [element];
       };
     }
   }
