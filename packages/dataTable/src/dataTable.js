@@ -1043,7 +1043,7 @@ export default {
             ? { ...config.proxyColumns.props, ...proxyColumns.props }
             : config.proxyColumns.props;
         let hasCheckbox = false;
-        this.tableColumns = this.editColumnsRender(columnsData, p => {
+        this.tableColumns = this.editColumnsInit(columnsData, p => {
           if (!hasCheckbox && p.type == "checkbox") {
             hasCheckbox = true;
           }
@@ -1190,7 +1190,7 @@ export default {
 
           let hasCheckbox = false;
 
-          this.tableColumns = this.editColumnsRender(tableColumns, p => {
+          this.tableColumns = this.editColumnsInit(tableColumns, p => {
             if (!hasCheckbox && p.type == "checkbox") {
               hasCheckbox = true;
             }

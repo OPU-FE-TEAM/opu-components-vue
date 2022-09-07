@@ -222,7 +222,8 @@ const editRender = {
       editApiList: [],
       editDefaultOption: {},
       editFieldList: {},
-      currentCell: null
+      currentCell: null,
+      tileColumns: []
     };
   },
   computed: {
@@ -278,7 +279,7 @@ const editRender = {
      * @param {*}
      * @return {*}
      */
-    onEditTableCurrentRowCellClick(e) {
+    onEditTableCurrentRowCellClick(e, type = false) {
       let that = this;
       let currentCell = that.currentCell || {};
       let { rowIndex: currentRowIndex } = currentCell;
@@ -287,13 +288,17 @@ const editRender = {
         if (e.rowIndex === currentRowIndex) {
           return;
         }
-        let item = that.pressEnterItems.find(
-          p => p.columnIndex == e.columnIndex
-        );
+        let item = that.pressEnterItems.find(p => {
+          if (e.field) {
+            return p.field == e.field;
+          } else {
+            return p.columnIndex == e.$columnIndex;
+          }
+        });
 
         if (item) {
           e.field = item.field;
-          that.itemFocus(e, false);
+          that.itemFocus(e, type);
         }
         setTimeout(() => {
           document.body.removeEventListener("click", that.onBlurEditTable);
@@ -383,16 +388,9 @@ const editRender = {
      * @param {*} isAll
      * @return {*}
      */
-    editColumnsRender(data, filterCallback, isAll) {
+    editColumnsInit(data, filterCallback, isAll) {
       let that = this;
-      let {
-        editType,
-        editOptions,
-        editDefaultOption,
-        editFieldList,
-        enterTypes,
-        isCacheOption
-      } = that;
+      let { editOptions, editDefaultOption, editFieldList } = that;
       let otherApiList = [];
       let pressEnterItems = [];
       let leftPressEnterItems = [];
@@ -406,170 +404,59 @@ const editRender = {
         param: {},
         fields: []
       };
+      let tileColumns = [];
       let index = 0;
-      data = data.filter((p, i) => {
-        if (filterCallback && !filterCallback(p)) {
-          return false;
+      data = data.filter(p => {
+        if (filterCallback && !filterCallback(p)) return false;
+        if (p.children && p.children.length > 0) {
+          let dIndex = index;
+          p.children = p.children.filter(item => {
+            let { is, index: childrenIndex } = that.editColumnsRender({
+              p: item,
+              getSelectOptions,
+              filterCallback,
+              unifyApiList,
+              otherApiList,
+              leftPressEnterItems,
+              rightPressEnterItems,
+              pressEnterItems,
+              editFieldList,
+              editOptions,
+              editDefaultOption,
+              index: dIndex,
+              isAll
+            });
+            if (is) dIndex = childrenIndex;
+
+            return is;
+          });
+          tileColumns = tileColumns.concat(p.children);
+          index = dIndex - 1;
+        } else {
+          tileColumns.push(p);
         }
-        if (p.itemRender) {
-          let name = toLine(p.itemRender.name || editType[0]);
-          if (editType.includes(name)) {
-            if (!p.slots) p.slots = {};
-            const field = p.field;
-            if (enterTypes.includes(name)) {
-              let enterItem = { field, item: p, columnIndex: index };
-              if (p.fixed == "left") {
-                leftPressEnterItems.push(enterItem);
-              } else if (p.fixed == "right") {
-                rightPressEnterItems.push(enterItem);
-              } else {
-                pressEnterItems.push(enterItem);
-              }
-            }
-            p.slots.default = e => {
-              return [
-                <div
-                  {...{
-                    on: {
-                      click: event => {
-                        let { currentCell } = that;
-                        if (currentCell) {
-                          let {
-                            columnIndex: currentColumnIndex,
-                            rowIndex: currentRowIndex
-                          } = currentCell;
-                          let { columnIndex, rowIndex } = e;
-                          if (
-                            currentRowIndex !== undefined &&
-                            currentColumnIndex !== undefined &&
-                            columnIndex === currentColumnIndex &&
-                            rowIndex === currentRowIndex
-                          ) {
-                            event.stopPropagation();
-                            event.preventDefault();
-                            return;
-                          }
-                        }
-                      },
-                      keyup: async event => {
-                        if (p.itemRender.on && p.itemRender.on.keyup) {
-                          let res = await p.itemRender.on.keyup(e, event);
-                          if (res === false) return;
-                        }
-                        if (name == "a-select" && event.keyCode == 13) {
-                          let {
-                            currentCell: { rowIndex, row }
-                          } = that;
-                          setTimeout(() => {
-                            that.pressEnterItem({
-                              columnIndex: i,
-                              rowIndex,
-                              row
-                            });
-                          }, 50);
-                        }
-                      }
-                    },
-                    style: "display:flex;align-items: center;"
-                  }}
-                >
-                  {p.itemRender.before && p.itemRender.before(e)}
-                  <div style="flex:1;max-width: 100%;">
-                    {that.editSlotRender(name)(e)}
-                  </div>
-                  {p.itemRender.after && p.itemRender.after(e)}
-                </div>
-              ];
-            };
-
-            if (name == "a-switch" || name == "a-checkbox") p.align = "center";
-            let props = p.itemRender.props || {};
-            if (["a-select", "a-auto-complete"].includes(name) && props) {
-              let valueField = props.valueField || getSelectOptions.valueField;
-              let labelField = props.labelField || getSelectOptions.labelField;
-              let childrenField =
-                props.childrenField || getSelectOptions.childrenField;
-              let dataField = props.dataField || getSelectOptions.dataField;
-              let defaultField =
-                props.defaultField || getSelectOptions.defaultField;
-              let searchFields =
-                props.searchFields ||
-                config.defaultProps.select.searchFields ||
-                [];
-
-              if (
-                !(
-                  editFieldList[field] &&
-                  props.api == editFieldList[field].api &&
-                  utils.isEqual(editFieldList[field].param, props.param)
-                )
-              ) {
-                editFieldList[field] = {
-                  valueField,
-                  labelField,
-                  childrenField,
-                  defaultField,
-                  searchFields,
-                  api: props.api,
-                  param: props.param
-                };
-
-                if (props.options) {
-                  editOptions[field] = cloneDeep(props.options).map(o => {
-                    o = that.optionDataRender(o, field, "", {
-                      [field]: {
-                        valueField,
-                        labelField,
-                        childrenField
-                      }
-                    });
-                    if (o[defaultField]) {
-                      editDefaultOption[field] = p.value;
-                    }
-                    return o;
-                  });
-                } else if (
-                  !props.optionsField &&
-                  (props.api || props.dataField || props.param) &&
-                  (!isCacheOption || !editOptions[field] || isAll)
-                ) {
-                  let item = {
-                    field,
-                    api: props.api,
-                    valueField,
-                    labelField,
-                    childrenField,
-                    dataField,
-                    defaultField,
-                    param: props.param || {}
-                  };
-                  if (props.api) {
-                    otherApiList.push(item);
-                  } else {
-                    for (let key in props.param) {
-                      if (
-                        unifyApiList.param[key] &&
-                        utils.isArray(unifyApiList.param[key])
-                      ) {
-                        unifyApiList.param[key].push(props.param[key]);
-                      } else {
-                        unifyApiList.param[key] = [props.param[key]];
-                      }
-                    }
-                    unifyApiList.fields.push(item);
-                  }
-                }
-              }
-            }
-          }
-        }
-        index++;
-        return true;
+        let { is, index: columnIndex } = that.editColumnsRender({
+          p,
+          getSelectOptions,
+          filterCallback,
+          unifyApiList,
+          otherApiList,
+          leftPressEnterItems,
+          rightPressEnterItems,
+          pressEnterItems,
+          editFieldList,
+          editOptions,
+          editDefaultOption,
+          index,
+          isAll
+        });
+        index = columnIndex;
+        return is;
       });
       if (unifyApiList.fields.length > 0) {
         otherApiList = otherApiList.concat(unifyApiList);
       }
-
+      that.tileColumns = tileColumns;
       that.editDefaultOption = editDefaultOption;
       that.leftPressEnterItems = leftPressEnterItems;
       that.pressEnterItems = [
@@ -588,6 +475,182 @@ const editRender = {
         that.loadOptionsData();
       }
       return data;
+    },
+    editColumnsRender({
+      p,
+      getSelectOptions,
+      filterCallback,
+      unifyApiList,
+      otherApiList,
+      leftPressEnterItems,
+      rightPressEnterItems,
+      pressEnterItems,
+      editFieldList,
+      editOptions,
+      editDefaultOption,
+      index,
+      isAll
+    }) {
+      let that = this;
+      let { editType, enterTypes, isCacheOption } = that;
+      if (filterCallback && !filterCallback(p)) return { is: false, index };
+
+      if (p.itemRender) {
+        p.itemRender.name = toLine(p.itemRender.name || editType[0]);
+        let name = p.itemRender.name;
+        if (editType.includes(name)) {
+          if (!p.slots) p.slots = {};
+          const field = p.field;
+          if (enterTypes.includes(name)) {
+            let enterItem = { field, item: p, columnIndex: index };
+            if (p.fixed == "left") {
+              leftPressEnterItems.push(enterItem);
+            } else if (p.fixed == "right") {
+              rightPressEnterItems.push(enterItem);
+            } else {
+              pressEnterItems.push(enterItem);
+            }
+          }
+          p.slots.default = e => {
+            return [
+              <div
+                {...{
+                  on: {
+                    click: event => {
+                      let { currentCell } = that;
+                      if (currentCell) {
+                        let {
+                          columnIndex: currentColumnIndex,
+                          rowIndex: currentRowIndex
+                        } = currentCell;
+                        let { columnIndex, rowIndex } = e;
+                        if (
+                          currentRowIndex !== undefined &&
+                          currentColumnIndex !== undefined &&
+                          columnIndex === currentColumnIndex &&
+                          rowIndex === currentRowIndex
+                        ) {
+                          console.log("阻止冒泡");
+                          event.stopPropagation();
+                          event.preventDefault();
+                          return;
+                        }
+                      }
+                    },
+                    keyup: async event => {
+                      if (p.itemRender.on && p.itemRender.on.keyup) {
+                        let res = await p.itemRender.on.keyup(e, event);
+                        if (res === false) return;
+                      }
+                      if (name == "a-select" && event.keyCode == 13) {
+                        let {
+                          currentCell: { rowIndex, row }
+                        } = that;
+                        setTimeout(() => {
+                          that.pressEnterItem({
+                            columnIndex: index,
+                            rowIndex,
+                            row,
+                            field
+                          });
+                        }, 50);
+                      }
+                    }
+                  },
+                  style: "display:flex;align-items: center;"
+                }}
+              >
+                {p.itemRender.before && p.itemRender.before(e)}
+                <div style="flex:1;max-width: 100%;">
+                  {that.editSlotRender(name)(e)}
+                </div>
+                {p.itemRender.after && p.itemRender.after(e)}
+              </div>
+            ];
+          };
+
+          if (name == "a-switch" || name == "a-checkbox") p.align = "center";
+          let props = p.itemRender.props || {};
+          if (["a-select", "a-auto-complete"].includes(name) && props) {
+            let valueField = props.valueField || getSelectOptions.valueField;
+            let labelField = props.labelField || getSelectOptions.labelField;
+            let childrenField =
+              props.childrenField || getSelectOptions.childrenField;
+            let dataField = props.dataField || getSelectOptions.dataField;
+            let defaultField =
+              props.defaultField || getSelectOptions.defaultField;
+            let searchFields =
+              props.searchFields ||
+              config.defaultProps.select.searchFields ||
+              [];
+
+            if (
+              !(
+                editFieldList[field] &&
+                props.api == editFieldList[field].api &&
+                utils.isEqual(editFieldList[field].param, props.param)
+              )
+            ) {
+              editFieldList[field] = {
+                valueField,
+                labelField,
+                childrenField,
+                defaultField,
+                searchFields,
+                api: props.api,
+                param: props.param
+              };
+
+              if (props.options) {
+                editOptions[field] = cloneDeep(props.options).map(o => {
+                  o = that.optionDataRender(o, field, "", {
+                    [field]: {
+                      valueField,
+                      labelField,
+                      childrenField
+                    }
+                  });
+                  if (o[defaultField]) {
+                    editDefaultOption[field] = p.value;
+                  }
+                  return o;
+                });
+              } else if (
+                !props.optionsField &&
+                (props.api || props.dataField || props.param) &&
+                (!isCacheOption || !editOptions[field] || isAll)
+              ) {
+                let item = {
+                  field,
+                  api: props.api,
+                  valueField,
+                  labelField,
+                  childrenField,
+                  dataField,
+                  defaultField,
+                  param: props.param || {}
+                };
+                if (props.api) {
+                  otherApiList.push(item);
+                } else {
+                  for (let key in props.param) {
+                    if (
+                      unifyApiList.param[key] &&
+                      utils.isArray(unifyApiList.param[key])
+                    ) {
+                      unifyApiList.param[key].push(props.param[key]);
+                    } else {
+                      unifyApiList.param[key] = [props.param[key]];
+                    }
+                  }
+                  unifyApiList.fields.push(item);
+                }
+              }
+            }
+          }
+        }
+      }
+      return { is: true, index: ++index };
     },
     loadOptionsData(isAll) {
       if (isAll) {
@@ -611,7 +674,7 @@ const editRender = {
         setTimeout(() => {
           this.onEditTableCurrentRowCellClick({
             row,
-            rowIndex: 0,
+            rowIndex,
             columnIndex: pressEnterItems[0].columnIndex,
             field: pressEnterItems[0].field
           });
@@ -630,7 +693,6 @@ const editRender = {
       let index = pressEnterItems.findIndex(p => p.field == field);
       let data = that.data || that.$refs.dataGrid.getData();
       if (!row) row = data[rowIndex];
-
       //换下一行
       if (index == pressEnterItems.length - 1) {
         rowIndex += 1;
@@ -640,12 +702,15 @@ const editRender = {
         } else {
           row = data[rowIndex];
           that.$refs.dataGrid.setCurrentRow(row);
-          that.onEditTableCurrentRowCellClick({
-            row,
-            rowIndex,
-            columnIndex: pressEnterItems[0].columnIndex,
-            field: pressEnterItems[0].field
-          });
+          that.onEditTableCurrentRowCellClick(
+            {
+              row,
+              rowIndex,
+              columnIndex: pressEnterItems[0].columnIndex,
+              field: pressEnterItems[0].field
+            },
+            true
+          );
         }
       } else {
         let nextData = pressEnterItems[index + 1];
@@ -717,6 +782,7 @@ const editRender = {
           let field = event.field;
           that.$refs.dataGrid.scrollToColumn(field);
           input.focus && input.focus();
+          input.select && input.select();
         } else if (type) {
           this.pressEnterItem(event);
         }
@@ -726,14 +792,15 @@ const editRender = {
     lineEditCellRender(name, value) {
       return <div class={`edit-input ${name}`}>{value}</div>;
     },
-    editSlotRender(name) {
+    editSlotRender() {
       return event => {
         let that = this;
         let { currentCell, editLine, lineEditTypes } = that;
-        let { columnIndex, rowIndex, row } = event;
-        let item = that.tableColumns[columnIndex];
+        let { $columnIndex, rowIndex, row } = event;
+        let item = that.tileColumns[$columnIndex];
         let itemRender = item.itemRender;
         if (itemRender) {
+          let name = itemRender.name;
           let props = itemRender.props || {};
           let disabled = editSlotPropInit(row, props, "disabled", event);
           let element;

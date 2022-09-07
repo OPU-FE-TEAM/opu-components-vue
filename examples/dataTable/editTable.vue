@@ -172,78 +172,85 @@ export default {
           }
         },
         {
-          field: "market",
-          align: "left",
-          title: "市场",
-          minWidth: 150,
-          itemRender: {
-            name: "ASelect",
-            props: {
-              param: { code: "Market" },
-              dataField: "data.Market",
-              default: ({ row }) => {
-                return [<span style="color:red;">{row.market}</span>];
-              }
-            },
-            on: {
-              keyup: () => {
-                this.onFocusEditRow();
-                return false;
-              }
-            }
-          }
-        },
-        {
-          field: "pulldown",
-          title: "下拉面板",
-          minWidth: 150,
-          itemRender: {
-            name: "pulldown-table",
-            props: {
-              valueField: "name",
-              textField: "age",
-              table: {
+          field: "bind",
+          title: "合并列",
+          children: [
+            {
+              field: "market",
+              align: "left",
+              title: "市场",
+              minWidth: 150,
+              itemRender: {
+                name: "ASelect",
                 props: {
-                  columns: [
-                    { type: "checkbox", width: 50 },
-                    { type: "seq", title: "Number", width: 80 },
-                    {
-                      field: "name",
-                      title: "Name",
-                      width: 200
-                    },
-                    {
-                      field: "sex",
-                      title: "Sex",
-                      width: 200
-                    },
-                    {
-                      field: "age",
-                      title: "Age",
-                      width: 200
-                    }
-                  ],
-                  size: "mini",
-                  height: 300,
-                  proxyConfig: {
-                    autoLoad: false,
-                    ajax: {
-                      query: getData
-                    }
+                  param: { code: "Market" },
+                  dataField: "data.Market",
+                  default: ({ row }) => {
+                    return [<span style="color:red;">{row.market}</span>];
                   }
+                },
+                on: {
+                  // keyup: () => {
+                  //   this.onFocusEditRow();
+                  //   return false;
+                  // }
                 }
               }
             },
-            on: {
-              change(val, sel) {
-                console.log("change", val, sel);
-              },
-              inputChange(sel) {
-                console.log("inputChange", sel);
+            {
+              field: "pulldown",
+              title: "下拉面板",
+              minWidth: 150,
+              itemRender: {
+                name: "pulldown-table",
+                props: {
+                  valueField: "name",
+                  textField: "age",
+                  table: {
+                    props: {
+                      columns: [
+                        { type: "checkbox", width: 50 },
+                        { type: "seq", title: "Number", width: 80 },
+                        {
+                          field: "name",
+                          title: "Name",
+                          width: 200
+                        },
+                        {
+                          field: "sex",
+                          title: "Sex",
+                          width: 200
+                        },
+                        {
+                          field: "age",
+                          title: "Age",
+                          width: 200
+                        }
+                      ],
+                      size: "mini",
+                      height: 300,
+                      proxyConfig: {
+                        autoLoad: false,
+                        ajax: {
+                          query: getData
+                        }
+                      }
+                    }
+                  }
+                },
+                on: {
+                  change(val, sel) {
+                    console.log("change", val, sel);
+                  },
+                  inputChange(sel) {
+                    console.log("inputChange", sel);
+                  }
+                }
               }
             }
-          }
+          ]
         },
+
         {
           field: "type1",
           align: "left",
@@ -272,51 +279,69 @@ export default {
           }
         },
         {
-          field: "input",
-          align: "left",
-          title: "输入框",
-          minWidth: 100,
-          itemRender: {
-            name: "a-input"
-          }
-        },
-        {
-          field: "type12",
-          align: "left",
-          title: "搜索输入",
-          minWidth: 150,
-          itemRender: {
-            name: "AAutoComplete",
-            props: {
-              options: [
-                "1456",
-                "12342",
-                "453213",
-                "4563464",
-                "453645",
-                "1345356",
-                "745345"
-              ]
+          field: "bind1",
+          title: "合1111",
+          children: [
+            {
+              field: "input",
+              align: "left",
+              title: "输入框",
+              minWidth: 100,
+              itemRender: {
+                name: "a-input"
+              }
             },
-            on: {
-              select: (e, option) => {
-                console.log(e);
-                console.log(option);
+            {
+              field: "sex",
+              title: "Sex",
+              editRender: {},
+              minWidth: 150,
+              slots: {
+                default: ({ columnIndex }) => {
+                  columnIndex;
+                  return [<div>222222</div>];
+                }
+              }
+            },
+            {
+              field: "type12",
+              align: "left",
+              title: "搜索输入",
+              minWidth: 150,
+              itemRender: {
+                name: "AAutoComplete",
+                props: {
+                  options: [
+                    "1456",
+                    "12342",
+                    "453213",
+                    "4563464",
+                    "453645",
+                    "1345356",
+                    "745345"
+                  ]
+                },
+                on: {
+                  select: (e, option) => {
+                    console.log(e);
+                    console.log(option);
+                  }
+                }
+              }
+            },
+            {
+              field: "sex6",
+              title: "性别插槽",
+              editRender: {},
+              minWidth: 150,
+              slots: {
+                default: ({ columnIndex }) => {
+                  columnIndex;
+                  return [<div>性别3</div>];
+                }
               }
             }
-          }
-        },
-        {
-          field: "sex6",
-          title: "性别插槽",
-          editRender: {},
-          minWidth: 150,
-          slots: {
-            default: ({ columnIndex }) => {
-              columnIndex;
-              return [<div>性别3</div>];
-            }
-          }
+          ]
         },
         {
           field: "sex61",
@@ -327,18 +352,6 @@ export default {
             default: ({ columnIndex }) => {
               columnIndex;
               return [<div>性别3</div>];
-            }
-          }
-        },
-        {
-          field: "sex",
-          title: "Sex",
-          editRender: {},
-          minWidth: 150,
-          slots: {
-            default: ({ columnIndex }) => {
-              columnIndex;
-              return [<div>222222</div>];
             }
           }
         },
@@ -360,6 +373,40 @@ export default {
                 console.log(b, "b");
                 console.log(c, "c");
                 console.log(d, "d");
+              }
+            }
+          }
+        },
+        {
+          field: "oneSelect",
+          align: "left",
+          title: "行内数据下拉",
+          minWidth: 150,
+          fixed: "left",
+          itemRender: {
+            name: "ASelect",
+            props: {
+              optionsField: "oneSelectList",
+              valueField: "value",
+              labelField: "label",
+              default: ({ row }) => {
+                return [row.oneSelectName];
+              }
+            },
+            on: {
+              change: (value, option, { row, rowIndex }) => {
+                console.log(row);
+                console.log(rowIndex);
+                let that = this;
+                let data = {};
+                for (let i = 0; i < 30; i++) {
+                  data["input-" + i] = i + "" + i;
+                }
+                that.data.splice(rowIndex, 1, {
+                  ...row,
+                  ...data
+                });
+                row.oneSelectName = option.label;
               }
             }
           }
@@ -532,40 +579,7 @@ export default {
             }
           }
         },
-        {
-          field: "oneSelect",
-          align: "left",
-          title: "行内数据下拉",
-          minWidth: 150,
-          fixed: "left",
-          itemRender: {
-            name: "ASelect",
-            props: {
-              optionsField: "oneSelectList",
-              valueField: "value",
-              labelField: "label",
-              default: ({ row }) => {
-                return [row.oneSelectName];
-              }
-            },
-            on: {
-              change: (value, option, { row, rowIndex }) => {
-                console.log(row);
-                console.log(rowIndex);
-                let that = this;
-                let data = {};
-                for (let i = 0; i < 30; i++) {
-                  data["input-" + i] = i + "" + i;
-                }
-                that.data.splice(rowIndex, 1, {
-                  ...row,
-                  ...data
-                });
-                row.oneSelectName = option.label;
-              }
-            }
-          }
-        },
+
         {
           field: "oneSelect1",
           align: "left",
@@ -641,33 +655,33 @@ export default {
     };
   },
   created() {
-    let columns = cloneDeep(this.columns);
-    for (let i = 0; i < 1; i++) {
-      let row = {
-        field: "input-" + i,
-        align: "left",
-        title: "输入框-" + i,
-        minWidth: 100,
-        itemRender: {
-          name: "a-input-number"
-        }
-      };
-      // if (i % 2 == 0) {
-      //   delete row.itemRender;
-      // }
-      columns.unshift(row);
-      defaultRow["input-" + i] = i;
-    }
-    columns.unshift({
-      type: "seq",
-      title: "序",
-      width: 100
-    });
-    this.columns = columns;
+    // let columns = cloneDeep(this.columns);
+    // for (let i = 0; i < 1; i++) {
+    //   let row = {
+    //     field: "input-" + i,
+    //     align: "left",
+    //     title: "输入框-" + i,
+    //     minWidth: 100,
+    //     itemRender: {
+    //       name: "a-input-number"
+    //     }
+    //   };
+    //   // if (i % 2 == 0) {
+    //   //   delete row.itemRender;
+    //   // }
+    //   columns.unshift(row);
+    //   defaultRow["input-" + i] = i;
+    // }
+    // columns.unshift({
+    //   type: "seq",
+    //   title: "序",
+    //   width: 100
+    // });
+    this.columns;
   },
   mounted() {
     let data = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 2; i++) {
       data.push(cloneDeep(defaultRow));
     }
     this.data = data;
@@ -743,7 +757,7 @@ export default {
     onFocusEditRow() {
       this.$refs.dataTable.itemFieldFocus({
         rowIndex: 0,
-        field: "market11"
+        field: "type1"
       });
       // this.$refs.dataTable.focusEditRow(0);
     },
