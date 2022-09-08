@@ -13,7 +13,7 @@ Vue.prototype.$modal = VXETable.modal;
 // import 'ant-design-vue/dist/antd.css';
 // Vue.use(Antd);
 
-dataTable.setup = setup;
+dataTable.setupConfig = setup;
 dataTable.install = function(Vue) {
   Vue.component(dataTable.name, dataTable);
 };

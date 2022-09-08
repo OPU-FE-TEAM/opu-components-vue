@@ -10,11 +10,11 @@ import checkbox from "./src/checkbox";
 import treeSelect from "./src/treeSelect";
 import cascaderEx from "./src/extend/cascader";
 
-import setup from "./conf/setup";
+import formSetup from "./conf/setup";
 dataForm.install = function(Vue) {
   Vue.component(dataForm.name, dataForm);
 };
-dataForm.setup = setup;
+dataForm.setupConfig = formSetup;
 dataForm.selectGroup = selectGroup;
 dataForm.select = select;
 dataForm.upload = upload;
