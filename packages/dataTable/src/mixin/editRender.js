@@ -530,9 +530,8 @@ const editRender = {
                           columnIndex === currentColumnIndex &&
                           rowIndex === currentRowIndex
                         ) {
-                          console.log("阻止冒泡");
                           event.stopPropagation();
-                          event.preventDefault();
+                          // event.preventDefault();
                           return;
                         }
                       }
