@@ -45,7 +45,8 @@ function handeUnifyApiGetOptions(
   unifyList,
   optionsApiList,
   _vm,
-  formData = {}
+  formData = {},
+  callback
 ) {
   const { getSelectOptions } = _vm;
   // 处理同一请求参数
@@ -90,11 +91,16 @@ function handeUnifyApiGetOptions(
       fields
     });
   }
-  fetchItemPropsOptionsApiList(optionsApiList, _vm, formData);
+  fetchItemPropsOptionsApiList(optionsApiList, _vm, formData, callback);
 }
 
 // 请求表单项可选数据
-const fetchItemPropsOptionsApiList = async function(list, _vm, formData) {
+const fetchItemPropsOptionsApiList = async function(
+  list,
+  _vm,
+  formData,
+  callback
+) {
   const {
     setFieldsOptions,
     onOptionsAllLoad,
@@ -167,6 +173,7 @@ const fetchItemPropsOptionsApiList = async function(list, _vm, formData) {
         defaultFormData = setFieldsOptionsDefaultValues(apiFields);
       }
       onOptionsLoadAfter(json, defaultFormData);
+      callback && callback(json, defaultFormData);
     })
     .catch(() => {});
 };
@@ -1038,7 +1045,7 @@ export default {
     );
   },
   methods: {
-    cloneItems(items, type) {
+    cloneItems(items, type, callback) {
       let {
         expand,
         autoLoadOptionsData,
@@ -1110,7 +1117,7 @@ export default {
       this.itemsOptions = data;
       this.oldItems = oldItems;
       if (isAutoLoadOptionsData || type) {
-        this.loadOptionsData();
+        this.loadOptionsData(null, null, callback);
       }
     },
     //初始化 optionsItem 索引数据
@@ -1142,9 +1149,9 @@ export default {
         }
       return row;
     },
-    loadOptionsData(formData = {}, isAll) {
+    loadOptionsData(formData = {}, callback, isAll) {
       if (isAll) {
-        this.cloneItems(this.items, isAll);
+        this.cloneItems(this.items, isAll, callback);
       } else {
         const { unifyApiGetOptions, getItemPropsOptionsApiList } = this;
         if (unifyApiGetOptions.length) {
@@ -1152,14 +1159,18 @@ export default {
             unifyApiGetOptions,
             getItemPropsOptionsApiList,
             this,
-            formData
+            formData,
+            callback
           );
         } else if (getItemPropsOptionsApiList.length) {
           fetchItemPropsOptionsApiList(
             getItemPropsOptionsApiList,
             this,
-            formData
+            formData,
+            callback
           );
+        } else {
+          callback && callback();
         }
       }
     },
@@ -1378,9 +1389,19 @@ export default {
     },
     //获取表单字段options数据
     getFieldsOptions(fields) {
+      let { optionsItemDataIndexs } = this;
+      let data = {};
       if (!fields) {
-        return;
+        for (let i in optionsItemDataIndexs) {
+          data[i] = optionsItemDataIndexs[i].options;
+        }
+      } else {
+        for (let i = 0; i < fields.length; i++) {
+          let field = fields[i];
+          data[field] = optionsItemDataIndexs[field].options;
+        }
       }
+      return data;
     },
     // 设置下拉框默认值，从下拉数据中获得默认选项,names = 指定要设置默认的字段，为空则设置全部
     setFieldsOptionsDefaultValues(fields = [], defaultData = {}, callback) {

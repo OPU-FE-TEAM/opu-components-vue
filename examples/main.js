@@ -200,7 +200,7 @@ function handleTableSetColumnsData(data) {
   });
 }
 
-DataForm.setup({
+DataForm.setupConfig({
   titleColon: false,
   titleWidth: 220,
   layout: "flex",
@@ -268,7 +268,7 @@ const initTableFieldData = field => {
   return data;
 };
 
-DataTable.setup({
+DataTable.setupConfig({
   pagerConfig: {
     pageIndex: 0,
     pageSize: 30, //默认每页条数
@@ -429,7 +429,7 @@ DataTable.setup({
   }
 });
 
-CrudTable.setup({
+CrudTable.setupConfig({
   // 操作代理配置
   proxyConfig: {
     // 新增

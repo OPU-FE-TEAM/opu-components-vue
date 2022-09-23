@@ -56,6 +56,9 @@
     <button @click="loadOptionsData">
       手动获取下拉数据
     </button>
+    <button @click="getFieldsOptions">
+      获取下拉数据
+    </button>
     <div style="width:300px">
       <SelectGroup
         :options="selectGroupOptions"
@@ -1307,6 +1310,10 @@ export default {
           this.setFormData();
         }
       );
+    },
+    getFieldsOptions() {
+      console.log(this.$refs.dataForm.getFieldsOptions());
+      console.log(this.$refs.dataForm.getFieldsOptions(["checkboxGroup"]));
     }
   }
 };

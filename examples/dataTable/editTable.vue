@@ -292,6 +292,50 @@ export default {
               }
             },
             {
+              field: "bind1-1",
+              title: "合2222",
+              children: [
+                {
+                  field: "number",
+                  align: "right",
+                  title: "数量",
+                  minWidth: 150,
+                  itemRender: {
+                    name: "AInputNumber",
+                    props: {
+                      disabled: row => {
+                        return row.orderType == 2;
+                      },
+                      min: 0
+                    },
+                    after: () => {
+                      return [<a-button style="padding:0 5px;">每日</a-button>];
+                    }
+                  }
+                },
+                {
+                  field: "apiSelect",
+                  align: "left",
+                  title: "请求下拉",
+                  minWidth: 150,
+                  itemRender: {
+                    name: "ASelect",
+                    props: {
+                      api: getTableSelectData,
+                      param: { code: "apiSelect" },
+                      dataField: "data.apiSelect",
+                      // optionsField: "oneSelectList1",
+                      // valueField: "value",
+                      // labelField: "label",
+                      disabled: row => {
+                        return row.orderType == 3;
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
               field: "sex",
               title: "Sex",
               editRender: {},
@@ -358,6 +402,7 @@ export default {
         {
           field: "orderType",
           align: "left",
+          fixed: "left",
           title: "下拉框666666",
           minWidth: 150,
           itemRender: {
@@ -380,7 +425,7 @@ export default {
         {
           field: "oneSelect",
           align: "left",
-          title: "行内数据下拉",
+          title: "行1内数据下拉",
           minWidth: 150,
           fixed: "left",
           itemRender: {
@@ -390,7 +435,11 @@ export default {
               valueField: "value",
               labelField: "label",
               default: ({ row }) => {
-                return [row.oneSelectName];
+                return [
+                  <span style="background:red;color:#fff">
+                    {row.oneSelectName}
+                  </span>
+                ];
               }
             },
             on: {
@@ -527,41 +576,7 @@ export default {
             }
           }
         },
-        {
-          field: "number",
-          align: "right",
-          title: "数量",
-          minWidth: 150,
-          itemRender: {
-            name: "AInputNumber",
-            props: {
-              disabled: row => {
-                return row.orderType == 2;
-              },
-              min: 0
-            },
-            after: () => {
-              return [<a-button style="padding:0 5px;">每日</a-button>];
-            }
-          }
-        },
-        {
-          field: "apiSelect",
-          align: "left",
-          title: "请求下拉",
-          minWidth: 150,
-          itemRender: {
-            name: "ASelect",
-            props: {
-              // optionsField: "oneSelectList1",
-              // valueField: "value",
-              // labelField: "label",
-              disabled: row => {
-                return row.orderType == 3;
-              }
-            }
-          }
-        },
+
         {
           field: "apiSelect1",
           align: "left",
@@ -681,14 +696,16 @@ export default {
   },
   mounted() {
     let data = [];
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 20; i++) {
       data.push(cloneDeep(defaultRow));
     }
     this.data = data;
   },
   methods: {
     onAdd() {
-      this.data.push({
+      let that = this;
+
+      that.data.push({
         type1: "",
         switch: false,
         switch1: "1",
@@ -700,6 +717,7 @@ export default {
         vip: "",
         input: "",
         market: "",
+        market11: "",
         apiSelect: "",
         apiSelect1: "",
         date: moment(),
@@ -715,6 +733,35 @@ export default {
         ],
         time: moment("12:08:23", "HH:mm:ss")
       });
+      that.$nextTick(() => {
+        setTimeout(() => {
+          that.$refs.dataTable.scrollToRow(that.data[that.data.length - 1]);
+        }, 0);
+      });
+      // setTimeout(() => {
+      // }, 1000);
+
+      // let tableWrapper = that.$refs.dataTable.$el.querySelector(
+      //   ".vxe-table--body-wrapper.body--wrapper"
+      // );
+      // let tableWrapperH = tableWrapper.offsetHeight;
+      // debugger;
+      // console.log(
+      //   that.$refs.dataTable.$el.querySelectorAll(
+      //     ".vxe-table--body-wrapper.body--wrapper table tr"
+      //   )
+      // );
+      // setTimeout(() => {
+      //   let scrollTop = tableWrapperH;
+      //   tableWrapper.scrollTop = scrollTop;
+      // }, 3000);
+      // console.log();
+      // let el = that.$refs.dataTable.$el.querySelector(
+      //   "vxe-table--body-wrapper"
+      // );
+      // console.log(el);
+      // debugger;
+      // that.$refs.dataTable.scrollToRow(that.data[that.data.length - 1]);
     },
     onChange() {},
     onChangeSelect() {
