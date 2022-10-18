@@ -1118,7 +1118,7 @@ export default {
       this.itemsOptions = data;
       this.oldItems = oldItems;
       if (isAutoLoadOptionsData || type) {
-        this.loadOptionsData(null, null, callback);
+        this.loadOptionsData(null, callback);
       }
     },
     //初始化 optionsItem 索引数据
