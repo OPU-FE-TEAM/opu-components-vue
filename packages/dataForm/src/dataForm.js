@@ -107,6 +107,7 @@ const fetchItemPropsOptionsApiList = async function(
     onOptionsLoadBefore,
     onOptionsLoadAfter,
     autoSetDefaultValue,
+    autoSetDefaultFirst,
     setFieldsOptionsDefaultValues
   } = _vm;
   if (onOptionsLoadBefore) {
@@ -169,7 +170,7 @@ const fetchItemPropsOptionsApiList = async function(
       }
       setFieldsOptions(json);
       let defaultFormData = {};
-      if (autoSetDefaultValue) {
+      if (autoSetDefaultValue && autoSetDefaultFirst) {
         defaultFormData = setFieldsOptionsDefaultValues(apiFields);
       }
       onOptionsLoadAfter(json, defaultFormData);
@@ -988,7 +989,7 @@ export default {
       }
       return clearUndefinedValue;
     },
-    //是否清空找不到的值
+    //enter自动切换下一个
     formAutoEnterSelectInput() {
       let autoEnterSelectInput = this.autoEnterSelectInput;
       if (autoEnterSelectInput === "") {
