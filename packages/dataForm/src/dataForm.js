@@ -261,7 +261,7 @@ function renderItemInput(item, h, _vm) {
     items,
     onButtonClick,
     renderNameKeys,
-    optionsItemIndexs,
+    ItemsOptionsIndexs,
     componentsFocusItemTypes
   } = _vm;
   const vDecorator = [item.field];
@@ -297,7 +297,7 @@ function renderItemInput(item, h, _vm) {
     props.props.disabled = true;
     props.props.placeholder = null;
   } else {
-    const find = items[optionsItemIndexs[item.field]];
+    const find = items[ItemsOptionsIndexs[item.field]];
     if (
       find &&
       find.itemRender &&
@@ -901,7 +901,7 @@ export default {
       //老数据
       oldItems: {},
       //有返回数据的item集合索引
-      optionsItemIndexs: {},
+      ItemsOptionsIndexs: {},
       optionsItemDataIndexs: {},
       unifyApiGetOptions: [],
       getItemPropsOptionsApiList: [],
@@ -1065,7 +1065,7 @@ export default {
           : DEFAULTCONFIG.getSelectOptions.autoLoadOptionsData;
 
       let cloneData = expand ? clone : clone.filter(p => !p.folding);
-      let optionsItemIndexs = {};
+      let ItemsOptionsIndexs = {};
       let oldItems = {};
       const isFormPartRequest =
         isPartRequest !== ""
@@ -1077,7 +1077,7 @@ export default {
         item.itemRender = itemRender;
         itemRender.props = itemRender.props || {};
         let itemProps = itemRender.props;
-        optionsItemIndexs[field] = index;
+        ItemsOptionsIndexs[field] = index;
         let prevItem = prevItems[field];
         oldItems[field] = cloneDeep(item);
         if (
@@ -1111,7 +1111,7 @@ export default {
         return item;
       });
 
-      this.optionsItemIndexs = optionsItemIndexs;
+      this.ItemsOptionsIndexs = ItemsOptionsIndexs;
       this.optionsItemDataIndexs = optionsItemDataIndexs;
       this.unifyApiGetOptions = unifyApiGetOptions;
       this.getItemPropsOptionsApiList = getItemPropsOptionsApiList;
@@ -1366,11 +1366,11 @@ export default {
     },
     // 设置一组字段的options数据
     setFieldsOptions(data) {
-      let { optionsItemDataIndexs, optionsItemIndexs } = this;
+      let { optionsItemDataIndexs, ItemsOptionsIndexs } = this;
       const formData = this.getData();
       for (const key in data) {
         const options = data[key];
-        const index = optionsItemIndexs[key];
+        const index = ItemsOptionsIndexs[key];
         if (index > -1) {
           const item = this.itemsOptions[index];
           if (item && item.itemRender && item.itemRender.props) {
