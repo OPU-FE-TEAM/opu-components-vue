@@ -236,6 +236,10 @@ export default {
         //   itemRender: {}
         // },
         {
+          field: "input",
+          title: "输入框"
+        },
+        {
           field: "autoComplete",
           title: "补全",
           itemRender: {

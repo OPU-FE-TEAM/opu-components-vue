@@ -16,7 +16,10 @@ export default {
       type: String,
       default: "取消"
     },
-    okButtonProps: Object,
+    okButtonProps: {
+      type: Object,
+      default: () => {}
+    },
     cancelButtonProps: Object,
     confirmLoading: {
       type: Boolean,
@@ -38,7 +41,7 @@ export default {
   },
   computed: {
     modalProps() {
-      const {
+      let {
         $scopedSlots,
         $listeners,
         onHide,
@@ -83,6 +86,7 @@ export default {
         }
       };
       if (showFooter && !$scopedSlots.footer) {
+        okButtonProps = okButtonProps || {};
         let okButton = (
           <a-button
             {...{
