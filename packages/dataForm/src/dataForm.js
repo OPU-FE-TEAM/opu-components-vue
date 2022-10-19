@@ -1073,8 +1073,8 @@ export default {
           : DEFAULTCONFIG.getSelectOptions.isPartRequest;
       const data = cloneData.map((item, index) => {
         let field = item.field;
-        let itemRender = item.itemRender || {};
-        item.itemRender = itemRender;
+        item.itemRender = item.itemRender || {};
+        let itemRender = item.itemRender;
         itemRender.props = itemRender.props || {};
         let itemProps = itemRender.props;
         itemsOptionsIndexs[field] = index;
@@ -1089,20 +1089,18 @@ export default {
         ) {
           return item;
         }
-        if (itemProps.api || itemProps.param) {
-          if (isFormPartRequest === true && !itemProps.api) {
-            itemProps.api = DEFAULTCONFIG.getSelectOptions.api;
-          }
-          if (itemProps.api) {
-            getItemPropsOptionsApiList.push({
-              field: field,
-              api: itemProps.api,
-              param: itemProps.param,
-              props: itemProps
-            });
-          } else if (itemProps.param) {
-            unifyApiGetOptions.push(item);
-          }
+        if (isFormPartRequest === true && !itemProps.api) {
+          itemProps.api = DEFAULTCONFIG.getSelectOptions.api;
+        }
+        if (itemProps.api) {
+          getItemPropsOptionsApiList.push({
+            field: field,
+            api: itemProps.api,
+            param: itemProps.param,
+            props: itemProps
+          });
+        } else if (itemProps.param) {
+          unifyApiGetOptions.push(item);
         }
         let row = this.initOptionsItemIndex(item, index);
         if (row) {

@@ -91,6 +91,7 @@ export default {
                 ...okButtonProps,
                 loading: confirmLoading
               },
+              style: okButtonProps.style,
               on: { click: onSubmit }
             }}
           >
