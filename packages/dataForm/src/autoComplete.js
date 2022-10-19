@@ -122,6 +122,7 @@ export default {
       const inputDom = el.getElementsByClassName("ant-select-search__field")[0];
       if (inputDom) {
         inputDom.focus && inputDom.focus();
+        inputDom.click && inputDom.click();
         inputDom.removeEventListener("keyup", that.onKeyUpEnter);
         inputDom.addEventListener("keyup", that.onKeyUpEnter);
       }
