@@ -401,10 +401,7 @@ const editRender = {
         data,
         getSelectOptions,
         unifyApiList: {
-          api:
-            getSelectOptions && getSelectOptions.api
-              ? getSelectOptions.api
-              : config.getSelectOptions.api,
+          api: getSelectOptions && getSelectOptions.api,
           param: {},
           fields: []
         },

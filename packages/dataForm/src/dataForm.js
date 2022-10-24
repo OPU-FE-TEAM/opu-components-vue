@@ -170,7 +170,7 @@ const fetchItemPropsOptionsApiList = async function(
       }
       setFieldsOptions(json);
       let defaultFormData = {};
-      if (autoSetDefaultValue && autoSetDefaultFirst) {
+      if (autoSetDefaultValue || autoSetDefaultFirst) {
         defaultFormData = setFieldsOptionsDefaultValues(apiFields);
       }
       onOptionsLoadAfter(json, defaultFormData);
@@ -1046,7 +1046,7 @@ export default {
     );
   },
   methods: {
-    cloneItems(items, type, callback) {
+    cloneItems(items, isAll, callback) {
       let {
         expand,
         autoLoadOptionsData,
@@ -1082,7 +1082,7 @@ export default {
         oldItems[field] = cloneDeep(item);
         if (
           isAutoLoadOptionsData &&
-          !type &&
+          !isAll &&
           prevItem &&
           prevItem.itemRender.props.api === itemProps.api &&
           utils.isEqual(prevItem.itemRender.props.param, itemProps.param)
@@ -1115,7 +1115,7 @@ export default {
       this.getItemPropsOptionsApiList = getItemPropsOptionsApiList;
       this.itemsOptions = data;
       this.oldItems = oldItems;
-      if (isAutoLoadOptionsData || type) {
+      if (isAutoLoadOptionsData || isAll) {
         this.loadOptionsData(null, callback);
       }
     },

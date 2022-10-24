@@ -72,8 +72,6 @@ let data = [
 console.log(data);
 
 function getData(arr = {}) {
-  console.log(arr);
-  console.log("请求");
   return new Promise(resolve => {
     setTimeout(() => {
       const size = arr.pageSize ? arr.pageSize : 20;

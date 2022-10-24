@@ -12,8 +12,8 @@
       height="600px"
       highlight-current-row
       :keyboard-config="{ isArrow: false }"
-      editLine
     >
+      <!-- editLine -->
       <template #name_edit="{ row }">
         <vxe-input v-model="row.name" ref="input"></vxe-input>
       </template>
@@ -607,6 +607,25 @@ export default {
               optionsField: "oneSelectList1",
               valueField: "value",
               labelField: "label"
+            }
+          }
+        },
+        {
+          field: "number1",
+          align: "right",
+          title: "数量1",
+          fixed: "right",
+          minWidth: 150,
+          itemRender: {
+            name: "AInputNumber",
+            props: {
+              disabled: row => {
+                return row.orderType == 2;
+              },
+              min: 0
+            },
+            after: () => {
+              return [<a-button style="padding:0 5px;">每日</a-button>];
             }
           }
         },

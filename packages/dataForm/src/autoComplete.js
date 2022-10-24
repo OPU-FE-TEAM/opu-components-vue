@@ -118,7 +118,8 @@ export default {
       const that = this;
       const inputComponent = this.$refs.inputComponent;
       const el = inputComponent.$el;
-      // // select获得输入焦点，弹出下拉面板
+
+      // select获得输入焦点，弹出下拉面板
       const inputDom = el.getElementsByClassName("ant-select-search__field")[0];
       if (inputDom) {
         inputDom.focus && inputDom.focus();
