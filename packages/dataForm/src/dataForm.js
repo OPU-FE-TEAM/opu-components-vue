@@ -321,10 +321,10 @@ function renderItemInput(item, h, _vm) {
     if ($slots[itemRender.slot]) {
       inputDom = $slots[itemRender.slot];
     } else if ($scopedSlots[itemRender.slot]) {
-      (props.scopedSlots = {
+      props.scopedSlots = {
         default: $scopedSlots[itemRender.slot]
-      }),
-        (inputDom = h("a-scopedSlots", props));
+      };
+      inputDom = h("a-scopedSlots", props);
     }
   } else if (itemRender.customRender) {
     // 自定义渲染内容
