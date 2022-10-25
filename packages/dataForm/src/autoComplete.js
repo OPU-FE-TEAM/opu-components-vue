@@ -131,6 +131,15 @@ export default {
       //   box[0].click();
       // }
     },
+    blur() {
+      const inputComponent = this.$refs.inputComponent;
+      const el = inputComponent.$el;
+      const inputDom = el.getElementsByClassName("ant-select-search__field")[0];
+      if (inputDom) {
+        inputDom.removeEventListener("keyup", this.onKeyUpEnter);
+        inputDom.blur();
+      }
+    },
     onKeyUpEnter(e) {
       if (e.key === "Enter") {
         e.stopPropagation();
