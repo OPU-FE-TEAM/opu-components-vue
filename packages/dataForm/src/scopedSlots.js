@@ -3,7 +3,7 @@ export default {
   components: {},
   props: {
     fieldName: String,
-    value: [Number, String, Object, Array]
+    value: [Number, String, Object, Array, Boolean]
   },
   model: {
     prop: "value",
