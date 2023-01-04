@@ -1241,9 +1241,11 @@ export default {
     // 允许反选高亮行时接管，单元格点击事件
     onCurrentRowCellClick(e) {
       let that = this;
-
       if (that.highlightCurrentUnselect) {
-        if (that.currentRow._XID && e.row._XID === that.currentRow._XID) {
+        if (
+          that.currentRow._X_ROW_KEY &&
+          e.row._X_ROW_KEY === that.currentRow._X_ROW_KEY
+        ) {
           that.$refs.dataGrid.clearCurrentRow();
           that.currentRow = {};
           that.$emit("current-change", { ...e, row: null });
