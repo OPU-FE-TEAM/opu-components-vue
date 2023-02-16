@@ -829,29 +829,30 @@ export default {
             }
           }
         },
-        // {
-        //   field: "radioGroup",
-        //   title: "单选框组",
-        //   itemRender: {
-        //     name: "a-radio-group",
-        //     props: {
-        //       // api: getCheckboxData,
-        //       // dataField: "",
-        //       // param: {
-        //       //   code: "cc"
-        //       // }
-        //       options: ["Apple", "Pear", "Orange"]
-        //       // options: [
-        //       //   { id: "Apple", name: "Apple" },
-        //       //   { id: "Pear", name: "Pear" },
-        //       //   { id: "Orange", name: "Orange" }
-        //       // ]
-        //     },
-        //     on: {
-        //       change: this.onRadioChange
-        //     }
-        //   }
-        // },
+        {
+          field: "radioGroup",
+          title: "单选框组",
+          itemRender: {
+            name: "a-radio-group",
+            props: {
+              api: getCheckboxData,
+              dataField: "",
+              defaultField: "isSelected",
+              param: {
+                code: "cc"
+              }
+              // options: ["Apple", "Pear", "Orange"]
+              // options: [
+              //   { id: "Apple", name: "Apple" },
+              //   { id: "Pear", name: "Pear" },
+              //   { id: "Orange", name: "Orange" }
+              // ]
+            },
+            on: {
+              change: this.onRadioChange
+            }
+          }
+        },
         // {
         //   field: "number",
         //   title: "数字",

@@ -48,6 +48,10 @@ export default {
       type: String,
       default: "name"
     },
+    labelField: {
+      type: String,
+      default: ""
+    },
     searchBefore: Function,
     searchField: {
       type: String,
@@ -86,9 +90,11 @@ export default {
       const { selectValue } = this;
       let text = "";
       if (selectValue && utils.isArray(selectValue)) {
-        text = selectValue.map(p => p[this.textField]).join(",");
+        text = selectValue
+          .map(p => p[this.labelField || this.textField])
+          .join(",");
       } else if (selectValue && utils.isObject(selectValue)) {
-        text = selectValue[this.textField];
+        text = selectValue[this.labelField || this.textField];
       } else if (selectValue || selectValue == 0) {
         text = selectValue;
       }
@@ -98,9 +104,11 @@ export default {
       const { currentValue } = this;
       let text = "";
       if (currentValue && utils.isArray(currentValue)) {
-        text = currentValue.map(p => p[this.textField]).join(",");
+        text = currentValue
+          .map(p => p[this.labelField || this.textField])
+          .join(",");
       } else if (currentValue && utils.isObject(currentValue)) {
-        text = currentValue[this.textField];
+        text = currentValue[this.labelField || this.textField];
       } else if (currentValue || currentValue == 0) {
         text = currentValue;
       }
@@ -197,7 +205,7 @@ export default {
     onTableRowSelect({ row, columnIndex }) {
       let { checkboxIndex } = this;
       if (checkboxIndex < 0 || checkboxIndex != columnIndex) {
-        let text = row[this.textField];
+        let text = row[this.labelField || this.textField];
         this.selectValue = row;
         this.currentValue = row;
         this.$emit("input", text);

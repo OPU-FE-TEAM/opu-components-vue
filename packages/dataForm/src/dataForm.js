@@ -1449,9 +1449,10 @@ export default {
                   if (defaultValue && defaultValue.length) {
                     let value = defaultValue;
                     const valueArrayTypes = [
-                      "a-checkbox-group",
-                      "a-radio-group"
+                      "a-checkbox-group"
+                      // "a-radio-group"
                     ];
+
                     const isSeletctMultiple =
                       (itemRender.name == "a-select" &&
                         props &&
