@@ -393,7 +393,7 @@ function renderItemInput(item, h, _vm) {
 
 // 渲染每个表单项内容
 function renderItemContent(item, h, _vm) {
-  const { formTitleWidth, $scopedSlots } = _vm;
+  const { $scopedSlots } = _vm;
   const itemRender = item.itemRender;
   const before = itemRender.before ? itemRender.before() : "";
   let after = itemRender.after ? itemRender.after() : "";
@@ -446,7 +446,7 @@ function renderItemContent(item, h, _vm) {
   return h(
     "div",
     {
-      style: { width: formTitleWidth },
+      // style: { width: formTitleWidth },
       class: {
         "data-form-item-content": true,
         "form-item-buttons": itemRender && itemRender.name == "buttons"
