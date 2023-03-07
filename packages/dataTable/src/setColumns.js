@@ -276,7 +276,7 @@ export default {
       let json = { ...params, data: newTableData };
       if (submitApi) {
         if (onConfig && onConfig.submitBefore) {
-          const submitBeforeRes = onConfig.submitBefore(json);
+          const submitBeforeRes = onConfig.submitBefore(json, opt);
           if (submitBeforeRes === false) {
             return false;
           } else if (submitBeforeRes) {
