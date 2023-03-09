@@ -444,8 +444,8 @@ function renderHeadToolbar(h, _vm) {
 
 //处理api获取的表头数据
 function handleColumnsData(data, columns, configProps, _vm) {
-  const { sortable, notSortableFields, tableProps } = _vm;
-  let copyColumns = utils.clone(columns);
+  const { sortable, notSortableFields, tableProps, proxyColumns } = _vm;
+  let copyColumns = columns ? utils.clone(columns) : [];
   let apiColumns = [];
   let otherColumns = [];
   for (let i = 0; i < data.length; i++) {
@@ -488,7 +488,11 @@ function handleColumnsData(data, columns, configProps, _vm) {
       if (findIndex > -1) {
         const find = copyColumns[findIndex];
         copyColumnChildren = find.children ? find.children : [];
-        obj = { ...obj, ...find, children: obj.children };
+        if (proxyColumns.mergeColumns !== false) {
+          obj = { ...obj, ...find, children: obj.children };
+        } else {
+          obj = { ...obj, children: obj.children };
+        }
         copyColumns.splice(findIndex, 1);
       }
     }
@@ -693,6 +697,7 @@ export default {
             : {};
 
         return {
+          ...config.setColumns,
           modal: {
             props: {
               ...config.setColumns.modal.props,
@@ -1159,10 +1164,12 @@ export default {
         config.proxyColumns && config.proxyColumns.defaultAjax
           ? config.proxyColumns.defaultAjax
           : {};
-      let params = null;
+      let params = {
+        columns
+      };
       let queryApi = null;
       if (opt.params) {
-        params = opt.params;
+        params = { ...params, ...opt.params };
         if (defaultAjax && defaultAjax.query && !(opt.ajax && opt.ajax.query)) {
           queryApi = defaultAjax.query;
         }

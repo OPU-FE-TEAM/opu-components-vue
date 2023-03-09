@@ -334,9 +334,9 @@ DataTable.setupConfig({
       list: "data",
       show: "show",
       align: "align",
-      fixed: "freeze",
-      title: "customName",
-      field: "name"
+      fixed: "fixed",
+      title: "title",
+      field: "field"
     },
     defaultAjax: {
       query: getColumns
@@ -356,10 +356,10 @@ DataTable.setupConfig({
         list: "data",
         show: "show",
         align: "align",
-        fixed: "freeze",
-        title: "customName",
-        field: "name",
-        defaultTitle: "sysColumnName"
+        fixed: "fixed",
+        title: "title",
+        field: "field",
+        defaultTitle: "title"
       },
       defaultAjax: {
         query: getColumns,

@@ -115,7 +115,7 @@ export default {
       return apiColumns;
     },
     fetchColumns() {
-      const { query, propsConfig, handelColumns, option } = this;
+      const { query, propsConfig, handelColumns, option, columns } = this;
       // const json = {
       //   ...getOpt.param
       // };
@@ -126,16 +126,23 @@ export default {
           ? config.setColumns.proxyConfig.defaultAjax
           : {};
       const opt = option.proxyConfig ? option.proxyConfig : {};
-      let params = null;
+      let params = {
+        columns
+      };
       let queryApi = null;
       if (opt && opt.params) {
-        params = opt.params;
+        params = { ...params, ...opt.params };
         if (defaultAjax && defaultAjax.query && !query) {
           queryApi = defaultAjax.query;
         }
       }
       if (query) {
         queryApi = query;
+      }
+      if (!queryApi) {
+        this.tableData = handelColumns(utils.clone(columns));
+        this.treeDrop();
+        return;
       }
       queryApi(params).then(res => {
         // const dataField = getOpt.dataField ? getOpt.dataField : "data";

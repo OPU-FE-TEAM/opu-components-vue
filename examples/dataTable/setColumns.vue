@@ -10,6 +10,7 @@
         :setcolumns-config="setColumns"
         class="abc-table"
         :proxy-columns="proxyColumns"
+        :columns="columns"
       >
       </DataTable>
 
@@ -70,1021 +71,155 @@ function getColumns(arr) {
       // const code = arr && arr.code ? arr.code : "";
       const list = [
         {
-          name: "statusTypesDesc",
-          sort: 0,
+          title: "编号1",
+          field: "code",
+          columnIndex: 0,
           show: true,
-          width: 50,
-          drag: true,
-          align: "center",
-          parentCode: "",
-          customName: "物品状态",
-
-          children: [],
-          sysColumnName: "物品状态",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          align: "left",
+          defaultTitle: "编号",
+          code: "",
+          _X_ROW_KEY: "row_41",
+          ISEDIT: true,
+          sortable: true,
+          width: 220
         },
         {
-          name: "goodsCode",
-          sort: 1,
+          title: "名称",
+          field: "name",
+          columnIndex: 1,
           show: true,
-          width: 50,
-          drag: true,
-          align: "center",
-          parentCode: "",
-          customName: "物品编码",
-
-          children: [],
-          sysColumnName: "物品编码",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          align: "",
+          defaultTitle: "名称",
+          code: "",
+          _X_ROW_KEY: "row_42",
+          ISEDIT: true,
+          sortable: true
         },
         {
-          name: "goodsName",
-          sort: 2,
-          show: true,
-          width: 180,
-          drag: true,
-          align: "left",
-          parentCode: "",
-          customName: "物品名称",
-
-          children: [],
-          sysColumnName: "物品名称",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "所属班级",
+          field: "squadName",
+          columnIndex: 2,
+          show: "",
+          align: "",
+          defaultTitle: "所属班级",
+          code: "",
+          _X_ROW_KEY: "row_43",
+          sortable: true
         },
         {
-          name: "typeName",
-          sort: 3,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: "",
-          customName: "项目大类",
-
-          children: [],
-          sysColumnName: "项目大类",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "状态",
+          field: "statusName",
+          slots: {},
+          columnIndex: 3,
+          show: "",
+          align: "",
+          defaultTitle: "状态",
+          code: "",
+          _X_ROW_KEY: "row_44",
+          sortable: true
         },
         {
-          name: "hisGoodsId",
-          sort: 4,
-          show: true,
-          width: 120,
-          drag: true,
-          align: "left",
-          parentCode: "",
-          customName: "HIS编码",
-
-          children: [],
-          sysColumnName: "HIS编码",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "培训开始时间",
+          field: "trainingBeginTime",
+          columnIndex: 4,
+          show: "",
+          align: "",
+          defaultTitle: "培训开始时间",
+          code: "",
+          _X_ROW_KEY: "row_45",
+          sortable: true
         },
         {
-          name: "goodsCategoryName",
-          sort: 5,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: "",
-          customName: "项目分类",
-
-          children: [],
-          sysColumnName: "项目分类",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "培训结束时间",
+          field: "trainingEndTime",
+          columnIndex: 5,
+          show: "",
+          align: "",
+          defaultTitle: "培训结束时间",
+          code: "",
+          _X_ROW_KEY: "row_46",
+          sortable: true
         },
         {
-          name: "specifications",
-          sort: 6,
-          show: true,
-          width: 120,
-          drag: true,
-          align: "right",
-          parentCode: "",
-          customName: "规格",
-
-          children: [],
-          sysColumnName: "规格",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "电话",
+          field: "phone",
+          columnIndex: 6,
+          show: "",
+          align: "",
+          defaultTitle: "电话",
+          code: "",
+          _X_ROW_KEY: "row_47",
+          sortable: true
         },
         {
-          name: "modelName",
-          sort: 7,
-          show: true,
-          width: 60,
-          drag: true,
-          align: "center",
-          parentCode: "",
-          customName: "剂型",
-
-          children: [],
-          sysColumnName: "剂型",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "身份证号",
+          field: "idCardNo",
+          columnIndex: 7,
+          show: "",
+          align: "",
+          defaultTitle: "身份证号",
+          code: "",
+          _X_ROW_KEY: "row_48",
+          sortable: true
         },
         {
-          name: "batchNo",
-          sort: 8,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "right",
-          parentCode: "",
-          customName: "批号",
-
-          children: [],
-          sysColumnName: "批号",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "性别",
+          field: "genderCode",
+          columnIndex: 8,
+          show: "",
+          align: "",
+          defaultTitle: "性别",
+          code: "",
+          _X_ROW_KEY: "row_49",
+          sortable: true
         },
         {
-          name: "unitName",
-          sort: 9,
-          show: true,
-          width: 50,
-          drag: true,
-          align: "center",
-          parentCode: "",
-          customName: "单位",
-
-          children: [],
-          sysColumnName: "大单位",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "籍贯",
+          field: "nativePlaceCode",
+          columnIndex: 9,
+          show: "",
+          align: "",
+          defaultTitle: "籍贯",
+          code: "",
+          _X_ROW_KEY: "row_50",
+          sortable: true
         },
         {
-          name: "unitPrice",
-          sort: 10,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "right",
-          parentCode: "",
-          customName: "单价",
-
-          children: [],
-          sysColumnName: "大单位进价",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "生日",
+          field: "birthday",
+          columnIndex: 10,
+          show: "",
+          align: "",
+          defaultTitle: "生日",
+          code: "",
+          _X_ROW_KEY: "row_51",
+          sortable: true
         },
         {
-          name: "smallUnitName",
-          sort: 11,
-          show: false,
-          width: 60,
-          drag: true,
-          align: "left",
-          parentCode: "",
-          customName: "小单位",
-
-          children: [],
-          sysColumnName: "小单位",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "地址",
+          field: "address",
+          columnIndex: 11,
+          show: "",
+          align: "",
+          defaultTitle: "地址",
+          code: "",
+          _X_ROW_KEY: "row_52",
+          sortable: true
         },
         {
-          name: "smallUnitPrice",
-          sort: 12,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "right",
-          parentCode: "",
-          customName: "小单位单价",
-
-          children: [],
-          sysColumnName: "小单位进价",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
-        },
-        {
-          name: "currentCheckDate",
-          sort: 13,
-          show: false,
-          width: 130,
-          drag: true,
-          align: "left",
-          parentCode: "",
-          customName: "上次盘点时间",
-
-          children: [],
-          sysColumnName: "上次盘点时间",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
-        },
-        {
-          name: "stockItemStatusDesc",
-          sort: 14,
-          show: false,
-          width: 70,
-          drag: true,
-          align: "left",
-          parentCode: "",
-          customName: "库存状态",
-
-          children: [],
-          sysColumnName: "库存状态",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
-        },
-        {
-          name: "unitRetailPrice",
-          sort: 15,
-          show: false,
-          width: 100,
-          drag: true,
-          align: "right",
-          parentCode: "",
-          customName: "大单位售价",
-
-          children: [],
-          sysColumnName: "大单位售价",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
-        },
-        {
-          name: "opening",
-          sort: 16,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "期初",
-
-          children: [
-            {
-              name: "openingQuantity",
-              sort: 16,
-              show: false,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "opening",
-              customName: "期初数量",
-
-              children: [],
-              sysColumnName: "期初数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "openingAvgPrice",
-              sort: 17,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "opening",
-              customName: "期初均价",
-
-              children: [],
-              sysColumnName: "期初进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "openingTotalPrice",
-              sort: 18,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "opening",
-              customName: "期初金额（进价）",
-
-              children: [],
-              sysColumnName: "期初进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "openingRetailPrice",
-              sort: 23,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "opening",
-              customName: "期初售价金额",
-
-              children: [],
-              sysColumnName: "期初售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "期初",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "inStock",
-          sort: 17,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "入库",
-
-          children: [
-            {
-              name: "inStockQuantity",
-              sort: 20,
-              show: false,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "inStock",
-              customName: "入库数量",
-
-              children: [],
-              sysColumnName: "入库数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "inStockAvgPrice",
-              sort: 21,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "inStock",
-              customName: "入库均价",
-
-              children: [],
-              sysColumnName: "入库进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "inStockTotalPrice",
-              sort: 22,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "inStock",
-              customName: "入库金额",
-
-              children: [],
-              sysColumnName: "入库进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "inStockRetailPrice",
-              sort: 28,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "inStock",
-              customName: "入库售价金额",
-
-              children: [],
-              sysColumnName: "入库售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "入库",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "outStock",
-          sort: 18,
-          show: true,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "出库",
-
-          children: [
-            {
-              name: "outStockQuantity",
-              sort: 24,
-              show: true,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "outStock",
-              customName: "出库数量",
-
-              children: [],
-              sysColumnName: "出库数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "outStockAvgPrice",
-              sort: 25,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "outStock",
-              customName: "出库均价",
-
-              children: [],
-              sysColumnName: "出库进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "outStockTotalPrice",
-              sort: 26,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "outStock",
-              customName: "出库金额（进价）",
-
-              children: [],
-              sysColumnName: "出库进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "outStockRetailPrice",
-              sort: 33,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "outStock",
-              customName: "出库售价金额",
-
-              children: [],
-              sysColumnName: "出库售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "出库",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "ending",
-          sort: 19,
-          show: true,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "期末",
-
-          children: [
-            {
-              name: "endingQuantity",
-              sort: 48,
-              show: true,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "ending",
-              customName: "期末数量",
-
-              children: [],
-              sysColumnName: "期末数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "endingAvgPrice",
-              sort: 49,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "ending",
-              customName: "期末均价",
-
-              children: [],
-              sysColumnName: "期末进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "endingTotalPrice",
-              sort: 50,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "ending",
-              customName: "期末金额（进价）",
-
-              children: [],
-              sysColumnName: "期末进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "endingRetailPrice",
-              sort: 63,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "ending",
-              customName: "期末售价金额",
-
-              children: [],
-              sysColumnName: "期末售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "期末",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "smallUnitRetailPrice",
-          sort: 20,
-          show: false,
-          width: 100,
-          drag: true,
-          align: "right",
-          parentCode: "",
-          customName: "小单位售价",
-
-          children: [],
-          sysColumnName: "小单位售价",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
-        },
-        {
-          name: "returnGoods",
-          sort: 21,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "退货",
-
-          children: [
-            {
-              name: "returnGoodsQuantity",
-              sort: 28,
-              show: false,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "returnGoods",
-              customName: "退货数量",
-
-              children: [],
-              sysColumnName: "退货数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "returnGoodsAvgPrice",
-              sort: 29,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "returnGoods",
-              customName: "退货均价",
-
-              children: [],
-              sysColumnName: "退货进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "returnGoodsTotalPrice",
-              sort: 30,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "returnGoods",
-              customName: "退货金额（进价）",
-
-              children: [],
-              sysColumnName: "退货进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "returnGoodsRetailPrice",
-              sort: 38,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "returnGoods",
-              customName: "退货售价金额",
-
-              children: [],
-              sysColumnName: "退货售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "退货",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "returnStock",
-          sort: 22,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "退库",
-
-          children: [
-            {
-              name: "returnStockQuantity",
-              sort: 32,
-              show: false,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "returnStock",
-              customName: "退库数量",
-
-              children: [],
-              sysColumnName: "退库数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "returnStockAvgPrice",
-              sort: 33,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "returnStock",
-              customName: "退库均价",
-
-              children: [],
-              sysColumnName: "退库进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "returnStockTotalPrice",
-              sort: 34,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "returnStock",
-              customName: "退库金额（进价）",
-
-              children: [],
-              sysColumnName: "退库进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "returnStockRetailPrice",
-              sort: 43,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "returnStock",
-              customName: "退库售价金额",
-
-              children: [],
-              sysColumnName: "退库售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "退库",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "reportLoss",
-          sort: 23,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "报损",
-
-          children: [
-            {
-              name: "reportLossQuantity",
-              sort: 36,
-              show: false,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "reportLoss",
-              customName: "报损数量",
-
-              children: [],
-              sysColumnName: "报损数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "reportLossAvgPrice",
-              sort: 37,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "reportLoss",
-              customName: "报损均价",
-
-              children: [],
-              sysColumnName: "报损进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "reportLossTotalPrice",
-              sort: 38,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "reportLoss",
-              customName: "报损金额（进价）",
-
-              children: [],
-              sysColumnName: "报损进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "reportLossRetailPrice",
-              sort: 48,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "reportLoss",
-              customName: "报损售价金额",
-
-              children: [],
-              sysColumnName: "报损售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "报损",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "reportOverflow",
-          sort: 24,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "报溢",
-
-          children: [
-            {
-              name: "reportOverflowQuantity",
-              sort: 40,
-              show: false,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "reportOverflow",
-              customName: "报溢数量",
-
-              children: [],
-              sysColumnName: "报溢数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "reportOverflowAvgPrice",
-              sort: 41,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "reportOverflow",
-              customName: "报溢均价",
-
-              children: [],
-              sysColumnName: "报溢进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "reportOverflowTotalPrice",
-              sort: 42,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "reportOverflow",
-              customName: "报溢金额（进价）",
-
-              children: [],
-              sysColumnName: "报溢进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "reportOverflowRetailPrice",
-              sort: 53,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "reportOverflow",
-              customName: "报溢售价金额",
-
-              children: [],
-              sysColumnName: "报溢售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "报溢",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "transfer",
-          sort: 25,
-          show: false,
-          width: 80,
-          drag: true,
-          align: "left",
-          parentCode: null,
-          customName: "调拨",
-
-          children: [
-            {
-              name: "transferQuantity",
-              sort: 44,
-              show: false,
-              width: 70,
-              drag: true,
-              align: "right",
-              parentCode: "transfer",
-              customName: "调拨数量",
-
-              children: [],
-              sysColumnName: "调拨数量",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "transferAvgPrice",
-              sort: 45,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "transfer",
-              customName: "调拨均价",
-
-              children: [],
-              sysColumnName: "调拨进货均价",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "transferTotalPrice",
-              sort: 46,
-              show: false,
-              width: 80,
-              drag: true,
-              align: "right",
-              parentCode: "transfer",
-              customName: "调拨金额（进价）",
-
-              children: [],
-              sysColumnName: "调拨进货金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            },
-            {
-              name: "transferRetailPrice",
-              sort: 58,
-              show: false,
-              width: 100,
-              drag: true,
-              align: "right",
-              parentCode: "transfer",
-              customName: "调拨售价金额",
-
-              children: [],
-              sysColumnName: "调拨售价金额",
-              isHide: false,
-              rowSpan: null,
-              colSpan: null
-            }
-          ],
-          sysColumnName: "调拨",
-          isHide: false,
-          rowSpan: null,
-          colSpan: 4
-        },
-        {
-          name: "manufacturerName",
-          sort: 26,
-          show: false,
-          width: 200,
-          drag: true,
-          align: "left",
-          parentCode: "",
-          customName: "生产厂商",
-
-          children: [],
-          sysColumnName: "生产厂商",
-          isHide: false,
-          rowSpan: null,
-          colSpan: null
+          title: "操作",
+          field: "id",
+          width: 250,
+          fixed: "right",
+          slots: {
+            default: "rowAction"
+          },
+          columnIndex: 12,
+          show: "",
+          align: "",
+          defaultTitle: "操作",
+          code: "",
+          _X_ROW_KEY: "row_53"
         }
       ];
 
@@ -1209,12 +344,13 @@ export default {
         }
       },
       proxyColumns: {
-        // props: {
-        //   list: "data.data",
-        //   show: "show",
-        //   align: "align",
-        //   fixed: "freeze"
-        // },
+        props: {
+          list: "data",
+          show: "show",
+          align: "align",
+          fixed: "fixed"
+        },
+        mergeColumns: false,
         params: {
           code: "goods"
         },
@@ -1223,7 +359,6 @@ export default {
         ajax: {
           query: json => {
             return new Promise(resolve => {
-              console.log(json);
               getColumns({
                 ...json,
                 code: "aaaa"
@@ -1233,7 +368,75 @@ export default {
             });
           }
         }
-      }
+      },
+      columns: [
+        {
+          title: "编号",
+          field: "code"
+        },
+        {
+          title: "名称",
+          field: "name"
+        },
+        {
+          title: "所属班级",
+          field: "squadName"
+        },
+        {
+          title: "状态",
+          field: "statusName",
+          slots: {
+            default: ({ row }) => {
+              if (row.status == 0) {
+                return [<a-badge status="default" text={row.statusName} />];
+              } else if (row.status == 1) {
+                return [<a-badge status="processing" text={row.statusName} />];
+              } else {
+                return [<a-badge status="success" text={row.statusName} />];
+              }
+            }
+          }
+        },
+        {
+          title: "培训开始时间",
+          field: "trainingBeginTime"
+        },
+        {
+          title: "培训结束时间",
+          field: "trainingEndTime"
+        },
+        {
+          title: "电话",
+          field: "phone"
+        },
+        {
+          title: "身份证号",
+          field: "idCardNo"
+        },
+        {
+          title: "性别",
+          field: "genderCode"
+        },
+        {
+          title: "籍贯",
+          field: "nativePlaceCode"
+        },
+        {
+          title: "生日",
+          field: "birthday"
+        },
+        {
+          title: "地址",
+          field: "address"
+        },
+        {
+          title: "操作",
+          field: "id",
+          width: 250,
+          fixed: "right",
+          slots: { default: "rowAction" }
+        }
+      ]
     };
   },
   created() {
