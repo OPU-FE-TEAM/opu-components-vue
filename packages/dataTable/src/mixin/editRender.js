@@ -790,6 +790,7 @@ const editRender = {
         let { rowIndex, row, column } = event;
         let field = column.field;
         let item = that.columnsIndexs[field];
+        if (!item) return;
         let itemRender = item.itemRender;
         if (itemRender) {
           event.field = field;
