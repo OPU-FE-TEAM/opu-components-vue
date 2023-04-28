@@ -39,6 +39,10 @@ export default {
       type: String,
       default: "data.url"
     },
+    responseBaseUrl: {
+      type: String,
+      default: ""
+    },
     maxSize: Number,
     dragger: Boolean
   },
@@ -69,6 +73,7 @@ export default {
         url = info.url;
       } else if (info.response) {
         url = utils.getObjData(this.responseUrlField, info.response);
+        url = this.responseBaseUrl + url;
       }
       const listeners = this.$listeners;
       if (!listeners.preview) {
