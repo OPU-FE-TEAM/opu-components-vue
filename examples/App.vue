@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import dataFormBase from "./dataForm/test";
+// import dataFormBase from "./dataForm/test";
 // import dataFormBase from "./dataForm/base";
-// import dataFormBase from "./dataForm/select";
+import dataFormBase from "./dataForm/select";
 import dataTableBase2 from "./dataTable/base";
 import dataTableBase1 from "./dataTable/data";
 
@@ -54,7 +54,7 @@ export default {
   },
   data() {
     return {
-      tab: 8,
+      tab: 1,
       locale: zh_CN
     };
   }

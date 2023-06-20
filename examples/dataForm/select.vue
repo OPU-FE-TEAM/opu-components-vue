@@ -78,7 +78,14 @@ export default {
               defaultField: "isSelected",
               valueField: "Id",
               labelField: "Text",
-              api: getSelectGroupData
+              api: getSelectGroupData,
+              mode: "multiple"
+            },
+            on: {
+              change: (e, rows) => {
+                console.log(e, "e");
+                console.log(rows, "rows");
+              }
             }
           }
         },

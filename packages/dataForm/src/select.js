@@ -162,13 +162,28 @@ export default {
     updateValue(value) {
       const { vF, optionsData, childrenField } = this;
       const optionsList = utils.treeTransArray(optionsData, childrenField);
-      const row = optionsList.find(p => p[vF] == value);
-      let pRow;
-      if (row && row._pValue) {
-        pRow = optionsList.find(p => p[vF] == row._pValue);
+      if (value instanceof Array) {
+        let rows = [];
+        for (let i = 0; i < value.length; i++) {
+          let item = value[i];
+          for (let j = 0; j < optionsList.length; j++) {
+            if (optionsList[j][vF] == item) {
+              rows.push(optionsList[j]);
+              break;
+            }
+          }
+        }
+        this.$emit("update", value, rows);
+        this.$emit("change", value, rows);
+      } else {
+        const row = optionsList.find(p => p[vF] == value);
+        let pRow;
+        if (row && row._pValue) {
+          pRow = optionsList.find(p => p[vF] == row._pValue);
+        }
+        this.$emit("update", value, row, pRow);
+        this.$emit("change", value, row, pRow);
       }
-      this.$emit("update", value, row, pRow);
-      this.$emit("change", value, row, pRow);
     },
     setOptionsData(data) {
       const options = handleItemPropsOptions(data, this);

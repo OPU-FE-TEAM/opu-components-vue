@@ -64,7 +64,7 @@ export default {
           showFooter
         }
       };
-      props.class = "vxeModal"
+      props.class = "vxeModal";
       props.ref = "modal";
       props.scopedSlots = {
         ...$scopedSlots,
