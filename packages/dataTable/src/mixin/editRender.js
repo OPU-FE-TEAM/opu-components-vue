@@ -1075,7 +1075,7 @@ const editRender = {
                   ...attr,
                   props: {
                     ...props,
-                    checked: row[field] == trueValue
+                    checked: utils.getObjData(field, row) == trueValue
                   },
                   on: {
                     ...ons,
