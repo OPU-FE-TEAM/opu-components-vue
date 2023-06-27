@@ -36,6 +36,10 @@ export default {
   components: {},
   props: {
     ...AutoCompleteProps,
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     renderName: {
       type: String,
       default: "a-auto-complete"
