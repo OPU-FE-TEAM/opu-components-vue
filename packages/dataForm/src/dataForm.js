@@ -1088,7 +1088,7 @@ export default {
         ) {
           return item;
         }
-        if (!item.itemRender.name) {
+        if (item.itemRender.name) {
           if (isFormPartRequest === true && !itemProps.api && itemProps.param) {
             itemProps.api = DEFAULTCONFIG.getSelectOptions.api;
           }
@@ -1577,7 +1577,7 @@ export default {
     }
   },
   render(h) {
-    const { form, formLayout, currentColspan, readonly, onSubmit } = this;
+    const { form, formLayout, currentColspan, readonly /*, onSubmit*/ } = this;
     // ant design form的layout属性
     const antdLayouts = ["horizontal", "vertical", "inline"];
     // form表单的参数
