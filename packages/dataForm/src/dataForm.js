@@ -1088,20 +1088,18 @@ export default {
         ) {
           return item;
         }
-        if (item.itemRender.name) {
-          if (isFormPartRequest === true && !itemProps.api && itemProps.param) {
-            itemProps.api = DEFAULTCONFIG.getSelectOptions.api;
-          }
-          if (itemProps.api) {
-            getItemPropsOptionsApiList.push({
-              field: field,
-              api: itemProps.api,
-              param: itemProps.param,
-              props: itemProps
-            });
-          } else if (itemProps.param) {
-            unifyApiGetOptions.push(item);
-          }
+        if (isFormPartRequest === true && !itemProps.api && itemProps.param) {
+          itemProps.api = DEFAULTCONFIG.getSelectOptions.api;
+        }
+        if (itemProps.api) {
+          getItemPropsOptionsApiList.push({
+            field: field,
+            api: itemProps.api,
+            param: itemProps.param,
+            props: itemProps
+          });
+        } else if (itemProps.param) {
+          unifyApiGetOptions.push(item);
         }
         let row = this.initOptionsItemIndex(item, index);
         if (row) {
