@@ -423,7 +423,7 @@ DataTable.setupConfig({
   sortConfig: {
     handleServerSortParams: e => {
       console.log(e);
-      return { aaaa: 123 };
+      return e;
     },
     notSortableFields: ["goodsCode"]
   }

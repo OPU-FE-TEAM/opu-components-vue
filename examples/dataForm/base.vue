@@ -300,6 +300,9 @@ export default {
         {
           field: "number",
           title: "数字",
+          option: {
+            rules: [{ required: true, message: "请输入代码!" }]
+          },
           // width: "200px",
           itemRender: {
             name: "a-input-number",

@@ -127,6 +127,7 @@ export default {
         on: {}
       }
     };
+    console.log(goodsItem);
     return {
       loading: false,
       headToolbar: {
@@ -134,30 +135,30 @@ export default {
           layout: "inline",
           titleWidth: "auto",
           items: [
-            goodsItem,
+            // goodsItem,
             {
               field: "keyword",
               title: "关键字",
-              folding: true,
+              // folding: true,
               itemRender: {}
             }
-          ],
-          advancedSearchModal: {
-            props: {
-              width: 800,
-              title: "高级搜索"
-            }
-          },
-          advancedSearchForm: {
-            props: {
-              layout: "flex",
-              colspan: 2
-            }
-          },
-          advancedSearchButtonProps: {
-            content: "高级搜索"
-          },
-          submitButtonProps: { content: "搜索" }
+          ]
+          // advancedSearchModal: {
+          //   props: {
+          //     width: 800,
+          //     title: "高级搜索"
+          //   }
+          // },
+          // advancedSearchForm: {
+          //   props: {
+          //     layout: "flex",
+          //     colspan: 2
+          //   }
+          // },
+          // advancedSearchButtonProps: {
+          //   content: "高级搜索"
+          // },
+          // submitButtonProps: { content: "搜索" }
         }
       },
       // proxyColumns: {

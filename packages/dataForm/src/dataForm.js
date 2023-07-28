@@ -384,7 +384,6 @@ function renderItemInput(item, h, _vm) {
       props.props.renderName = renderName;
       renderName = "options-component";
     }
-
     inputDom = h(renderName, props);
   }
 
@@ -1089,18 +1088,20 @@ export default {
         ) {
           return item;
         }
-        if (isFormPartRequest === true && !itemProps.api) {
-          itemProps.api = DEFAULTCONFIG.getSelectOptions.api;
-        }
-        if (itemProps.api) {
-          getItemPropsOptionsApiList.push({
-            field: field,
-            api: itemProps.api,
-            param: itemProps.param,
-            props: itemProps
-          });
-        } else if (itemProps.param) {
-          unifyApiGetOptions.push(item);
+        if (!item.itemRender.name) {
+          if (isFormPartRequest === true && !itemProps.api && itemProps.param) {
+            itemProps.api = DEFAULTCONFIG.getSelectOptions.api;
+          }
+          if (itemProps.api) {
+            getItemPropsOptionsApiList.push({
+              field: field,
+              api: itemProps.api,
+              param: itemProps.param,
+              props: itemProps
+            });
+          } else if (itemProps.param) {
+            unifyApiGetOptions.push(item);
+          }
         }
         let row = this.initOptionsItemIndex(item, index);
         if (row) {
@@ -1108,7 +1109,6 @@ export default {
         }
         return item;
       });
-
       this.itemsOptionsIndexs = itemsOptionsIndexs;
       this.optionsItemDataIndexs = optionsItemDataIndexs;
       this.unifyApiGetOptions = unifyApiGetOptions;
@@ -1578,6 +1578,7 @@ export default {
   },
   render(h) {
     const { form, formLayout, currentColspan, readonly, onSubmit } = this;
+    console.log(onSubmit);
     // ant design form的layout属性
     const antdLayouts = ["horizontal", "vertical", "inline"];
     // form表单的参数
@@ -1588,10 +1589,12 @@ export default {
         layout: antdLayouts.includes(formLayout) ? formLayout : null
       },
       class: ["data-form", formLayout],
-      style: {},
-      on: {
-        submit: onSubmit
-      }
+      style: {}
+      // on: {
+      //   submit: (a, b, c) => {
+      //     onSubmit(a, b, c);
+      //   }
+      // }
     };
     if (readonly) {
       formProps.class.push("readonly");

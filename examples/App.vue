@@ -9,22 +9,24 @@
       <pulldownTable v-else-if="tab == 6" />
       <dataTableJsx v-else-if="tab == 7" />
       <setColumns v-else-if="tab == 8" />
-      <dataTableBase1 v-else-if="tab == 9" />
+      <dataTableData v-else-if="tab == 9" />
       <modalDemo v-else-if="tab == 10" />
-      <dataTableBase2 v-else-if="tab == 11" />
+      <editTable v-else-if="tab == 11" />
+      <dataTableBase1 v-else-if="tab == 12" />
     </a-config-provider>
   </div>
 </template>
 
 <script>
-// import dataFormBase from "./dataForm/test";
+import dataFormBase from "./dataForm/test";
 // import dataFormBase from "./dataForm/base";
-import dataFormBase from "./dataForm/select";
-import dataTableBase2 from "./dataTable/base";
-import dataTableBase1 from "./dataTable/data";
+// import dataFormBase from "./dataForm/select";
+import dataTableBase from "./dataTable/base";
+import dataTableBase1 from "./dataTable/base1";
+import dataTableData from "./dataTable/data";
 
 // import dataTableBase from "./dataTable/Grid";
-import dataTableBase from "./dataTable/editTable";
+import editTable from "./dataTable/editTable";
 import dataTableJsx from "./dataTable/jsx";
 import setColumns from "./dataTable/setColumns.vue";
 
@@ -42,19 +44,20 @@ export default {
   components: {
     dataFormBase,
     dataTableBase,
+    dataTableBase1,
     crudTableBase,
     Cell,
     pageWraper,
     pulldownTable,
     dataTableJsx,
     setColumns,
-    dataTableBase1,
+    dataTableData,
     modalDemo,
-    dataTableBase2
+    editTable
   },
   data() {
     return {
-      tab: 2,
+      tab: 12,
       locale: zh_CN
     };
   }
