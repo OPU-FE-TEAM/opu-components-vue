@@ -1578,7 +1578,6 @@ export default {
   },
   render(h) {
     const { form, formLayout, currentColspan, readonly, onSubmit } = this;
-    console.log(onSubmit);
     // ant design form的layout属性
     const antdLayouts = ["horizontal", "vertical", "inline"];
     // form表单的参数
