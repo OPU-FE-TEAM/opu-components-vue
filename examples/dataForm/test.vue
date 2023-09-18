@@ -11,6 +11,7 @@
         autoFocus="name3"
         loadOptionsIdField="id"
         titleWidth="auto"
+        readonly
       >
       </DataForm>
       <a-button @click="onSetData">赋值</a-button>
@@ -233,6 +234,18 @@ export default {
         //   title: "shur",
         //   itemRender: {}
         // },
+        {
+          title: "证件类型",
+          field: "idType",
+          itemRender: {
+            name: "a-auto-complete",
+            props: {
+              api: getSelectData,
+              valueField: "text",
+              textField: "text"
+            }
+          }
+        },
         {
           field: "input",
           title: "输入框"
