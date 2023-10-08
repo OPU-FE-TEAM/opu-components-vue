@@ -951,7 +951,7 @@ const editRender = {
                 }
 
                 if (props.search) {
-                  props.saerch = (value, dataSource) => {
+                  props.search = (value, dataSource) => {
                     itemRender.props.search(value, dataSource, row, event);
                   };
                 }
