@@ -1018,11 +1018,17 @@ const editRender = {
                 };
                 break;
               case "a-time-picker":
+                var dateTimeValue = !props.value
+                  ? null
+                  : props.value.format
+                  ? props.value
+                  : moment(props.value, props.format || "HH:mm:ss");
                 elementAttribute = {
                   ...attr,
                   props: {
                     clearIcon: true,
-                    ...props
+                    ...props,
+                    value: dateTimeValue
                   },
                   style: {
                     width: "100%",
