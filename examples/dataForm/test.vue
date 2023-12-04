@@ -11,7 +11,6 @@
         autoFocus="name3"
         loadOptionsIdField="id"
         titleWidth="auto"
-        readonly
       >
       </DataForm>
       <a-button @click="onSetData">赋值</a-button>
@@ -324,6 +323,19 @@ export default {
             props: {
               mode: "year",
               format: "YYYY"
+            }
+          }
+        },
+        {
+          title: "月份",
+          field: "month",
+          itemRender: {
+            name: "a-date-picker",
+            // YearPicker
+            // name: "a-date-picker",
+            props: {
+              mode: "month",
+              format: "MM"
             }
           }
         },

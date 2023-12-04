@@ -47,7 +47,7 @@ export default {
           ...ons,
           change: this.updateValue,
           panelChange: e => {
-            if (propsData.mode == "year") {
+            if (["year", "month"].includes(propsData.mode)) {
               this.updateValue(e);
             }
           },
