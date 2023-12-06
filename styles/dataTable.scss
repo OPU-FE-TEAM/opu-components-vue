@@ -52,3 +52,17 @@
     border:none;
 }
 
+.vxe-tools--wrapper{
+    flex-shrink: 0;
+    .ant-form-inline{
+        .ant-form-item{
+            .ant-form-item-label,.data-form-item-title,.ant-form-item-control,.data-form-buttons{
+                line-height:32px;
+            }
+        } 
+    }
+}
+
+.data-table .vxe-table .vxe-sort--desc-btn{
+    bottom: -0.1em;
+}
