@@ -6,6 +6,7 @@ export const getBlocks = (format = "YYYY-MM-DD") => {
   let formatArr = format.split("");
   let number = 0;
   let formatItemStr = "";
+
   formatArr.forEach((key, index) => {
     if (formatTags.includes(key)) {
       number++;

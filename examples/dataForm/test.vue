@@ -664,6 +664,7 @@ export default {
       console.log(d);
     },
     onSetData() {
+      debugger;
       this.$refs.dataForm.setData({
         pulldown: "6666下拉"
       });
