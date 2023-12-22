@@ -44,6 +44,7 @@ export default {
       type: String,
       default: "a-auto-complete"
     },
+    slots: [Object],
     valueField: String,
     labelField: String,
     value: [Number, String, Object, Array],
@@ -200,16 +201,20 @@ export default {
     }
   },
   render(h) {
-    const { componentProps, value, $slots } = this;
+    const { componentProps, value } = this;
 
     let { selectOptions, dataSource } = this.autoCompleteFilterRender(
       componentProps
     );
 
-    let slots = Object.keys($slots).map(name => (
-      <template slot={name}>{$slots[name]}</template>
-    ));
-    if (!$slots.dataSource) {
+    let slots = [];
+    if (componentProps.props.slots && componentProps.props.slots) {
+      slots = Object.keys(componentProps.props.slots).map(name => (
+        <template slot={name}>
+          {componentProps.props.slots[name](this.optionsData)}
+        </template>
+      ));
+    } else {
       slots.push(<template slot="dataSource">{selectOptions}</template>);
     }
     return h(
