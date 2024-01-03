@@ -492,12 +492,12 @@ const editRender = {
                 enterItems[p.fixed || "center"].push(p);
               }
 
-              p.slots.default = e => {
+              p.slots.default = event => {
                 return [
                   <div
                     {...{
                       on: {
-                        click: event => {
+                        click: e => {
                           let { currentCell } = that;
                           if (currentCell) {
                             let {
@@ -511,18 +511,18 @@ const editRender = {
                               columnIndex === currentColumnIndex &&
                               rowIndex === currentRowIndex
                             ) {
-                              event.stopPropagation();
+                              e.stopPropagation();
                               // event.preventDefault();
                               return;
                             }
                           }
                         },
-                        keyup: async event => {
+                        keyup: async e => {
                           if (itemRender.on.keyup) {
                             let res = await itemRender.on.keyup(e, event);
                             if (res === false) return;
                           }
-                          if (name == "a-select" && event.keyCode == 13) {
+                          if (name == "a-select" && e.keyCode == 13) {
                             let {
                               currentCell: { rowIndex, row }
                             } = that;
@@ -540,11 +540,11 @@ const editRender = {
                       style: "display:flex;align-items: center;"
                     }}
                   >
-                    {itemRender.before && itemRender.before(e)}
+                    {itemRender.before && itemRender.before(event)}
                     <div style="flex:1;max-width: 100%;">
-                      {that.editSlotRender(name)(e)}
+                      {that.editSlotRender(name)(event)}
                     </div>
-                    {itemRender.after && itemRender.after(e)}
+                    {itemRender.after && itemRender.after(event)}
                   </div>
                 ];
               };
