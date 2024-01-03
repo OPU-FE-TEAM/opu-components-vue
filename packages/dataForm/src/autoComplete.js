@@ -208,7 +208,7 @@ export default {
     );
 
     let slots = [];
-    if (componentProps.props.slots && componentProps.props.slots) {
+    if (componentProps.props && componentProps.props.slots) {
       slots = Object.keys(componentProps.props.slots).map(name => (
         <template slot={name}>
           {componentProps.props.slots[name](this.optionsData)}
