@@ -663,14 +663,15 @@ const editRender = {
       let data = this.data || dataGrid.getData();
       let row = data[rowIndex];
       if (row && pressEnterItems.length > 0) {
+        let e = {
+          row,
+          rowIndex,
+          columnIndex: pressEnterItems[0].columnIndex,
+          field: pressEnterItems[0].field
+        };
         dataGrid.setCurrentRow(row);
         setTimeout(() => {
-          this.onEditTableCurrentRowCellClick({
-            row,
-            rowIndex,
-            columnIndex: pressEnterItems[0].columnIndex,
-            field: pressEnterItems[0].field
-          });
+          this.onEditTableCurrentRowCellClick(e);
         }, 50);
       }
     },
@@ -693,17 +694,18 @@ const editRender = {
         if (data.length == rowIndex) {
           this.$emit("enterLastItem");
         } else {
+          let e = {
+            row,
+            rowIndex,
+            columnIndex: pressEnterItems[0].columnIndex,
+            field: pressEnterItems[0].field
+          };
           row = data[rowIndex];
           that.$refs.dataGrid.setCurrentRow(row);
-          that.onEditTableCurrentRowCellClick(
-            {
-              row,
-              rowIndex,
-              columnIndex: pressEnterItems[0].columnIndex,
-              field: pressEnterItems[0].field
-            },
-            true
-          );
+          that.onEditTableCurrentRowCellClick(e, true);
+          if (!this.editLine) {
+            that.itemFocus(e, true);
+          }
         }
       } else {
         let nextItem = pressEnterItems[index + 1];
