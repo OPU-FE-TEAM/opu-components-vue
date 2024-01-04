@@ -275,6 +275,13 @@ const editRender = {
       return this.editDefaultOption;
     },
     /**
+     * @description: 获取可编辑数据列
+     * @return {*}
+     */
+    getPressEnterItems() {
+      return this.pressEnterItems;
+    },
+    /**
      * @description: 表格编辑行点击
      * @param {*}
      * @return {*}
@@ -677,10 +684,11 @@ const editRender = {
     },
     /**
      * @description: 表格编辑 选中元素 按下enter
-     * @param {*}
+     * @param {*} event
+     * @param {*} e
      * @return {*}
      */
-    pressEnterItem(event) {
+    async pressEnterItem(event) {
       let that = this;
       let { pressEnterItems } = that;
       let { rowIndex, row, field } = event;
@@ -986,6 +994,10 @@ const editRender = {
                         let res = await itemRender.on.inputPressEnter(e, event);
                         if (res === false) return;
                       }
+                      if (itemRender.on.keyup) {
+                        let res = await itemRender.on.keyup(e, event);
+                        if (res === false) return;
+                      }
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
@@ -1010,6 +1022,10 @@ const editRender = {
                     inputPressEnter: async e => {
                       if (itemRender.on.inputPressEnter) {
                         let res = await itemRender.on.inputPressEnter(e, event);
+                        if (res === false) return;
+                      }
+                      if (itemRender.on.keyup) {
+                        let res = await itemRender.on.keyup(e, event);
                         if (res === false) return;
                       }
                       if (e.keyCode == 13) {
@@ -1043,6 +1059,10 @@ const editRender = {
                         let res = await itemRender.on.inputPressEnter(e, event);
                         if (res === false) return;
                       }
+                      if (itemRender.on.keyup) {
+                        let res = await itemRender.on.keyup(e, event);
+                        if (res === false) return;
+                      }
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
@@ -1066,6 +1086,10 @@ const editRender = {
                     inputPressEnter: async e => {
                       if (itemRender.on.inputPressEnter) {
                         let res = await itemRender.on.inputPressEnter(e, event);
+                        if (res === false) return;
+                      }
+                      if (itemRender.on.keyup) {
+                        let res = await itemRender.on.keyup(e, event);
                         if (res === false) return;
                       }
                       if (e.keyCode == 13) {
