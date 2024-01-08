@@ -1,8 +1,8 @@
 <template>
   <div>
+    <!-- layout="inline" -->
     <DataForm
       ref="dataForm"
-      layout="inline"
       :items="items"
       :loading="loading"
       isClearUndefinedValue
@@ -57,17 +57,17 @@ export default {
       a,
       loading: true,
       items: [
-        {
-          field: "checkOutDate1",
-          title: "日期范围",
-          itemRender: {
-            name: "a-range-picker-split",
-            props: {
-              allowClear: true,
-              hasLimit: false
-            }
-          }
-        },
+        // {
+        //   field: "checkOutDate1",
+        //   title: "日期范围",
+        //   itemRender: {
+        //     name: "a-range-picker-split",
+        //     props: {
+        //       allowClear: true,
+        //       hasLimit: false
+        //     }
+        //   }
+        // },
         {
           field: "ordinary1",
           title: "请求下拉123",
@@ -76,9 +76,11 @@ export default {
             props: {
               size: "small",
               defaultField: "isSelected",
+              dataField: "data",
               valueField: "Id",
               labelField: "Text",
-              api: getSelectGroupData,
+              // api: getSelectGroupData,
+              searchApi: getSelectGroupData,
               mode: "multiple"
             },
             on: {
@@ -88,58 +90,58 @@ export default {
               }
             }
           }
-        },
-        {
-          title: "部门",
-          field: "departId123",
-          itemRender: {
-            name: "a-tree-select",
-            props: {
-              treeData: [
-                {
-                  key: "874199840383303680",
-                  title: "卤味",
-                  isDeleted: true,
-                  simpleCode: "LW,HK",
-                  disabled: true,
-                  children: [
-                    {
-                      key: "874199879860092928",
-                      title: "肉类",
-                      isDeleted: false,
-                      simpleCode: "RL,MO",
-                      children: []
-                    },
-                    {
-                      key: "878177788215951360",
-                      title: "蔬菜",
-                      isDeleted: false,
-                      simpleCode: "SC,AA",
-                      children: []
-                    }
-                  ]
-                },
-                {
-                  key: "874205575305494528",
-                  title: "地方小炒",
-                  isDeleted: false,
-                  simpleCode: "DFXC,FYIO",
-                  children: [
-                    {
-                      key: "874205640732442624",
-                      title: "桂林",
-                      isDeleted: false,
-                      simpleCode: "GL,SS",
-                      disabled: true,
-                      children: []
-                    }
-                  ]
-                }
-              ]
-            },
-            treeDefaultExpandAll: true
-          }
         }
+        // {
+        //   title: "部门",
+        //   field: "departId123",
+        //   itemRender: {
+        //     name: "a-tree-select",
+        //     props: {
+        //       treeData: [
+        //         {
+        //           key: "874199840383303680",
+        //           title: "卤味",
+        //           isDeleted: true,
+        //           simpleCode: "LW,HK",
+        //           disabled: true,
+        //           children: [
+        //             {
+        //               key: "874199879860092928",
+        //               title: "肉类",
+        //               isDeleted: false,
+        //               simpleCode: "RL,MO",
+        //               children: []
+        //             },
+        //             {
+        //               key: "878177788215951360",
+        //               title: "蔬菜",
+        //               isDeleted: false,
+        //               simpleCode: "SC,AA",
+        //               children: []
+        //             }
+        //           ]
+        //         },
+        //         {
+        //           key: "874205575305494528",
+        //           title: "地方小炒",
+        //           isDeleted: false,
+        //           simpleCode: "DFXC,FYIO",
+        //           children: [
+        //             {
+        //               key: "874205640732442624",
+        //               title: "桂林",
+        //               isDeleted: false,
+        //               simpleCode: "GL,SS",
+        //               disabled: true,
+        //               children: []
+        //             }
+        //           ]
+        //         }
+        //       ]
+        //     },
+        //     treeDefaultExpandAll: true
+        //   }
+        // }
       ]
     };
   },

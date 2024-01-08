@@ -19,8 +19,8 @@
 
 <script>
 // import dataFormBase from "./dataForm/test";
-import dataFormBase from "./dataForm/base";
-// import dataFormBase from "./dataForm/select";
+// import dataFormBase from "./dataForm/base";
+import dataFormBase from "./dataForm/select";
 import dataTableBase from "./dataTable/base";
 import dataTableBase1 from "./dataTable/base1";
 import dataTableData from "./dataTable/data";
@@ -30,8 +30,8 @@ import editTable from "./dataTable/editTable";
 import dataTableJsx from "./dataTable/jsx";
 import setColumns from "./dataTable/setColumns.vue";
 
-import crudTableBase from "./crudTable/index1";
-// import crudTableBase from "./crudTable/base";
+// import crudTableBase from "./crudTable/index1";
+import crudTableBase from "./crudTable/base";
 import Cell from "./other/cell";
 import pageWraper from "./other/pageWraper";
 import pulldownTable from "./other/pulldownTable";

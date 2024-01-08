@@ -52,7 +52,12 @@ export default {
     },
     childrenField: String,
     renderOptionLabel: Function,
-    optionsFilter: Function
+    optionsFilter: Function,
+    searchTrigger: {
+      type: String, //search || focus
+      default: "focus"
+    },
+    searchApi: Function
   },
   model: {
     prop: "value",
@@ -61,7 +66,8 @@ export default {
   data() {
     return {
       optionsData: [],
-      hasGroup: false
+      hasGroup: false,
+      fetching: null
     };
   },
   computed: {
@@ -102,7 +108,8 @@ export default {
       const props = {
         props: {
           ...propsData,
-          value: currentValue
+          value: currentValue,
+          options: null
           // getPopupContainer: triggerNode => triggerNode.parentNode
         },
         on: {
@@ -156,7 +163,7 @@ export default {
     init() {
       const { options } = this;
       if (options && options.length) {
-        this.optionsData = handleItemPropsOptions(options, this);
+        this.setOptionsData(options);
       }
     },
     updateValue(value) {
@@ -186,9 +193,14 @@ export default {
       }
     },
     setOptionsData(data) {
-      const options = handleItemPropsOptions(data, this);
-      this.optionsData = options;
-      return options;
+      if (this.optionsData !== data) {
+        const options = handleItemPropsOptions(data, this);
+        this.optionsData = options;
+        this.fetching = null;
+        return options;
+      } else {
+        return data;
+      }
     },
     getOptionsData() {
       return this.optionsData;
@@ -207,6 +219,55 @@ export default {
             box[0].click();
           }
         }
+      }
+    },
+    onSearch(e, type) {
+      return new Promise((resolve, reject) => {
+        console.log(this.fetching);
+        if (
+          this.fetching === null &&
+          this.searchTrigger == type &&
+          this.searchApi &&
+          this.optionsData.length == 0
+        ) {
+          this.fetching = true;
+          this.searchApi(e)
+            .then(res => {
+              this.fetching = false;
+              let data = utils.getObjData(this.dataField, res);
+              this.optionsData = handleItemPropsOptions(data, this);
+              resolve(data);
+            })
+            .catch(() => {
+              this.fetching = false;
+              reject();
+            });
+        } else {
+          resolve(this.optionsData);
+        }
+      });
+    },
+    renderSelectChildren(h) {
+      if (this.fetching) {
+        return [<a-spin slot="notFoundContent" size="small" />];
+      } else {
+        const {
+          componentProps,
+          renderOptGroup,
+          renderOptionLabel,
+          renderOptionItems
+        } = this;
+        const optGroup = renderOptGroup(h);
+        let optionItems = "";
+        if (
+          !optGroup &&
+          renderOptionLabel &&
+          utils.isFunction(renderOptionLabel)
+        ) {
+          optionItems = renderOptionItems(h);
+          componentProps.props.options = null;
+        }
+        return [optGroup, optionItems];
       }
     },
     renderOptGroup(h) {
@@ -243,33 +304,30 @@ export default {
     }
   },
   render(h) {
-    const {
-      componentProps,
-      renderOptGroup,
-      renderOptionLabel,
-      renderOptionItems
-    } = this;
-    const optGroup = renderOptGroup(h);
-    let optionItems = "";
-    if (optGroup) {
-      componentProps.props.options = null;
-    } else if (renderOptionLabel && utils.isFunction(renderOptionLabel)) {
-      optionItems = renderOptionItems(h);
-      componentProps.props.options = null;
-    }
+    const { componentProps } = this;
 
     return h(
       "a-select",
       {
         ref: "inputComponent",
         props: {
-          ...componentProps.props
+          ...componentProps.props,
+          search: async e => {
+            await this.onSearch(e, "search");
+            componentProps.props.search &&
+              componentProps.props.search(e, this.optionsData);
+          }
         },
         on: {
-          ...componentProps.on
+          ...componentProps.on,
+          focus: async e => {
+            await this.onSearch(e, "focus");
+            componentProps.on.focus &&
+              componentProps.on.focus(e, this.optionsData);
+          }
         }
       },
-      [optGroup, optionItems]
+      this.renderSelectChildren(h)
     );
   }
 };

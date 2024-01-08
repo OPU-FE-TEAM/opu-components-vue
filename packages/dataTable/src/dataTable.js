@@ -125,6 +125,7 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
     delete p.folding;
     return p;
   });
+
   const formProps =
     cloneSearchConfig.advancedSearchForm &&
     cloneSearchConfig.advancedSearchForm.props
@@ -994,13 +995,31 @@ export default {
     },
     onAdvancedSubmit() {
       const { $refs, onAdvancedcancel } = this;
-      $refs.advancedSearch.validateFields((err, values) => {
-        //同步值到headform
-        const headSearchForm = this.$refs.headSearch;
-        headSearchForm.setData(values);
-        this.searchData = values;
-        this.query();
-        onAdvancedcancel();
+      const searchConfig = this.headToolbar.search;
+      $refs.advancedSearch.validateFields(async (err, values) => {
+        if (!err) {
+          try {
+            if (
+              searchConfig &&
+              searchConfig.advancedSearchModal &&
+              searchConfig.advancedSearchModal.on &&
+              searchConfig.advancedSearchModal.on.submit
+            ) {
+              let res = await searchConfig.advancedSearchModal.on.submit(
+                values
+              );
+              if (res === false) return;
+            }
+            //同步值到headform
+            const headSearchForm = this.$refs.headSearch;
+            headSearchForm.setData(values);
+            this.searchData = values;
+            this.query();
+            onAdvancedcancel();
+          } catch (error) {
+            console.error(error);
+          }
+        }
       });
     },
     onAdvancedcancel() {

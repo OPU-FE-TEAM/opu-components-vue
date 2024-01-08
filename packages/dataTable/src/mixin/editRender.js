@@ -574,66 +574,68 @@ const editRender = {
                   config.defaultProps.select.searchFields ||
                   [];
 
-                if (
-                  !(
-                    editFieldList[field] &&
-                    props.api == editFieldList[field].api &&
-                    utils.isEqual(editFieldList[field].param, props.param)
-                  )
-                ) {
-                  editFieldList[field] = {
-                    valueField,
-                    labelField,
-                    childrenField,
-                    defaultField,
-                    searchFields,
-                    api: props.api,
-                    param: props.param
-                  };
-
-                  if (props.options) {
-                    editOptions[field] = cloneDeep(props.options).map(o => {
-                      o = that.optionDataRender(o, field, "", {
-                        [field]: {
-                          valueField,
-                          labelField,
-                          childrenField
-                        }
-                      });
-                      if (o[defaultField]) {
-                        editDefaultOption[field] = p.value;
-                      }
-                      return o;
-                    });
-                  } else if (
-                    !props.optionsField &&
-                    (props.api || props.dataField || props.param) &&
-                    (!isCacheOption || !editOptions[field] || isAll)
+                if (!props.searchApi && (props.api || props.param)) {
+                  if (
+                    !(
+                      editFieldList[field] &&
+                      props.api == editFieldList[field].api &&
+                      utils.isEqual(editFieldList[field].param, props.param)
+                    )
                   ) {
-                    let item = {
-                      field,
-                      api: props.api,
+                    editFieldList[field] = {
                       valueField,
                       labelField,
                       childrenField,
-                      dataField,
                       defaultField,
-                      param: props.param || {}
+                      searchFields,
+                      api: props.api,
+                      param: props.param
                     };
-                    if (props.api) {
-                      otherApiList.push(item);
-                    } else {
-                      for (let key in props.param) {
-                        if (
-                          unifyApiList.param[key] &&
-                          utils.isArray(unifyApiList.param[key])
-                        ) {
-                          unifyApiList.param[key].push(props.param[key]);
-                        } else {
-                          unifyApiList.param[key] = [props.param[key]];
+
+                    if (props.options) {
+                      editOptions[field] = cloneDeep(props.options).map(o => {
+                        o = that.optionDataRender(o, field, "", {
+                          [field]: {
+                            valueField,
+                            labelField,
+                            childrenField
+                          }
+                        });
+                        if (o[defaultField]) {
+                          editDefaultOption[field] = p.value;
                         }
+                        return o;
+                      });
+                    } else if (
+                      !props.optionsField &&
+                      (props.api || props.dataField || props.param) &&
+                      (!isCacheOption || !editOptions[field] || isAll)
+                    ) {
+                      let item = {
+                        field,
+                        api: props.api,
+                        valueField,
+                        labelField,
+                        childrenField,
+                        dataField,
+                        defaultField,
+                        param: props.param || {}
+                      };
+                      if (props.api) {
+                        otherApiList.push(item);
+                      } else {
+                        for (let key in props.param) {
+                          if (
+                            unifyApiList.param[key] &&
+                            utils.isArray(unifyApiList.param[key])
+                          ) {
+                            unifyApiList.param[key].push(props.param[key]);
+                          } else {
+                            unifyApiList.param[key] = [props.param[key]];
+                          }
+                        }
+                        unifyApiList.fields.push(item);
                       }
-                      unifyApiList.fields.push(item);
                     }
                   }
                 }
