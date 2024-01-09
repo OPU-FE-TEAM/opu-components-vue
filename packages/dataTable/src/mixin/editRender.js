@@ -826,6 +826,7 @@ const editRender = {
             return [<div class={`edit-input ${name}`}>{value}</div>];
           } else {
             props = {
+              allowClear: true,
               size: that.editItemSize,
               ...props,
               value: utils.getObjData(field, row),
@@ -1046,7 +1047,6 @@ const editRender = {
                 elementAttribute = {
                   ...attr,
                   props: {
-                    clearIcon: true,
                     ...props,
                     value: dateTimeValue
                   },

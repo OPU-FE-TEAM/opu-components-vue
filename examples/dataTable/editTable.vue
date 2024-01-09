@@ -103,13 +103,13 @@ let defaultRow = {
   name: "123",
   number: "333",
   orderType: "",
-  vip: "",
+  vip: undefined,
   input: "",
   market: "",
   apiSelect: "",
   apiSelect1: "",
   date: moment(),
-  oneSelect: "",
+  oneSelect: [],
   oneSelect1: "",
   oneSelectList: [
     { value: 11, label: "广西" },
@@ -430,14 +430,19 @@ export default {
           field: "oneSelect",
           align: "left",
           title: "行1内数据下拉",
-          minWidth: 150,
+          minWidth: 200,
           fixed: "left",
           itemRender: {
             name: "ASelect",
             props: {
-              optionsField: "oneSelectList",
-              valueField: "value",
-              labelField: "label",
+              mode: "multiple",
+              dataField: "data.commissioncode",
+              searchApi: () => {
+                return getTableSelectData({ code: "commissioncode" });
+              },
+              // optionsField: "oneSelectList",
+              // valueField: "value",
+              // labelField: "label",
               default: ({ row }) => {
                 return [
                   <span style="background:red;color:#fff">
@@ -670,13 +675,13 @@ export default {
           name: "123",
           number: "333",
           orderType: "",
-          vip: "",
+          vip: undefined,
           input: "",
           market: "",
           apiSelect: "",
           apiSelect1: "",
           date: moment(),
-          oneSelect: "",
+          oneSelect: [],
           oneSelect1: "",
           oneSelectList: [
             { value: 11, label: "广西" },
@@ -737,14 +742,14 @@ export default {
         name: "123",
         number: "333",
         orderType: "",
-        vip: "",
+        vip: undefined,
         input: "",
         market: "",
         market11: "",
         apiSelect: "",
         apiSelect1: "",
         date: moment(),
-        oneSelect: "",
+        oneSelect: [],
         oneSelect1: "",
         oneSelectList: [
           { value: 11, label: "广西" },
