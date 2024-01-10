@@ -126,7 +126,6 @@ export default {
           currentValue = value.map(p => p + "");
         }
       }
-      console.log(currentValue);
       const props = {
         props: {
           ...propsData,
@@ -191,7 +190,6 @@ export default {
     updateValue(e) {
       const { vF, optionsData, childrenField, labelInValue } = this;
       const optionsList = utils.treeTransArray(optionsData, childrenField);
-      console.log(e);
       if (e instanceof Array) {
         let rows = [];
         for (let i = 0; i < e.length; i++) {
@@ -248,7 +246,6 @@ export default {
     },
     onSearch(e, type) {
       return new Promise((resolve, reject) => {
-        console.log(this.fetching);
         if (
           this.fetching === null &&
           this.searchTrigger == type &&
