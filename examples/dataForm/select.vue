@@ -47,6 +47,7 @@ function getSelectGroupData() {
     }, 500);
   });
 }
+getSelectGroupData();
 
 export default {
   components: {
@@ -57,40 +58,40 @@ export default {
       a,
       loading: true,
       items: [
-        // {
-        //   field: "checkOutDate1",
-        //   title: "日期范围",
-        //   itemRender: {
-        //     name: "a-range-picker-split",
-        //     props: {
-        //       allowClear: true,
-        //       hasLimit: false
-        //     }
-        //   }
-        // },
         {
-          field: "ordinary1",
-          title: "请求下拉123",
+          field: "checkOutDate1",
+          title: "日期范围",
           itemRender: {
-            name: "a-select",
+            name: "a-range-picker-split",
             props: {
-              size: "small",
-              defaultField: "isSelected",
-              dataField: "data",
-              valueField: "Id",
-              labelField: "Text",
-              // api: getSelectGroupData,
-              searchApi: getSelectGroupData,
-              mode: "multiple"
-            },
-            on: {
-              change: (e, rows) => {
-                console.log(e, "e");
-                console.log(rows, "rows");
-              }
+              allowClear: true,
+              showTime: { format: "HH:mm:ss" }
             }
           }
         }
+        // {
+        //   field: "ordinary1",
+        //   title: "请求下拉123",
+        //   itemRender: {
+        //     name: "a-select",
+        //     props: {
+        //       size: "small",
+        //       defaultField: "isSelected",
+        //       dataField: "data",
+        //       valueField: "Id",
+        //       labelField: "Text",
+        //       // api: getSelectGroupData,
+        //       searchApi: getSelectGroupData,
+        //       mode: "multiple"
+        //     },
+        //     on: {
+        //       change: (e, rows) => {
+        //         console.log(e, "e");
+        //         console.log(rows, "rows");
+        //       }
+        //     }
+        //   }
+        // }
         // {
         //   title: "部门",
         //   field: "departId123",

@@ -926,6 +926,12 @@ const editRender = {
                   );
                   delete props.optionsFilter;
                 }
+
+                if (props.searchApi) {
+                  props.searchApi = e => {
+                    return itemRender.props.searchApi(e, event);
+                  };
+                }
                 elementAttribute = {
                   ...attr,
                   props: {

@@ -100,11 +100,33 @@ export default {
         };
       });
       let currentValue = value;
-      if (value && utils.isNumber(value)) {
-        currentValue = value + "";
-      } else if (value && utils.isArray(value)) {
-        currentValue = value.map(p => p + "");
+      if (value) {
+        if (propsData.labelInValue) {
+          if (utils.isArray(value)) {
+            value.forEach(p => {
+              if (!p.label) {
+                p.label = p[lF];
+              }
+              if (!p.key) {
+                p.key = p[vF];
+              }
+            });
+          } else {
+            if (!value.label) {
+              value.label = value[lF];
+            }
+            if (!value.key) {
+              value.key = value[vF];
+            }
+          }
+          currentValue = value;
+        } else if (utils.isNumber(value)) {
+          currentValue = value + "";
+        } else if (utils.isArray(value)) {
+          currentValue = value.map(p => p + "");
+        }
       }
+      console.log(currentValue);
       const props = {
         props: {
           ...propsData,
@@ -166,13 +188,15 @@ export default {
         this.setOptionsData(options);
       }
     },
-    updateValue(value) {
-      const { vF, optionsData, childrenField } = this;
+    updateValue(e) {
+      const { vF, optionsData, childrenField, labelInValue } = this;
       const optionsList = utils.treeTransArray(optionsData, childrenField);
-      if (value instanceof Array) {
+      console.log(e);
+      if (e instanceof Array) {
         let rows = [];
-        for (let i = 0; i < value.length; i++) {
-          let item = value[i];
+        for (let i = 0; i < e.length; i++) {
+          let item = e[i];
+          if (labelInValue) item = item.key;
           for (let j = 0; j < optionsList.length; j++) {
             if (optionsList[j][vF] == item) {
               rows.push(optionsList[j]);
@@ -180,16 +204,17 @@ export default {
             }
           }
         }
-        this.$emit("update", value, rows);
-        this.$emit("change", value, rows);
+        this.$emit("update", e, rows);
+        this.$emit("change", e, rows);
       } else {
+        const value = labelInValue && e ? e.key : e;
         const row = optionsList.find(p => p[vF] == value);
         let pRow;
         if (row && row._pValue) {
           pRow = optionsList.find(p => p[vF] == row._pValue);
         }
-        this.$emit("update", value, row, pRow);
-        this.$emit("change", value, row, pRow);
+        this.$emit("update", e, row, pRow);
+        this.$emit("change", e, row, pRow);
       }
     },
     setOptionsData(data) {
@@ -305,7 +330,6 @@ export default {
   },
   render(h) {
     const { componentProps } = this;
-
     return h(
       "a-select",
       {

@@ -89,6 +89,8 @@ export default {
   },
   methods: {
     updateValue(value) {
+      this.inputValue =
+        value && value.format ? value.format(this.currentFormat) : "";
       this.$emit("update", value);
       this.$emit("change", value);
     },
@@ -118,6 +120,7 @@ export default {
         this.currentFormat
       );
       const newVal = moment(val, this.currentFormat);
+
       if (newVal.format(this.currentFormat) !== "Invalid date") {
         this.updateValue(newVal);
       }
