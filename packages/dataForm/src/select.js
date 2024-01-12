@@ -183,18 +183,22 @@ export default {
   methods: {
     init() {
       const { options } = this;
-      if (options && options.length) {
+      if (options) {
         this.setOptionsData(options);
       }
     },
     updateValue(e) {
-      const { vF, optionsData, childrenField, labelInValue } = this;
+      const { vF, lF, optionsData, childrenField, labelInValue } = this;
       const optionsList = utils.treeTransArray(optionsData, childrenField);
       if (e instanceof Array) {
         let rows = [];
         for (let i = 0; i < e.length; i++) {
           let item = e[i];
-          if (labelInValue) item = item.key;
+          if (labelInValue) {
+            item[vF] = item.key;
+            item[lF] = item.label;
+            item = item.key;
+          }
           for (let j = 0; j < optionsList.length; j++) {
             if (optionsList[j][vF] == item) {
               rows.push(optionsList[j]);
@@ -205,7 +209,12 @@ export default {
         this.$emit("update", e, rows);
         this.$emit("change", e, rows);
       } else {
-        const value = labelInValue && e ? e.key : e;
+        let value = e;
+        if (e && labelInValue) {
+          e[vF] = e.key;
+          e[lF] = e.label;
+          value = e.key;
+        }
         const row = optionsList.find(p => p[vF] == value);
         let pRow;
         if (row && row._pValue) {

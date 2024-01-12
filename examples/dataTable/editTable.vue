@@ -153,6 +153,10 @@ export default {
       };
       longColumns.push(row);
     }
+    let data = [];
+    for (let i = 0; i < 5; i++) {
+      data.push(cloneDeep(defaultRow));
+    }
     return {
       longColumns,
       columns: [
@@ -174,85 +178,85 @@ export default {
         //     }
         //   }
         // },
-        // {
-        //   field: "bind",
-        //   title: "合并列",
-        //   children: [
-        //     {
-        //       field: "market",
-        //       align: "left",
-        //       title: "市场",
-        //       minWidth: 150,
-        //       itemRender: {
-        //         name: "ASelect",
-        //         props: {
-        //           param: { code: "Market" },
-        //           dataField: "data.Market",
-        //           default: ({ row }) => {
-        //             return [<span style="color:red;">{row.market}</span>];
-        //           }
-        //         },
-        //         on: {
-        //           // keyup: () => {
-        //           //   this.onFocusEditRow();
-        //           //   return false;
-        //           // }
-        //         }
-        //       }
-        //     },
-        //     {
-        //       field: "pulldown",
-        //       title: "下拉面板",
-        //       minWidth: 150,
-        //       itemRender: {
-        //         name: "pulldown-table",
-        //         props: {
-        //           valueField: "name",
-        //           textField: "age",
-        //           table: {
-        //             props: {
-        //               columns: [
-        //                 { type: "checkbox", width: 50 },
-        //                 { type: "seq", title: "Number", width: 80 },
-        //                 {
-        //                   field: "name",
-        //                   title: "Name",
-        //                   width: 200
-        //                 },
-        //                 {
-        //                   field: "sex",
-        //                   title: "Sex",
-        //                   width: 200
-        //                 },
-        //                 {
-        //                   field: "age",
-        //                   title: "Age",
-        //                   width: 200
-        //                 }
-        //               ],
-        //               size: "mini",
-        //               height: 300,
-        //               proxyConfig: {
-        //                 autoLoad: false,
-        //                 ajax: {
-        //                   query: getData
-        //                 }
-        //               }
-        //             }
-        //           }
-        //         },
-        //         on: {
-        //           change(val, sel) {
-        //             console.log("change", val, sel);
-        //           },
-        //           inputChange(sel) {
-        //             console.log("inputChange", sel);
-        //           }
-        //         }
-        //       }
-        //     }
-        //   ]
-        // },
+        {
+          field: "bind",
+          title: "合并列",
+          children: [
+            {
+              field: "market",
+              align: "left",
+              title: "市场",
+              minWidth: 150,
+              itemRender: {
+                name: "ASelect",
+                props: {
+                  param: { code: "Market" },
+                  dataField: "data.Market",
+                  default: ({ row }) => {
+                    return [<span style="color:red;">{row.market}</span>];
+                  }
+                },
+                on: {
+                  // keyup: () => {
+                  //   this.onFocusEditRow();
+                  //   return false;
+                  // }
+                }
+              }
+            },
+            {
+              field: "pulldown",
+              title: "下拉面板",
+              minWidth: 150,
+              itemRender: {
+                name: "pulldown-table",
+                props: {
+                  valueField: "name",
+                  textField: "age",
+                  table: {
+                    props: {
+                      columns: [
+                        { type: "checkbox", width: 50 },
+                        { type: "seq", title: "Number", width: 80 },
+                        {
+                          field: "name",
+                          title: "Name",
+                          width: 200
+                        },
+                        {
+                          field: "sex",
+                          title: "Sex",
+                          width: 200
+                        },
+                        {
+                          field: "age",
+                          title: "Age",
+                          width: 200
+                        }
+                      ],
+                      size: "mini",
+                      height: 300,
+                      proxyConfig: {
+                        autoLoad: false,
+                        ajax: {
+                          query: getData
+                        }
+                      }
+                    }
+                  }
+                },
+                on: {
+                  change(val, sel) {
+                    console.log("change", val, sel);
+                  },
+                  inputChange(sel) {
+                    console.log("inputChange", sel);
+                  }
+                }
+              }
+            }
+          ]
+        },
 
         // {
         //   field: "type1",
@@ -403,6 +407,10 @@ export default {
         //   }
         // },
         {
+          field: "switch1",
+          title: "默认值"
+        },
+        {
           field: "orderType",
           align: "left",
           fixed: "left",
@@ -460,23 +468,29 @@ export default {
               }
             },
             on: {
-              change: (value, option, { row, rowIndex }) => {
-                console.log(row);
-                console.log(rowIndex);
-                let that = this;
-                let data = {};
-                for (let i = 0; i < 30; i++) {
-                  data["input-" + i] = i + "" + i;
+              // change: (value, option, { row, rowIndex }) => {
+              // console.log(row);
+              // console.log(rowIndex);
+              // let that = this;
+              // let data = {};
+              // for (let i = 0; i < 30; i++) {
+              //   data["input-" + i] = i + "" + i;
+              // }
+              // that.data.splice(rowIndex, 1, {
+              //   ...row,
+              //   ...data
+              // });
+              // row.oneSelectName = option.label;
+              // },
+              keyup: (e, { row }) => {
+                console.log(e, "页面进入");
+                if (e.keyCode == 13 && row.oneSelect.length < 2) {
+                  return false;
                 }
-                that.data.splice(rowIndex, 1, {
-                  ...row,
-                  ...data
-                });
-                row.oneSelectName = option.label;
               }
             }
           }
-        }
+        },
         // {
         //   field: "vip",
         //   align: "left",
@@ -594,23 +608,23 @@ export default {
         //   }
         // },
 
-        // {
-        //   field: "apiSelect1",
-        //   align: "left",
-        //   title: "请求下拉1",
-        //   minWidth: 150,
-        //   itemRender: {
-        //     name: "ASelect",
-        //     props: {
-        //       optionsField: "oneSelectList1",
-        //       valueField: "value",
-        //       labelField: "label",
-        //       disabled: row => {
-        //         return row.orderType == 3;
-        //       }
-        //     }
-        //   }
-        // },
+        {
+          field: "apiSelect1",
+          align: "left",
+          title: "请求下拉1",
+          minWidth: 150,
+          itemRender: {
+            name: "ASelect",
+            props: {
+              optionsField: "oneSelectList1",
+              valueField: "value",
+              labelField: "label",
+              disabled: row => {
+                return row.orderType == 3;
+              }
+            }
+          }
+        }
 
         // {
         //   field: "oneSelect1",
@@ -673,36 +687,7 @@ export default {
         //   }
         // }
       ],
-      data: [
-        {
-          type1: "",
-          switch: false,
-          switch1: "1",
-          checkbox: false,
-          checkbox1: "1",
-          name: "123",
-          number: "333",
-          orderType: "",
-          vip: undefined,
-          input: "",
-          market: "",
-          apiSelect: "",
-          apiSelect1: "",
-          date: moment(),
-          oneSelect: [],
-          oneSelect1: "",
-          oneSelectList: [
-            { value: 11, label: "广西" },
-            { value: 22, label: "广东" }
-          ],
-          oneSelectList1: [
-            { value: 11, label: "广西1" },
-            { value: 22, label: "广东1" }
-          ],
-          time: moment("12:08:23", "HH:mm:ss"),
-          time1: undefined
-        }
-      ]
+      data: data
     };
   },
   created() {
@@ -731,11 +716,11 @@ export default {
     this.columns;
   },
   mounted() {
-    let data = [];
-    for (let i = 0; i < 1; i++) {
-      data.push(cloneDeep(defaultRow));
-    }
-    this.data = data;
+    // let data = [];
+    // for (let i = 0; i < 5; i++) {
+    //   data.push(cloneDeep(defaultRow));
+    // }
+    // this.data = data;
   },
   methods: {
     onAdd() {

@@ -1,5 +1,5 @@
 import moment from "moment";
-import { cloneDeep } from "lodash";
+import { cloneDeep, debounce } from "lodash";
 import utils from "../../../utils";
 import config from "../../conf";
 import OpuInputNumber from "../../../dataForm/src/inputNumber";
@@ -133,7 +133,9 @@ function editSlotPropInit(row, props, key, event, defaultKey = false) {
     : props[key];
 }
 
-const editRender = {
+const debounceTime = 100;
+
+export default {
   components: {
     OpuInputNumber,
     OpuSelect,
@@ -524,25 +526,25 @@ const editRender = {
                             }
                           }
                         },
-                        keyup: async e => {
-                          if (itemRender.on.keyup) {
-                            let res = await itemRender.on.keyup(e, event);
-                            if (res === false) return;
-                          }
-                          if (name == "a-select" && e.keyCode == 13) {
-                            let {
-                              currentCell: { rowIndex, row }
-                            } = that;
-                            setTimeout(() => {
+                        keyup: debounce(async e => {
+                          if (name == "a-select") {
+                            if (itemRender.on.keyup) {
+                              let res = await itemRender.on.keyup(e, event);
+                              if (res === false) return;
+                            }
+                            if (e.keyCode == 13) {
+                              let {
+                                currentCell: { rowIndex, row }
+                              } = that;
                               that.pressEnterItem({
                                 columnIndex: index,
                                 rowIndex,
                                 row,
                                 field
                               });
-                            }, 50);
+                            }
                           }
-                        }
+                        }, debounceTime)
                       },
                       style: "display:flex;align-items: center;"
                     }}
@@ -574,68 +576,67 @@ const editRender = {
                   config.defaultProps.select.searchFields ||
                   [];
 
-                if (!props.searchApi && (props.api || props.param)) {
-                  if (
-                    !(
-                      editFieldList[field] &&
-                      props.api == editFieldList[field].api &&
-                      utils.isEqual(editFieldList[field].param, props.param)
-                    )
+                if (
+                  !(
+                    editFieldList[field] &&
+                    props.api == editFieldList[field].api &&
+                    utils.isEqual(editFieldList[field].param, props.param)
+                  )
+                ) {
+                  editFieldList[field] = {
+                    valueField,
+                    labelField,
+                    childrenField,
+                    defaultField,
+                    searchFields,
+                    api: props.api,
+                    param: props.param
+                  };
+
+                  if (props.options) {
+                    editOptions[field] = cloneDeep(props.options).map(o => {
+                      o = that.optionDataRender(o, field, "", {
+                        [field]: {
+                          valueField,
+                          labelField,
+                          childrenField
+                        }
+                      });
+                      if (o[defaultField]) {
+                        editDefaultOption[field] = p.value;
+                      }
+                      return o;
+                    });
+                  } else if (
+                    !props.optionsField &&
+                    !props.searchApi &&
+                    (props.api || props.dataField || props.param) &&
+                    (!isCacheOption || !editOptions[field] || isAll)
                   ) {
-                    editFieldList[field] = {
+                    let item = {
+                      field,
+                      api: props.api,
                       valueField,
                       labelField,
                       childrenField,
+                      dataField,
                       defaultField,
-                      searchFields,
-                      api: props.api,
-                      param: props.param
+                      param: props.param || {}
                     };
-
-                    if (props.options) {
-                      editOptions[field] = cloneDeep(props.options).map(o => {
-                        o = that.optionDataRender(o, field, "", {
-                          [field]: {
-                            valueField,
-                            labelField,
-                            childrenField
-                          }
-                        });
-                        if (o[defaultField]) {
-                          editDefaultOption[field] = p.value;
+                    if (props.api) {
+                      otherApiList.push(item);
+                    } else {
+                      for (let key in props.param) {
+                        if (
+                          unifyApiList.param[key] &&
+                          utils.isArray(unifyApiList.param[key])
+                        ) {
+                          unifyApiList.param[key].push(props.param[key]);
+                        } else {
+                          unifyApiList.param[key] = [props.param[key]];
                         }
-                        return o;
-                      });
-                    } else if (
-                      !props.optionsField &&
-                      (props.api || props.dataField || props.param) &&
-                      (!isCacheOption || !editOptions[field] || isAll)
-                    ) {
-                      let item = {
-                        field,
-                        api: props.api,
-                        valueField,
-                        labelField,
-                        childrenField,
-                        dataField,
-                        defaultField,
-                        param: props.param || {}
-                      };
-                      if (props.api) {
-                        otherApiList.push(item);
-                      } else {
-                        for (let key in props.param) {
-                          if (
-                            unifyApiList.param[key] &&
-                            utils.isArray(unifyApiList.param[key])
-                          ) {
-                            unifyApiList.param[key].push(props.param[key]);
-                          } else {
-                            unifyApiList.param[key] = [props.param[key]];
-                          }
-                        }
-                        unifyApiList.fields.push(item);
                       }
+                      unifyApiList.fields.push(item);
                     }
                   }
                 }
@@ -875,7 +876,7 @@ const editRender = {
                         itemRender.on.change(e, event);
                       }
                     },
-                    keyup: async e => {
+                    keyup: debounce(async e => {
                       if (itemRender.on.keyup) {
                         let res = await itemRender.on.keyup(e, event);
                         if (res === false) return;
@@ -883,7 +884,7 @@ const editRender = {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }
+                    }, debounceTime)
                   }
                 };
                 break;
@@ -901,7 +902,7 @@ const editRender = {
                   },
                   on: {
                     ...ons,
-                    keyup: async e => {
+                    keyup: debounce(async e => {
                       if (itemRender.on.keyup) {
                         let res = await itemRender.on.keyup(e, event);
                         if (res === false) return;
@@ -909,7 +910,7 @@ const editRender = {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }
+                    }, debounceTime)
                   }
                 };
                 break;
@@ -926,10 +927,14 @@ const editRender = {
                   );
                   delete props.optionsFilter;
                 }
-
                 if (props.searchApi) {
                   props.searchApi = e => {
                     return itemRender.props.searchApi(e, event);
+                  };
+                }
+                if (props.maxTagPlaceholder) {
+                  props.maxTagPlaceholder = e => {
+                    return itemRender.props.maxTagPlaceholder(e, event);
                   };
                 }
                 elementAttribute = {
@@ -998,7 +1003,7 @@ const editRender = {
                         itemRender.on.select(value, optionRow, event);
                       }
                     },
-                    inputPressEnter: async e => {
+                    inputPressEnter: debounce(async e => {
                       if (itemRender.on.inputPressEnter) {
                         let res = await itemRender.on.inputPressEnter(e, event);
                         if (res === false) return;
@@ -1010,7 +1015,7 @@ const editRender = {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }
+                    }, debounceTime)
                   }
                 };
                 break;
@@ -1028,7 +1033,7 @@ const editRender = {
                   },
                   on: {
                     ...ons,
-                    inputPressEnter: async e => {
+                    inputPressEnter: debounce(async e => {
                       if (itemRender.on.inputPressEnter) {
                         let res = await itemRender.on.inputPressEnter(e, event);
                         if (res === false) return;
@@ -1040,7 +1045,7 @@ const editRender = {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }
+                    }, debounceTime)
                   }
                 };
                 break;
@@ -1062,7 +1067,7 @@ const editRender = {
                   },
                   on: {
                     ...ons,
-                    inputPressEnter: async e => {
+                    inputPressEnter: debounce(async e => {
                       if (itemRender.on.inputPressEnter) {
                         let res = await itemRender.on.inputPressEnter(e, event);
                         if (res === false) return;
@@ -1074,7 +1079,7 @@ const editRender = {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }
+                    }, debounceTime)
                   }
                 };
                 break;
@@ -1091,7 +1096,7 @@ const editRender = {
                         itemRender.on.change(e, option, event);
                       }
                     },
-                    inputPressEnter: async e => {
+                    inputPressEnter: debounce(async e => {
                       if (itemRender.on.inputPressEnter) {
                         let res = await itemRender.on.inputPressEnter(e, event);
                         if (res === false) return;
@@ -1103,7 +1108,7 @@ const editRender = {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }
+                    }, debounceTime)
                   }
                 };
                 break;
@@ -1165,5 +1170,3 @@ const editRender = {
     }
   }
 };
-
-export default editRender;

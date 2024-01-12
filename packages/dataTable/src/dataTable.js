@@ -1,5 +1,6 @@
 // import Vue from "vue";
 import "vxe-table/lib/index.css";
+// import { cloneDeep } from "lodash";
 import utils from "../../utils";
 import { Table } from "vxe-table";
 import { DataForm } from "../../dataForm";
@@ -8,7 +9,7 @@ import SetColumns from "./setColumns";
 import editRenderMixin from "./mixin/editRender";
 import { Modal } from "../../modal";
 
-const tablePropKeys = Object.keys(Table.props);
+// const tablePropKeys = Object.keys(Table.props);
 const methods = {};
 Object.keys(Table.methods).forEach(name => {
   methods[name] = function(...args) {
@@ -643,17 +644,18 @@ export default {
       tableHeight: "",
       currentRow: {},
       hasAjaxQuery: false,
-      hasCheckbox: false //是否存在checkbox
+      hasCheckbox: false, //是否存在checkbox
+      oldProps: null
     };
   },
   computed: {
-    tableExtendProps() {
-      const rest = {};
-      tablePropKeys.forEach(key => {
-        rest[key] = this[key];
-      });
-      return rest;
-    },
+    // tableExtendProps() {
+    //   const rest = {};
+    //   tablePropKeys.forEach(key => {
+    //     rest[key] = this[key];
+    //   });
+    //   return rest;
+    // },
     pagerConfigOpt() {
       if (this.pagerConfig) {
         return { ...config.pagerConfig, ...this.pagerConfig };
@@ -755,32 +757,30 @@ export default {
       const {
         $listeners,
         $scopedSlots,
-        tableExtendProps,
+        // tableExtendProps,
         handleTableQuery,
         pagerConfigOpt,
         proxyConfigOpt,
         height,
-        onCurrentRowCellClick,
-        onCurrentRowChange,
-        onKeyDownSpace,
         // handleServerSort,
         keyboardSpace
       } = that;
-      const propsData = that.$options.propsData;
-      const props = Object.assign({}, tableExtendProps);
-      Object.assign(props, {
+      const propsData = that.$props;
+      const props = {
         props: {
           ...config.props,
           ...propsData,
-          data: proxyConfigOpt ? null : propsData.data,
-          proxyConfig: utils.clone(proxyConfigOpt, true),
+          data: proxyConfigOpt ? null : this.data,
+          proxyConfig: utils.clone(proxyConfigOpt, true)
           // columns: columns,
-          loading: propsData.loading
+          // loading: propsData.loading
         }
-      });
+      };
+
       if (height && utils.isString(height) && height.indexOf("calc") > -1) {
         props.props.height = "auto";
       }
+
       const ons = {};
       utils.each($listeners, (cb, type) => {
         ons[type] = (...args) => {
@@ -788,8 +788,8 @@ export default {
         };
       });
 
-      ons["cell-click"] = onCurrentRowCellClick;
-      ons["current-change"] = onCurrentRowChange;
+      ons["cell-click"] = this.onCurrentRowCellClick;
+      ons["current-change"] = this.onCurrentRowChange;
       let isKeyboardSpace =
         keyboardSpace !== null ? keyboardSpace : config.keyboardSpace;
       if (isKeyboardSpace) {
@@ -798,7 +798,7 @@ export default {
           if (this.hasCheckbox && event.code == "Space") {
             event.preventDefault();
             event.stopPropagation();
-            onKeyDownSpace(e);
+            this.onKeyDownSpace(e);
           }
           that.$emit("keyDown", e);
         };
@@ -826,18 +826,7 @@ export default {
                       props.props.proxyConfig.props.result,
                       res
                     );
-                    if (data && data.length) {
-                      let grid = that.$refs.dataGrid;
-                      if (grid) {
-                        grid.setCurrentRow(data[0]);
-                        grid.focus();
-                        that.onCurrentRowChange({
-                          row: data[0],
-                          rowIndex: 0,
-                          $rowIndex: 0
-                        });
-                      }
-                    }
+                    this.setSelectRow(0, data);
                   });
                 }
               })
@@ -1247,6 +1236,31 @@ export default {
     getSearchData() {
       return this.searchData;
     },
+    /**
+     * @description:
+     * @return {*}
+     */
+    /**
+     * @description: 设置默认选中
+     * @param {*} index
+     * @param {*} data
+     * @return {*}
+     */
+    setSelectRow(index, data) {
+      if (!data) data = this.data;
+      if (data && data.length) {
+        let grid = this.$refs.dataGrid;
+        if (grid) {
+          grid.setCurrentRow(data[0]);
+          grid.focus();
+          this.onCurrentRowChange({
+            row: data[0],
+            rowIndex: 0,
+            $rowIndex: 0
+          });
+        }
+      }
+    },
     // 允许反选高亮行时接管，高亮行选中事件
     onCurrentRowChange(e) {
       const that = this;
@@ -1312,14 +1326,12 @@ export default {
     if (height && utils.isString(height) && height.indexOf("calc") > -1) {
       tableHeight = height;
     }
-
     // // 渲染头部搜索表单
     let headSearchForm = "";
     if (searchConfig) {
       // 头部搜索
       headSearchForm = renderHeadSearch(searchConfig, h, this);
     }
-
     return h(
       "div",
       {
@@ -1341,7 +1353,10 @@ export default {
           [
             h("vxe-grid", {
               ...tableProps,
-              props: { ...tableProps.props, columns: this.tableColumns }
+              props: {
+                ...tableProps.props,
+                columns: this.tableColumns
+              }
             })
           ]
         )
