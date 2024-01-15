@@ -9,7 +9,6 @@
       :data="data"
       :columns="columns"
       :pager-config="false"
-      size="mini"
       height="600px"
       highlight-current-row
       :keyboard-config="{ isArrow: false }"
@@ -178,85 +177,85 @@ export default {
         //     }
         //   }
         // },
-        {
-          field: "bind",
-          title: "合并列",
-          children: [
-            {
-              field: "market",
-              align: "left",
-              title: "市场",
-              minWidth: 150,
-              itemRender: {
-                name: "ASelect",
-                props: {
-                  param: { code: "Market" },
-                  dataField: "data.Market",
-                  default: ({ row }) => {
-                    return [<span style="color:red;">{row.market}</span>];
-                  }
-                },
-                on: {
-                  // keyup: () => {
-                  //   this.onFocusEditRow();
-                  //   return false;
-                  // }
-                }
-              }
-            },
-            {
-              field: "pulldown",
-              title: "下拉面板",
-              minWidth: 150,
-              itemRender: {
-                name: "pulldown-table",
-                props: {
-                  valueField: "name",
-                  textField: "age",
-                  table: {
-                    props: {
-                      columns: [
-                        { type: "checkbox", width: 50 },
-                        { type: "seq", title: "Number", width: 80 },
-                        {
-                          field: "name",
-                          title: "Name",
-                          width: 200
-                        },
-                        {
-                          field: "sex",
-                          title: "Sex",
-                          width: 200
-                        },
-                        {
-                          field: "age",
-                          title: "Age",
-                          width: 200
-                        }
-                      ],
-                      size: "mini",
-                      height: 300,
-                      proxyConfig: {
-                        autoLoad: false,
-                        ajax: {
-                          query: getData
-                        }
-                      }
-                    }
-                  }
-                },
-                on: {
-                  change(val, sel) {
-                    console.log("change", val, sel);
-                  },
-                  inputChange(sel) {
-                    console.log("inputChange", sel);
-                  }
-                }
-              }
-            }
-          ]
-        },
+        // {
+        //   field: "bind",
+        //   title: "合并列",
+        //   children: [
+        //     {
+        //       field: "market",
+        //       align: "left",
+        //       title: "市场",
+        //       minWidth: 150,
+        //       itemRender: {
+        //         name: "ASelect",
+        //         props: {
+        //           param: { code: "Market" },
+        //           dataField: "data.Market",
+        //           default: ({ row }) => {
+        //             return [<span style="color:red;">{row.market}</span>];
+        //           }
+        //         },
+        //         on: {
+        //           // keyup: () => {
+        //           //   this.onFocusEditRow();
+        //           //   return false;
+        //           // }
+        //         }
+        //       }
+        //     },
+        //     {
+        //       field: "pulldown",
+        //       title: "下拉面板",
+        //       minWidth: 150,
+        //       itemRender: {
+        //         name: "pulldown-table",
+        //         props: {
+        //           valueField: "name",
+        //           textField: "age",
+        //           table: {
+        //             props: {
+        //               columns: [
+        //                 { type: "checkbox", width: 50 },
+        //                 { type: "seq", title: "Number", width: 80 },
+        //                 {
+        //                   field: "name",
+        //                   title: "Name",
+        //                   width: 200
+        //                 },
+        //                 {
+        //                   field: "sex",
+        //                   title: "Sex",
+        //                   width: 200
+        //                 },
+        //                 {
+        //                   field: "age",
+        //                   title: "Age",
+        //                   width: 200
+        //                 }
+        //               ],
+        //               size: "mini",
+        //               height: 300,
+        //               proxyConfig: {
+        //                 autoLoad: false,
+        //                 ajax: {
+        //                   query: getData
+        //                 }
+        //               }
+        //             }
+        //           }
+        //         },
+        //         on: {
+        //           change(val, sel) {
+        //             console.log("change", val, sel);
+        //           },
+        //           inputChange(sel) {
+        //             console.log("inputChange", sel);
+        //           }
+        //         }
+        //       }
+        //     }
+        //   ]
+        // },
 
         // {
         //   field: "type1",

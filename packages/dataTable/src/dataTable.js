@@ -765,11 +765,11 @@ export default {
         // handleServerSort,
         keyboardSpace
       } = that;
-      const propsData = that.$props;
       const props = {
         props: {
+          ...this.$props,
           ...config.props,
-          ...propsData,
+          ...that.$options.propsData,
           data: proxyConfigOpt ? null : this.data,
           proxyConfig: utils.clone(proxyConfigOpt, true)
           // columns: columns,
@@ -780,7 +780,6 @@ export default {
       if (height && utils.isString(height) && height.indexOf("calc") > -1) {
         props.props.height = "auto";
       }
-
       const ons = {};
       utils.each($listeners, (cb, type) => {
         ons[type] = (...args) => {
