@@ -52,7 +52,12 @@ export default {
     },
     childrenField: String,
     renderOptionLabel: Function,
-    optionsFilter: Function
+    optionsFilter: Function,
+    searchTrigger: {
+      type: String, //search || focus
+      default: "focus"
+    },
+    searchApi: Function
   },
   model: {
     prop: "value",
@@ -61,7 +66,8 @@ export default {
   data() {
     return {
       optionsData: [],
-      hasGroup: false
+      hasGroup: false,
+      fetching: null
     };
   },
   computed: {
@@ -94,15 +100,37 @@ export default {
         };
       });
       let currentValue = value;
-      if (value && utils.isNumber(value)) {
-        currentValue = value + "";
-      } else if (value && utils.isArray(value)) {
-        currentValue = value.map(p => p + "");
+      if (value) {
+        if (propsData.labelInValue) {
+          if (utils.isArray(value)) {
+            value.forEach(p => {
+              if (!p.label) {
+                p.label = p[lF];
+              }
+              if (!p.key) {
+                p.key = p[vF];
+              }
+            });
+          } else {
+            if (!value.label) {
+              value.label = value[lF];
+            }
+            if (!value.key) {
+              value.key = value[vF];
+            }
+          }
+          currentValue = value;
+        } else if (utils.isNumber(value)) {
+          currentValue = value + "";
+        } else if (utils.isArray(value)) {
+          currentValue = value.map(p => p + "");
+        }
       }
       const props = {
         props: {
           ...propsData,
-          value: currentValue
+          value: currentValue,
+          options: null
           // getPopupContainer: triggerNode => triggerNode.parentNode
         },
         on: {
@@ -155,17 +183,22 @@ export default {
   methods: {
     init() {
       const { options } = this;
-      if (options && options.length) {
-        this.optionsData = handleItemPropsOptions(options, this);
+      if (options) {
+        this.setOptionsData(options);
       }
     },
-    updateValue(value) {
-      const { vF, optionsData, childrenField } = this;
+    updateValue(e) {
+      const { vF, lF, optionsData, childrenField, labelInValue } = this;
       const optionsList = utils.treeTransArray(optionsData, childrenField);
-      if (value instanceof Array) {
+      if (e instanceof Array) {
         let rows = [];
-        for (let i = 0; i < value.length; i++) {
-          let item = value[i];
+        for (let i = 0; i < e.length; i++) {
+          let item = e[i];
+          if (labelInValue) {
+            item[vF] = item.key;
+            item[lF] = item.label;
+            item = item.key;
+          }
           for (let j = 0; j < optionsList.length; j++) {
             if (optionsList[j][vF] == item) {
               rows.push(optionsList[j]);
@@ -173,22 +206,33 @@ export default {
             }
           }
         }
-        this.$emit("update", value, rows);
-        this.$emit("change", value, rows);
+        this.$emit("update", e, rows);
+        this.$emit("change", e, rows);
       } else {
+        let value = e;
+        if (e && labelInValue) {
+          e[vF] = e.key;
+          e[lF] = e.label;
+          value = e.key;
+        }
         const row = optionsList.find(p => p[vF] == value);
         let pRow;
         if (row && row._pValue) {
           pRow = optionsList.find(p => p[vF] == row._pValue);
         }
-        this.$emit("update", value, row, pRow);
-        this.$emit("change", value, row, pRow);
+        this.$emit("update", e, row, pRow);
+        this.$emit("change", e, row, pRow);
       }
     },
     setOptionsData(data) {
-      const options = handleItemPropsOptions(data, this);
-      this.optionsData = options;
-      return options;
+      if (this.optionsData !== data) {
+        const options = handleItemPropsOptions(data, this);
+        this.optionsData = options;
+        this.fetching = null;
+        return options;
+      } else {
+        return data;
+      }
     },
     getOptionsData() {
       return this.optionsData;
@@ -207,6 +251,54 @@ export default {
             box[0].click();
           }
         }
+      }
+    },
+    onSearch(e, type) {
+      return new Promise((resolve, reject) => {
+        if (
+          this.fetching === null &&
+          this.searchTrigger == type &&
+          this.searchApi &&
+          this.optionsData.length == 0
+        ) {
+          this.fetching = true;
+          this.searchApi(e)
+            .then(res => {
+              this.fetching = false;
+              let data = utils.getObjData(this.dataField, res);
+              this.optionsData = handleItemPropsOptions(data, this);
+              resolve(data);
+            })
+            .catch(() => {
+              this.fetching = false;
+              reject();
+            });
+        } else {
+          resolve(this.optionsData);
+        }
+      });
+    },
+    renderSelectChildren(h) {
+      if (this.fetching) {
+        return [<a-spin slot="notFoundContent" size="small" />];
+      } else {
+        const {
+          componentProps,
+          renderOptGroup,
+          renderOptionLabel,
+          renderOptionItems
+        } = this;
+        const optGroup = renderOptGroup(h);
+        let optionItems = "";
+        if (
+          !optGroup &&
+          renderOptionLabel &&
+          utils.isFunction(renderOptionLabel)
+        ) {
+          optionItems = renderOptionItems(h);
+          componentProps.props.options = null;
+        }
+        return [optGroup, optionItems];
       }
     },
     renderOptGroup(h) {
@@ -243,33 +335,29 @@ export default {
     }
   },
   render(h) {
-    const {
-      componentProps,
-      renderOptGroup,
-      renderOptionLabel,
-      renderOptionItems
-    } = this;
-    const optGroup = renderOptGroup(h);
-    let optionItems = "";
-    if (optGroup) {
-      componentProps.props.options = null;
-    } else if (renderOptionLabel && utils.isFunction(renderOptionLabel)) {
-      optionItems = renderOptionItems(h);
-      componentProps.props.options = null;
-    }
-
+    const { componentProps } = this;
     return h(
       "a-select",
       {
         ref: "inputComponent",
         props: {
-          ...componentProps.props
+          ...componentProps.props,
+          search: async e => {
+            await this.onSearch(e, "search");
+            componentProps.props.search &&
+              componentProps.props.search(e, this.optionsData);
+          }
         },
         on: {
-          ...componentProps.on
+          ...componentProps.on,
+          focus: async e => {
+            await this.onSearch(e, "focus");
+            componentProps.on.focus &&
+              componentProps.on.focus(e, this.optionsData);
+          }
         }
       },
-      [optGroup, optionItems]
+      this.renderSelectChildren(h)
     );
   }
 };
