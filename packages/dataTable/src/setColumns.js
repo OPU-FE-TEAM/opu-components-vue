@@ -347,6 +347,7 @@ export default {
         field: "defaultTitle",
         title: "默认标题",
         align: "center",
+        minWidth: 150,
         treeNode: true
       },
       {
@@ -397,6 +398,7 @@ export default {
         field: "show",
         title: "显示",
         align: "center",
+        width: 60,
         itemRender: {
           name: "a-checkbox",
           on: {
