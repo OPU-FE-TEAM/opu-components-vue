@@ -269,6 +269,13 @@ const initTableFieldData = field => {
 };
 
 DataTable.setupConfig({
+  props: {
+    size: "mini",
+    align: "center",
+    highlightCurrentRow: true,
+    sortConfig: { trigger: "cell" },
+    "auto-resize": true
+  },
   pagerConfig: {
     pageIndex: 0,
     pageSize: 30, //默认每页条数

@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ data }}
     <DataTable
       border
       resizable
@@ -8,7 +9,6 @@
       :data="data"
       :columns="columns"
       :pager-config="false"
-      size="mini"
       height="600px"
       highlight-current-row
       :keyboard-config="{ isArrow: false }"
@@ -56,7 +56,8 @@ const initTableFieldData = (field, num = 0) => {
     data.push({
       id: i + "",
       name: field + i + "",
-      code: i + 1 + "code"
+      code: i + 1 + "code",
+      text: field + i + ""
     });
   }
   return data;
@@ -92,6 +93,7 @@ function getData(arr = {}) {
     }, 500);
   });
 }
+getData();
 
 let defaultRow = {
   type1: "",
@@ -101,14 +103,14 @@ let defaultRow = {
   checkbox1: "1",
   name: "123",
   number: "333",
-  orderType: "",
-  vip: "",
+  orderType: { id: "1", text: "6661" },
+  vip: undefined,
   input: "",
   market: "",
   apiSelect: "",
   apiSelect1: "",
   date: moment(),
-  oneSelect: "",
+  oneSelect: [{ id: "1", text: "666" }],
   oneSelect1: "",
   oneSelectList: [
     { value: 11, label: "广西" },
@@ -150,254 +152,262 @@ export default {
       };
       longColumns.push(row);
     }
+    let data = [];
+    for (let i = 0; i < 5; i++) {
+      data.push(cloneDeep(defaultRow));
+    }
     return {
       longColumns,
       columns: [
-        {
-          field: "date",
-          title: "日期111",
-          minWidth: 150,
-          itemRender: {
-            name: "a-date-picker",
-            props: {
-              format: "YYYY-MM-DD"
-              // format: "YYYY-MM-DD HH:mm:ss",
-              // showTime: true,
-            },
-            on: {
-              change: e => {
-                console.log(e);
-              }
-            }
-          }
-        },
-        {
-          field: "bind",
-          title: "合并列",
-          children: [
-            {
-              field: "market",
-              align: "left",
-              title: "市场",
-              minWidth: 150,
-              itemRender: {
-                name: "ASelect",
-                props: {
-                  param: { code: "Market" },
-                  dataField: "data.Market",
-                  default: ({ row }) => {
-                    return [<span style="color:red;">{row.market}</span>];
-                  }
-                },
-                on: {
-                  // keyup: () => {
-                  //   this.onFocusEditRow();
-                  //   return false;
-                  // }
-                }
-              }
-            },
-            {
-              field: "pulldown",
-              title: "下拉面板",
-              minWidth: 150,
-              itemRender: {
-                name: "pulldown-table",
-                props: {
-                  valueField: "name",
-                  textField: "age",
-                  table: {
-                    props: {
-                      columns: [
-                        { type: "checkbox", width: 50 },
-                        { type: "seq", title: "Number", width: 80 },
-                        {
-                          field: "name",
-                          title: "Name",
-                          width: 200
-                        },
-                        {
-                          field: "sex",
-                          title: "Sex",
-                          width: 200
-                        },
-                        {
-                          field: "age",
-                          title: "Age",
-                          width: 200
-                        }
-                      ],
-                      size: "mini",
-                      height: 300,
-                      proxyConfig: {
-                        autoLoad: false,
-                        ajax: {
-                          query: getData
-                        }
-                      }
-                    }
-                  }
-                },
-                on: {
-                  change(val, sel) {
-                    console.log("change", val, sel);
-                  },
-                  inputChange(sel) {
-                    console.log("inputChange", sel);
-                  }
-                }
-              }
-            }
-          ]
-        },
+        // {
+        //   field: "date",
+        //   title: "日期111",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "a-date-picker",
+        //     props: {
+        //       format: "YYYY-MM-DD"
+        //       // format: "YYYY-MM-DD HH:mm:ss",
+        //       // showTime: true,
+        //     },
+        //     on: {
+        //       change: e => {
+        //         console.log(e);
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "bind",
+        //   title: "合并列",
+        //   children: [
+        //     {
+        //       field: "market",
+        //       align: "left",
+        //       title: "市场",
+        //       minWidth: 150,
+        //       itemRender: {
+        //         name: "ASelect",
+        //         props: {
+        //           param: { code: "Market" },
+        //           dataField: "data.Market",
+        //           default: ({ row }) => {
+        //             return [<span style="color:red;">{row.market}</span>];
+        //           }
+        //         },
+        //         on: {
+        //           // keyup: () => {
+        //           //   this.onFocusEditRow();
+        //           //   return false;
+        //           // }
+        //         }
+        //       }
+        //     },
+        //     {
+        //       field: "pulldown",
+        //       title: "下拉面板",
+        //       minWidth: 150,
+        //       itemRender: {
+        //         name: "pulldown-table",
+        //         props: {
+        //           valueField: "name",
+        //           textField: "age",
+        //           table: {
+        //             props: {
+        //               columns: [
+        //                 { type: "checkbox", width: 50 },
+        //                 { type: "seq", title: "Number", width: 80 },
+        //                 {
+        //                   field: "name",
+        //                   title: "Name",
+        //                   width: 200
+        //                 },
+        //                 {
+        //                   field: "sex",
+        //                   title: "Sex",
+        //                   width: 200
+        //                 },
+        //                 {
+        //                   field: "age",
+        //                   title: "Age",
+        //                   width: 200
+        //                 }
+        //               ],
+        //               size: "mini",
+        //               height: 300,
+        //               proxyConfig: {
+        //                 autoLoad: false,
+        //                 ajax: {
+        //                   query: getData
+        //                 }
+        //               }
+        //             }
+        //           }
+        //         },
+        //         on: {
+        //           change(val, sel) {
+        //             console.log("change", val, sel);
+        //           },
+        //           inputChange(sel) {
+        //             console.log("inputChange", sel);
+        //           }
+        //         }
+        //       }
+        //     }
+        //   ]
+        // },
 
+        // {
+        //   field: "type1",
+        //   align: "left",
+        //   title: "搜索输入",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "AAutoComplete",
+        //     props: {
+        //       labelField: "label",
+        //       valueField: "label",
+        //       options: [
+        //         { value: "1", label: "省份" },
+        //         { value: "2", label: "省份1" },
+        //         { value: "21", label: "省份2" },
+        //         { value: "22", label: "省份3" },
+        //         { value: "3", label: "区域" },
+        //         { value: "4", label: "123" }
+        //       ]
+        //     },
+        //     on: {
+        //       select: (e, option) => {
+        //         console.log(e);
+        //         console.log(option);
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "bind1",
+        //   title: "合1111",
+        //   children: [
+        //     {
+        //       field: "input",
+        //       align: "left",
+        //       title: "输入框",
+        //       minWidth: 100,
+        //       itemRender: {
+        //         name: "a-input"
+        //       }
+        //     },
+        //     {
+        //       field: "bind1-1",
+        //       title: "合2222",
+        //       children: [
+        //         {
+        //           field: "number",
+        //           align: "right",
+        //           title: "数量",
+        //           minWidth: 150,
+        //           itemRender: {
+        //             name: "AInputNumber",
+        //             props: {
+        //               disabled: row => {
+        //                 return row.orderType == 2;
+        //               },
+        //               min: 0
+        //             },
+        //             after: () => {
+        //               return [<a-button style="padding:0 5px;">每日</a-button>];
+        //             }
+        //           }
+        //         },
+        //         {
+        //           field: "apiSelect",
+        //           align: "left",
+        //           title: "请求下拉",
+        //           minWidth: 150,
+        //           itemRender: {
+        //             name: "ASelect",
+        //             props: {
+        //               api: getTableSelectData,
+        //               param: { code: "apiSelect" },
+        //               dataField: "data.apiSelect",
+        //               // optionsField: "oneSelectList1",
+        //               // valueField: "value",
+        //               // labelField: "label",
+        //               disabled: row => {
+        //                 return row.orderType == 3;
+        //               }
+        //             }
+        //           }
+        //         }
+        //       ]
+        //     },
+        //     {
+        //       field: "sex",
+        //       title: "Sex",
+        //       editRender: {},
+        //       minWidth: 150,
+        //       slots: {
+        //         default: ({ columnIndex }) => {
+        //           columnIndex;
+        //           return [<div>222222</div>];
+        //         }
+        //       }
+        //     },
+        //     {
+        //       field: "type12",
+        //       align: "left",
+        //       title: "搜索输入",
+        //       minWidth: 150,
+        //       itemRender: {
+        //         name: "AAutoComplete",
+        //         props: {
+        //           options: [
+        //             "1456",
+        //             "12342",
+        //             "453213",
+        //             "4563464",
+        //             "453645",
+        //             "1345356",
+        //             "745345"
+        //           ]
+        //         },
+        //         on: {
+        //           select: (e, option) => {
+        //             console.log(e);
+        //             console.log(option);
+        //           }
+        //         }
+        //       }
+        //     },
+        //     {
+        //       field: "sex6",
+        //       title: "性别插槽",
+        //       editRender: {},
+        //       minWidth: 150,
+        //       slots: {
+        //         default: ({ columnIndex }) => {
+        //           columnIndex;
+        //           return [<div>性别3</div>];
+        //         }
+        //       }
+        //     }
+        //   ]
+        // },
+        // {
+        //   field: "sex61",
+        //   title: "性别插槽",
+        //   editRender: {},
+        //   minWidth: 150,
+        //   slots: {
+        //     default: ({ columnIndex }) => {
+        //       columnIndex;
+        //       return [<div>性别3</div>];
+        //     }
+        //   }
+        // },
         {
-          field: "type1",
-          align: "left",
-          title: "搜索输入",
-          minWidth: 150,
-          itemRender: {
-            name: "AAutoComplete",
-            props: {
-              labelField: "label",
-              valueField: "label",
-              options: [
-                { value: "1", label: "省份" },
-                { value: "2", label: "省份1" },
-                { value: "21", label: "省份2" },
-                { value: "22", label: "省份3" },
-                { value: "3", label: "区域" },
-                { value: "4", label: "123" }
-              ]
-            },
-            on: {
-              select: (e, option) => {
-                console.log(e);
-                console.log(option);
-              }
-            }
-          }
-        },
-        {
-          field: "bind1",
-          title: "合1111",
-          children: [
-            {
-              field: "input",
-              align: "left",
-              title: "输入框",
-              minWidth: 100,
-              itemRender: {
-                name: "a-input"
-              }
-            },
-            {
-              field: "bind1-1",
-              title: "合2222",
-              children: [
-                {
-                  field: "number",
-                  align: "right",
-                  title: "数量",
-                  minWidth: 150,
-                  itemRender: {
-                    name: "AInputNumber",
-                    props: {
-                      disabled: row => {
-                        return row.orderType == 2;
-                      },
-                      min: 0
-                    },
-                    after: () => {
-                      return [<a-button style="padding:0 5px;">每日</a-button>];
-                    }
-                  }
-                },
-                {
-                  field: "apiSelect",
-                  align: "left",
-                  title: "请求下拉",
-                  minWidth: 150,
-                  itemRender: {
-                    name: "ASelect",
-                    props: {
-                      api: getTableSelectData,
-                      param: { code: "apiSelect" },
-                      dataField: "data.apiSelect",
-                      // optionsField: "oneSelectList1",
-                      // valueField: "value",
-                      // labelField: "label",
-                      disabled: row => {
-                        return row.orderType == 3;
-                      }
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              field: "sex",
-              title: "Sex",
-              editRender: {},
-              minWidth: 150,
-              slots: {
-                default: ({ columnIndex }) => {
-                  columnIndex;
-                  return [<div>222222</div>];
-                }
-              }
-            },
-            {
-              field: "type12",
-              align: "left",
-              title: "搜索输入",
-              minWidth: 150,
-              itemRender: {
-                name: "AAutoComplete",
-                props: {
-                  options: [
-                    "1456",
-                    "12342",
-                    "453213",
-                    "4563464",
-                    "453645",
-                    "1345356",
-                    "745345"
-                  ]
-                },
-                on: {
-                  select: (e, option) => {
-                    console.log(e);
-                    console.log(option);
-                  }
-                }
-              }
-            },
-            {
-              field: "sex6",
-              title: "性别插槽",
-              editRender: {},
-              minWidth: 150,
-              slots: {
-                default: ({ columnIndex }) => {
-                  columnIndex;
-                  return [<div>性别3</div>];
-                }
-              }
-            }
-          ]
-        },
-        {
-          field: "sex61",
-          title: "性别插槽",
-          editRender: {},
-          minWidth: 150,
-          slots: {
-            default: ({ columnIndex }) => {
-              columnIndex;
-              return [<div>性别3</div>];
-            }
-          }
+          field: "switch1",
+          title: "默认值"
         },
         {
           field: "orderType",
@@ -408,9 +418,15 @@ export default {
           itemRender: {
             name: "ASelect",
             props: {
-              api: getTableSelectData,
-              param: { code: "commissioncode" },
-              dataField: "data.commissioncode"
+              dataField: "data.commissioncode",
+              valueField: "id",
+              labelField: "text",
+              labelInValue: true,
+              searchApi: () => {
+                return getTableSelectData({ code: "commissioncode" });
+              }
+              // api:getTableSelectData,
+              // param: { code: "commissioncode" },
             },
             on: {
               change: (a, b, c, d) => {
@@ -426,14 +442,22 @@ export default {
           field: "oneSelect",
           align: "left",
           title: "行1内数据下拉",
-          minWidth: 150,
+          minWidth: 200,
           fixed: "left",
           itemRender: {
             name: "ASelect",
             props: {
-              optionsField: "oneSelectList",
-              valueField: "value",
-              labelField: "label",
+              mode: "multiple",
+              valueField: "id",
+              labelField: "text",
+              labelInValue: true,
+              dataField: "data.oneSelect",
+              searchApi: () => {
+                return getTableSelectData({ code: "oneSelect" });
+              },
+              // optionsField: "oneSelectList",
+              // valueField: "value",
+              // labelField: "label",
               default: ({ row }) => {
                 return [
                   <span style="background:red;color:#fff">
@@ -443,139 +467,145 @@ export default {
               }
             },
             on: {
-              change: (value, option, { row, rowIndex }) => {
-                console.log(row);
-                console.log(rowIndex);
-                let that = this;
-                let data = {};
-                for (let i = 0; i < 30; i++) {
-                  data["input-" + i] = i + "" + i;
+              // change: (value, option, { row, rowIndex }) => {
+              // console.log(row);
+              // console.log(rowIndex);
+              // let that = this;
+              // let data = {};
+              // for (let i = 0; i < 30; i++) {
+              //   data["input-" + i] = i + "" + i;
+              // }
+              // that.data.splice(rowIndex, 1, {
+              //   ...row,
+              //   ...data
+              // });
+              // row.oneSelectName = option.label;
+              // },
+              keyup: (e, { row }) => {
+                console.log(e, "页面进入");
+                if (e.keyCode == 13 && row.oneSelect.length < 2) {
+                  return false;
                 }
-                that.data.splice(rowIndex, 1, {
-                  ...row,
-                  ...data
-                });
-                row.oneSelectName = option.label;
               }
             }
           }
         },
-        {
-          field: "vip",
-          align: "left",
-          title: "vip",
-          minWidth: 150,
-          itemRender: {
-            name: "ASelect",
-            props: {
-              param: { code: "vip" },
-              dataField: "data.vip"
-            }
-          }
-        },
-        {
-          field: "market11",
-          align: "left",
-          title: "市场11",
-          minWidth: 150,
-          itemRender: {
-            name: "ASelect",
-            props: {
-              param: { code: "Market" },
-              dataField: "data.Market"
-            }
-          }
-        },
-        {
-          field: "switch",
-          align: "left",
-          title: "开关",
-          minWidth: 150,
-          itemRender: {
-            name: "ASwitch",
-            props: {
-              hidden: row => {
-                return row.orderType == 1;
-              }
-            }
-          }
-        },
-        {
-          field: "time",
-          title: "时间",
-          minWidth: 150,
-          itemRender: {
-            name: "a-time-picker",
-            props: {
-              format: "HH:mm"
-            },
-            on: {
-              change: e => {
-                console.log(e);
-              }
-            }
-          }
-        },
-        {
-          field: "switch1",
-          align: "left",
-          title: "开关1",
-          minWidth: 150,
-          itemRender: {
-            name: "ASwitch",
-            props: {
-              disabled: row => {
-                return row.orderType == 1;
-              },
-              trueValue: "1",
-              falseValue: "0"
-            }
-          }
-        },
-        {
-          field: "checkbox",
-          align: "left",
-          title: "选中",
-          minWidth: 150,
-          itemRender: {
-            name: "ACheckbox",
-            props: {
-              disabled: row => {
-                return row.orderType == 1;
-              }
-            }
-          }
-        },
-        {
-          field: "checkbox1",
-          align: "left",
-          title: "选中1",
-          minWidth: 150,
-          itemRender: {
-            name: "a-checkbox",
-            props: {
-              disabled: row => {
-                return row.orderType == 1;
-              },
-              trueValue: "1",
-              falseValue: "0"
-            }
-          }
-        },
-        {
-          field: "name",
-          align: "left",
-          title: "名称",
-          minWidth: 150,
-          itemRender: {
-            name: "AInput",
-            props: {
-              disabled: row => {
-                return row.orderType == 1;
-              }
-            }
-          }
-        },
+        // {
+        //   field: "vip",
+        //   align: "left",
+        //   title: "vip",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "ASelect",
+        //     props: {
+        //       param: { code: "vip" },
+        //       dataField: "data.vip"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "market11",
+        //   align: "left",
+        //   title: "市场11",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "ASelect",
+        //     props: {
+        //       param: { code: "Market" },
+        //       dataField: "data.Market"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "switch",
+        //   align: "left",
+        //   title: "开关",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "ASwitch",
+        //     props: {
+        //       hidden: row => {
+        //         return row.orderType == 1;
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "time",
+        //   title: "时间",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "a-time-picker",
+        //     props: {
+        //       format: "HH:mm"
+        //     },
+        //     on: {
+        //       change: e => {
+        //         console.log(e);
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "switch1",
+        //   align: "left",
+        //   title: "开关1",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "ASwitch",
+        //     props: {
+        //       disabled: row => {
+        //         return row.orderType == 1;
+        //       },
+        //       trueValue: "1",
+        //       falseValue: "0"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "checkbox",
+        //   align: "left",
+        //   title: "选中",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "ACheckbox",
+        //     props: {
+        //       disabled: row => {
+        //         return row.orderType == 1;
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "checkbox1",
+        //   align: "left",
+        //   title: "选中1",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "a-checkbox",
+        //     props: {
+        //       disabled: row => {
+        //         return row.orderType == 1;
+        //       },
+        //       trueValue: "1",
+        //       falseValue: "0"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "name",
+        //   align: "left",
+        //   title: "名称",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "AInput",
+        //     props: {
+        //       disabled: row => {
+        //         return row.orderType == 1;
+        //       }
+        //     }
+        //   }
+        // },
 
         {
           field: "apiSelect1",
@@ -593,99 +623,70 @@ export default {
               }
             }
           }
-        },
+        }
 
-        {
-          field: "oneSelect1",
-          align: "left",
-          title: "行内数据下拉1",
-          minWidth: 150,
-          fixed: "right",
-          itemRender: {
-            name: "a-select",
-            props: {
-              optionsField: "oneSelectList1",
-              valueField: "value",
-              labelField: "label"
-            }
-          }
-        },
-        {
-          field: "number1",
-          align: "right",
-          title: "数量1",
-          fixed: "right",
-          minWidth: 150,
-          itemRender: {
-            name: "AInputNumber",
-            props: {
-              disabled: row => {
-                return row.orderType == 2;
-              },
-              min: 0
-            },
-            after: () => {
-              return [<a-button style="padding:0 5px;">每日</a-button>];
-            }
-          }
-        },
-        {
-          field: "time1",
-          align: "left",
-          title: "时间3333",
-          minWidth: 150,
-          fixed: "right",
-          itemRender: {
-            name: "a-time-picker",
-            props: {
-              format: "HH:mm",
-              showTime: true,
-              disabled: row => {
-                return row.orderType == 3;
-              }
-            },
-            on: {
-              change: () => {},
-              blur: (a, b, c, d) => {
-                console.log(a);
-                console.log(b);
-                console.log(c);
-                console.log(d);
-              }
-            }
-          }
-        }
+        // {
+        //   field: "oneSelect1",
+        //   align: "left",
+        //   title: "行内数据下拉1",
+        //   minWidth: 150,
+        //   fixed: "right",
+        //   itemRender: {
+        //     name: "a-select",
+        //     props: {
+        //       optionsField: "oneSelectList1",
+        //       valueField: "value",
+        //       labelField: "label"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "number1",
+        //   align: "right",
+        //   title: "数量1",
+        //   fixed: "right",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "AInputNumber",
+        //     props: {
+        //       disabled: row => {
+        //         return row.orderType == 2;
+        //       },
+        //       min: 0
+        //     },
+        //     after: () => {
+        //       return [<a-button style="padding:0 5px;">每日</a-button>];
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "time1",
+        //   align: "left",
+        //   title: "时间3333",
+        //   minWidth: 150,
+        //   fixed: "right",
+        //   itemRender: {
+        //     name: "a-time-picker",
+        //     props: {
+        //       format: "HH:mm",
+        //       showTime: true,
+        //       disabled: row => {
+        //         return row.orderType == 3;
+        //       }
+        //     },
+        //     on: {
+        //       change: () => {},
+        //       blur: (a, b, c, d) => {
+        //         console.log(a);
+        //         console.log(b);
+        //         console.log(c);
+        //         console.log(d);
+        //       }
+        //     }
+        //   }
+        // }
       ],
-      data: [
-        {
-          type1: "",
-          switch: false,
-          switch1: "1",
-          checkbox: false,
-          checkbox1: "1",
-          name: "123",
-          number: "333",
-          orderType: "",
-          vip: "",
-          input: "",
-          market: "",
-          apiSelect: "",
-          apiSelect1: "",
-          date: moment(),
-          oneSelect: "",
-          oneSelect1: "",
-          oneSelectList: [
-            { value: 11, label: "广西" },
-            { value: 22, label: "广东" }
-          ],
-          oneSelectList1: [
-            { value: 11, label: "广西1" },
-            { value: 22, label: "广东1" }
-          ],
-          time: moment("12:08:23", "HH:mm:ss"),
-          time1: undefined
-        }
-      ]
+      data: data
     };
   },
   created() {
@@ -714,11 +715,11 @@ export default {
     this.columns;
   },
   mounted() {
-    let data = [];
-    for (let i = 0; i < 20; i++) {
-      data.push(cloneDeep(defaultRow));
-    }
-    this.data = data;
+    // let data = [];
+    // for (let i = 0; i < 5; i++) {
+    //   data.push(cloneDeep(defaultRow));
+    // }
+    // this.data = data;
   },
   methods: {
     onAdd() {
@@ -733,7 +734,7 @@ export default {
         name: "123",
         number: "333",
         orderType: "",
-        vip: "",
+        vip: undefined,
         input: "",
         market: "",
         market11: "",

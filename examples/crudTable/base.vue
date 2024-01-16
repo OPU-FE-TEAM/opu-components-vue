@@ -455,6 +455,12 @@ export default {
                 props: {
                   width: 800,
                   title: "高级搜索1"
+                },
+                on: {
+                  submit: e => {
+                    debugger;
+                    console.log(e);
+                  }
                 }
               },
               advancedSearchForm: {
@@ -467,6 +473,14 @@ export default {
                 {
                   field: "name",
                   title: "名称",
+                  option: {
+                    rules: [
+                      {
+                        required: true,
+                        message: "请输入名称"
+                      }
+                    ]
+                  },
                   itemRender: {
                     name: "a-input",
                     props: { placeholder: "请输入名称" }
@@ -582,6 +596,7 @@ export default {
 
             ajax: {
               query: values => {
+                debugger;
                 console.log(values);
                 return new Promise(resolve => {
                   getData({
