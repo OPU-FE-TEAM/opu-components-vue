@@ -11,6 +11,7 @@ import OpuDatePicker from "./datePicker";
 import OpuTimePicker from "./timePicker";
 
 import OpuSelect from "./select";
+import OpuSearchSelect from "./searchSelect";
 import OpuSwitch from "./switch";
 import OpuCheckbox from "./checkbox";
 import OpuTreeSelect from "./treeSelect";
@@ -26,6 +27,7 @@ export default {
   AInputNumber,
   AInputNumberSplit,
   OpuSelect,
+  OpuSearchSelect,
   OptionsComponent,
   OpuDatePicker,
   OpuTimePicker,

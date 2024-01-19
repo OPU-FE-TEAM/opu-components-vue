@@ -68,30 +68,34 @@ export default {
               showTime: { format: "HH:mm:ss" }
             }
           }
+        },
+        {
+          field: "ordinary1",
+          title: "请求下拉123",
+          itemRender: {
+            name: "a-select",
+            props: {
+              size: "small",
+              defaultField: "isSelected",
+              dataField: "data",
+              valueField: "Id",
+              labelField: "Text",
+              // api: getSelectGroupData,
+              searchApi: getSelectGroupData,
+              renderOptionLabel: e => {
+                console.log(e);
+                return <span style="background:red;">{e.Text}</span>;
+              },
+              mode: "multiple"
+            },
+            on: {
+              change: (e, rows) => {
+                console.log(e, "e");
+                console.log(rows, "rows");
+              }
+            }
+          }
         }
-        // {
-        //   field: "ordinary1",
-        //   title: "请求下拉123",
-        //   itemRender: {
-        //     name: "a-select",
-        //     props: {
-        //       size: "small",
-        //       defaultField: "isSelected",
-        //       dataField: "data",
-        //       valueField: "Id",
-        //       labelField: "Text",
-        //       // api: getSelectGroupData,
-        //       searchApi: getSelectGroupData,
-        //       mode: "multiple"
-        //     },
-        //     on: {
-        //       change: (e, rows) => {
-        //         console.log(e, "e");
-        //         console.log(rows, "rows");
-        //       }
-        //     }
-        //   }
-        // }
         // {
         //   title: "部门",
         //   field: "departId123",

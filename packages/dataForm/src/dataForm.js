@@ -874,6 +874,7 @@ export default {
         "a-password",
         "a-input-password",
         "a-select",
+        "a-search-select",
         "a-tree-select",
         "a-textarea",
         "a-select-group",
@@ -882,6 +883,7 @@ export default {
       //有返回数据的Form组件名称
       optionsFormTypes: [
         "a-select",
+        "a-search-select",
         "a-select-group",
         "a-tree-select",
         "a-radio-group",
@@ -889,6 +891,7 @@ export default {
       ],
       renderNameKeys: {
         "a-select": "opu-select",
+        "a-search-select": "opu-search-select",
         "a-date-picker": "opu-date-picker",
         "a-time-picker": "opu-time-picker",
         "a-switch": "opu-switch",
@@ -1452,7 +1455,8 @@ export default {
                     ];
 
                     const isSeletctMultiple =
-                      (itemRender.name == "a-select" &&
+                      ((itemRender.name == "a-select" ||
+                        itemRender.name == "a-search-select") &&
                         props &&
                         props.mode == "multiple") ||
                       valueArrayTypes.includes(itemRender.name);

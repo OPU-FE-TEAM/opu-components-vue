@@ -4,6 +4,7 @@ import utils from "../../../utils";
 import config from "../../conf";
 import OpuInputNumber from "../../../dataForm/src/inputNumber";
 import OpuSelect from "../../../dataForm/src/select";
+import OpuSearchSelect from "../../../dataForm/src/searchSelect";
 import OpuDatePicker from "../../../dataForm/src/datePicker";
 import OpuTimePicker from "../../../dataForm/src/timePicker";
 import OpuAutoComplete from "../../../dataForm/src/autoComplete";
@@ -139,6 +140,7 @@ export default {
   components: {
     OpuInputNumber,
     OpuSelect,
+    OpuSearchSelect,
     OpuDatePicker,
     OpuTimePicker,
     OpuAutoComplete
@@ -175,6 +177,7 @@ export default {
         "a-input",
         "a-input-number",
         "a-select",
+        "a-search-select",
         "a-auto-complete",
         "a-date-picker",
         "a-time-picker",
@@ -185,6 +188,7 @@ export default {
       editTypeTargetName: {
         "a-input-number": "OpuInputNumber",
         "a-select": "OpuSelect",
+        "a-search-select": "OpuSearchSelect",
         "a-auto-complete": "OpuAutoComplete",
         "a-date-picker": "OpuDatePicker",
         "a-time-picker": "OpuTimePicker"
@@ -193,6 +197,7 @@ export default {
         "a-input",
         "a-input-number",
         "a-select",
+        "a-search-select",
         "a-auto-complete",
         "a-date-picker",
         "a-time-picker",
@@ -204,6 +209,7 @@ export default {
         "a-input-number",
         "a-auto-complete",
         "a-select",
+        "a-search-select",
         "a-date-picker",
         "a-time-picker"
       ],
@@ -213,6 +219,7 @@ export default {
         "a-input-number",
         "a-auto-complete",
         "a-select",
+        "a-search-select",
         "a-date-picker",
         "a-time-picker"
       ],
@@ -527,7 +534,7 @@ export default {
                           }
                         },
                         keyup: debounce(async e => {
-                          if (name == "a-select") {
+                          if (name == "a-select" || name == "a-search-select") {
                             if (itemRender.on.keyup) {
                               let res = await itemRender.on.keyup(e, event);
                               if (res === false) return;
@@ -561,7 +568,12 @@ export default {
               if (name == "a-switch" || name == "a-checkbox")
                 p.align = "center";
               let props = itemRender.props;
-              if (["a-select", "a-auto-complete"].includes(name) && props) {
+              if (
+                ["a-select", "a-search-select", "a-auto-complete"].includes(
+                  name
+                ) &&
+                props
+              ) {
                 let valueField =
                   props.valueField || getSelectOptions.valueField;
                 let labelField =
@@ -915,6 +927,7 @@ export default {
                 };
                 break;
               case "a-select":
+              case "a-search-select":
                 optionsField = (props && props.optionsField) || "";
                 options = optionsField
                   ? row[optionsField]
@@ -927,10 +940,12 @@ export default {
                   );
                   delete props.optionsFilter;
                 }
-                if (props.searchApi) {
-                  props.searchApi = e => {
-                    return itemRender.props.searchApi(e, event);
-                  };
+                if (name == "a-search-select") {
+                  if (props.searchApi) {
+                    props.searchApi = e => {
+                      return itemRender.props.searchApi(e, event);
+                    };
+                  }
                 }
                 if (props.maxTagPlaceholder) {
                   props.maxTagPlaceholder = e => {
