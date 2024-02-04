@@ -1,6 +1,8 @@
 import { DataTable } from "../../dataTable";
 import { Pulldown } from "vxe-table";
 import { utils } from "../../init";
+import SetColumns from "../../dataTable/src/setColumns";
+import tableConf from "../../dataTable/conf";
 function renderInput(h, _vm) {
   const {
     onInputFocus,
@@ -35,7 +37,8 @@ const pulldownPropKeys = Object.keys(Pulldown.props);
 export default {
   name: "PulldownTable",
   components: {
-    DataTable
+    DataTable,
+    SetColumns
   },
   props: {
     ...Pulldown.props,
@@ -147,7 +150,8 @@ export default {
         tableData,
         $scopedSlots,
         onTableRowSelect,
-        onTableCheckboxChange
+        onTableCheckboxChange,
+        onTableSetColumnsShow
       } = that;
       //是否存在多选  若存在  多选checkbox索引
       let columns = (table && table.props && table.props.columns) || [];
@@ -171,6 +175,9 @@ export default {
         class: "pulldown-table",
         slot: "dropdown"
       };
+      if (props.props.setcolumnsConfig) {
+        props.props.setcolumnsConfig.onShow = onTableSetColumnsShow;
+      }
       if (table.props.proxyConfig && table.props.proxyConfig.ajax) {
         props.props.proxyConfig = {
           ...table.props.proxyConfig,
@@ -182,6 +189,80 @@ export default {
       props.scopedSlots = $scopedSlots;
       props.ref = "table";
       return props;
+    },
+    setColumnsOpt() {
+      const setcolumnsConfig = this.tableProps.props.setcolumnsConfig;
+      if (setcolumnsConfig) {
+        const modalProps =
+          setcolumnsConfig &&
+          setcolumnsConfig.modal &&
+          setcolumnsConfig.modal.props
+            ? setcolumnsConfig.modal.props
+            : {};
+
+        const proxyConfigProps =
+          setcolumnsConfig &&
+          setcolumnsConfig.proxyConfig &&
+          setcolumnsConfig.proxyConfig.props
+            ? setcolumnsConfig.proxyConfig.props
+            : {};
+
+        const proxyConfigAjax =
+          setcolumnsConfig &&
+          setcolumnsConfig.proxyConfig &&
+          setcolumnsConfig.proxyConfig.ajax
+            ? setcolumnsConfig.proxyConfig.ajax
+            : {};
+
+        const proxyConfigOn =
+          setcolumnsConfig &&
+          setcolumnsConfig.proxyConfig &&
+          setcolumnsConfig.proxyConfig.on
+            ? setcolumnsConfig.proxyConfig.on
+            : {};
+
+        const tableConfig =
+          setcolumnsConfig && setcolumnsConfig.tableConfig
+            ? setcolumnsConfig.tableConfig
+            : {};
+        return {
+          ...tableConf.setColumns,
+          modal: {
+            props: {
+              zIndex: 9999,
+              transfer: true,
+              ...tableConf.setColumns.modal.props,
+              ...modalProps
+            }
+          },
+          proxyConfig: {
+            params:
+              setcolumnsConfig &&
+              setcolumnsConfig.proxyConfig &&
+              setcolumnsConfig.proxyConfig.params
+                ? setcolumnsConfig.proxyConfig.params
+                : null,
+            props: {
+              ...tableConf.setColumns.proxyConfig.props,
+              ...proxyConfigProps
+            },
+            ajax: {
+              ...tableConf.setColumns.proxyConfig.ajax,
+              ...proxyConfigAjax
+            },
+            on: {
+              ...tableConf.setColumns.proxyConfig.on,
+              ...proxyConfigOn
+            }
+          },
+          tableConfig: {
+            ...tableConf.setColumns.tableConfig,
+            ...tableConfig
+          }
+        };
+      } else {
+        return tableConf.setColumns;
+      }
     }
   },
   watch: {
@@ -379,10 +460,30 @@ export default {
       }
 
       this.visible = false;
+    },
+    onSetColumnsSubmit(e) {
+      const dataTable = this.$refs.table;
+      if (dataTable) {
+        dataTable.setTableColumns(e);
+      }
+      // console.log("sub", e);
+    },
+    onTableSetColumnsShow() {
+      if (this.$refs.setTableColumnsModal) {
+        this.$refs.setTableColumnsModal.show();
+      }
+      return false;
     }
   },
   render(h) {
-    const { tableProps, pulldownProps, visible } = this;
+    const {
+      tableProps,
+      pulldownProps,
+      visible,
+      onSetColumnsSubmit,
+      setColumnsOpt
+    } = this;
+
     return h(
       "vxe-pulldown",
       {
@@ -401,6 +502,16 @@ export default {
           ...tableProps,
           ...{
             on: { ...tableProps.on }
+          }
+        }),
+        h("set-columns", {
+          ref: "setTableColumnsModal",
+          props: {
+            option: setColumnsOpt,
+            columns: tableProps.props.columns
+          },
+          on: {
+            submit: onSetColumnsSubmit
           }
         })
       ]

@@ -698,7 +698,6 @@ export default {
           this.setcolumnsConfig && this.setcolumnsConfig.tableConfig
             ? this.setcolumnsConfig.tableConfig
             : {};
-
         return {
           ...config.setColumns,
           modal: {
@@ -1015,6 +1014,12 @@ export default {
     },
     // 显示表头设置窗口
     showSetColumns() {
+      if (this.setcolumnsConfig && this.setcolumnsConfig.onShow) {
+        const is = this.setcolumnsConfig.onShow();
+        if (is === false) {
+          return;
+        }
+      }
       if (this.$refs.setColumsModal) {
         this.$refs.setColumsModal.show();
       }

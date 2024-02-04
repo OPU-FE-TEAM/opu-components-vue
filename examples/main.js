@@ -342,8 +342,8 @@ DataTable.setupConfig({
       show: "show",
       align: "align",
       fixed: "fixed",
-      title: "title",
-      field: "field"
+      title: "customName",
+      field: "name"
     },
     defaultAjax: {
       query: getColumns
@@ -371,7 +371,10 @@ DataTable.setupConfig({
       defaultAjax: {
         query: getColumns,
         submit: json => {
-          console.log(json);
+          return new Promise(resolve => {
+            console.log(json);
+            resolve(json);
+          });
         }
       },
       on: {
