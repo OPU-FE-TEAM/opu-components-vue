@@ -553,7 +553,7 @@ export default {
                           }
                         }, debounceTime)
                       },
-                      style: "display:flex;align-items: center;"
+                      style: "display:flex;align-items:center;width:100%;"
                     }}
                   >
                     {itemRender.before && itemRender.before(event)}

@@ -340,7 +340,7 @@ export default {
               return [<span>{e}</span>];
             }
           }
-        }
+        },
         // {
         //   field: "treeSelect",
         //   title: "树下啦",
@@ -935,22 +935,43 @@ export default {
         // //     }
         // //   }
         // // },
+        {
+          field: "ARangePickerSplit",
+          title: "日期范围拆分",
+          itemRender: {
+            name: "a-range-picker-split",
+            props: {
+              // hasLimit: true,
+              // separator: () => {
+              //   return <div style="color:red;width:70px">结束日期：</div>;
+              // },
+              // min: moment(),
+              // max: moment().add(5, "day"),
+              endDisabledDate: () => {
+                console.log("第二个时间");
+                return true;
+              },
+              startDisabled: true
+              // showTime: { format: "HH:mm" }
+            }
+          }
+        }
         // {
-        //   field: "ARangePickerSplit",
-        //   title: "日期范围拆分",
+        //   field: "checkInDate",
+        //   title: "入住日期",
         //   itemRender: {
-        //     name: "a-range-picker-split",
+        //     name: "a-date-picker",
         //     props: {
-        //       hasLimit: true,
-        //       separator: () => {
-        //         return <div style="color:red;width:70px">结束日期：</div>;
-        //       },
-        //       min: moment(),
-        //       max: moment().add(2, "day")
-        //       // showTime: { format: "HH:mm" }
+        //       format: "YYYY-MM-DD",
+        //       allowClear: false,
+        //       showToday: false,
+        //       disabledDate: () => {
+        //         console.log("开启成功");
+        //         return true;
+        //       }
         //     }
         //   }
-        // },
+        // }
 
         // // {
         // //   field: "number3",
