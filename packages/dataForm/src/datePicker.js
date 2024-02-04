@@ -55,7 +55,7 @@ export default {
           ok: ok
         }
       };
-      if (this.min || (this.max && !props.props.disabledDate)) {
+      if ((this.min || this.max) && !props.props.disabledDate) {
         props.props.disabledDate = e => {
           return this.renderDisabledDate(e);
         };

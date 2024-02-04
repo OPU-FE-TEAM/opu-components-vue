@@ -18,6 +18,14 @@ export default {
       default: true
     },
     separator: [String, Function],
+    startDisabled: {
+      type: Boolean,
+      default: false
+    },
+    endDisabled: {
+      type: Boolean,
+      default: false
+    },
     startDisabledDate: {
       type: Function,
       default: null
@@ -155,6 +163,9 @@ export default {
     if (this.startValue) {
       start.props.value = this.startValue;
     }
+    if (this.startDisabled) {
+      start.props.disabled = true;
+    }
     const end = {
       ref: "endDatePicker",
       props: {
@@ -177,6 +188,9 @@ export default {
     if (this.endValue) {
       end.props.value = this.endValue;
     }
+    if (this.endDisabled) {
+      end.props.disabled = true;
+    }
     // 限制
     if (hasLimit) {
       start.props.disabledDate = e => {
@@ -186,6 +200,12 @@ export default {
         return this.endDisabledDateFuc(e);
       };
     } else {
+      if (start.props.startDisabledDate) {
+        start.props.disabledDate = this.startDisabledDate;
+      }
+      if (end.props.endDisabledDate) {
+        end.props.disabledDate = this.endDisabledDate;
+      }
       start.scopedSlots = {
         dateRender: current => {
           let outside = false;
