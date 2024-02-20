@@ -72,6 +72,19 @@ export default {
       type: Boolean,
       default: true
     },
+    //其他插槽
+    otherSlot: {
+      type: [Function],
+      default: null
+    },
+    popupClassName: {
+      type: String,
+      default: ""
+    },
+    popupStyle: {
+      type: String,
+      default: ""
+    },
     // 允许输入值
     allowInputValue: Boolean
   },
@@ -466,7 +479,6 @@ export default {
       if (dataTable) {
         dataTable.setTableColumns(e);
       }
-      // console.log("sub", e);
     },
     onTableSetColumnsShow() {
       if (this.$refs.setTableColumnsModal) {
@@ -498,22 +510,33 @@ export default {
       },
       [
         renderInput(h, this),
-        h("data-table", {
-          ...tableProps,
-          ...{
-            on: { ...tableProps.on }
-          }
-        }),
-        h("set-columns", {
-          ref: "setTableColumnsModal",
-          props: {
-            option: setColumnsOpt,
-            columns: tableProps.props.columns
+        h(
+          "div",
+          {
+            slot: "dropdown",
+            class: this.popupClassName,
+            style: this.popupStyle
           },
-          on: {
-            submit: onSetColumnsSubmit
-          }
-        })
+          [
+            this.otherSlot && this.otherSlot(),
+            h("data-table", {
+              ...tableProps,
+              ...{
+                on: { ...tableProps.on }
+              }
+            }),
+            h("set-columns", {
+              ref: "setTableColumnsModal",
+              props: {
+                option: setColumnsOpt,
+                columns: tableProps.props.columns
+              },
+              on: {
+                submit: onSetColumnsSubmit
+              }
+            })
+          ]
+        )
       ]
     );
   }

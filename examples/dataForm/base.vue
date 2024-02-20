@@ -83,8 +83,6 @@ moment();
 //     });
 // }
 function getData(arr) {
-  console.log(arr);
-  console.log("请求");
   if (arr) {
     return new Promise(resolve => {
       setTimeout(() => {
@@ -142,7 +140,7 @@ function getCheckboxData(values) {
     }, 500);
   });
 }
-getCheckboxData();
+getCheckboxData;
 
 function getSelectGroupData() {
   return new Promise(resolve => {

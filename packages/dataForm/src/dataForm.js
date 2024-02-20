@@ -270,9 +270,6 @@ function renderItemInput(item, h, _vm) {
   }
   let itemRender = item.itemRender;
   const props = {
-    props: {
-      fieldName: item.field
-    },
     ...itemRender,
     ref: "input_" + item.field,
     directives: [
@@ -282,6 +279,7 @@ function renderItemInput(item, h, _vm) {
       }
     ]
   };
+  props.props.fieldName = item.field;
 
   // 只读
   if (readonly || itemRender.props.readonly) {
@@ -862,6 +860,7 @@ export default {
         "a-week-picker",
         "a-range-picker",
         "a-range-picker-split",
+        "a-range-time-picker-split",
         "a-auto-complete",
         "pulldown-table",
         "a-input-number-split",

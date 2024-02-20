@@ -64,8 +64,6 @@ const initTableFieldData = (field, num = 0) => {
 };
 
 function getData(arr = {}) {
-  console.log(arr);
-  console.log("请求");
   return new Promise(resolve => {
     setTimeout(() => {
       const size = arr.pageSize ? arr.pageSize : 20;
@@ -88,12 +86,11 @@ function getData(arr = {}) {
           total: 100
         }
       };
-      console.log(json);
       resolve(json);
     }, 500);
   });
 }
-getData();
+getData;
 
 let defaultRow = {
   type1: "",

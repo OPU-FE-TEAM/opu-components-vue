@@ -54,7 +54,6 @@
 function getData(arr) {
   return new Promise(resolve => {
     setTimeout(() => {
-      console.log(arr);
       const size = arr.pageSize ? arr.pageSize : 20;
       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
       const list = Array.from({ length: size }, (_, key) => ({
@@ -87,7 +86,6 @@ function getData(arr) {
           total: size
         }
       };
-      console.log(json);
       resolve(json);
     }, 500);
   });

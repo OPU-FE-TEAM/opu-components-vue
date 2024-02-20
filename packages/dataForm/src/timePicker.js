@@ -1,12 +1,15 @@
 import { TimePickerProps } from "ant-design-vue/lib/time-picker/index";
 import utils from "../../utils";
 import { formatInputDate, getBlocks } from "../../utils/dateFormat";
-
 export default {
   name: "OpuTimePicker",
   components: {},
   props: {
-    ...TimePickerProps()
+    ...TimePickerProps(),
+    fieldName: {
+      type: String,
+      default: ""
+    }
   },
   model: {
     prop: "value",
@@ -14,14 +17,14 @@ export default {
   },
   data() {
     return {
-      isOpen: false
+      isOpen: false,
+      className: ""
     };
   },
   computed: {
     componentProps() {
       const { $listeners, $options } = this;
       const propsData = $options.propsData;
-
       const ons = {};
       utils.each($listeners, (cb, type) => {
         ons[type] = (...args) => {
@@ -30,7 +33,8 @@ export default {
       });
       const props = {
         props: {
-          ...propsData
+          ...propsData,
+          popupClassName: this.className
         },
         on: {
           ...ons,
@@ -52,9 +56,13 @@ export default {
   watch: {
     currentFormat() {
       this.blocksData = getBlocks(this.currentFormat);
+    },
+    fieldName() {
+      this.className = "id" + this.fieldName + utils.getUid();
     }
   },
   created() {
+    this.className = "id" + this.fieldName + utils.getUid();
     this.blocksData = getBlocks(this.currentFormat);
     this.focus = utils.throttle(function() {
       this.onFocus();
@@ -73,34 +81,39 @@ export default {
       if (box && box.length) {
         box[0].click();
       }
-      this.onInputEvent();
+      // this.onInputEvent();
     },
     // 监听输入事件
     onInputEvent() {
       const that = this;
-      setTimeout(() => {
-        const input = document.getElementsByClassName(
-          "ant-time-picker-panel-input"
-        );
-        if (input && input.length) {
-          input[0].selectionStart = 0; // 选中开始位置
-          input[0].selectionEnd = input[0].value.length;
-          input[0].addEventListener("keyup", function(e) {
-            if (e.key === "Enter") {
-              e.stopPropagation();
-              that.isOpen = false;
-              that.$emit("inputPressEnter", e);
-            }
-          });
-          input[0].oninput = function(e) {
-            const { value } = e.target;
-            if (e.target.value && e.inputType !== "deleteContentBackward") {
-              let newValue = formatInputDate(value, that.blocksData);
-              e.target.value = newValue;
-            }
-          };
-        }
-      }, 100);
+      this.$nextTick(() => {
+        setTimeout(() => {
+          const input = document.querySelector(
+            `.${this.className} .ant-time-picker-panel-input`
+          );
+
+          if (input) {
+            input.selectionStart = 0; // 选中开始位置
+            input.selectionEnd = input.value.length;
+            // input.removeEventListener("keyup", this.onKeyup);
+            input.addEventListener("keyup", this.onKeyup);
+            input.oninput = function(e) {
+              const { value } = e.target;
+              if (e.target.value && e.inputType !== "deleteContentBackward") {
+                let newValue = formatInputDate(value, that.blocksData);
+                e.target.value = newValue;
+              }
+            };
+          }
+        }, 100);
+      });
+    },
+    onKeyup(e) {
+      if (e.key === "Enter") {
+        e.stopPropagation();
+        this.isOpen = false;
+        this.$emit("inputPressEnter", e);
+      }
     },
     onOpenChange(status) {
       this.isOpen = status;

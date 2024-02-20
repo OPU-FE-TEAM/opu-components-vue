@@ -444,6 +444,9 @@ export default {
             props: {
               valueField: "name",
               textField: "age",
+              otherSlot: () => {
+                return <div style="width:200px;float:left;">123</div>;
+              },
               table: {
                 props: {
                   columns: [

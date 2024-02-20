@@ -182,6 +182,18 @@ XEUtils.mixin({
   //是否空对象
   isEmptyObject(data) {
     return JSON.stringify(data) === "{}";
+  },
+  /**
+   * 生成一个 不重复的ID
+   * @param { Number } randomLength
+   */
+  getUid(randomLength = 36) {
+    let dateTime = Date.now().toString();
+    return Number(
+      Math.random()
+        .toString()
+        .substr(2, randomLength) + dateTime
+    ).toString(36);
   }
 });
 

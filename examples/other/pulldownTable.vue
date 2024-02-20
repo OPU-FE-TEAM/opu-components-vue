@@ -1,5 +1,6 @@
 <template>
   <div>
+    <data-form :items="formItems" />
     <button @click="onShow">显示</button>
     <modal v-model="show" :width="800">
       <!-- <pulldownTable
@@ -12,7 +13,6 @@
         @change="onChange"
         textField="sex"
       /> -->
-      <data-form :items="formItems" />
     </modal>
   </div>
 </template>
