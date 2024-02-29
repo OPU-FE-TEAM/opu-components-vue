@@ -13,7 +13,11 @@ export default {
   props: {
     ...DatePickerProps(),
     min: [String, Object],
-    max: [String, Object]
+    max: [String, Object],
+    fieldName: {
+      type: String,
+      default: ""
+    }
   },
   model: {
     prop: "value",
@@ -21,6 +25,7 @@ export default {
   },
   data() {
     return {
+      className: "",
       inputValue: "",
       blocksData: {
         blocks: [],
@@ -41,7 +46,8 @@ export default {
       });
       const props = {
         props: {
-          ...propsData
+          ...propsData,
+          dropdownClassName: this.className
         },
         on: {
           ...ons,
@@ -79,9 +85,13 @@ export default {
   watch: {
     currentFormat() {
       this.blocksData = getBlocks(this.currentFormat);
+    },
+    fieldName() {
+      this.className = "id" + this.fieldName + utils.getUid();
     }
   },
   created() {
+    this.className = "id" + this.fieldName + utils.getUid();
     this.blocksData = getBlocks(this.currentFormat);
     this.focus = utils.throttle(function() {
       this.onFocus();
@@ -106,13 +116,6 @@ export default {
       }
       this.onInputEvent();
     },
-    onKeyUpEnter(e) {
-      if (e.key === "Enter") {
-        e.stopPropagation();
-        this.ok();
-        this.$emit("inputPressEnter", e);
-      }
-    },
     ok() {
       const val = mergeInputDate(
         this.inputValue,
@@ -129,14 +132,17 @@ export default {
     onInputEvent() {
       const that = this;
       setTimeout(() => {
-        const input = document.getElementsByClassName("ant-calendar-input");
-        if (input && input.length) {
-          const inputDom = input[input.length - 1];
-          inputDom.selectionStart = 0; // 选中开始位置
-          inputDom.selectionEnd = inputDom.value.length;
-          inputDom.removeEventListener("keyup", that.onKeyUpEnter);
-          inputDom.addEventListener("keyup", that.onKeyUpEnter);
-          inputDom.oninput = function(e) {
+        const input = document.querySelector(
+          `.${this.className} .ant-calendar-input`
+        );
+        if (input) {
+          input.selectionStart = 0; // 选中开始位置
+          input.selectionEnd = input.value.length;
+          input.removeEventListener("keydown", this.onKeydown);
+          input.addEventListener("keydown", this.onKeydown);
+          input.removeEventListener("keyup", that.onKeyup);
+          input.addEventListener("keyup", that.onKeyup);
+          input.oninput = function(e) {
             const { value } = e.target;
             if (e.target.value && e.inputType !== "deleteContentBackward") {
               let newValue = formatInputDate(value, that.blocksData);
@@ -146,6 +152,17 @@ export default {
           };
         }
       }, 100);
+    },
+    onKeyup(e) {
+      if (e.key === "Enter") {
+        e.stopPropagation();
+        this.ok();
+        this.$emit("inputPressEnter", e);
+      }
+    },
+    onKeydown(e) {
+      e.stopPropagation();
+      this.$emit("keydown");
     },
     onOpenChange(status) {
       if (status) {

@@ -156,6 +156,7 @@ export default {
     return {
       longColumns,
       columns: [
+        { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         // {
         //   field: "date",
         //   title: "日期111",
@@ -402,39 +403,35 @@ export default {
         //     }
         //   }
         // },
-        {
-          field: "switch1",
-          title: "默认值"
-        },
-        {
-          field: "orderType",
-          align: "left",
-          fixed: "left",
-          title: "下拉框666666",
-          minWidth: 150,
-          itemRender: {
-            name: "ASelect",
-            props: {
-              dataField: "data.commissioncode",
-              valueField: "id",
-              labelField: "text",
-              labelInValue: true,
-              searchApi: () => {
-                return getTableSelectData({ code: "commissioncode" });
-              }
-              // api:getTableSelectData,
-              // param: { code: "commissioncode" },
-            },
-            on: {
-              change: (a, b, c, d) => {
-                console.log(a, "a");
-                console.log(b, "b");
-                console.log(c, "c");
-                console.log(d, "d");
-              }
-            }
-          }
-        },
+        // {
+        //   field: "orderType",
+        //   align: "left",
+        //   fixed: "left",
+        //   title: "下拉框666666",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "ASelect",
+        //     props: {
+        //       dataField: "data.commissioncode",
+        //       valueField: "id",
+        //       labelField: "text",
+        //       labelInValue: true,
+        //       searchApi: () => {
+        //         return getTableSelectData({ code: "commissioncode" });
+        //       }
+        //       // api:getTableSelectData,
+        //       // param: { code: "commissioncode" },
+        //     },
+        //     on: {
+        //       change: (a, b, c, d) => {
+        //         console.log(a, "a");
+        //         console.log(b, "b");
+        //         console.log(c, "c");
+        //         console.log(d, "d");
+        //       }
+        //     }
+        //   }
+        // },
         {
           field: "oneSelect",
           align: "left",
@@ -442,7 +439,7 @@ export default {
           minWidth: 200,
           fixed: "left",
           itemRender: {
-            name: "ASelect",
+            name: "ASearchSelect",
             props: {
               mode: "multiple",
               valueField: "id",
@@ -481,7 +478,7 @@ export default {
               keyup: (e, { row }) => {
                 console.log(e, "页面进入");
                 if (e.keyCode == 13 && row.oneSelect.length < 2) {
-                  return false;
+                  // return false;
                 }
               }
             }
@@ -589,38 +586,37 @@ export default {
         //     }
         //   }
         // },
-        // {
-        //   field: "name",
-        //   align: "left",
-        //   title: "名称",
-        //   minWidth: 150,
-        //   itemRender: {
-        //     name: "AInput",
-        //     props: {
-        //       disabled: row => {
-        //         return row.orderType == 1;
-        //       }
-        //     }
-        //   }
-        // },
-
         {
-          field: "apiSelect1",
+          field: "name",
           align: "left",
-          title: "请求下拉1",
+          title: "名称",
           minWidth: 150,
           itemRender: {
-            name: "ASelect",
+            name: "AInput",
             props: {
-              optionsField: "oneSelectList1",
-              valueField: "value",
-              labelField: "label",
               disabled: row => {
-                return row.orderType == 3;
+                return row.orderType == 1;
               }
             }
           }
         }
+        // {
+        //   field: "apiSelect1",
+        //   align: "left",
+        //   title: "请求下拉1",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "ASelect",
+        //     props: {
+        //       optionsField: "oneSelectList1",
+        //       valueField: "value",
+        //       labelField: "label",
+        //       disabled: row => {
+        //         return row.orderType == 3;
+        //       }
+        //     }
+        //   }
+        // }
 
         // {
         //   field: "oneSelect1",

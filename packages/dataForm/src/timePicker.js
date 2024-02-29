@@ -95,7 +95,9 @@ export default {
           if (input) {
             input.selectionStart = 0; // 选中开始位置
             input.selectionEnd = input.value.length;
-            // input.removeEventListener("keyup", this.onKeyup);
+            input.removeEventListener("keydown", this.onKeydown);
+            input.addEventListener("keydown", this.onKeydown);
+            input.removeEventListener("keyup", this.onKeyup);
             input.addEventListener("keyup", this.onKeyup);
             input.oninput = function(e) {
               const { value } = e.target;
@@ -107,6 +109,10 @@ export default {
           }
         }, 100);
       });
+    },
+    onKeydown(e) {
+      e.stopPropagation();
+      this.$emit("keydown");
     },
     onKeyup(e) {
       if (e.key === "Enter") {

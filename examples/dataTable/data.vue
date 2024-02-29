@@ -193,7 +193,7 @@ export default {
         //   width: 30,
         //   fixed: "left"
         // },
-        // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
+        { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         {
           field: "name",
           itemRender: {

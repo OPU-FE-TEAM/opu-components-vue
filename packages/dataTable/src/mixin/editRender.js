@@ -533,6 +533,9 @@ export default {
                             }
                           }
                         },
+                        keydown: e => {
+                          e.stopPropagation();
+                        },
                         keyup: debounce(async e => {
                           if (name == "a-select" || name == "a-search-select") {
                             if (itemRender.on.keyup) {
