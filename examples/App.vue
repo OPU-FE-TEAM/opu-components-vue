@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import dataFormBase from "./dataForm/test";
-// import dataFormBase from "./dataForm/base";
+// import dataFormBase from "./dataForm/test";
+import dataFormBase from "./dataForm/base";
 // import dataFormBase from "./dataForm/select";
 // import dataFormBase from "./dataForm/rangTimePicker";
 import dataTableBase from "./dataTable/base";
@@ -58,7 +58,7 @@ export default {
   },
   data() {
     return {
-      tab: 11,
+      tab: 1,
       locale: zh_CN
     };
   }

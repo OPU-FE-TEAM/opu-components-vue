@@ -80,24 +80,25 @@ export default {
     }
   },
   methods: {
-    onChange() {
+    onChange(type) {
       let value = [this.minDate, this.maxDate];
       this.$emit("update", value);
       this.$emit("change", value);
+      this.$emit(`${type}Change`, value);
     },
     onStartChange(e) {
       if (this.maxDate && moment(this.maxDate).isBefore(e)) {
         this.maxDate = e;
       }
       this.minDate = e;
-      this.onChange(0);
+      this.onChange("start");
     },
     onEndChange(e) {
       if (this.minDate && e && !moment(this.minDate).isBefore(e)) {
         this.minDate = e;
       }
       this.maxDate = e;
-      this.onChange(1);
+      this.onChange("end");
     },
     startDisabledDateFuc(current) {
       if (

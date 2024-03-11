@@ -607,13 +607,18 @@ export default {
         // //     name: "a-input-number-split"
         // //   }
         // // },
-        // // {
-        // //   field: "cprice",
-        // //   title: "时间",
-        // //   itemRender: {
-        // //     name: "a-range-picker-split"
-        // //   }
-        // // },
+        {
+          field: "cprice",
+          title: "时间",
+          itemRender: {
+            name: "a-range-picker-split",
+            on: {
+              startChange: () => {
+                debugger;
+              }
+            }
+          }
+        },
         // // {
         // //   field: "name1",
         // //   title: "名称2",
