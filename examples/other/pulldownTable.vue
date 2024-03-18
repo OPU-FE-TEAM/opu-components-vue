@@ -249,7 +249,19 @@ export default {
                 props: {
                   sortable: true,
                   sortConfig: { remote: true },
-                  columns: [],
+                  columns: [
+                    {
+                      field: "keyName",
+                      title: "Name",
+                      width: 200,
+                      align: "left"
+                    },
+                    {
+                      field: "sex",
+                      title: "Sex",
+                      width: 200
+                    }
+                  ],
                   height: "400px",
                   highlightHoverRow: true,
                   highlightCurrentRow: true,
@@ -258,13 +270,13 @@ export default {
                       queryFlag: true
                     }
                   },
-                  setcolumnsConfig: {
-                    proxyConfig: {
-                      params: {
-                        queryFlag: false
-                      }
-                    }
-                  },
+                  // setcolumnsConfig: {
+                  //   proxyConfig: {
+                  //     params: {
+                  //       queryFlag: false
+                  //     }
+                  //   }
+                  // },
                   proxyConfig: {
                     autoLoad: true,
                     ajax: {

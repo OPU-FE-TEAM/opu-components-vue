@@ -525,16 +525,17 @@ export default {
                 on: { ...tableProps.on }
               }
             }),
-            h("set-columns", {
-              ref: "setTableColumnsModal",
-              props: {
-                option: setColumnsOpt,
-                columns: tableProps.props.columns
-              },
-              on: {
-                submit: onSetColumnsSubmit
-              }
-            })
+            setColumnsOpt.tableConfig &&
+              h("set-columns", {
+                ref: "setTableColumnsModal",
+                props: {
+                  option: setColumnsOpt,
+                  columns: tableProps.props.columns
+                },
+                on: {
+                  submit: onSetColumnsSubmit
+                }
+              })
           ]
         )
       ]

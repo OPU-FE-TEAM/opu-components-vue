@@ -428,7 +428,7 @@ export default {
         }
       }
     ];
-    if (option.tableConfig.columns) {
+    if (option.tableConfig && option.tableConfig.columns) {
       tableColumn = option.tableConfig.columns;
     }
 

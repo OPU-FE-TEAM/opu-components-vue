@@ -112,25 +112,12 @@ export default {
     }
   },
   methods: {
-    onChange() {
+    onChange(type) {
       let value = [this.minTime, this.maxTime];
       this.$emit("update", value);
       this.$emit("change", value);
+      this.$emit(`${type}Change`, value);
     },
-    // onStartChange(e) {
-    //   if (this.maxTime && moment(this.maxTime, this.format).isBefore(e)) {
-    //     this.maxTime = e;
-    //   }
-    //   this.minTime = e;
-    //   this.onChange(0);
-    // },
-    // onEndChange(e) {
-    //   if (this.minTime && e && !moment(this.minTime, this.format).isBefore(e)) {
-    //     this.minTime = e;
-    //   }
-    //   this.maxTime = e;
-    //   this.onChange(1);
-    // },
     onStartChange(e) {
       if (this.maxTime && moment(this.maxTime, this.format).isBefore(e)) {
         if (this.hasLimit) {
@@ -142,7 +129,7 @@ export default {
       } else {
         this.minTime = e;
       }
-      this.onChange(0);
+      this.onChange("start");
     },
     onEndChange(e) {
       if (this.minTime && e && !moment(this.minTime, this.format).isBefore(e)) {
@@ -155,7 +142,7 @@ export default {
       } else {
         this.maxTime = e;
       }
-      this.onChange(1);
+      this.onChange("end");
     },
     startDisabledHoursFuc() {
       let hoursArr = [];
