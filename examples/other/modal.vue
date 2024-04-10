@@ -4,6 +4,12 @@
     <a-button type="primary" @click="open1">打开1</a-button>
     <a-button type="primary" @click="open2">打开2</a-button>
     <modal title="" v-model="visible" :width="700">
+      <template #title>
+        <div class="title">
+          <span>123</span>
+          <span style="background:red">6666</span>
+        </div>
+      </template>
       <div>
         <a-checkbox-group :options="options"> </a-checkbox-group>
         <BaseForm />

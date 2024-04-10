@@ -80,7 +80,7 @@ export default {
                 class: "modal-title"
               }}
             >
-              {propsData.title}
+              {($scopedSlots.title && $scopedSlots.title()) || propsData.title}
               <input class="hidden-input" ref="hiddenInput"></input>
             </div>
           );
