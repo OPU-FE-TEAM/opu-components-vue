@@ -168,7 +168,11 @@ export default {
         return p;
       });
     }
-    if (propsData.fileList && propsData.fileList.length && !this.multiple) {
+    if (
+      propsData.fileList &&
+      propsData.fileList.length &&
+      (!this.multiple || this.disabled)
+    ) {
       button = "";
     }
 
