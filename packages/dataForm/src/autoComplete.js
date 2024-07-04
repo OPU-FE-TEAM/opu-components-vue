@@ -7,7 +7,7 @@ function handleItemPropsOptions(options, _vm, pValue = "") {
   const { vF, lF, optionsFilter, value } = _vm;
   if (options && utils.isArray(options)) {
     const cloneOptions = utils.clone(options);
-    return cloneOptions.map(item => {
+    return cloneOptions.map((item) => {
       if (Object.prototype.toString.call(item) === "[object Object]") {
         if (item.value && vF != "value" && !item[config.originalValueKey]) {
           item[config.originalValueKey] = item.value;
@@ -38,26 +38,30 @@ export default {
     ...AutoCompleteProps,
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     renderName: {
       type: String,
-      default: "a-auto-complete"
+      default: "a-auto-complete",
     },
     slots: [Object],
     valueField: String,
     labelField: String,
     value: [Number, String, Object, Array],
     options: Array,
-    renderOptionLabel: Function
+    renderOptionLabel: Function,
+    searchFields: {
+      type: Array,
+      default: () => [],
+    },
   },
   model: {
     prop: "value",
-    event: "update"
+    event: "update",
   },
   data() {
     return {
-      optionsData: []
+      optionsData: [],
     };
   },
   computed: {
@@ -83,20 +87,20 @@ export default {
       });
       const props = {
         props: {
-          ...propsData
+          ...propsData,
         },
         on: {
           ...ons,
-          change: this.updateValue
-        }
+          change: this.updateValue,
+        },
       };
       return props;
-    }
+    },
   },
   watch: {
     options(value) {
       this.setOptionsData(value);
-    }
+    },
   },
   created() {
     this.init();
@@ -152,13 +156,20 @@ export default {
       }
     },
     autoCompleteFilterRender(props) {
-      let { vF, lF, optionsData, value, renderOptionLabel } = this;
+      let {
+        vF,
+        lF,
+        optionsData,
+        value,
+        renderOptionLabel,
+        searchFields,
+      } = this;
       let dataSource = [];
       if (props.search) {
         dataSource = props.search(value, optionsData);
       } else {
-        const searchFields = props.searchFields || [];
-        dataSource = optionsData.filter(p => {
+        // const searchFields = props.searchFields || [];
+        dataSource = optionsData.filter((p) => {
           if (!value) return true;
           let is = false;
           if (Object.prototype.toString.call(p) === "[object Object]") {
@@ -190,7 +201,7 @@ export default {
         });
       }
 
-      const selectOptions = dataSource.map(p => {
+      const selectOptions = dataSource.map((p) => {
         return (
           <a-select-option key={p[vF] || p}>
             {(renderOptionLabel && renderOptionLabel(p)) || p[lF] || p}
@@ -198,7 +209,7 @@ export default {
         );
       });
       return { selectOptions, dataSource };
-    }
+    },
   },
   render(h) {
     const { componentProps, value } = this;
@@ -209,7 +220,7 @@ export default {
 
     let slots = [];
     if (componentProps.props && componentProps.props.slots) {
-      slots = Object.keys(componentProps.props.slots).map(name => (
+      slots = Object.keys(componentProps.props.slots).map((name) => (
         <template slot={name}>
           {componentProps.props.slots[name](this.optionsData)}
         </template>
@@ -223,7 +234,7 @@ export default {
         ref: "inputComponent",
         props: {
           ...componentProps.props,
-          value
+          value,
         },
         on: {
           ...componentProps.on,
@@ -233,10 +244,10 @@ export default {
               componentProps.on.focus();
             }
           },
-          select: value => {
+          select: (value) => {
             if (componentProps.on && componentProps.on.select) {
               let { vF } = this;
-              let row = dataSource.find(p => {
+              let row = dataSource.find((p) => {
                 if (Object.prototype.toString.call(p) === "[object Object]") {
                   return p[vF] == value;
                 } else {
@@ -245,10 +256,10 @@ export default {
               });
               componentProps.on.select(value, row);
             }
-          }
-        }
+          },
+        },
       },
       [slots]
     );
-  }
+  },
 };

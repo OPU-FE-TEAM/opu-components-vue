@@ -13,6 +13,7 @@
       <modalDemo v-else-if="tab == 10" />
       <editTable v-else-if="tab == 11" />
       <dataTableBase1 v-else-if="tab == 12" />
+      <dataFormAutoComplete v-else-if="tab == 13" />
     </a-config-provider>
   </div>
 </template>
@@ -20,7 +21,7 @@
 <script>
 // import dataFormBase from "./dataForm/test";
 import dataFormBase from "./dataForm/base";
-// import dataFormBase from "./dataForm/select";
+import dataFormAutoComplete from "./dataForm/autoComplete";
 // import dataFormBase from "./dataForm/rangTimePicker";
 import dataTableBase from "./dataTable/base";
 import dataTableBase1 from "./dataTable/base1";
@@ -54,14 +55,15 @@ export default {
     setColumns,
     dataTableData,
     modalDemo,
-    editTable
+    editTable,
+    dataFormAutoComplete,
   },
   data() {
     return {
-      tab: 10,
-      locale: zh_CN
+      tab: 13,
+      locale: zh_CN,
     };
-  }
+  },
 };
 </script>
 
