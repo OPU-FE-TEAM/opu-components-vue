@@ -33,6 +33,14 @@ export default {
     endDisabledDate: {
       type: Function,
       default: null
+    },
+    startProps:{
+      type:Object,
+      default:()=>({})
+    },
+    endProps:{
+      type:Object,
+      default:()=>({})
     }
   },
   model: {
@@ -142,7 +150,8 @@ export default {
     const start = {
       ref: "startDatePicker",
       props: {
-        ...propsData
+        ...propsData,
+        ...this.startProps
         // allowClear: false
       },
       style: {
@@ -170,7 +179,8 @@ export default {
     const end = {
       ref: "endDatePicker",
       props: {
-        ...propsData
+        ...propsData,
+        ...this.endProps
         // allowClear: false
       },
       style: {
