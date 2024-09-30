@@ -86,9 +86,9 @@ export default {
     this.optionsData = this.treeData;
   },
   methods: {
-    updateValue(value) {
-      this.$emit("update", value);
-      this.$emit("change", value);
+    updateValue(value, label, extra) {
+      this.$emit("update", value, label, extra);
+      this.$emit("change", value, label, extra);
     },
     setOptionsData(data) {
       this.optionsData = data;
