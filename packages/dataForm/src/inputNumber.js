@@ -49,8 +49,8 @@ export default {
       on: {
         ...listeners,
         change: value => {
-          this.$emit("update", value);
-          this.$emit("change", value);
+          this.$emit("update", value || "");
+          this.$emit("change", value || "");
         },
         pressEnter: e => {
           this.$emit("pressEnter", e);
