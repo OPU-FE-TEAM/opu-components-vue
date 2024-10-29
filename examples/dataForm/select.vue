@@ -24,21 +24,47 @@ var a = { id: 1, name: 10 };
 function getSelectGroupData() {
   return new Promise(resolve => {
     setTimeout(() => {
+      // const data = [
+      //   {
+      //     Id: 1,
+      //     Text: "男",
+      //     code: "boy"
+      //   },
+      //   {
+      //     Id: 2,
+      //     Text: "女",
+      //     isSelected: true,
+      //     code: "girl"
+      //   },
+      //   {
+      //     Id: 3,
+      //     Text: "未知"
+      //   }
+      // ];
+
       const data = [
         {
-          Id: 1,
-          Text: "男",
-          code: "boy"
+          id: "940433117406035968",
+          name: "肉类",
+          isDeleted: false,
+          simpleCode: "RL,MO",
+          projectCategoryList: [
+            {
+              id: "941587787218419712",
+              name: "热火菜",
+              isDeleted: false,
+              simpleCode: "RHC,ROA",
+              projectCategoryList: []
+            }
+          ]
         },
         {
-          Id: 2,
-          Text: "女",
-          isSelected: true,
-          code: "girl"
-        },
-        {
-          Id: 3,
-          Text: "未知"
+          id: "1127846921893838848",
+          name: "冷饮",
+          disabled: true,
+          isDeleted: false,
+          simpleCode: "LY,UQ",
+          projectCategoryList: []
         }
       ];
       resolve({
@@ -58,44 +84,63 @@ export default {
       a,
       loading: true,
       items: [
+        // {
+        //   field: "checkOutDate1",
+        //   title: "日期范围",
+        //   itemRender: {
+        //     name: "a-range-picker-split",
+        //     props: {
+        //       allowClear: true,
+        //       showTime: { format: "HH:mm:ss" }
+        //     }
+        //   }
+        // },
         {
-          field: "checkOutDate1",
-          title: "日期范围",
-          itemRender: {
-            name: "a-range-picker-split",
-            props: {
-              allowClear: true,
-              showTime: { format: "HH:mm:ss" }
-            }
-          }
-        },
-        {
-          field: "ordinary1",
+          field: "ordinary2",
           title: "请求下拉123",
           itemRender: {
-            name: "a-select",
+            name: "a-select-group",
             props: {
-              size: "small",
-              defaultField: "isSelected",
               dataField: "data",
-              valueField: "Id",
-              labelField: "Text",
-              // api: getSelectGroupData,
-              searchApi: getSelectGroupData,
-              renderOptionLabel: e => {
-                console.log(e);
-                return <span style="background:red;">{e.Text}</span>;
+              valueField: "id",
+              labelField: "name",
+              defaultActiveFirstOption: false,
+              childrenField: "projectCategoryList",
+              replaceFields: {
+                children: "projectCategoryList"
               },
-              mode: "multiple"
-            },
-            on: {
-              change: (e, rows) => {
-                console.log(e, "e");
-                console.log(rows, "rows");
-              }
+              disabledField: "disabled",
+              api: getSelectGroupData
             }
           }
         }
+        // {
+        //   field: "ordinary1",
+        //   title: "请求下拉123",
+        //   itemRender: {
+        //     name: "a-select",
+        //     props: {
+        //       size: "small",
+        //       defaultField: "isSelected",
+        //       dataField: "data",
+        //       valueField: "Id",
+        //       labelField: "Text",
+        //       // api: getSelectGroupData,
+        //       searchApi: getSelectGroupData,
+        //       renderOptionLabel: e => {
+        //         console.log(e);
+        //         return <span style="background:red;">{e.Text}</span>;
+        //       },
+        //       mode: "multiple"
+        //     },
+        //     on: {
+        //       change: (e, rows) => {
+        //         console.log(e, "e");
+        //         console.log(rows, "rows");
+        //       }
+        //     }
+        //   }
+        // }
         // {
         //   title: "部门",
         //   field: "departId123",

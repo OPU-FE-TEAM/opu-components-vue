@@ -44,7 +44,11 @@ export default {
       type: Array,
       default: () => []
     },
-    childrenField: String
+    childrenField: String,
+    disabledField: {
+      type: String,
+      default: "disabled"
+    }
   },
   model: {
     prop: "value",
@@ -156,7 +160,7 @@ export default {
       }
     },
     renderOptGroup(h) {
-      const { childrenField, optionsData } = this;
+      const { childrenField, disabledField, optionsData } = this;
       if (this.childrenField) {
         return optionsData.map(group => {
           let options = "";
@@ -168,13 +172,26 @@ export default {
             });
             return h(
               "a-select-opt-group",
-              { props: { label: group.label, key: group.value } },
+              {
+                props: {
+                  label: group.label,
+                  key: group.value,
+                  disabled: group && group[disabledField]
+                }
+              },
               [options]
             );
           }
-          return h("a-select-option", { props: { value: group.value } }, [
-            group.label
-          ]);
+          return h(
+            "a-select-option",
+            {
+              props: {
+                value: group.value,
+                disabled: group && group[disabledField]
+              }
+            },
+            [group.label]
+          );
         });
       }
       return "";

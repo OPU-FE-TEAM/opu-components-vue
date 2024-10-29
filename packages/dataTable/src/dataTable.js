@@ -1250,17 +1250,17 @@ export default {
      * @param {*} data
      * @return {*}
      */
-    setSelectRow(index, data) {
+    setSelectRow(index = 0, data) {
       if (!data) data = this.data;
       if (data && data.length) {
         let grid = this.$refs.dataGrid;
         if (grid) {
-          grid.setCurrentRow(data[0]);
+          grid.setCurrentRow(data[index]);
           grid.focus();
           this.onCurrentRowChange({
-            row: data[0],
-            rowIndex: 0,
-            $rowIndex: 0
+            row: data[index],
+            rowIndex: index,
+            $rowIndex: index
           });
         }
       }

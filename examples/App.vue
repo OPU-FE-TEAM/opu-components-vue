@@ -20,9 +20,9 @@
 
 <script>
 // import dataFormBase from "./dataForm/test";
-import dataFormBase from "./dataForm/base";
+// import dataFormBase from "./dataForm/base";
 import dataFormAutoComplete from "./dataForm/autoComplete";
-// import dataFormBase from "./dataForm/rangTimePicker";
+import dataFormBase from "./dataForm/select";
 import dataTableBase from "./dataTable/base";
 import dataTableBase1 from "./dataTable/base1";
 import dataTableData from "./dataTable/data";
@@ -56,14 +56,14 @@ export default {
     dataTableData,
     modalDemo,
     editTable,
-    dataFormAutoComplete,
+    dataFormAutoComplete
   },
   data() {
     return {
-      tab: 13,
-      locale: zh_CN,
+      tab: 1,
+      locale: zh_CN
     };
-  },
+  }
 };
 </script>
 
