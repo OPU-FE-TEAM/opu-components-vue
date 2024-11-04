@@ -17,6 +17,22 @@ export default {
     fieldName: {
       type: String,
       default: ""
+    },
+    inputFormat: {
+      type: String,
+      default: ""
+    },
+    formatInputReplace: {
+      type: Function,
+      default: null
+    },
+    formatInputBefore: {
+      type: Function,
+      default: null
+    },
+    disabledInputDate: {
+      type: Boolean,
+      default: false
     }
   },
   model: {
@@ -84,7 +100,7 @@ export default {
   },
   watch: {
     currentFormat() {
-      this.blocksData = getBlocks(this.currentFormat);
+      this.blocksData = getBlocks(this.inputFormat || this.currentFormat);
     },
     fieldName() {
       this.className = "id" + this.fieldName + utils.getUid();
@@ -92,7 +108,7 @@ export default {
   },
   created() {
     this.className = "id" + this.fieldName + utils.getUid();
-    this.blocksData = getBlocks(this.currentFormat);
+    this.blocksData = getBlocks(this.inputFormat || this.currentFormat);
     this.focus = utils.throttle(function() {
       this.onFocus();
     }, 100);
@@ -131,27 +147,51 @@ export default {
     // 监听输入事件
     onInputEvent() {
       const that = this;
-      setTimeout(() => {
-        const input = document.querySelector(
-          `.${this.className} .ant-calendar-input`
-        );
-        if (input) {
-          input.selectionStart = 0; // 选中开始位置
-          input.selectionEnd = input.value.length;
-          input.removeEventListener("keydown", this.onKeydown);
-          input.addEventListener("keydown", this.onKeydown);
-          input.removeEventListener("keyup", that.onKeyup);
-          input.addEventListener("keyup", that.onKeyup);
-          input.oninput = function(e) {
-            const { value } = e.target;
-            if (e.target.value && e.inputType !== "deleteContentBackward") {
-              let newValue = formatInputDate(value, that.blocksData);
-              e.target.value = newValue;
-            }
-            that.inputValue = e.target.value;
-          };
-        }
-      }, 100);
+      if (!that.disabledInputDate) {
+        setTimeout(() => {
+          const input = document.querySelector(
+            `.${that.className} .ant-calendar-input`
+          );
+          if (input) {
+            input.selectionStart = 0; // 选中开始位置
+            input.selectionEnd = input.value.length;
+            input.removeEventListener("keydown", that.onKeydown);
+            input.addEventListener("keydown", that.onKeydown);
+            input.removeEventListener("keyup", that.onKeyup);
+            input.addEventListener("keyup", that.onKeyup);
+            input.oninput = function(e) {
+              if (e.inputType !== "deleteContentBackward") {
+                if (that.formatInputReplace) {
+                  let res = that.formatInputReplace(e);
+                  if (res !== false) {
+                    e.target.value = res;
+                  }
+                }
+                if (that.formatInputBefore) {
+                  let res = that.formatInputBefore({
+                    e,
+                    format: that.currentFormat,
+                    updateValue: that.updateValue,
+                    formatInputDate,
+                    vm: that
+                  });
+                  if (res === false) {
+                    return;
+                  }
+                }
+                const { value } = e.target;
+                if (value) {
+                  let newValue = formatInputDate(value, that.blocksData);
+                  e.target.value = newValue;
+                }
+                // if (e.target.value != value) {
+                that.inputValue = e.target.value;
+                // }
+              }
+            };
+          }
+        }, 100);
+      }
     },
     onKeyup(e) {
       if (e.key === "Enter") {

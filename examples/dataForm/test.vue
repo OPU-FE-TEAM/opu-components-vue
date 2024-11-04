@@ -24,9 +24,9 @@
 </template>
 
 <script>
-// import test1 from "./test1";
+import moment from "moment";
 import { formatInputDate } from "../../packages/utils/dateFormat";
-
+moment;
 let data = [
   {
     value: "1",
@@ -70,7 +70,7 @@ let data = [
   }
 ];
 console.log(data);
-
+getData;
 function getData(arr = {}) {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -99,7 +99,7 @@ function getData(arr = {}) {
     }, 500);
   });
 }
-
+getSelectGroupData;
 function getSelectGroupData() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -191,6 +191,7 @@ function getSelectData() {
     }, 3000);
   });
 }
+getSelectData;
 function getSelectTextData() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -202,6 +203,7 @@ function getSelectTextData() {
     }, 3000);
   });
 }
+getSelectTextData;
 
 export default {
   components: {
@@ -233,44 +235,44 @@ export default {
         //   title: "shur",
         //   itemRender: {}
         // },
-        {
-          title: "证件类型",
-          field: "idType",
-          itemRender: {
-            name: "a-auto-complete",
-            props: {
-              api: getSelectData,
-              valueField: "text",
-              textField: "text"
-            }
-          }
-        },
-        {
-          field: "input",
-          title: "输入框"
-        },
-        {
-          field: "autoComplete",
-          title: "补全",
-          itemRender: {
-            name: "a-auto-complete",
-            props: {
-              api: getSelectData,
-              valueField: "text",
-              textField: "text"
-            }
-          }
-        },
-        {
-          field: "autoCompleteText",
-          title: "补全文字",
-          itemRender: {
-            name: "a-auto-complete",
-            props: {
-              api: getSelectTextData
-            }
-          }
-        },
+        // {
+        //   title: "证件类型",
+        //   field: "idType",
+        //   itemRender: {
+        //     name: "a-auto-complete",
+        //     props: {
+        //       api: getSelectData,
+        //       valueField: "text",
+        //       textField: "text"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "input",
+        //   title: "输入框"
+        // },
+        // {
+        //   field: "autoComplete",
+        //   title: "补全",
+        //   itemRender: {
+        //     name: "a-auto-complete",
+        //     props: {
+        //       api: getSelectData,
+        //       valueField: "text",
+        //       textField: "text"
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "autoCompleteText",
+        //   title: "补全文字",
+        //   itemRender: {
+        //     name: "a-auto-complete",
+        //     props: {
+        //       api: getSelectTextData
+        //     }
+        //   }
+        // },
         // {
         //   field: "cascader11",
         //   title: "半选",
@@ -313,32 +315,32 @@ export default {
         //   title: "shur",
         //   itemRender: {}
         // },
-        {
-          title: "年份",
-          field: "year",
-          itemRender: {
-            name: "a-date-picker",
-            // YearPicker
-            // name: "a-date-picker",
-            props: {
-              mode: "year",
-              format: "YYYY"
-            }
-          }
-        },
-        {
-          title: "月份",
-          field: "month",
-          itemRender: {
-            name: "a-date-picker",
-            // YearPicker
-            // name: "a-date-picker",
-            props: {
-              mode: "month",
-              format: "MM"
-            }
-          }
-        },
+        // {
+        //   title: "年份",
+        //   field: "year",
+        //   itemRender: {
+        //     name: "a-date-picker",
+        //     // YearPicker
+        //     // name: "a-date-picker",
+        //     props: {
+        //       mode: "year",
+        //       format: "YYYY"
+        //     }
+        //   }
+        // },
+        // {
+        //   title: "月份",
+        //   field: "month",
+        //   itemRender: {
+        //     name: "a-date-picker",
+        //     // YearPicker
+        //     // name: "a-date-picker",
+        //     props: {
+        //       mode: "month",
+        //       format: "MM"
+        //     }
+        //   }
+        // },
         {
           title: "日期111111111",
           field: "date",
@@ -347,23 +349,42 @@ export default {
             // YearPicker
             // name: "a-date-picker",
             props: {
-              format: "YYYY-MM-DD"
+              format: "YYYY-MM-DD",
+              // inputFormat: "YYYY-MM-DD",
+              showTime: true
+              // formatInputReplace: e => {
+              //   let value = e.target.value;
+              //   let newValue = e.target.value.replace(/.?\((.*)\)/, "");
+              //   if (value == newValue) {
+              //     return false;
+              //   } else {
+              //     return newValue;
+              //   }
+              // },
+              // formatInputBefore: ({ e, updateValue }) => {
+              //   const { value } = e.target;
+              //   if (value.length > 18) {
+              //     let newValue = value.substring(0, 19);
+              //     updateValue(moment(newValue));
+              //     return false;
+              //   }
+              // }
             }
           }
-        },
-        {
-          title: "时间",
-          field: "dateTime",
-          itemRender: {
-            name: "a-date-picker",
-            // YearPicker
-            // name: "a-date-picker",
-            props: {
-              showTime: true,
-              format: "YYYY-MM-DD HH:mm"
-            }
-          }
-        },
+        }
+        // {
+        //   title: "时间",
+        //   field: "dateTime",
+        //   itemRender: {
+        //     name: "a-date-picker",
+        //     // YearPicker
+        //     // name: "a-date-picker",
+        //     props: {
+        //       showTime: true,
+        //       format: "YYYY-MM-DD HH:mm"
+        //     }
+        //   }
+        // },
         // {
         //   title: "数字",
         //   field: "number",
@@ -433,91 +454,91 @@ export default {
         //     }
         //   }
         // }
-        {
-          field: "pulldown",
-          title: "下拉面板",
-          option: {
-            initialValue: "桂林"
-          },
-          itemRender: {
-            name: "pulldown-table",
-            props: {
-              valueField: "name",
-              textField: "age",
-              otherSlot: () => {
-                return <div style="width:200px;float:left;">123</div>;
-              },
-              table: {
-                props: {
-                  columns: [
-                    { type: "checkbox", width: 50 },
-                    { type: "seq", title: "Number", width: 80 },
-                    {
-                      field: "name",
-                      title: "Name",
-                      width: 200
-                    },
-                    {
-                      field: "sex",
-                      title: "Sex",
-                      width: 200
-                    },
-                    {
-                      field: "age",
-                      title: "Age",
-                      width: 200
-                    }
-                  ],
-                  size: "mini",
-                  height: 300,
-                  proxyConfig: {
-                    autoLoad: false,
-                    ajax: {
-                      query: getData
-                    }
-                  }
-                }
-              }
-            },
-            on: {
-              change(val, sel) {
-                console.log("change", val, sel);
-              },
-              inputChange(sel) {
-                console.log("inputChange", sel);
-              }
-            }
-          }
-        },
-        {
-          field: "ordinary1",
-          title: "请求下拉123",
-          itemRender: {
-            name: "a-select",
-            props: {}
-          }
-        },
-        {
-          field: "ordinary12",
-          title: "请求下拉123",
-          itemRender: {
-            name: "a-select",
-            props: {}
-          }
-        },
-        {
-          field: "ordinary13",
-          title: "请求下拉123",
-          itemRender: {
-            name: "a-select",
-            props: {
-              defaultField: "isSelected",
-              valueField: "Id",
-              labelField: "Text",
-              api: getSelectGroupData
-            }
-          }
-        }
+        // {
+        //   field: "pulldown",
+        //   title: "下拉面板",
+        //   option: {
+        //     initialValue: "桂林"
+        //   },
+        //   itemRender: {
+        //     name: "pulldown-table",
+        //     props: {
+        //       valueField: "name",
+        //       textField: "age",
+        //       otherSlot: () => {
+        //         return <div style="width:200px;float:left;">123</div>;
+        //       },
+        //       table: {
+        //         props: {
+        //           columns: [
+        //             { type: "checkbox", width: 50 },
+        //             { type: "seq", title: "Number", width: 80 },
+        //             {
+        //               field: "name",
+        //               title: "Name",
+        //               width: 200
+        //             },
+        //             {
+        //               field: "sex",
+        //               title: "Sex",
+        //               width: 200
+        //             },
+        //             {
+        //               field: "age",
+        //               title: "Age",
+        //               width: 200
+        //             }
+        //           ],
+        //           size: "mini",
+        //           height: 300,
+        //           proxyConfig: {
+        //             autoLoad: false,
+        //             ajax: {
+        //               query: getData
+        //             }
+        //           }
+        //         }
+        //       }
+        //     },
+        //     on: {
+        //       change(val, sel) {
+        //         console.log("change", val, sel);
+        //       },
+        //       inputChange(sel) {
+        //         console.log("inputChange", sel);
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "ordinary1",
+        //   title: "请求下拉123",
+        //   itemRender: {
+        //     name: "a-select",
+        //     props: {}
+        //   }
+        // },
+        // {
+        //   field: "ordinary12",
+        //   title: "请求下拉123",
+        //   itemRender: {
+        //     name: "a-select",
+        //     props: {}
+        //   }
+        // },
+        // {
+        //   field: "ordinary13",
+        //   title: "请求下拉123",
+        //   itemRender: {
+        //     name: "a-select",
+        //     props: {
+        //       defaultField: "isSelected",
+        //       valueField: "Id",
+        //       labelField: "Text",
+        //       api: getSelectGroupData
+        //     }
+        //   }
+        // }
         //   {
         //     field: "pulldown1",
         //     title: "下拉面板1",

@@ -19,10 +19,10 @@
 </template>
 
 <script>
-// import dataFormBase from "./dataForm/test";
+import dataFormBase from "./dataForm/test";
 // import dataFormBase from "./dataForm/base";
 import dataFormAutoComplete from "./dataForm/autoComplete";
-import dataFormBase from "./dataForm/select";
+// import dataFormBase from "./dataForm/select";
 import dataTableBase from "./dataTable/base";
 import dataTableBase1 from "./dataTable/base1";
 import dataTableData from "./dataTable/data";

@@ -32,18 +32,66 @@ export const getBlocks = (format = "YYYY-MM-DD") => {
   };
 };
 
+// export const formatInputDate = (value, blocksData) => {
+//   const { blocks, datePatterns, delimiters } = blocksData;
+//   let result = "";
+//   value = value.replace(/[^\d]/g, "");
+//   blocks.forEach((length, index) => {
+//     if (value.length > 0) {
+//       let sub = value.slice(0, length);
+//       let rest = value.slice(length);
+//       let datePattern = datePatterns[index];
+
+//       let delimiter = "";
+//       if (sub.length === length) {
+//         delimiter = delimiters[index] ? delimiters[index] : "";
+//       }
+//       if (datePattern == "DD") {
+//         if (sub === "00") {
+//           sub = "01";
+//         } else if (parseInt(sub, 10) > 31) {
+//           sub = "31";
+//         }
+//       } else if (datePattern == "MM") {
+//         if (sub === "00") {
+//           sub = "01";
+//         } else if (parseInt(sub, 10) > 12) {
+//           sub = "12";
+//         }
+//       } else if (datePattern == "HH") {
+//         if (parseInt(sub, 10) > 23) {
+//           sub = "23";
+//         }
+//       } else if (datePattern == "h") {
+//         if (parseInt(sub, 10) > 12) {
+//           sub = "12";
+//         }
+//       } else if (["mm", "ss", "m", "s"].includes(datePattern)) {
+//         if (parseInt(sub, 10) > 59) {
+//           sub = "59";
+//         }
+//       }
+
+//       result += sub + delimiter;
+//       value = rest;
+//     }
+//   });
+//   return result;
+// };
+
 export const formatInputDate = (value, blocksData) => {
   const { blocks, datePatterns, delimiters } = blocksData;
   let result = "";
+  let arr = value.match(/[^\D]+/g, "");
   value = value.replace(/[^\d]/g, "");
   blocks.forEach((length, index) => {
     if (value.length > 0) {
-      let sub = value.slice(0, length);
-      let rest = value.slice(length);
+      let sub = value.slice(0, arr[index].length);
+      let rest = value.slice(arr[index].length);
       let datePattern = datePatterns[index];
 
       let delimiter = "";
-      if (sub.length === length) {
+      if (sub.length === length || value.length - arr[index].length > 0) {
         delimiter = delimiters[index] ? delimiters[index] : "";
       }
       if (datePattern == "DD") {
