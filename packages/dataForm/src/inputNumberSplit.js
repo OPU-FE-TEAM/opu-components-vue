@@ -92,7 +92,7 @@ export default {
       if (sMax && e > sMax) {
         e = sMax;
       }
-      if (this.eValue && (e || e == 0) && this.eValue < e) {
+      if (this.eValue && (e || e === 0) && this.eValue < e) {
         e = this.eValue;
       }
       this.sValue = e;
@@ -106,7 +106,7 @@ export default {
       if (eMax && e > eMax) {
         e = eMax;
       }
-      if (this.sValue && (e || e == 0) && this.sValue > e) {
+      if (this.sValue && (e || e === 0) && this.sValue > e) {
         e = this.sValue;
       }
       this.eValue = e;
