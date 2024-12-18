@@ -2,6 +2,7 @@ import { DatePickerProps } from "ant-design-vue/lib/date-picker/interface";
 import utils from "../../utils";
 import OpuDatePicker from "./datePicker";
 import moment from "moment";
+import { cloneDeep } from "lodash";
 
 export default {
   name: "ARangePickerSplit",
@@ -34,13 +35,17 @@ export default {
       type: Function,
       default: null
     },
-    startProps:{
-      type:Object,
-      default:()=>({})
+    startProps: {
+      type: Object,
+      default: () => ({})
     },
-    endProps:{
-      type:Object,
-      default:()=>({})
+    endProps: {
+      type: Object,
+      default: () => ({})
+    },
+    directives: {
+      type: Array,
+      default: () => []
     }
   },
   model: {
@@ -146,6 +151,7 @@ export default {
         this.$emit(type, ...args);
       };
     });
+    console.log(propsData);
 
     const start = {
       ref: "startDatePicker",
@@ -264,16 +270,33 @@ export default {
       separatorText = separator;
     }
 
-    return (
+    if (this.directives) {
+      start.directives = this.directives;
+      let directives = cloneDeep(this.directives);
+      let row = directives.find(p => p.name == "decorator");
+      row.value[0] = row.value[0] + "-end";
+      end.directives = directives;
+    }
+
+    return [
       <div class="date-range-split">
-        <div class="item">
+        <a-form-item class="item">
           <opu-date-picker {...start} />
-        </div>
+        </a-form-item>
         <div class="fh"> {separatorText} </div>
-        <div class="item">
+        <a-form-item class="item">
           <opu-date-picker {...end} />
-        </div>
+        </a-form-item>
       </div>
-    );
+    ];
+    // <div class="date-range-split">
+    //   <div class="item">
+    //     <opu-date-picker {...start} />
+    //   </div>
+    //   <div class="fh"> {separatorText} </div>
+    //   <div class="item">
+    //     <opu-date-picker {...end} />
+    //   </div>
+    // </div>
   }
 };

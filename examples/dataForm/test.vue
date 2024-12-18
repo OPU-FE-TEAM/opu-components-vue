@@ -1,20 +1,22 @@
 <template>
   <div>
-    <div style="width:300px">
+    <div style="width:500px">
       <DataForm
         ref="dataForm"
         :items="items"
         :foldingButtonProps="false"
+        titleColon
         autoSetDefaultValue
         autoSetDefaultFirst
         autoEnterSelectInput
         autoFocus="name3"
         loadOptionsIdField="id"
-        titleWidth="auto"
+        titleWidth="120"
       >
       </DataForm>
       <a-button @click="onSetData">赋值</a-button>
       <a-button @click="onGetData">获取</a-button>
+      <a-button @click="onValidateFields">验证</a-button>
       <div>
         <a-input v-model="dateValue" @change="onDateValueChange"></a-input>
         <a-button @click="onFormatDate">格式化</a-button>
@@ -212,6 +214,25 @@ export default {
   data() {
     return {
       items: [
+        {
+          field: "dateTime111",
+          title: "时间",
+          colspan: 2,
+          option: {
+            rules: [
+              {
+                required: true,
+                message: "请选择时间"
+              }
+            ]
+          },
+          itemRender: {
+            name: "a-range-picker-split",
+            props: {
+              format: "YYYY-MM-DD"
+            }
+          }
+        },
         // {
         //   field: "cascader",
         //   title: "级联选择",
@@ -235,18 +256,14 @@ export default {
         //   title: "shur",
         //   itemRender: {}
         // },
-        // {
-        //   title: "证件类型",
-        //   field: "idType",
-        //   itemRender: {
-        //     name: "a-auto-complete",
-        //     props: {
-        //       api: getSelectData,
-        //       valueField: "text",
-        //       textField: "text"
-        //     }
-        //   }
-        // },
+        {
+          title: "证件类型",
+          field: "idType",
+          itemRender: {
+            name: "a-date-picker",
+            props: {}
+          }
+        }
         // {
         //   field: "input",
         //   title: "输入框"
@@ -341,37 +358,37 @@ export default {
         //     }
         //   }
         // },
-        {
-          title: "日期111111111",
-          field: "date",
-          itemRender: {
-            name: "a-date-picker",
-            // YearPicker
-            // name: "a-date-picker",
-            props: {
-              format: "YYYY-MM-DD",
-              // inputFormat: "YYYY-MM-DD",
-              showTime: true
-              // formatInputReplace: e => {
-              //   let value = e.target.value;
-              //   let newValue = e.target.value.replace(/.?\((.*)\)/, "");
-              //   if (value == newValue) {
-              //     return false;
-              //   } else {
-              //     return newValue;
-              //   }
-              // },
-              // formatInputBefore: ({ e, updateValue }) => {
-              //   const { value } = e.target;
-              //   if (value.length > 18) {
-              //     let newValue = value.substring(0, 19);
-              //     updateValue(moment(newValue));
-              //     return false;
-              //   }
-              // }
-            }
-          }
-        }
+        // {
+        //   title: "日期111111111",
+        //   field: "date",
+        //   itemRender: {
+        //     name: "a-date-picker",
+        //     // YearPicker
+        //     // name: "a-date-picker",
+        //     props: {
+        //       format: "YYYY-MM-DD",
+        //       // inputFormat: "YYYY-MM-DD",
+        //       showTime: true
+        //       // formatInputReplace: e => {
+        //       //   let value = e.target.value;
+        //       //   let newValue = e.target.value.replace(/.?\((.*)\)/, "");
+        //       //   if (value == newValue) {
+        //       //     return false;
+        //       //   } else {
+        //       //     return newValue;
+        //       //   }
+        //       // },
+        //       // formatInputBefore: ({ e, updateValue }) => {
+        //       //   const { value } = e.target;
+        //       //   if (value.length > 18) {
+        //       //     let newValue = value.substring(0, 19);
+        //       //     updateValue(moment(newValue));
+        //       //     return false;
+        //       //   }
+        //       // }
+        //     }
+        //   }
+        // }
         // {
         //   title: "时间",
         //   field: "dateTime",
@@ -695,6 +712,11 @@ export default {
     },
     onGetData() {
       console.log(this.$refs.dataForm.getData());
+    },
+    onValidateFields() {
+      this.$refs.dataForm.validateFields().then(res => {
+        console.log(res);
+      });
     },
     onFormatDate() {
       // const res = dateFormat("20220726083056", "YYYY-MM-DD HH:mm:ss");

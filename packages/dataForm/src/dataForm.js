@@ -382,6 +382,10 @@ function renderItemInput(item, h, _vm) {
       props.props.renderName = renderName;
       renderName = "options-component";
     }
+    if (["a-range-picker-split"].includes(renderName)) {
+      props.props.directives = props.directives;
+      delete props.directives;
+    }
     inputDom = h(renderName, props);
   }
 
@@ -585,7 +589,6 @@ function renderItems(h, _vm) {
             }
           };
         }
-
         return h("a-form-item", formItemProps, [
           h("div", wrapperProps, [formItemContent])
         ]);
