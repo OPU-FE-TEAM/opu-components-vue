@@ -188,6 +188,9 @@ $formItemMarginBottom: 19px;
 
 .date-range-split {
     display: flex;
+    .ant-form-item{
+        margin-bottom:0;
+    }
     .item {
       flex: 1;
     }
