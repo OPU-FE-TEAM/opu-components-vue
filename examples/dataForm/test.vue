@@ -371,7 +371,7 @@ export default {
               // }
             }
           }
-        }
+        },
         // {
         //   title: "时间",
         //   field: "dateTime",
@@ -454,62 +454,62 @@ export default {
         //     }
         //   }
         // }
-        // {
-        //   field: "pulldown",
-        //   title: "下拉面板",
-        //   option: {
-        //     initialValue: "桂林"
-        //   },
-        //   itemRender: {
-        //     name: "pulldown-table",
-        //     props: {
-        //       valueField: "name",
-        //       textField: "age",
-        //       otherSlot: () => {
-        //         return <div style="width:200px;float:left;">123</div>;
-        //       },
-        //       table: {
-        //         props: {
-        //           columns: [
-        //             { type: "checkbox", width: 50 },
-        //             { type: "seq", title: "Number", width: 80 },
-        //             {
-        //               field: "name",
-        //               title: "Name",
-        //               width: 200
-        //             },
-        //             {
-        //               field: "sex",
-        //               title: "Sex",
-        //               width: 200
-        //             },
-        //             {
-        //               field: "age",
-        //               title: "Age",
-        //               width: 200
-        //             }
-        //           ],
-        //           size: "mini",
-        //           height: 300,
-        //           proxyConfig: {
-        //             autoLoad: false,
-        //             ajax: {
-        //               query: getData
-        //             }
-        //           }
-        //         }
-        //       }
-        //     },
-        //     on: {
-        //       change(val, sel) {
-        //         console.log("change", val, sel);
-        //       },
-        //       inputChange(sel) {
-        //         console.log("inputChange", sel);
-        //       }
-        //     }
-        //   }
-        // },
+        {
+          field: "pulldown",
+          title: "下拉面板",
+          option: {
+            initialValue: "桂林"
+          },
+          itemRender: {
+            name: "pulldown-table",
+            props: {
+              valueField: "name",
+              textField: "age",
+              otherSlot: () => {
+                return <div style="width:200px;float:left;">123</div>;
+              },
+              table: {
+                props: {
+                  columns: [
+                    { type: "checkbox", width: 50 },
+                    { type: "seq", title: "Number", width: 80 },
+                    {
+                      field: "name",
+                      title: "Name",
+                      width: 200
+                    },
+                    {
+                      field: "sex",
+                      title: "Sex",
+                      width: 200
+                    },
+                    {
+                      field: "age",
+                      title: "Age",
+                      width: 200
+                    }
+                  ],
+                  size: "mini",
+                  height: 300,
+                  proxyConfig: {
+                    autoLoad: false,
+                    ajax: {
+                      query: getData
+                    }
+                  }
+                }
+              }
+            },
+            on: {
+              change(val, sel) {
+                console.log("change", val, sel);
+              },
+              inputChange(sel) {
+                console.log("inputChange", sel);
+              }
+            }
+          }
+        }
         // {
         //   field: "ordinary1",
         //   title: "请求下拉123",

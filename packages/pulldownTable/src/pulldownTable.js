@@ -164,6 +164,7 @@ export default {
         $scopedSlots,
         onTableRowSelect,
         onTableCheckboxChange,
+        onTableCurrentChange,
         onTableSetColumnsShow
       } = that;
       //是否存在多选  若存在  多选checkbox索引
@@ -182,7 +183,8 @@ export default {
         on: {
           "cell-click": onTableRowSelect,
           "checkbox-change": onTableCheckboxChange,
-          "checkbox-all": onTableCheckboxChange
+          "checkbox-all": onTableCheckboxChange,
+          "current-change": onTableCurrentChange
         },
         style: { background: "#fff", ...table.style },
         class: "pulldown-table",
@@ -298,13 +300,24 @@ export default {
     },
     onTableRowSelect({ row, columnIndex }) {
       let { checkboxIndex } = this;
-      if (checkboxIndex < 0 || checkboxIndex != columnIndex) {
+      if (
+        (checkboxIndex < 0 || checkboxIndex != columnIndex) &&
+        this.selectValue != row &&
+        this.visible
+      ) {
         let text = row[this.labelField || this.textField];
         this.selectValue = row;
         this.currentValue = row;
         this.$emit("input", text);
         this.$emit("change", text, row);
         this.visible = false;
+      }
+    },
+    onTableCurrentChange({ row, columnIndex }) {
+      let { checkboxIndex } = this;
+      if (checkboxIndex < 0 || checkboxIndex != columnIndex) {
+        let text = row[this.labelField || this.textField];
+        this.$emit("current-change", text, row);
       }
     },
     onTableCheckboxChange({ records }) {
