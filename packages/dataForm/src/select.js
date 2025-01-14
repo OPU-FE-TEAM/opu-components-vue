@@ -86,7 +86,6 @@ export default {
         lF
       } = this;
       const propsData = $options.propsData;
-
       const ons = {};
       utils.each($listeners, (cb, type) => {
         ons[type] = (...args) => {
@@ -155,8 +154,10 @@ export default {
   methods: {
     init() {
       const { options } = this;
-      if (options && options.length) {
+      if (options && options.length > 0) {
         this.optionsData = handleItemPropsOptions(options, this);
+      } else {
+        this.optionsData = [];
       }
     },
     updateValue(value) {

@@ -150,7 +150,7 @@ export default {
       longColumns.push(row);
     }
     let data = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 1; i++) {
       data.push(cloneDeep(defaultRow));
     }
     return {
@@ -432,58 +432,58 @@ export default {
         //     }
         //   }
         // },
-        {
-          field: "oneSelect",
-          align: "left",
-          title: "行1内数据下拉",
-          minWidth: 200,
-          fixed: "left",
-          itemRender: {
-            name: "ASearchSelect",
-            props: {
-              mode: "multiple",
-              valueField: "id",
-              labelField: "text",
-              labelInValue: true,
-              dataField: "data.oneSelect",
-              searchApi: () => {
-                return getTableSelectData({ code: "oneSelect" });
-              },
-              // optionsField: "oneSelectList",
-              // valueField: "value",
-              // labelField: "label",
-              default: ({ row }) => {
-                return [
-                  <span style="background:red;color:#fff">
-                    {row.oneSelectName}
-                  </span>
-                ];
-              }
-            },
-            on: {
-              // change: (value, option, { row, rowIndex }) => {
-              // console.log(row);
-              // console.log(rowIndex);
-              // let that = this;
-              // let data = {};
-              // for (let i = 0; i < 30; i++) {
-              //   data["input-" + i] = i + "" + i;
-              // }
-              // that.data.splice(rowIndex, 1, {
-              //   ...row,
-              //   ...data
-              // });
-              // row.oneSelectName = option.label;
-              // },
-              keyup: (e, { row }) => {
-                console.log(e, "页面进入");
-                if (e.keyCode == 13 && row.oneSelect.length < 2) {
-                  // return false;
-                }
-              }
-            }
-          }
-        },
+        // {
+        //   field: "oneSelect",
+        //   align: "left",
+        //   title: "行1内数据下拉",
+        //   minWidth: 200,
+        //   fixed: "left",
+        //   itemRender: {
+        //     name: "ASearchSelect",
+        //     props: {
+        //       mode: "multiple",
+        //       valueField: "id",
+        //       labelField: "text",
+        //       labelInValue: true,
+        //       dataField: "data.oneSelect",
+        //       searchApi: () => {
+        //         return getTableSelectData({ code: "oneSelect" });
+        //       },
+        //       // optionsField: "oneSelectList",
+        //       // valueField: "value",
+        //       // labelField: "label",
+        //       default: ({ row }) => {
+        //         return [
+        //           <span style="background:red;color:#fff">
+        //             {row.oneSelectName}
+        //           </span>
+        //         ];
+        //       }
+        //     },
+        //     on: {
+        //       // change: (value, option, { row, rowIndex }) => {
+        //       // console.log(row);
+        //       // console.log(rowIndex);
+        //       // let that = this;
+        //       // let data = {};
+        //       // for (let i = 0; i < 30; i++) {
+        //       //   data["input-" + i] = i + "" + i;
+        //       // }
+        //       // that.data.splice(rowIndex, 1, {
+        //       //   ...row,
+        //       //   ...data
+        //       // });
+        //       // row.oneSelectName = option.label;
+        //       // },
+        //       keyup: (e, { row }) => {
+        //         console.log(e, "页面进入");
+        //         if (e.keyCode == 13 && row.oneSelect.length < 2) {
+        //           // return false;
+        //         }
+        //       }
+        //     }
+        //   }
+        // },
         // {
         //   field: "vip",
         //   align: "left",
@@ -494,19 +494,6 @@ export default {
         //     props: {
         //       param: { code: "vip" },
         //       dataField: "data.vip"
-        //     }
-        //   }
-        // },
-        // {
-        //   field: "market11",
-        //   align: "left",
-        //   title: "市场11",
-        //   minWidth: 150,
-        //   itemRender: {
-        //     name: "ASelect",
-        //     props: {
-        //       param: { code: "Market" },
-        //       dataField: "data.Market"
         //     }
         //   }
         // },
@@ -586,20 +573,20 @@ export default {
         //     }
         //   }
         // },
-        {
-          field: "name",
-          align: "left",
-          title: "名称",
-          minWidth: 150,
-          itemRender: {
-            name: "AInput",
-            props: {
-              disabled: row => {
-                return row.orderType == 1;
-              }
-            }
-          }
-        }
+        // {
+        //   field: "name",
+        //   align: "left",
+        //   title: "名称",
+        //   minWidth: 150,
+        //   itemRender: {
+        //     name: "AInput",
+        //     props: {
+        //       disabled: row => {
+        //         return row.orderType == 1;
+        //       }
+        //     }
+        //   }
+        // }
         // {
         //   field: "apiSelect1",
         //   align: "left",
@@ -617,22 +604,41 @@ export default {
         //     }
         //   }
         // }
-
-        // {
-        //   field: "oneSelect1",
-        //   align: "left",
-        //   title: "行内数据下拉1",
-        //   minWidth: 150,
-        //   fixed: "right",
-        //   itemRender: {
-        //     name: "a-select",
-        //     props: {
-        //       optionsField: "oneSelectList1",
-        //       valueField: "value",
-        //       labelField: "label"
-        //     }
-        //   }
-        // },
+        {
+          field: "market11",
+          align: "left",
+          title: "市场11",
+          minWidth: 150,
+          itemRender: {
+            name: "ASelect",
+            props: {
+              param: { code: "Market" },
+              dataField: "data.Market"
+            },
+            on: {
+              change: (e, option, { row }) => {
+                row.oneSelectList1 = [];
+                // row.oneSelectList1 = [{ label: "广南", value: -1 }];
+                console.log(row);
+              }
+            }
+          }
+        },
+        {
+          field: "oneSelect1",
+          align: "left",
+          title: "行内数据下拉1",
+          minWidth: 150,
+          fixed: "right",
+          itemRender: {
+            name: "a-select",
+            props: {
+              optionsField: "oneSelectList1",
+              valueField: "value",
+              labelField: "label"
+            }
+          }
+        }
         // {
         //   field: "number1",
         //   align: "right",
@@ -758,7 +764,6 @@ export default {
       //   ".vxe-table--body-wrapper.body--wrapper"
       // );
       // let tableWrapperH = tableWrapper.offsetHeight;
-      // debugger;
       // console.log(
       //   that.$refs.dataTable.$el.querySelectorAll(
       //     ".vxe-table--body-wrapper.body--wrapper table tr"
@@ -773,7 +778,6 @@ export default {
       //   "vxe-table--body-wrapper"
       // );
       // console.log(el);
-      // debugger;
       // that.$refs.dataTable.scrollToRow(that.data[that.data.length - 1]);
     },
     onChange() {},
