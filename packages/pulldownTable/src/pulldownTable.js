@@ -417,12 +417,17 @@ export default {
       }, 300);
     },
     onClear(value) {
-      if (this.searchKeyword && this.currentValue == this.searchKeyword) {
+      if (
+        this.visible &&
+        this.searchKeyword &&
+        this.currentValue == this.searchKeyword
+      ) {
         this.onInputChange({
           target: {
             value: "",
           },
         });
+        return;
       }
       this.selectValue = "";
       this.currentValue = "";
