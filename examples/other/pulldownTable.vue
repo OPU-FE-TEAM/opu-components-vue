@@ -19,7 +19,7 @@
 
 <script>
 function getData(arr) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       const size = arr.pageSize ? arr.pageSize : 20;
       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
@@ -27,7 +27,7 @@ function getData(arr) {
         id: key,
         keyName: `name_${pageIndex}_${key}`,
         sex: key < 3 ? 1 : 2,
-        age: key
+        age: key,
       }));
       const json = {
         // data: [...list],
@@ -35,8 +35,8 @@ function getData(arr) {
         code: 0,
         data: {
           data: [...list],
-          total: 100
-        }
+          total: 100,
+        },
       };
       resolve(json);
     }, 500);
@@ -49,14 +49,14 @@ export default {
         props: {
           proxyColumns: {
             params: {
-              queryFlag: true
-            }
+              queryFlag: true,
+            },
           },
           setcolumnsConfig: {
             modal: {
               props: {
-                bodyStyle: { height: "500px" }
-              }
+                bodyStyle: { height: "500px" },
+              },
             },
             proxyConfig: {
               props: {
@@ -65,14 +65,14 @@ export default {
                 align: "align",
                 show: "show",
                 fixed: "fixed",
-                field: "field"
+                field: "field",
               },
               on: {
-                submitBefore: values => {
+                submitBefore: (values) => {
                   console.log(values);
                   // return false;
-                }
-              }
+                },
+              },
             },
             tableConfig: {
               columns: [
@@ -83,20 +83,20 @@ export default {
                     default: "btn_default",
                     header: () => {
                       return "排序";
-                    }
-                  }
+                    },
+                  },
                 },
                 {
                   field: "title",
                   title: "显示标题",
                   align: "center",
-                  editRender: { name: "AInput" }
+                  editRender: { name: "AInput" },
                 },
                 {
                   field: "width",
                   title: "列宽",
                   align: "center",
-                  editRender: { name: "AInputNumber" }
+                  editRender: { name: "AInputNumber" },
                 },
                 {
                   field: "align",
@@ -107,15 +107,15 @@ export default {
                     options: [
                       { label: "居左", value: "left" },
                       { label: "居中", value: "center" },
-                      { label: "居右", value: "right" }
-                    ]
-                  }
+                      { label: "居右", value: "right" },
+                    ],
+                  },
                 },
                 {
                   field: "show",
                   title: "显示",
                   align: "center",
-                  slots: { default: "show_default" }
+                  slots: { default: "show_default" },
                 },
                 {
                   field: "fixed",
@@ -126,12 +126,12 @@ export default {
                     options: [
                       { label: "不固定", value: "" },
                       { label: "靠左", value: "left" },
-                      { label: "靠右", value: "right" }
-                    ]
-                  }
-                }
-              ]
-            }
+                      { label: "靠右", value: "right" },
+                    ],
+                  },
+                },
+              ],
+            },
           },
           columns: [
             { type: "checkbox", width: 50 },
@@ -140,18 +140,18 @@ export default {
               field: "keyName",
               title: "Name",
               width: 200,
-              align: "left"
+              align: "left",
             },
             {
               field: "sex",
               title: "Sex",
-              width: 200
+              width: 200,
             },
             {
               field: "age",
               title: "Age",
-              width: 200
-            }
+              width: 200,
+            },
           ],
           //   headToolbar: {
           //     buttons: [
@@ -227,10 +227,10 @@ export default {
           highlightCurrentRow: true,
           proxyConfig: {
             ajax: {
-              query: getData
-            }
-          }
-        }
+              query: getData,
+            },
+          },
+        },
       },
       value: "123",
       show: false,
@@ -245,6 +245,7 @@ export default {
               searchField: "keyword",
               allowInputValue: false,
               retainSearchValue: false,
+              retainSearchKeyword: true,
               table: {
                 props: {
                   sortable: true,
@@ -254,21 +255,21 @@ export default {
                       field: "keyName",
                       title: "Name",
                       width: 200,
-                      align: "left"
+                      align: "left",
                     },
                     {
                       field: "sex",
                       title: "Sex",
-                      width: 200
-                    }
+                      width: 200,
+                    },
                   ],
                   height: "400px",
                   highlightHoverRow: true,
                   highlightCurrentRow: true,
                   proxyColumns: {
                     params: {
-                      queryFlag: true
-                    }
+                      queryFlag: true,
+                    },
                   },
                   // setcolumnsConfig: {
                   //   proxyConfig: {
@@ -281,7 +282,7 @@ export default {
                     autoLoad: true,
                     ajax: {
                       query: () => {
-                        return new Promise(resolve => {
+                        return new Promise((resolve) => {
                           console.log("请求数据");
                           resolve({
                             code: 0,
@@ -291,31 +292,31 @@ export default {
                                   id: 1,
                                   name: "aaaa",
                                   endingQuantity: "111",
-                                  endingAvgPrice: "22"
+                                  endingAvgPrice: "22",
                                 },
                                 {
                                   id: 2,
                                   endingQuantity: "aaa",
                                   endingAvgPrice: "bbb",
-                                  name: "bbbb"
-                                }
-                              ]
-                            }
+                                  name: "bbbb",
+                                },
+                              ],
+                            },
                           });
                         });
-                      }
-                    }
-                  }
+                      },
+                    },
+                  },
                 },
                 style: {
-                  width: "calc(65vw)"
-                }
-              }
+                  width: "calc(65vw)",
+                },
+              },
             },
-            on: {}
-          }
-        }
-      ]
+            on: {},
+          },
+        },
+      ],
     };
   },
   methods: {
@@ -332,8 +333,8 @@ export default {
     },
     onShow() {
       this.show = true;
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

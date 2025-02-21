@@ -12,7 +12,7 @@ function renderInput(h, _vm) {
     selectValueText,
     disabled,
     inputProps,
-    onInputKeyUp
+    onInputKeyUp,
   } = _vm;
   return h("a-input", {
     props: {
@@ -20,15 +20,15 @@ function renderInput(h, _vm) {
       disabled,
       allowClear: true,
       ...inputProps,
-      value: text
+      value: text,
     },
     ref: "input",
     on: {
       focus: onInputFocus,
       keydown: onInputKeDown,
       keyup: onInputKeyUp,
-      change: onInputChangeBefore
-    }
+      change: onInputChangeBefore,
+    },
   });
 }
 
@@ -38,55 +38,60 @@ export default {
   name: "PulldownTable",
   components: {
     DataTable,
-    SetColumns
+    SetColumns,
   },
   props: {
     ...Pulldown.props,
     table: Object,
     valueField: {
       type: String,
-      default: "id"
+      default: "id",
     },
     textField: {
       type: String,
-      default: "name"
+      default: "name",
     },
     labelField: {
       type: String,
-      default: ""
+      default: "",
     },
     searchBefore: Function,
     searchField: {
       type: String,
-      default: "keyword"
+      default: "keyword",
     },
     value: {
-      type: [Object, Array, String, Number]
+      type: [Object, Array, String, Number],
     },
     disabled: Boolean,
     inputProps: {
-      type: [Object]
+      type: [Object],
     },
     //是否focus时保留原值搜索
     retainSearchValue: {
       type: Boolean,
-      default: true
+      default: true,
+    },
+    //是否focus时保留原查询关键词搜索
+    retainSearchKeyword: {
+      type: Boolean,
+      default: false,
     },
     //其他插槽
     otherSlot: {
       type: [Function],
-      default: null
+      default: null,
     },
     popupClassName: {
       type: String,
-      default: ""
+      default: "",
     },
     popupStyle: {
       type: String,
-      default: ""
+      default: "",
     },
     // 允许输入值
-    allowInputValue: Boolean
+    allowInputValue: Boolean,
   },
 
   data() {
@@ -98,7 +103,8 @@ export default {
       currentValue: "",
       inputChangeValue: "",
       timer: null,
-      checkboxIndex: -1
+      checkboxIndex: -1,
+      searchKeyword: "",
     };
   },
   computed: {
@@ -107,7 +113,7 @@ export default {
       let text = "";
       if (selectValue && utils.isArray(selectValue)) {
         text = selectValue
-          .map(p => p[this.labelField || this.textField])
+          .map((p) => p[this.labelField || this.textField])
           .join(",");
       } else if (selectValue && utils.isObject(selectValue)) {
         text = selectValue[this.labelField || this.textField];
@@ -121,7 +127,7 @@ export default {
       let text = "";
       if (currentValue && utils.isArray(currentValue)) {
         text = currentValue
-          .map(p => p[this.labelField || this.textField])
+          .map((p) => p[this.labelField || this.textField])
           .join(",");
       } else if (currentValue && utils.isObject(currentValue)) {
         text = currentValue[this.labelField || this.textField];
@@ -132,7 +138,7 @@ export default {
     },
     pulldownExtendProps() {
       const rest = {};
-      pulldownPropKeys.forEach(key => {
+      pulldownPropKeys.forEach((key) => {
         rest[key] = this[key];
       });
       return rest;
@@ -146,13 +152,13 @@ export default {
         props: {
           transfer: true,
           destroyOnClose: true,
-          ...propsData
-        }
+          ...propsData,
+        },
       });
       props.ref = "pulldownTable";
       props.class = "pulldown";
       props.on = {
-        "hide-panel": this.onPulldownHideBefore
+        "hide-panel": this.onPulldownHideBefore,
       };
       return props;
     },
@@ -165,11 +171,11 @@ export default {
         onTableRowSelect,
         onTableCheckboxChange,
         onTableCurrentChange,
-        onTableSetColumnsShow
+        onTableSetColumnsShow,
       } = that;
       //是否存在多选  若存在  多选checkbox索引
       let columns = (table && table.props && table.props.columns) || [];
-      that.checkboxIndex = columns.findIndex(p => p.type == "checkbox");
+      that.checkboxIndex = columns.findIndex((p) => p.type == "checkbox");
       const props = {
         props: {
           highlightHoverRow: true,
@@ -178,17 +184,17 @@ export default {
           "show-overflow": true,
           ...table.props,
           data: tableData,
-          columns: columns
+          columns: columns,
         },
         on: {
           "cell-click": onTableRowSelect,
           "checkbox-change": onTableCheckboxChange,
           "checkbox-all": onTableCheckboxChange,
-          "current-change": onTableCurrentChange
+          "current-change": onTableCurrentChange,
         },
         style: { background: "#fff", ...table.style },
         class: "pulldown-table",
-        slot: "dropdown"
+        slot: "dropdown",
       };
       if (props.props.setcolumnsConfig) {
         props.props.setcolumnsConfig.onShow = onTableSetColumnsShow;
@@ -197,8 +203,8 @@ export default {
         props.props.proxyConfig = {
           ...table.props.proxyConfig,
           ajax: {
-            ...table.props.proxyConfig.ajax
-          }
+            ...table.props.proxyConfig.ajax,
+          },
         };
       }
       props.scopedSlots = $scopedSlots;
@@ -247,8 +253,8 @@ export default {
               zIndex: 9999,
               transfer: true,
               ...tableConf.setColumns.modal.props,
-              ...modalProps
-            }
+              ...modalProps,
+            },
           },
           proxyConfig: {
             params:
@@ -259,32 +265,32 @@ export default {
                 : null,
             props: {
               ...tableConf.setColumns.proxyConfig.props,
-              ...proxyConfigProps
+              ...proxyConfigProps,
             },
             ajax: {
               ...tableConf.setColumns.proxyConfig.ajax,
-              ...proxyConfigAjax
+              ...proxyConfigAjax,
             },
             on: {
               ...tableConf.setColumns.proxyConfig.on,
-              ...proxyConfigOn
-            }
+              ...proxyConfigOn,
+            },
           },
           tableConfig: {
             ...tableConf.setColumns.tableConfig,
-            ...tableConfig
-          }
+            ...tableConfig,
+          },
         };
       } else {
         return tableConf.setColumns;
       }
-    }
+    },
   },
   watch: {
     value(val) {
       this.currentValue = val;
       this.selectValue = val;
-    }
+    },
   },
   created() {
     this.onChange = utils.debounce(this.onInputChange, 400);
@@ -344,7 +350,12 @@ export default {
       ) {
         that.$nextTick(() => {
           let params = {};
-          params[searchField] = retainSearchValue ? that.selectValueText : "";
+          if (that.retainSearchKeyword) {
+            params[searchField] = that.searchKeyword;
+            that.currentValue = that.searchKeyword;
+          } else {
+            params[searchField] = retainSearchValue ? that.selectValueText : "";
+          }
           if (searchBefore) {
             const searchBeforeRes = searchBefore && searchBefore(params);
             if (searchBeforeRes === false) {
@@ -355,6 +366,7 @@ export default {
           }
           const dataTable = that.$refs.table;
           dataTable.onSearchSubmit(params);
+          that.searchKeyword = params[searchField];
         });
       } else if (that.tableData.length > 0) {
         const dataTable = that.$refs.table;
@@ -398,14 +410,23 @@ export default {
           }
           const dataTable = this.$refs.table;
           dataTable.onSearchSubmit(params);
+          this.searchKeyword = params[searchField];
         }
 
         this.$emit("inputChange", e);
       }, 300);
     },
     onClear(value) {
+      if (this.searchKeyword && this.currentValue == this.searchKeyword) {
+        this.onInputChange({
+          target: {
+            value: "",
+          },
+        });
+      }
       this.selectValue = "";
       this.currentValue = "";
+      this.searchKeyword = "";
       this.$emit("input", value);
       this.$emit("change", value, {});
     },
@@ -498,7 +519,7 @@ export default {
         this.$refs.setTableColumnsModal.show();
       }
       return false;
-    }
+    },
   },
   render(h) {
     const {
@@ -506,7 +527,7 @@ export default {
       pulldownProps,
       visible,
       onSetColumnsSubmit,
-      setColumnsOpt
+      setColumnsOpt,
     } = this;
 
     return h(
@@ -515,11 +536,11 @@ export default {
         ...pulldownProps,
         props: {
           ...pulldownProps.props,
-          value: visible
+          value: visible,
         },
         ...{
-          on: { ...pulldownProps.on }
-        }
+          on: { ...pulldownProps.on },
+        },
       },
       [
         renderInput(h, this),
@@ -528,30 +549,30 @@ export default {
           {
             slot: "dropdown",
             class: this.popupClassName,
-            style: this.popupStyle
+            style: this.popupStyle,
           },
           [
             this.otherSlot && this.otherSlot(),
             h("data-table", {
               ...tableProps,
               ...{
-                on: { ...tableProps.on }
-              }
+                on: { ...tableProps.on },
+              },
             }),
             setColumnsOpt.tableConfig &&
               h("set-columns", {
                 ref: "setTableColumnsModal",
                 props: {
                   option: setColumnsOpt,
-                  columns: tableProps.props.columns
+                  columns: tableProps.props.columns,
                 },
                 on: {
-                  submit: onSetColumnsSubmit
-                }
-              })
+                  submit: onSetColumnsSubmit,
+                },
+              }),
           ]
-        )
+        ),
       ]
     );
-  }
+  },
 };

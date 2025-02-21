@@ -56,14 +56,14 @@ export default {
     dataTableData,
     modalDemo,
     editTable,
-    dataFormAutoComplete
+    dataFormAutoComplete,
   },
   data() {
     return {
-      tab: 11,
-      locale: zh_CN
+      tab: 6,
+      locale: zh_CN,
     };
-  }
+  },
 };
 </script>
 
