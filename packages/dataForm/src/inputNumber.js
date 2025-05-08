@@ -51,7 +51,9 @@ export default {
         change: value => {
           value = value || value === 0 ? value : "";
           this.$emit("update", value);
-          this.$emit("change", value);
+          if (this.value !== value) {
+            this.$emit("change", value);
+          }
         },
         pressEnter: e => {
           this.$emit("pressEnter", e);

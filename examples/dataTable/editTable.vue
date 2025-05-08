@@ -638,26 +638,35 @@ export default {
               labelField: "label"
             }
           }
+        },
+        {
+          field: "number",
+          align: "right",
+          title: "数量1",
+          fixed: "right",
+          minWidth: 150,
+          itemRender: {
+            name: "AInputNumber",
+            props: {
+              disabled: row => {
+                return row.orderType == 2;
+              },
+              min: 0,
+              precision: 2
+            },
+            on: {
+              change: () => {
+                console.log("change");
+              },
+              blur: () => {
+                console.log("blur");
+              }
+            },
+            after: () => {
+              return [<a-button style="padding:0 5px;">每日</a-button>];
+            }
+          }
         }
-        // {
-        //   field: "number1",
-        //   align: "right",
-        //   title: "数量1",
-        //   fixed: "right",
-        //   minWidth: 150,
-        //   itemRender: {
-        //     name: "AInputNumber",
-        //     props: {
-        //       disabled: row => {
-        //         return row.orderType == 2;
-        //       },
-        //       min: 0
-        //     },
-        //     after: () => {
-        //       return [<a-button style="padding:0 5px;">每日</a-button>];
-        //     }
-        //   }
-        // },
         // {
         //   field: "time1",
         //   align: "left",
