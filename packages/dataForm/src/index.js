@@ -6,6 +6,7 @@ import ARangePickerSplit from "./rangePickerSplit";
 import ARangeTimePickerSplit from "./rangeTimePickerSplit";
 import AInputNumber from "./inputNumber";
 import AInputNumberSplit from "./inputNumberSplit";
+import OpuModalTextarea from "./modalTextarea";
 // import ATest from "./test";
 import OptionsComponent from "./optionsComponent";
 import OpuDatePicker from "./datePicker";
@@ -28,6 +29,7 @@ export default {
   ARangeTimePickerSplit,
   AInputNumber,
   AInputNumberSplit,
+  OpuModalTextarea,
   OpuSelect,
   OpuSearchSelect,
   OptionsComponent,

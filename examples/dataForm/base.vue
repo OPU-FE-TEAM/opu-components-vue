@@ -278,6 +278,20 @@ export default {
         }
       ],
       items: [
+        {
+          field: "guestRemark1111",
+          title: "modal111",
+          // colspan: 2,
+          itemRender: {
+            name: "a-modal-textarea",
+            props: {
+              autoSize: {
+                maxRows: 1,
+                minRows: 1
+              }
+            }
+          }
+        },
         // {
         //   field: "id",
         //   itemRender: {
@@ -304,41 +318,57 @@ export default {
         //     }
         //   }
         // },
-        {
-          title: "证件类型",
-          field: "idType111",
-          itemRender: {
-            name: "a-auto-complete",
-            props: {
-              // options: ["1", "2", "3"],
-              api: idTypeFunction,
-              param: { value: "idType" },
-              dataField: "data",
-              slots: {
-                dataSource: e => {
-                  console.log(e);
-                  return e.map(p => {
-                    return <a-select-option key={p}>{p}</a-select-option>;
-                  });
-                }
-              }
-            },
-            scopedSlots: {
-              dataSource: e => {
-                return [
-                  <span>
-                    {e}-{e}
-                  </span>
-                ];
-              }
-            }
-          },
-          slots: {
-            dataSource: e => {
-              return [<span>{e}</span>];
-            }
-          }
-        },
+        // {
+        //   title: "证件类型",
+        //   field: "idType111",
+        //   itemRender: {
+        //     name: "a-auto-complete",
+        //     props: {
+        //       // options: ["1", "2", "3"],
+        //       api: idTypeFunction,
+        //       param: { value: "idType" },
+        //       dataField: "data",
+        //       slots: {
+        //         dataSource: e => {
+        //           console.log(e);
+        //           return e.map(p => {
+        //             return <a-select-option key={p}>{p}</a-select-option>;
+        //           });
+        //         }
+        //       }
+        //     },
+        //     scopedSlots: {
+        //       dataSource: e => {
+        //         return [
+        //           <span>
+        //             {e}-{e}
+        //           </span>
+        //         ];
+        //       }
+        //     }
+        //   },
+        //   slots: {
+        //     dataSource: e => {
+        //       return [<span>{e}</span>];
+        //     }
+        //   }
+        // },
+        // {
+        //   field: "guestRemark",
+        //   title: "客注",
+        //   filter: ["bookingForm", "longTermBookingForm"],
+        //   // colspan: 2,
+        //   itemRender: {
+        //     name: "a-textarea",
+        //     props: {
+        //       autoSize: {
+        //         maxRows: 1,
+        //         minRows: 1
+        //       }
+        //     }
+        //   }
+        // },
+
         // {
         //   field: "treeSelect",
         //   title: "树下啦",

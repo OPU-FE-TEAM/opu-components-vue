@@ -372,6 +372,21 @@ export default {
             }
           }
         },
+        {
+          field: "guestRemark",
+          title: "客注",
+          filter: ["bookingForm", "longTermBookingForm"],
+          // colspan: 2,
+          itemRender: {
+            name: "a-textarea",
+            props: {
+              autoSize: {
+                maxRows: 1,
+                minRows: 1
+              }
+            }
+          }
+        },
         // {
         //   title: "时间",
         //   field: "dateTime",
@@ -509,7 +524,37 @@ export default {
               }
             }
           }
+        },
+        {
+          field: "guestRemark1111",
+          title: "modal111",
+          // colspan: 2,
+          itemRender: {
+            name: "a-modal-textarea",
+            props: {
+              autoSize: {
+                maxRows: 1,
+                minRows: 1
+              }
+            }
+          }
+        },
+        {
+          field: "guestRemark1",
+          title: "客注",
+          filter: ["bookingForm", "longTermBookingForm"],
+          // colspan: 2,
+          itemRender: {
+            name: "a-textarea",
+            props: {
+              autoSize: {
+                maxRows: 1,
+                minRows: 1
+              }
+            }
+          }
         }
+
         // {
         //   field: "ordinary1",
         //   title: "请求下拉123",

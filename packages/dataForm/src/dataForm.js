@@ -10,7 +10,7 @@ const optionsComponents = [
   "a-radio-group",
   "a-checkbox-group",
   "a-cascader",
-  "a-cascader-ex",
+  "a-cascader-ex"
 ];
 // 回车跳转下一个focus
 function nextItemFocus(item, _vm, e = {}) {
@@ -52,11 +52,11 @@ function handeUnifyApiGetOptions(
   // 处理同一请求参数
   const json = {};
   let fields = [];
-  unifyList.map((item) => {
+  unifyList.map(item => {
     const { param, autoLoadOptionsId } = item.itemRender.props;
     fields.push({
       field: item.field,
-      param,
+      param
     });
     for (const key in param) {
       if (json[key] && utils.isArray(json[key])) {
@@ -88,7 +88,7 @@ function handeUnifyApiGetOptions(
     optionsApiList.push({
       api: unifyApi,
       param: json,
-      fields,
+      fields
     });
   }
   fetchItemPropsOptionsApiList(optionsApiList, _vm, formData, callback);
@@ -108,7 +108,7 @@ const fetchItemPropsOptionsApiList = async function(
     onOptionsLoadAfter,
     autoSetDefaultValue,
     autoSetDefaultFirst,
-    setFieldsOptionsDefaultValues,
+    setFieldsOptionsDefaultValues
   } = _vm;
   if (onOptionsLoadBefore) {
     const beforeRes = onOptionsLoadBefore(list);
@@ -119,7 +119,7 @@ const fetchItemPropsOptionsApiList = async function(
     }
   }
 
-  let promises = list.map((item) => {
+  let promises = list.map(item => {
     const { api, param } = item;
     const field = item.field;
     // 添加表单字段参数
@@ -137,7 +137,7 @@ const fetchItemPropsOptionsApiList = async function(
     return api(param);
   });
   Promise.all(promises)
-    .then((res) => {
+    .then(res => {
       let json = {};
       let apiFields = [];
       list.forEach((item, index) => {
@@ -145,7 +145,7 @@ const fetchItemPropsOptionsApiList = async function(
         const itemData = res[index];
         if (fields && fields.length) {
           // 统一请求可选数据 赋值到指定字段的处理
-          fields.forEach((p) => {
+          fields.forEach(p => {
             const optionsData = handlefieldOptionsDataField(
               p.field,
               itemData,
@@ -181,7 +181,7 @@ const fetchItemPropsOptionsApiList = async function(
 
 function handlefieldOptionsDataField(field, json, _vm) {
   const { itemsOptions } = _vm;
-  const fieldItem = itemsOptions.find((p) => p.field === field);
+  const fieldItem = itemsOptions.find(p => p.field === field);
   let optionData = json;
   if (fieldItem && fieldItem.itemRender && fieldItem.itemRender.props) {
     const itemProps = fieldItem.itemRender.props;
@@ -230,8 +230,8 @@ function renderItemTitle(item, h, _vm) {
       [
         h("a-icon", {
           props: { type: "question-circle" },
-          style: { color: "#999" },
-        }),
+          style: { color: "#999" }
+        })
       ]
     );
   }
@@ -242,11 +242,11 @@ function renderItemTitle(item, h, _vm) {
         "data-form-item-title",
         formTitleAlign,
         { colon: item.colon === false ? item.colon : formTitleColon },
-        { required: isRequired },
+        { required: isRequired }
       ],
       style: {
-        width: titleWidthStr,
-      },
+        width: titleWidthStr
+      }
     },
     [titleText, tooltip]
   );
@@ -262,7 +262,7 @@ function renderItemInput(item, h, _vm) {
     onButtonClick,
     renderNameKeys,
     itemsOptionsIndexs,
-    componentsFocusItemTypes,
+    componentsFocusItemTypes
   } = _vm;
   const vDecorator = [item.field];
   if (item.option) {
@@ -275,9 +275,9 @@ function renderItemInput(item, h, _vm) {
     directives: [
       {
         name: "decorator",
-        value: vDecorator,
-      },
-    ],
+        value: vDecorator
+      }
+    ]
   };
   props.props.fieldName = item.field;
 
@@ -320,7 +320,7 @@ function renderItemInput(item, h, _vm) {
       inputDom = $slots[itemRender.slot];
     } else if ($scopedSlots[itemRender.slot]) {
       props.scopedSlots = {
-        default: $scopedSlots[itemRender.slot],
+        default: $scopedSlots[itemRender.slot]
       };
       inputDom = h("a-scopedSlots", props);
     }
@@ -330,7 +330,7 @@ function renderItemInput(item, h, _vm) {
       props.props["customRender"] = itemRender.customRender;
     } else {
       props.props = {
-        customRender: itemRender.customRender,
+        customRender: itemRender.customRender
       };
     }
     inputDom = h("a-customRender", props);
@@ -353,16 +353,16 @@ function renderItemInput(item, h, _vm) {
       : {};
     props.props = {
       ...configProps,
-      ...props.props,
+      ...props.props
     };
     // }
     if (componentsFocusItemTypes.includes(renderName)) {
       props.on = {
         ...props.on,
-        inputPressEnter: (e) => {
+        inputPressEnter: e => {
           e.stopPropagation();
           nextItemFocus(item, _vm, e);
-        },
+        }
       };
     }
     if (renderNameKeys[renderName]) {
@@ -372,7 +372,7 @@ function renderItemInput(item, h, _vm) {
         props.props.itemClick = onButtonClick;
       } else {
         props.props = {
-          itemClick: onButtonClick,
+          itemClick: onButtonClick
         };
       }
       props.props.items = itemRender.items;
@@ -396,7 +396,7 @@ function renderItemContent(item, h, _vm) {
   let after = itemRender.after ? itemRender.after() : "";
   let extend = itemRender.extend ? itemRender.extend(item) : "";
   if (item.actions && item.actions.length && !itemRender.props.disabled) {
-    after = item.actions.map((p) => {
+    after = item.actions.map(p => {
       let actionButton = "";
       if (utils.isFunction(p.button)) {
         actionButton = p.button();
@@ -405,7 +405,7 @@ function renderItemContent(item, h, _vm) {
           p.button && p.button.props ? utils.clone(p.button.props) : {};
         const buttonContent = buttonProps.content ? buttonProps.content : "";
         const buttonOn = {
-          click: (e) => {
+          click: e => {
             if (p.button && p.button.on && p.button.on.click) {
               const onClickRes = p.button.on.click(e);
               if (onClickRes === false) {
@@ -418,10 +418,10 @@ function renderItemContent(item, h, _vm) {
                 modalProps: { ...modalProps },
                 content: p.modal.content,
                 form: p.modal.form,
-                slots: $scopedSlots,
+                slots: $scopedSlots
               });
             }
-          },
+          }
         };
 
         actionButton = h(
@@ -430,8 +430,8 @@ function renderItemContent(item, h, _vm) {
             ...{
               props: { ...buttonProps },
               on: { ...buttonOn },
-              style: { ...p.button.style },
-            },
+              style: { ...p.button.style }
+            }
           },
           [buttonContent]
         );
@@ -446,38 +446,38 @@ function renderItemContent(item, h, _vm) {
       // style: { width: formTitleWidth },
       class: {
         "data-form-item-content": true,
-        "form-item-buttons": itemRender && itemRender.name == "buttons",
-      },
+        "form-item-buttons": itemRender && itemRender.name == "buttons"
+      }
     },
     [
       h(
         "div",
         {
-          class: "data-form-item-before",
+          class: "data-form-item-before"
         },
         [before]
       ),
       h(
         "div",
         {
-          class: "data-form-item-input",
+          class: "data-form-item-input"
         },
         [renderItemInput(item, h, _vm)]
       ),
       h(
         "div",
         {
-          class: "data-form-item-after",
+          class: "data-form-item-after"
         },
         [after]
       ),
       h(
         "div",
         {
-          class: "data-form-item-extend",
+          class: "data-form-item-extend"
         },
         [extend]
-      ),
+      )
     ]
   );
 }
@@ -491,19 +491,19 @@ function renderItems(h, _vm) {
     currentColspan,
     $scopedSlots,
     wrapperFocusItemTypes,
-    currentScreen,
+    currentScreen
     // $listeners,
     // submitButtonProps
   } = _vm;
 
   return itemsOptions
-    ? itemsOptions.map((item) => {
+    ? itemsOptions.map(item => {
         const formItemProps = {
           key: item.field,
           props: item,
           style: item.style ? item.style : {},
           class: item.class,
-          scopedSlots: {},
+          scopedSlots: {}
         };
 
         let formItemContent = "";
@@ -518,17 +518,17 @@ function renderItems(h, _vm) {
           }
           formItemContent = h("a-scopedSlots", {
             props: {
-              fieldName: item.field,
+              fieldName: item.field
             },
             scopedSlots: {
-              default: $scopedSlots[item.slot],
+              default: $scopedSlots[item.slot]
             },
             directives: [
               {
                 name: "decorator",
-                value: vDecorator,
-              },
-            ],
+                value: vDecorator
+              }
+            ]
           });
         } else if (item.itemRender.name === "hidden") {
           formItemContent = [renderItemContent(item, h, _vm)];
@@ -568,16 +568,20 @@ function renderItems(h, _vm) {
 
         let wrapperProps = {
           class: ["data-form-item-wrapper", item.align],
-          on: {},
+          on: {}
         };
         if (
           (wrapperFocusItemTypes.includes(item.itemRender.name) ||
             !item.itemRender.name) &&
           !(item.itemRender.name == "a-input-number-split")
         ) {
-          wrapperProps.on.keyup = (e) => {
+          wrapperProps.on.keyup = e => {
             const { keyCode } = e;
-            if (e.shiftKey && item.itemRender.name == "a-textarea")
+            if (
+              e.shiftKey &&
+              (item.itemRender.name == "a-textarea" ||
+                item.name == "a-textarea")
+            )
               return false;
             e.stopPropagation();
             if (keyCode === 13) {
@@ -587,7 +591,7 @@ function renderItems(h, _vm) {
         }
 
         return h("a-form-item", formItemProps, [
-          h("div", wrapperProps, [formItemContent]),
+          h("div", wrapperProps, [formItemContent])
         ]);
       })
     : [];
@@ -608,7 +612,7 @@ function renderActionButtons(h, _vm) {
     expand,
     onExpandClick,
     items,
-    currentColspan,
+    currentColspan
   } = _vm;
 
   if ($listeners && $listeners.submit && submitButtonProps !== false) {
@@ -628,11 +632,11 @@ function renderActionButtons(h, _vm) {
         props: {
           ...DEFAULTCONFIG.submitButtonProps,
           ...submitButtonProps,
-          loading: loading,
+          loading: loading
         },
         on: {
-          click: onSubmit,
-        },
+          click: onSubmit
+        }
       },
       [submitText]
     );
@@ -643,20 +647,20 @@ function renderActionButtons(h, _vm) {
         {
           props: {
             ...DEFAULTCONFIG.cancelButtonProps,
-            ...cancelButtonProps,
+            ...cancelButtonProps
           },
           on: {
             click: () => {
               resetFields();
-            },
-          },
+            }
+          }
         },
         [cancelText]
       );
     }
 
     // 渲染展开/收起按钮
-    const hasFolding = items.findIndex((p) => p.folding) > -1;
+    const hasFolding = items.findIndex(p => p.folding) > -1;
     let foldingButton = "";
     if (hasFolding && foldingButtonProps !== false) {
       const openText =
@@ -684,11 +688,11 @@ function renderActionButtons(h, _vm) {
         {
           props: {
             ...DEFAULTCONFIG.foldingButtonProps,
-            ...foldingButtonProps,
+            ...foldingButtonProps
           },
           on: {
-            click: onExpandClick,
-          },
+            click: onExpandClick
+          }
         },
         [foldingText, h("a-icon", { props: { type: foldingIcon } })]
       );
@@ -713,8 +717,8 @@ function renderActionButtons(h, _vm) {
         class: "data-form-buttons",
         style: {
           ...buttonStyle,
-          marginLeft: titleWidthStr,
-        },
+          marginLeft: titleWidthStr
+        }
       },
       [submitButton, cancelButton, foldingButton]
     );
@@ -728,119 +732,119 @@ const responsiveMap = {
   md: "(min-width: 768px)",
   lg: "(min-width: 992px)",
   xl: "(min-width: 1200px)",
-  xxl: "(min-width: 1600px)",
+  xxl: "(min-width: 1600px)"
 };
 
 export default {
   name: "DataForm",
   components: {
-    ...inputs,
+    ...inputs
   },
   props: {
     /* DEFAULTCONFIG 配置参数 开始 */
     // 布局，'horizontal'|'vertical'|'inline'|'grid'|'flex'
     layout: {
       type: String,
-      default: "",
+      default: ""
     },
     // grid、flex布局时的列数
     colspan: {
       type: [Number, String, Object],
-      default: "",
+      default: ""
     },
     // 所有项的标题对齐方式
     titleAlign: {
       type: String,
-      default: "",
+      default: ""
     },
     // 所有项的标题宽度
     titleWidth: {
       type: [String, Number],
-      default: "",
+      default: ""
     },
     // 是否显示标题冒号
     titleColon: {
       type: [Boolean, String],
-      default: "",
+      default: ""
     },
     //是否清空找不到的值
     clearUndefinedValue: {
       type: [Boolean, String],
-      default: "",
+      default: ""
     },
     /* DEFAULTCONFIG 配置参数 结束 */
     // 表单内容
     items: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     // 是否只读
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     // 可选数据全部请求完后回调
     onOptionsAllLoad: {
       type: Function,
-      default: () => {},
+      default: () => {}
     },
     // 可选数据请求前回调
     onOptionsLoadBefore: {
       type: Function,
-      default: () => {},
+      default: () => {}
     },
     // 可选数据请求后回调
     onOptionsLoadAfter: {
       type: Function,
-      default: () => {},
+      default: () => {}
     },
     // 获取数据时是否清除空值字段值
     filterNullValues: {
       type: [Boolean, String],
-      default: "",
+      default: ""
     },
     getSelectOptions: Object,
     submitButtonProps: {
       type: [Boolean, Object],
-      default: () => {},
+      default: () => {}
     },
     cancelButtonProps: {
       type: [Boolean, Object],
-      default: () => {},
+      default: () => {}
     },
     foldingButtonProps: {
       type: [Boolean, Object],
-      default: () => {},
+      default: () => {}
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     // 自动获得焦点，string时为指定获得焦点的字段
     autoFocus: {
       type: [Boolean, String],
-      default: false,
+      default: false
     },
     autoLoadOptionsData: {
       type: [Boolean, String],
-      default: "",
+      default: ""
     },
     isPartRequest: {
       type: [Boolean, String],
-      default: "",
+      default: ""
     },
     autoSetDefaultValue: {
       type: Boolean,
-      default: false,
+      default: false
     },
     autoSetDefaultFirst: {
       type: Boolean,
-      default: false,
+      default: false
     },
     autoEnterSelectInput: {
       type: [Boolean, String],
-      default: "",
-    },
+      default: ""
+    }
     // //是否缓存option
     // isCacheOption: {
     //   type: Boolean,
@@ -866,9 +870,12 @@ export default {
         "a-input-number-split",
         "a-cascader",
         "a-cascader-ex",
+        "a-textarea",
+        "a-modal-textarea"
       ],
       wrapperFocusItemTypes: [
         "a-input-number",
+        "a-modal-textarea",
         "a-input",
         "a-password",
         "a-input-password",
@@ -878,6 +885,7 @@ export default {
         "a-textarea",
         "a-select-group",
         "a-cascader-ex",
+        "a-textarea"
       ],
       //有返回数据的Form组件名称
       optionsFormTypes: [
@@ -886,10 +894,11 @@ export default {
         "a-select-group",
         "a-tree-select",
         "a-radio-group",
-        "a-checkbox-group",
+        "a-checkbox-group"
       ],
       renderNameKeys: {
         "a-select": "opu-select",
+        "a-modal-textarea": "opu-modal-textarea",
         "a-search-select": "opu-search-select",
         "a-date-picker": "opu-date-picker",
         "a-time-picker": "opu-time-picker",
@@ -897,7 +906,7 @@ export default {
         "a-checkbox": "opu-checkbox",
         "a-tree-select": "opu-tree-select",
         "a-select-group": "opu-select-group",
-        "a-auto-complete": "opu-auto-complete",
+        "a-auto-complete": "opu-auto-complete"
       },
       //老数据
       oldItems: {},
@@ -907,14 +916,14 @@ export default {
       unifyApiGetOptions: [],
       getItemPropsOptionsApiList: [],
       DEFAULTCONFIG: DEFAULTCONFIG,
-      currentScreen: "xl",
+      currentScreen: "xl"
     };
   },
   computed: {
     // 回车跳转下一个表单项获得焦点的字段列表
     enterToNextItemFocusList() {
       return this.itemsOptions
-        .map((item) => {
+        .map(item => {
           let itemRender = item.itemRender;
           let itemProps = itemRender.props;
           if (
@@ -929,7 +938,7 @@ export default {
             !itemRender.name ||
             [
               ...this.wrapperFocusItemTypes,
-              ...this.componentsFocusItemTypes,
+              ...this.componentsFocusItemTypes
             ].includes(itemRender.name)
           ) {
             // 可获得焦点的组件
@@ -937,7 +946,7 @@ export default {
           }
           return "";
         })
-        .filter((p) => p !== "");
+        .filter(p => p !== "");
     },
     //布局
     formLayout() {
@@ -997,12 +1006,12 @@ export default {
         autoEnterSelectInput = DEFAULTCONFIG.autoEnterSelectInput;
       }
       return autoEnterSelectInput;
-    },
+    }
   },
   watch: {
     items(items) {
       this.cloneItems(items);
-    },
+    }
   },
   created() {
     this.cloneItems(this.items);
@@ -1013,18 +1022,18 @@ export default {
     if (utils.isObject(this.colspan)) {
       this.$nextTick(() => {
         const keys = Object.keys(responsiveMap);
-        keys.map((screen) =>
+        keys.map(screen =>
           enquire.register(responsiveMap[screen], {
             match: () => {
               that.currentScreen = screen;
             },
             unmatch: () => {
-              const keyIndex = keys.findIndex((p) => p === screen);
+              const keyIndex = keys.findIndex(p => p === screen);
               if (keyIndex > 0) {
                 that.currentScreen = keys[keyIndex - 1];
               }
             },
-            destroy() {},
+            destroy() {}
           })
         );
       });
@@ -1042,7 +1051,7 @@ export default {
     }
   },
   beforeDestroy() {
-    Object.keys(responsiveMap).map((screen) =>
+    Object.keys(responsiveMap).map(screen =>
       enquire.unregister(responsiveMap[screen])
     );
   },
@@ -1053,7 +1062,7 @@ export default {
         autoLoadOptionsData,
         isPartRequest,
         optionsItemDataIndexs,
-        oldItems: prevItems,
+        oldItems: prevItems
       } = this;
       const clone = utils.clone(items, true);
       const getItemPropsOptionsApiList = [];
@@ -1065,7 +1074,7 @@ export default {
           ? autoLoadOptionsData
           : DEFAULTCONFIG.getSelectOptions.autoLoadOptionsData;
 
-      let cloneData = expand ? clone : clone.filter((p) => !p.folding);
+      let cloneData = expand ? clone : clone.filter(p => !p.folding);
       let itemsOptionsIndexs = {};
       let oldItems = {};
       const isFormPartRequest =
@@ -1098,7 +1107,7 @@ export default {
             field: field,
             api: itemProps.api,
             param: itemProps.param,
-            props: itemProps,
+            props: itemProps
           });
         } else if (itemProps.param) {
           unifyApiGetOptions.push(item);
@@ -1128,7 +1137,7 @@ export default {
         if (optionsItemDataIndexs[item.field]) {
           row = {
             ...optionsItemDataIndexs[item.field],
-            index,
+            index
           };
         } else {
           let itemProps = itemRender.props;
@@ -1136,7 +1145,7 @@ export default {
             name: itemRender.name,
             options: [],
             ...itemProps,
-            index,
+            index
           };
           if (
             itemRender.name == "a-tree-select" &&
@@ -1179,7 +1188,7 @@ export default {
      * @return {*}
      */
     reviseItems(data) {
-      this.itemsOptions = this.itemsOptions.map((p) => {
+      this.itemsOptions = this.itemsOptions.map(p => {
         let field = p.field;
         return data[field] ? data[field] : p;
       });
@@ -1194,11 +1203,11 @@ export default {
       const {
         getSelectOptions: {
           valueField: configValueField,
-          childrenField: configChildrenField,
-        },
+          childrenField: configChildrenField
+        }
       } = DEFAULTCONFIG;
       // 过滤掉formitems未定义的字段
-      const formFields = items.map((item) => item.field);
+      const formFields = items.map(item => item.field);
       let formData = {};
       for (const key in values) {
         if (formFields.includes(key)) {
@@ -1247,7 +1256,7 @@ export default {
                   is = true;
                   values[key] = arrValue;
                 } else {
-                  is = item.options.findIndex((p) => p[vF] == values[key]) > -1;
+                  is = item.options.findIndex(p => p[vF] == values[key]) > -1;
                 }
               }
             } else {
@@ -1269,7 +1278,7 @@ export default {
         this.form.validateFields(fields, (err, values) => {
           if (!err) {
             let json = {
-              ...values,
+              ...values
             };
 
             let hasFilterNullValues = filterNullValues;
@@ -1294,7 +1303,7 @@ export default {
     // 格式化提交数据，上传对象转成url
     formatSubmitValues(values) {
       const { items } = this;
-      items.forEach((item) => {
+      items.forEach(item => {
         // 将上传组件的对象值转换成url字符串
         if (
           item.itemRender &&
@@ -1304,7 +1313,7 @@ export default {
           const value = values[item.field];
           if (value.fileList && value.fileList.length) {
             const list = value.fileList
-              .map((p) => {
+              .map(p => {
                 if (p.url) {
                   return p.url;
                 } else if (p.response) {
@@ -1323,7 +1332,7 @@ export default {
                 }
                 return p;
               })
-              .filter((p) => p !== "");
+              .filter(p => p !== "");
             values[item.field] = list && list.length ? list : undefined;
           } else if (value.fileList && value.fileList.length === 0) {
             values[item.field] = undefined;
@@ -1341,7 +1350,7 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           let json = {
-            ...values,
+            ...values
           };
           json = this.formatSubmitValues(json);
           this.$emit("submit", json);
@@ -1408,7 +1417,7 @@ export default {
       let formData = {};
       let linkageFormData = {};
       let defaultFormData = {};
-      this.itemsOptions.forEach((item) => {
+      this.itemsOptions.forEach(item => {
         if (
           !item.itemRender.props.unDefaultSelected &&
           ((fields.length && fields.includes(item.field)) ||
@@ -1434,22 +1443,22 @@ export default {
                   "a-cascader",
                   "a-cascader-ex",
                   "a-select-group",
-                  "a-tree-select",
+                  "a-tree-select"
                 ].includes(itemName)
               ) {
                 if (autoSetDefaultFirst) {
                   defaultRows = [options[0]];
                 } else {
-                  defaultRows = options.filter((p) => p[defaultKey]);
+                  defaultRows = options.filter(p => p[defaultKey]);
                 }
                 if (defaultRows.length > 0) {
-                  const defaultValue = defaultRows.map((p) => {
+                  const defaultValue = defaultRows.map(p => {
                     return p[valueField];
                   });
                   if (defaultValue && defaultValue.length) {
                     let value = defaultValue;
                     const valueArrayTypes = [
-                      "a-checkbox-group",
+                      "a-checkbox-group"
                       // "a-radio-group"
                     ];
 
@@ -1465,7 +1474,7 @@ export default {
                     }
                     if (!isSeletctMultiple && props.linkage) {
                       if (props.linkage instanceof Array) {
-                        props.linkage.forEach((linkItem) => {
+                        props.linkage.forEach(linkItem => {
                           linkageFormData[linkItem.key] = utils.getObjData(
                             linkItem.value,
                             defaultRows
@@ -1485,7 +1494,7 @@ export default {
                     if (callback) {
                       formData = {
                         ...formData,
-                        ...callback(item.field, defaultRows),
+                        ...callback(item.field, defaultRows)
                       };
                     }
                   }
@@ -1498,7 +1507,7 @@ export default {
       const json = {
         ...defaultData,
         ...formData,
-        ...linkageFormData,
+        ...linkageFormData
       };
       this.setData(json);
       return defaultFormData;
@@ -1558,7 +1567,7 @@ export default {
     },
     // 加载表单项的下拉数据
     loadItemOptionsData(field, params) {
-      const formItem = this.itemsOptions.find((p) => p.field === field);
+      const formItem = this.itemsOptions.find(p => p.field === field);
       let itemProps = formItem.itemRender.props;
       if (itemProps.api || itemProps.param) {
         let api = "";
@@ -1569,13 +1578,13 @@ export default {
         }
         api({
           ...itemProps.param,
-          ...params,
-        }).then((res) => {
+          ...params
+        }).then(res => {
           const optionsData = handlefieldOptionsDataField(field, res, this);
           this.setFieldsOptions({ [field]: optionsData });
         });
       }
-    },
+    }
   },
   render(h) {
     const { form, formLayout, currentColspan, readonly /*, onSubmit*/ } = this;
@@ -1586,10 +1595,10 @@ export default {
       props: {
         ...DEFAULTCONFIG.props,
         form: form,
-        layout: antdLayouts.includes(formLayout) ? formLayout : null,
+        layout: antdLayouts.includes(formLayout) ? formLayout : null
       },
       class: ["data-form", formLayout],
-      style: {},
+      style: {}
       // on: {
       //   submit: (a, b, c) => {
       //     onSubmit(a, b, c);
@@ -1608,7 +1617,7 @@ export default {
     }
     return h("a-form", formProps, [
       renderItems(h, this),
-      renderActionButtons(h, this),
+      renderActionButtons(h, this)
     ]);
-  },
+  }
 };
