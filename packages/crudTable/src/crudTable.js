@@ -584,10 +584,14 @@ export default {
           if (queryDataField) {
             data = utils.getObjData(queryDataField, res);
           }
-          formModal.setFormData(data);
+          this.$nextTick(() => {
+            formModal.setFormData(data);
+          });
         });
       } else {
-        formModal.setFormData(row);
+        this.$nextTick(() => {
+          formModal.setFormData(row);
+        });
       }
     },
     onOptionsLoadAfter() {
