@@ -281,9 +281,33 @@ export default {
                   proxyConfig: {
                     autoLoad: true,
                     ajax: {
-                      query: () => {
+                      query: (params) => {
                         return new Promise((resolve) => {
-                          console.log("请求数据");
+                          console.log("请求数据", params);
+                          if (params.keyword == 2) {
+                            resolve({
+                              code: 0,
+                              data: {
+                                datas: [],
+                              },
+                            });
+                            return;
+                          } else if (params.keyword == 1) {
+                            resolve({
+                              code: 0,
+                              data: {
+                                datas: [
+                                  {
+                                    id: 1,
+                                    name: "aaaa",
+                                    endingQuantity: "111",
+                                    endingAvgPrice: "22",
+                                  },
+                                ],
+                              },
+                            });
+                            return;
+                          }
                           resolve({
                             code: 0,
                             data: {

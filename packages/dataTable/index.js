@@ -17,6 +17,7 @@ dataTable.setupConfig = setup;
 dataTable.install = function(Vue) {
   Vue.component(dataTable.name, dataTable);
 };
+dataTable.use = VXETable.use;
 
 export const DataTable = dataTable;
 export default dataTable;

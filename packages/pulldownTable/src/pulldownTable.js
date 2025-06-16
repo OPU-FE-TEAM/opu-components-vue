@@ -349,7 +349,9 @@ export default {
         table.props.proxyConfig.ajax.query
       ) {
         that.$nextTick(() => {
+          const dataTable = that.$refs.table;
           let params = {};
+
           if (that.retainSearchKeyword) {
             params[searchField] = that.searchKeyword;
             that.currentValue = that.searchKeyword;
@@ -364,7 +366,6 @@ export default {
               params = searchBeforeRes;
             }
           }
-          const dataTable = that.$refs.table;
           dataTable.onSearchSubmit(params);
           that.searchKeyword = params[searchField];
         });
@@ -467,6 +468,11 @@ export default {
     },
     onPulldownHideBefore({ $event: e }) {
       let that = this;
+      const dataTable = that.$refs.table;
+      const tableData = dataTable.getTableData();
+      if (tableData.tableData && tableData.tableData.length == 0) {
+        this.searchKeyword = "";
+      }
       that.onPulldownHide(e);
       // let isContains = false;
 
