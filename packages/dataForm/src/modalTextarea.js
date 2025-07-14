@@ -38,7 +38,6 @@ export default {
       this.$refs.modalTextarea.focus();
     },
     onShowModal() {
-      debugger;
       this.modalTextareaValue = this.value;
       this.visible = true;
     },
