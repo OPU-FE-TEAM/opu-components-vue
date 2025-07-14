@@ -25,8 +25,6 @@ export default {
   computed: {
     modalTitle() {
       const propsData = this.$options.propsData;
-      console.log(propsData);
-
       return propsData.modalTitle || "编辑";
     }
   },
