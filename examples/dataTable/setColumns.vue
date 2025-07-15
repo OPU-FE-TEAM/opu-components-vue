@@ -12,11 +12,11 @@
         class="abc-table"
         :proxy-columns="proxyColumns"
         :columns="columns"
-        isShowResetSetColumnsButton
       >
       </DataTable>
 
       <a-button @click="showSetColumns">设置表头</a-button>
+      <a-button @click="closeSetColumns">关闭表头</a-button>
     </div>
   </div>
 </template>
@@ -25,7 +25,7 @@
 // import {utils} from '../../index'
 
 function getData(arr) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       const size = arr && arr.pageSize ? arr.pageSize : 20;
       const pageIndex = arr && arr.pageIndex ? arr.pageIndex : 1;
@@ -42,13 +42,13 @@ function getData(arr) {
         children: [
           {
             id: "a1",
-            name: "cname1"
+            name: "cname1",
           },
           {
             id: "a2",
-            name: "cname2"
-          }
-        ]
+            name: "cname2",
+          },
+        ],
       }));
       const json = {
         // data: [...list],
@@ -56,8 +56,8 @@ function getData(arr) {
         code: 0,
         data: {
           data: [...list],
-          total: size
-        }
+          total: size,
+        },
       };
       console.log(json);
       resolve(json);
@@ -66,7 +66,7 @@ function getData(arr) {
 }
 
 function getColumns(arr) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     console.log(arr);
     setTimeout(() => {
       // const code = arr && arr.code ? arr.code : "";
@@ -82,7 +82,7 @@ function getColumns(arr) {
           _X_ROW_KEY: "row_41",
           ISEDIT: true,
           sortable: true,
-          width: 220
+          width: 220,
         },
         {
           title: "名称",
@@ -94,7 +94,7 @@ function getColumns(arr) {
           code: "",
           _X_ROW_KEY: "row_42",
           ISEDIT: true,
-          sortable: true
+          sortable: true,
         },
         {
           title: "所属班级",
@@ -105,7 +105,7 @@ function getColumns(arr) {
           defaultTitle: "所属班级",
           code: "",
           _X_ROW_KEY: "row_43",
-          sortable: true
+          sortable: true,
         },
         {
           title: "状态",
@@ -117,7 +117,7 @@ function getColumns(arr) {
           defaultTitle: "状态",
           code: "",
           _X_ROW_KEY: "row_44",
-          sortable: true
+          sortable: true,
         },
         {
           title: "培训开始时间",
@@ -128,7 +128,7 @@ function getColumns(arr) {
           defaultTitle: "培训开始时间",
           code: "",
           _X_ROW_KEY: "row_45",
-          sortable: true
+          sortable: true,
         },
         {
           title: "培训结束时间",
@@ -139,7 +139,7 @@ function getColumns(arr) {
           defaultTitle: "培训结束时间",
           code: "",
           _X_ROW_KEY: "row_46",
-          sortable: true
+          sortable: true,
         },
         {
           title: "电话",
@@ -150,7 +150,7 @@ function getColumns(arr) {
           defaultTitle: "电话",
           code: "",
           _X_ROW_KEY: "row_47",
-          sortable: true
+          sortable: true,
         },
         {
           title: "身份证号",
@@ -161,7 +161,7 @@ function getColumns(arr) {
           defaultTitle: "身份证号",
           code: "",
           _X_ROW_KEY: "row_48",
-          sortable: true
+          sortable: true,
         },
         {
           title: "性别",
@@ -172,7 +172,7 @@ function getColumns(arr) {
           defaultTitle: "性别",
           code: "",
           _X_ROW_KEY: "row_49",
-          sortable: true
+          sortable: true,
         },
         {
           title: "籍贯",
@@ -183,7 +183,7 @@ function getColumns(arr) {
           defaultTitle: "籍贯",
           code: "",
           _X_ROW_KEY: "row_50",
-          sortable: true
+          sortable: true,
         },
         {
           title: "生日",
@@ -194,7 +194,7 @@ function getColumns(arr) {
           defaultTitle: "生日",
           code: "",
           _X_ROW_KEY: "row_51",
-          sortable: true
+          sortable: true,
         },
         {
           title: "地址",
@@ -205,7 +205,7 @@ function getColumns(arr) {
           defaultTitle: "地址",
           code: "",
           _X_ROW_KEY: "row_52",
-          sortable: true
+          sortable: true,
         },
         {
           title: "操作1",
@@ -220,15 +220,15 @@ function getColumns(arr) {
           align: "",
           defaultTitle: "操作",
           code: "",
-          _X_ROW_KEY: "row_53"
-        }
+          _X_ROW_KEY: "row_53",
+        },
       ];
 
       const json = {
         // data: [...list],
         // total: 100
         code: 0,
-        data: list
+        data: list,
       };
       resolve(json);
     }, 500);
@@ -244,35 +244,38 @@ export default {
       tableForm: {
         data: {
           name: "",
-          sex: ""
+          sex: "",
         },
         items: [
           {
             field: "name",
             title: "app.body.label.name",
-            itemRender: { name: "$input", props: { placeholder: "请输入名称" } }
+            itemRender: {
+              name: "$input",
+              props: { placeholder: "请输入名称" },
+            },
           },
           {
             field: "sex",
             title: "性别",
             titlePrefix: {
               message: "帮助信息！！！",
-              icon: "fa fa-info-circle"
+              icon: "fa fa-info-circle",
             },
-            itemRender: { name: "$select", options: [] }
+            itemRender: { name: "$select", options: [] },
           },
           {
             itemRender: {
               name: "$buttons",
               children: [
                 {
-                  props: { type: "submit", content: "查询", status: "primary" }
+                  props: { type: "submit", content: "查询", status: "primary" },
                 },
-                { props: { type: "reset", content: "重置" } }
-              ]
-            }
-          }
-        ]
+                { props: { type: "reset", content: "重置" } },
+              ],
+            },
+          },
+        ],
       },
       setColumns: {
         // modal: {
@@ -283,8 +286,8 @@ export default {
         proxyConfig: {
           // props: {},
           params: {
-            code: "goods"
-          }
+            code: "goods",
+          },
 
           // ajax: {
           //   query: json => {
@@ -302,12 +305,18 @@ export default {
           //     console.log("submit111", values);
           //   }
           // }
-        }
+        },
+        isShowReset: true,
+        // resetColumnsPromise: (e) => {
+        //   return new Promise((resolve) => {
+        //     resolve(e);
+        //   });
+        // },
       },
 
       pagerConfig: {
         pageIndex: 0,
-        pageSize: 10
+        pageSize: 10,
         // layouts: [
         //   "PrevJump",
         //   "PrevPage",
@@ -337,54 +346,54 @@ export default {
         props: {
           result: "data.data",
           total: "data.total",
-          list: "data.data"
+          list: "data.data",
         },
         autoLoad: true,
         ajax: {
           autoLoad: true,
-          query: values => {
+          query: (values) => {
             return getData(values);
-          }
-        }
+          },
+        },
       },
       proxyColumns: {
         props: {
           list: "data",
           show: "show",
           align: "align",
-          fixed: "fixed"
+          fixed: "fixed",
         },
         mergeColumns: false,
         params: {
-          code: "goods"
+          code: "goods",
         },
         on: {},
 
         ajax: {
-          query: json => {
-            return new Promise(resolve => {
+          query: (json) => {
+            return new Promise((resolve) => {
               getColumns({
                 ...json,
-                code: "aaaa"
-              }).then(res => {
+                code: "aaaa",
+              }).then((res) => {
                 resolve(res);
               });
             });
-          }
-        }
+          },
+        },
       },
       columns: [
         {
           title: "编号",
-          field: "code"
+          field: "code",
         },
         {
           title: "名称",
-          field: "name"
+          field: "name",
         },
         {
           title: "所属班级",
-          field: "squadName"
+          field: "squadName",
         },
         {
           title: "状态",
@@ -398,55 +407,55 @@ export default {
               } else {
                 return [<a-badge status="success" text={row.statusName} />];
               }
-            }
-          }
+            },
+          },
         },
         {
           title: "培训开始时间",
-          field: "trainingBeginTime"
+          field: "trainingBeginTime",
         },
         {
           title: "培训结束时间",
-          field: "trainingEndTime"
+          field: "trainingEndTime",
         },
         {
           title: "电话",
-          field: "phone"
+          field: "phone",
         },
         {
           title: "身份证号",
-          field: "idCardNo"
+          field: "idCardNo",
         },
         {
           title: "性别",
-          field: "genderCode"
+          field: "genderCode",
         },
         {
           title: "籍贯",
-          field: "nativePlaceCode"
+          field: "nativePlaceCode",
         },
         {
           title: "生日",
-          field: "birthday"
+          field: "birthday",
         },
         {
           title: "地址",
-          field: "address"
+          field: "address",
         },
         {
           title: "操作",
           field: "id",
           width: 110,
-          fixed: "right"
+          fixed: "right",
           // slots: { default: "rowAction" }
-        }
-      ]
+        },
+      ],
     };
   },
   created() {
     // this.findList()
     this.fetchSelectData();
-    getData().then(res => {
+    getData().then((res) => {
       this.tableData = res.data.data;
     });
   },
@@ -493,6 +502,19 @@ export default {
     showSetColumns() {
       const grid = this.$refs.xGrid;
       grid.showSetColumns();
+      setTimeout(() => {
+        this.closeSetColumns();
+      }, 3000);
+    },
+    closeSetColumns() {
+      const grid = this.$refs.xGrid;
+      grid.$refs.setColumsModal.onCancel();
+    },
+    resetColumnsPromise(e) {
+      console.log(e);
+      return new Promise((resolve) => {
+        resolve(e);
+      });
     },
     updateColumns() {
       this.tableColumn = [
@@ -502,14 +524,14 @@ export default {
           field: "code",
           title: "Code",
           minWidth: 140,
-          editRender: { name: "AInput" }
+          editRender: { name: "AInput" },
         },
         {
           field: "checkbox",
           title: "Checkbox",
           minWidth: 140,
-          editRender: { name: "ACheckbox" }
-        }
+          editRender: { name: "ACheckbox" },
+        },
       ];
     },
     editRow(row) {
@@ -522,7 +544,7 @@ export default {
     setSearchData() {
       const grid = this.$refs.xGrid;
       grid.setSearchData({
-        name: "aaa"
+        name: "aaa",
       });
     },
     getSearchData() {
@@ -534,7 +556,7 @@ export default {
       const grid = this.$refs.xGrid;
       grid.reload({
         a: 1,
-        b: 2
+        b: 2,
       });
     },
     onCellClick(e) {
@@ -554,21 +576,21 @@ export default {
         {
           id: 1,
           name: "b1",
-          sex: 1
+          sex: 1,
         },
         {
           id: 2,
           name: "b2",
-          sex: 1
+          sex: 1,
         },
         {
           id: 3,
           name: "b3",
-          sex: 1
-        }
+          sex: 1,
+        },
       ];
-    }
-  }
+    },
+  },
 };
 </script>
 
