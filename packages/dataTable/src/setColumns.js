@@ -14,7 +14,13 @@ export default {
       type: Object,
       default: () => {}
     },
-    columns: Array
+    columns: Array,
+    defaultColumns: Array,
+    isShowReset: Boolean,
+    resetColumnsPromise: {
+      type: Function,
+      default: null
+    }
   },
   data() {
     return {
@@ -250,6 +256,21 @@ export default {
       const table = this.$refs.table;
       return table.getTableData();
     },
+    onResetColumns() {
+      if (this.resetColumnsPromise) {
+        this.resetColumnsPromise(this.tableData).then(res => {
+          this.tableData = this.handelColumns(utils.clone(res));
+          // this.$nextTick(() => {
+          //   this.treeDrop();
+          // });
+        });
+      } else {
+        this.tableData = this.handelColumns(utils.clone(this.defaultColumns));
+        // this.$nextTick(() => {
+        //   this.treeDrop();
+        // });
+      }
+    },
     onCancel() {
       this.visible = false;
     },
@@ -347,13 +368,14 @@ export default {
         field: "defaultTitle",
         title: "默认标题",
         align: "center",
-        minWidth: 150,
+        minWidth: 100,
         treeNode: true
       },
       {
         field: "title",
         title: "显示标题",
         align: "center",
+        minWidth: 100,
         itemRender: {
           name: "AInput",
           on: {
@@ -365,6 +387,7 @@ export default {
         field: "width",
         title: "列宽",
         align: "center",
+        width: 100,
         itemRender: {
           name: "AInputNumber",
           on: {
@@ -376,6 +399,7 @@ export default {
         field: "align",
         title: "对齐方式",
         align: "center",
+        width: 120,
         itemRender: {
           name: "a-select",
           props: {
@@ -411,6 +435,7 @@ export default {
         field: "fixed",
         title: "固定",
         align: "center",
+        width: 120,
         itemRender: {
           name: "a-select",
           props: {
@@ -440,13 +465,39 @@ export default {
       {
         props: {
           title: modalProps.title ? modalProps.title : "设置表头",
-          width: 800,
+          width: 900,
           ...modalProps,
           value: visible
         },
         on: {
           cancel: onCancel,
           ok: onSubmit
+        },
+        scopedSlots: {
+          footer: () => {
+            let buttons = [
+              <a-button {...{ on: { click: onCancel } }}>取消</a-button>,
+              <a-button
+                {...{ props: { type: "primary" }, on: { click: onSubmit } }}
+              >
+                确定
+              </a-button>
+            ];
+            if (this.isShowReset) {
+              buttons.push(
+                <a-button
+                  {...{
+                    props: { type: "primary" },
+                    on: { click: this.onResetColumns },
+                    style: "float:left;"
+                  }}
+                >
+                  重置
+                </a-button>
+              );
+            }
+            return buttons;
+          }
         },
         class: "set-columns-modal"
       },

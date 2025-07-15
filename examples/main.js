@@ -15,15 +15,15 @@ function getSelectData(arr) {
   if (!arr) {
     arr = { code: "ab" };
   }
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(() => {
       const json = {};
       if (utils.isArray(arr.code)) {
-        arr.code.map((item) => {
+        arr.code.map(item => {
           const list = Array.from({ length: 5 }, (_, key) => ({
             id: key,
             default: key == 2 ? true : false,
-            name: `${item}_${key}`,
+            name: `${item}_${key}`
           }));
           list[1].isSelected = true;
           json[item] = list;
@@ -33,7 +33,7 @@ function getSelectData(arr) {
           id: key,
           default: key == 2 ? true : false,
           name: `${arr.code}_${key}_${Math.ceil(Math.random() * 10)}`,
-          code: `code_${key}`,
+          code: `code_${key}`
         }));
         list[1].isSelected = true;
         json[arr.code] = list;
@@ -44,8 +44,9 @@ function getSelectData(arr) {
   });
 }
 
+// eslint-disable-next-line no-unused-vars
 function getColumns(arr) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     console.log("获取表头", arr);
     setTimeout(() => {
       // const code = arr && arr.code ? arr.code : "";
@@ -64,7 +65,7 @@ function getColumns(arr) {
           sysColumnName: "物品名称",
           isHide: false,
           rowSpan: null,
-          colSpan: null,
+          colSpan: null
         },
         {
           name: "goodsCode",
@@ -79,7 +80,7 @@ function getColumns(arr) {
           sysColumnName: "物品编码",
           isHide: false,
           rowSpan: null,
-          colSpan: null,
+          colSpan: null
           // sortable: false
         },
         {
@@ -107,7 +108,7 @@ function getColumns(arr) {
               sysColumnName: "期末数量",
               isHide: false,
               rowSpan: null,
-              colSpan: null,
+              colSpan: null
             },
             {
               name: "endingAvgPrice",
@@ -123,7 +124,7 @@ function getColumns(arr) {
               sysColumnName: "期末进货均价",
               isHide: false,
               rowSpan: null,
-              colSpan: null,
+              colSpan: null
             },
             {
               name: "endingTotalPrice",
@@ -139,7 +140,7 @@ function getColumns(arr) {
               sysColumnName: "期末进货金额",
               isHide: false,
               rowSpan: null,
-              colSpan: null,
+              colSpan: null
             },
             {
               name: "endingRetailPrice",
@@ -155,21 +156,21 @@ function getColumns(arr) {
               sysColumnName: "期末售价金额",
               isHide: false,
               rowSpan: null,
-              colSpan: null,
-            },
+              colSpan: null
+            }
           ],
           sysColumnName: "期末",
           isHide: false,
           rowSpan: null,
-          colSpan: 4,
-        },
+          colSpan: 4
+        }
       ];
 
       const json = {
         // data: [...list],
         // total: 100
         code: 0,
-        data: list,
+        data: list
       };
       resolve(json);
     }, 500);
@@ -211,10 +212,10 @@ DataForm.setupConfig({
     // autoLoadOptionsData: true, //是否自动获取下拉数据
     loadOptionsIdField: "id",
     isPartRequest: true,
-    defaultField: "isSelected",
+    defaultField: "isSelected"
   },
   props: {
-    selfUpdate: true,
+    selfUpdate: true
   },
   defaultProps: {
     select: {
@@ -222,34 +223,34 @@ DataForm.setupConfig({
       placeholder: "请选择",
       allowClear: true,
       searchFields: ["code"],
-      defaultField: "isSelected",
+      defaultField: "isSelected"
     },
     selectGroup: {
       showSearch: true,
       placeholder: "请选择",
       allowClear: true,
-      searchFields: ["code"],
+      searchFields: ["code"]
     },
     rangePickerSplit: {
       allowClear: true,
-      placeholder: "请选择1",
+      placeholder: "请选择1"
     },
     pulldownTable: {
       inputProps: {
-        allowClear: true,
-      },
+        allowClear: true
+      }
     },
     autoComplete: {
-      searchFields: ["simpleCode", "wubiCode", "code", "spellCode"],
-    },
-  },
+      searchFields: ["simpleCode", "wubiCode", "code", "spellCode"]
+    }
+  }
 });
 
-const getTableSelectData = (fields) => {
-  return new Promise((resolve) => {
+const getTableSelectData = fields => {
+  return new Promise(resolve => {
     setTimeout(() => {
       let data = {
-        data: {},
+        data: {}
       };
       fields = fields.code;
       for (let i = 0; i < fields.length; i++) {
@@ -260,12 +261,12 @@ const getTableSelectData = (fields) => {
   });
 };
 
-const initTableFieldData = (field) => {
+const initTableFieldData = field => {
   let data = [];
   for (let i = 0; i < 10; i++) {
     data.push({
       id: i,
-      name: field + i,
+      name: field + i
     });
   }
   return data;
@@ -277,13 +278,13 @@ DataTable.setupConfig({
     align: "center",
     highlightCurrentRow: true,
     sortConfig: { trigger: "cell" },
-    "auto-resize": true,
+    "auto-resize": true
   },
   pagerConfig: {
     pageIndex: 0,
     pageSize: 30, //默认每页条数
     slots: {
-      left: (grid) => {
+      left: grid => {
         const vm = new Vue();
         const h = vm.$createElement;
         let setColumnsButton = "";
@@ -297,15 +298,15 @@ DataTable.setupConfig({
             {
               props: {
                 icon: "setting",
-                size: "small",
+                size: "small"
               },
               style: { marginLeft: "8px" },
               on: {
                 click: () => {
                   grid.$grid.$parent.showSetColumns &&
                     grid.$grid.$parent.showSetColumns();
-                },
-              },
+                }
+              }
             },
             []
           );
@@ -316,50 +317,50 @@ DataTable.setupConfig({
             {
               props: {
                 icon: "reload",
-                size: "small",
+                size: "small"
               },
               on: {
                 click: () => {
                   grid.$grid.commitProxy("reload");
-                },
-              },
+                }
+              }
             },
             []
           ),
-          setColumnsButton,
+          setColumnsButton
         ];
-      },
-    },
+      }
+    }
   },
   proxyConfig: {
     seq: true, // 启用动态序号代理
     props: {
       result: "data.datas",
       total: "data.total",
-      list: "data.datas",
-    },
+      list: "data.datas"
+    }
   },
   proxyColumns: {
     props: {
-      list: "data",
-      show: "show",
-      align: "align",
-      fixed: "fixed",
-      title: "customName",
-      field: "name",
-    },
-    defaultAjax: {
-      query: getColumns,
-    },
+      // list: "data",
+      // show: "show",
+      // align: "align",
+      // fixed: "fixed"
+      // title: "customName"
+      // field: "name",
+    }
+    // defaultAjax: {
+    //   query: getColumns
+    // }
   },
   getSelectOptions: {
-    api: getTableSelectData,
+    api: getTableSelectData
   },
   setColumns: {
     modal: {
       props: {
-        bodyStyle: { height: "600px" },
-      },
+        bodyStyle: { height: "600px" }
+      }
     },
     proxyConfig: {
       props: {
@@ -369,49 +370,49 @@ DataTable.setupConfig({
         fixed: "fixed",
         title: "title",
         field: "field",
-        defaultTitle: "title",
+        defaultTitle: "title"
       },
-      defaultAjax: {
-        query: getColumns,
-        submit: (json) => {
-          return new Promise((resolve) => {
-            console.log(json);
-            resolve(json);
-          });
-        },
-      },
+      // defaultAjax: {
+      //   query: getColumns,
+      //   submit: json => {
+      //     return new Promise(resolve => {
+      //       console.log(json);
+      //       resolve(json);
+      //     });
+      //   }
+      // },
       on: {
-        submitBefore: (values) => {
+        submitBefore: values => {
           return {
             checkType: values.typeCode,
-            configList: handleTableSetColumnsData(values.data),
+            configList: handleTableSetColumnsData(values.data)
           };
-        },
-      },
+        }
+      }
     },
     tableConfig: {
       onCellEditChange: (e, event) => {
         console.log(e, event);
-        if (
-          event.field == "show" &&
-          event.row.children &&
-          event.row.children.length
-        ) {
-          for (let i = 0; i < event.row.children.length; i++) {
-            let item = event.row.children[i];
-            item.show = event.row[event.field];
-          }
-        }
-        if (event.row.parentCode) {
-          const parentFind = event.data.find(
-            (p) => p.name == event.row.parentCode
-          );
-          if (parentFind && parentFind.children && parentFind.children.length) {
-            const parentShow = parentFind.children.some((p) => p.show === true);
-            parentFind.show = parentShow;
-          }
-        }
-      },
+        // if (
+        //   event.field == "show" &&
+        //   event.row.children &&
+        //   event.row.children.length
+        // ) {
+        //   for (let i = 0; i < event.row.children.length; i++) {
+        //     let item = event.row.children[i];
+        //     item.show = event.row[event.field];
+        //   }
+        // }
+        // if (event.row.parentCode) {
+        //   const parentFind = event.data.find(
+        //     p => p.name == event.row.parentCode
+        //   );
+        //   if (parentFind && parentFind.children && parentFind.children.length) {
+        //     const parentShow = parentFind.children.some(p => p.show === true);
+        //     parentFind.show = parentShow;
+        //   }
+        // }
+      }
       // columns: [
       //   {
       //     width: 60,
@@ -431,15 +432,15 @@ DataTable.setupConfig({
       //     }
       //   }
       // ]
-    },
+    }
   },
   sortConfig: {
-    handleServerSortParams: (e) => {
+    handleServerSortParams: e => {
       console.log(e);
       return e;
     },
-    notSortableFields: ["goodsCode"],
-  },
+    notSortableFields: ["goodsCode"]
+  }
 });
 
 CrudTable.setupConfig({
@@ -452,9 +453,9 @@ CrudTable.setupConfig({
       responseCodeField: "code",
       props: {
         name: "新增", // 按钮文字
-        type: "primary",
+        type: "primary"
         //... 可配置更多按钮属性
-      },
+      }
     },
     // 编辑
     edit: {
@@ -462,8 +463,8 @@ CrudTable.setupConfig({
       props: {
         name: "编辑",
         size: "small",
-        type: "link",
-      },
+        type: "link"
+      }
     },
     // 删除
     del: {
@@ -474,8 +475,8 @@ CrudTable.setupConfig({
       props: {
         name: "删除",
         size: "small",
-        type: "link",
-      },
+        type: "link"
+      }
     },
     view: {
       modalTitle: "查看",
@@ -483,15 +484,15 @@ CrudTable.setupConfig({
       props: {
         name: "查看",
         size: "small",
-        type: "link",
-      },
-    },
-  },
+        type: "link"
+      }
+    }
+  }
 });
 
 Vue.config.productionTip = false;
 Vue.use(opuCompontents);
 
 new Vue({
-  render: (h) => h(App),
+  render: h => h(App)
 }).$mount("#app");

@@ -1,6 +1,7 @@
 <template>
   <div>
     <div style="height:600px;width:1000px">
+      {{ columns }}
       <DataTable
         show-overflow
         keep-source
@@ -11,6 +12,7 @@
         class="abc-table"
         :proxy-columns="proxyColumns"
         :columns="columns"
+        isShowResetSetColumnsButton
       >
       </DataTable>
 
@@ -25,9 +27,8 @@
 function getData(arr) {
   return new Promise(resolve => {
     setTimeout(() => {
-      console.log(arr);
-      const size = arr.pageSize ? arr.pageSize : 20;
-      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+      const size = arr && arr.pageSize ? arr.pageSize : 20;
+      const pageIndex = arr && arr.pageIndex ? arr.pageIndex : 1;
       const list = Array.from({ length: size }, (_, key) => ({
         id: key,
         name: `name_${pageIndex}_${key}`,
@@ -71,7 +72,7 @@ function getColumns(arr) {
       // const code = arr && arr.code ? arr.code : "";
       const list = [
         {
-          title: "编号1",
+          title: "编号111",
           field: "code",
           columnIndex: 0,
           show: true,
@@ -207,12 +208,12 @@ function getColumns(arr) {
           sortable: true
         },
         {
-          title: "操作",
+          title: "操作1",
           field: "id",
-          width: 250,
+          width: 80,
           fixed: "right",
           slots: {
-            default: "rowAction"
+            // default: "rowAction"
           },
           columnIndex: 12,
           show: "",
@@ -338,9 +339,12 @@ export default {
           total: "data.total",
           list: "data.data"
         },
-        autoLoad: false,
+        autoLoad: true,
         ajax: {
-          query: getData
+          autoLoad: true,
+          query: values => {
+            return getData(values);
+          }
         }
       },
       proxyColumns: {
@@ -432,9 +436,9 @@ export default {
         {
           title: "操作",
           field: "id",
-          width: 250,
-          fixed: "right",
-          slots: { default: "rowAction" }
+          width: 110,
+          fixed: "right"
+          // slots: { default: "rowAction" }
         }
       ]
     };
@@ -442,6 +446,9 @@ export default {
   created() {
     // this.findList()
     this.fetchSelectData();
+    getData().then(res => {
+      this.tableData = res.data.data;
+    });
   },
   methods: {
     fetchSelectData() {

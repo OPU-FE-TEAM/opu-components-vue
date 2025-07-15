@@ -214,12 +214,26 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
 
 // 渲染设置表头窗口
 function renderColumnsModal(h, _vm) {
-  const { backupColumns, setTableColumns, setColumnsOpt } = _vm;
+  const {
+    backupColumns,
+    setTableColumns,
+    setColumnsOpt,
+    defaultColumns,
+    resetColumnsPromise
+  } = _vm;
   return h("SetColumns", {
     ref: "setColumsModal",
     props: {
       option: setColumnsOpt,
-      columns: backupColumns
+      columns: backupColumns,
+      defaultColumns,
+      isShowReset:
+        _vm.setColumnsOpt.isShowReset ||
+        _vm.isShowResetSetColumnsButton ||
+        resetColumnsPromise
+          ? true
+          : false,
+      resetColumnsPromise
     },
     on: {
       submit: setTableColumns
@@ -623,7 +637,9 @@ export default {
     tableIndex: { type: String, default: "" },
     sortable: { type: Boolean, default: false },
     keyboardSpace: { type: [Boolean, String], default: null },
-    notSortableFields: Array
+    notSortableFields: Array,
+    resetColumnsPromise: { type: Function, default: null },
+    isShowResetSetColumnsButton: { type: Boolean, default: false }
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -645,7 +661,8 @@ export default {
       currentRow: {},
       hasAjaxQuery: false,
       hasCheckbox: false, //是否存在checkbox
-      oldProps: null
+      oldProps: null,
+      defaultColumns: []
     };
   },
   computed: {
@@ -729,7 +746,9 @@ export default {
           tableConfig: {
             ...config.setColumns.tableConfig,
             ...tableConfig
-          }
+          },
+          isShowReset:
+            this.setcolumnsConfig.isShowReset || config.setColumns.isShowReset
         };
       } else {
         return config.setColumns;
@@ -1053,6 +1072,7 @@ export default {
           });
         }
         this.backupColumns = columnsData;
+
         const configProps =
           proxyColumns &&
           proxyColumns.props &&
@@ -1180,6 +1200,7 @@ export default {
         columns
       };
       let queryApi = null;
+      this.defaultColumns = utils.clone(columns);
       if (opt.params) {
         params = { ...params, ...opt.params };
         if (defaultAjax && defaultAjax.query && !(opt.ajax && opt.ajax.query)) {
