@@ -7,20 +7,20 @@ import { Modal } from "../../modal";
 export default {
   name: "SetColumns",
   components: {
-    Modal
+    Modal,
   },
   props: {
     option: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
-    columns: Array
+    columns: Array,
   },
   data() {
     return {
       visible: false,
       tableData: [],
-      defaultData: []
+      defaultData: [],
     };
   },
   computed: {
@@ -41,7 +41,7 @@ export default {
       return option.proxyConfig && option.proxyConfig.props
         ? {
             ...config.setColumns.proxyConfig.props,
-            ...option.proxyConfig.props
+            ...option.proxyConfig.props,
           }
         : config.setColumns.proxyConfig.props;
     },
@@ -64,7 +64,7 @@ export default {
       return option.proxyConfig && option.proxyConfig.on
         ? { ...config.setColumns.proxyConfig.on, ...option.proxyConfig.on }
         : config.setColumns.proxyConfig.on;
-    }
+    },
   },
 
   beforeDestroy() {
@@ -98,7 +98,7 @@ export default {
       const apiColumns = data.map(item => {
         // 替换字段
         let obj = {
-          ...item
+          ...item,
         };
         for (const key in configProps) {
           if (key !== "list") {
@@ -130,7 +130,7 @@ export default {
           : {};
       const opt = option.proxyConfig ? option.proxyConfig : {};
       let params = {
-        columns
+        columns,
       };
       let queryApi = null;
       if (opt && opt.params) {
@@ -161,7 +161,7 @@ export default {
         let xTable = this.$refs.table;
         this.sortable = Sortable.create(
           xTable.$el.querySelector(
-            ".columns-table .body--wrapper>.vxe-table--body tbody"
+            ".columns-table .body--wrapper>.vxe-table--body tbody",
           ),
           {
             handle: ".drag-btn",
@@ -175,7 +175,7 @@ export default {
               let selfNode = utils.findTree(
                 tableTreeData,
                 row => row === selfRow,
-                options
+                options,
               );
               if (prevTrElem) {
                 // 移动到节点
@@ -183,13 +183,13 @@ export default {
                 let prevNode = utils.findTree(
                   tableTreeData,
                   row => row === prevRow,
-                  options
+                  options,
                 );
                 if (
                   utils.findTree(
                     selfRow[options.children],
                     row => prevRow === row,
-                    options
+                    options,
                   )
                 ) {
                   // 错误的移动
@@ -197,7 +197,7 @@ export default {
                   wrapperElem.insertBefore(targetTrElem, oldTrElem);
                   return this.$XModal.message({
                     message: "不允许自己给自己拖动！",
-                    status: "error"
+                    status: "error",
                   });
                 }
                 if (xTable.isTreeExpandByRow(prevRow)) {
@@ -221,7 +221,7 @@ export default {
                       prevNode.index +
                         (selfNode.index < prevNode.index ? 0 : 1),
                       0,
-                      currRow
+                      currRow,
                     );
                   }
                 }
@@ -232,8 +232,8 @@ export default {
               }
               // 如果变动了树层级，需要刷新数据
               xTable.syncData();
-            }
-          }
+            },
+          },
         );
       });
     },
@@ -242,13 +242,13 @@ export default {
       const h = vm.$createElement;
       return h("a-checkbox", {
         props: {
-          checked: scope.row.show
+          checked: scope.row.show,
         },
         on: {
           input: function(checked) {
             scope.row.show = checked;
-          }
-        }
+          },
+        },
       });
     },
     getData() {
@@ -328,7 +328,7 @@ export default {
       if (this.option.tableConfig && this.option.tableConfig.onCellEditChange) {
         this.option.tableConfig.onCellEditChange(...args);
       }
-    }
+    },
   },
   render(h) {
     const {
@@ -339,7 +339,7 @@ export default {
       onSubmit,
       onCancel,
       option,
-      onCellEditChange
+      onCellEditChange,
     } = this;
     const dropBtn = (
       <span class="drag-btn">
@@ -354,15 +354,15 @@ export default {
           default: "btn_default",
           header: () => {
             return "排序";
-          }
-        }
+          },
+        },
       },
       {
         field: "defaultTitle",
         title: "默认标题",
         align: "center",
         minWidth: 100,
-        treeNode: true
+        treeNode: true,
       },
       {
         field: "title",
@@ -372,9 +372,9 @@ export default {
         itemRender: {
           name: "AInput",
           on: {
-            change: onCellEditChange
-          }
-        }
+            change: onCellEditChange,
+          },
+        },
       },
       {
         field: "width",
@@ -384,9 +384,9 @@ export default {
         itemRender: {
           name: "AInputNumber",
           on: {
-            change: onCellEditChange
-          }
-        }
+            change: onCellEditChange,
+          },
+        },
       },
       {
         field: "align",
@@ -401,15 +401,15 @@ export default {
             options: [
               { label: "居左", value: "left" },
               { label: "居中", value: "center" },
-              { label: "居右", value: "right" }
-            ]
+              { label: "居右", value: "right" },
+            ],
           },
           on: {
             change: (value, option, event) => {
               this.onCellEditChange(value, event);
-            }
-          }
-        }
+            },
+          },
+        },
       },
       {
         field: "show",
@@ -419,9 +419,9 @@ export default {
         itemRender: {
           name: "a-checkbox",
           on: {
-            change: onCellEditChange
-          }
-        }
+            change: onCellEditChange,
+          },
+        },
         // slots: { default: "show_default" }
       },
       {
@@ -437,21 +437,21 @@ export default {
             options: [
               { label: "不固定", value: "" },
               { label: "靠左", value: "left" },
-              { label: "靠右", value: "right" }
-            ]
+              { label: "靠右", value: "right" },
+            ],
           },
           on: {
-            change: onCellEditChange
-          }
-        }
-      }
+            change: onCellEditChange,
+          },
+        },
+      },
     ];
     if (option.tableConfig && option.tableConfig.columns) {
       tableColumn = option.tableConfig.columns;
     }
 
     const modalProps = {
-      ...modalOpt
+      ...modalOpt,
     };
     return h(
       "modal",
@@ -460,11 +460,11 @@ export default {
           title: modalProps.title ? modalProps.title : "设置表头",
           width: 900,
           ...modalProps,
-          value: visible
+          value: visible,
         },
         on: {
           cancel: onCancel,
-          ok: onSubmit
+          ok: onSubmit,
         },
         scopedSlots: {
           footer: () => {
@@ -474,7 +474,7 @@ export default {
                 {...{ props: { type: "primary" }, on: { click: onSubmit } }}
               >
                 确定
-              </a-button>
+              </a-button>,
             ];
             if (this.option.isShowReset) {
               buttons.push(
@@ -482,17 +482,17 @@ export default {
                   {...{
                     props: { type: "primary" },
                     on: { click: this.onResetColumns },
-                    style: "float:left;"
+                    style: "float:left;",
                   }}
                 >
                   重置
-                </a-button>
+                </a-button>,
               );
             }
             return buttons;
-          }
+          },
         },
-        class: "set-columns-modal"
+        class: "set-columns-modal",
       },
       [
         h(
@@ -510,17 +510,17 @@ export default {
               // editConfig: { trigger: "click", mode: "row" },
               checkboxConfig: { checkStrictly: true },
               height: "600px",
-              transfer: true
+              transfer: true,
             },
             scopedSlots: {
               btn_default: () => {
                 return dropBtn;
               },
-              show_default: renderShowEdit
-            }
+              show_default: renderShowEdit,
+            },
           },
-          []
-        )
+          [],
+        ),
         //   h(
         //     "SetColums",
         //     {
@@ -530,7 +530,7 @@ export default {
         //       }
         //     }
         //   )
-      ]
+      ],
     );
-  }
+  },
 };
