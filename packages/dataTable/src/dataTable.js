@@ -11,7 +11,7 @@ import { Modal } from "../../modal";
 
 // const tablePropKeys = Object.keys(Table.props);
 const methods = {};
-Object.keys(Table.methods).forEach((name) => {
+Object.keys(Table.methods).forEach(name => {
   methods[name] = function(...args) {
     return this.$refs.dataGrid && this.$refs.dataGrid[name](...args);
   };
@@ -25,16 +25,16 @@ function renderHeadSearch(searchConfig, h, _vm) {
     ref: "headSearchForm",
     props: {
       ...searchConfig,
-      items,
+      items
     },
     class: "head-search-form",
     style: searchConfig.style,
     on: {
       submit: onSearchSubmit,
       ...searchConfig.on,
-      buttonActionClick: onButtonActionClick,
+      buttonActionClick: onButtonActionClick
     },
-    scopedSlots: $scopedSlots,
+    scopedSlots: $scopedSlots
   });
 
   return form;
@@ -44,7 +44,7 @@ function renderHeadSearch(searchConfig, h, _vm) {
 function renderHeadToolbarSearch(searchConfig, h, _vm) {
   const { onSearchSubmit, onButtonActionClick, $scopedSlots } = _vm;
   const cloneSearchConfig = utils.clone(searchConfig, true);
-  const items = cloneSearchConfig.items.filter((item) => !item.folding);
+  const items = cloneSearchConfig.items.filter(item => !item.folding);
   // 生成查询按钮
   let actionButtons = [];
   if (cloneSearchConfig.submitButtonProps !== false) {
@@ -58,12 +58,12 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
         action: "submit",
         content: "查询",
         type: "primary",
-        ...submitButtonProps,
-      },
+        ...submitButtonProps
+      }
     });
   }
   // 高级查询按钮
-  const hasFolding = cloneSearchConfig.items.findIndex((p) => p.folding) > -1;
+  const hasFolding = cloneSearchConfig.items.findIndex(p => p.folding) > -1;
   if (hasFolding && cloneSearchConfig.advancedSearchButtonProps !== false) {
     const advancedSearchButtonProps =
       cloneSearchConfig.advancedSearchButtonProps &&
@@ -74,8 +74,8 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
       props: {
         action: "advancedQuery",
         content: "高级查询",
-        ...advancedSearchButtonProps,
-      },
+        ...advancedSearchButtonProps
+      }
     });
   }
 
@@ -86,8 +86,8 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
       folding: false,
       itemRender: {
         name: "buttons",
-        items: actionButtons,
-      },
+        items: actionButtons
+      }
     });
   }
   let form = h("data-form", {
@@ -95,16 +95,16 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
     props: {
       ...cloneSearchConfig,
       submitButtonProps: false,
-      items,
+      items
     },
     class: "headtoolbar-search-form",
     on: {
       submit: onSearchSubmit,
       ...cloneSearchConfig.on,
-      buttonActionClick: onButtonActionClick,
+      buttonActionClick: onButtonActionClick
     },
     style: { ...cloneSearchConfig.style },
-    scopedSlots: $scopedSlots,
+    scopedSlots: $scopedSlots
   });
 
   return form;
@@ -118,13 +118,11 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
     onAdvancedReset,
     onAdvancedcancel,
     onAdvancedSubmit,
-    $scopedSlots,
+    $scopedSlots
   } = _vm;
   const cloneSearchConfig = utils.clone(searchConfig, true);
-  const items = cloneSearchConfig.items.filter(
-    (item) => item.folding !== false
-  );
-  const formItems = items.map((p) => {
+  const items = cloneSearchConfig.items.filter(item => item.folding !== false);
+  const formItems = items.map(p => {
     delete p.folding;
     return p;
   });
@@ -139,14 +137,14 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
     props: {
       ...formProps,
       items: formItems,
-      submitButtonProps: false,
+      submitButtonProps: false
     },
     class: "advanced-search-form",
     on: {
       ...cloneSearchConfig.on,
-      submit: onSearchSubmit,
+      submit: onSearchSubmit
     },
-    scopedSlots: $scopedSlots,
+    scopedSlots: $scopedSlots
   });
 
   const modalProps =
@@ -163,11 +161,11 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
         ...modalProps,
         title: modalProps.title ? modalProps.title : "高级查询",
         value: advancedVisible,
-        showFooter: true,
+        showFooter: true
       },
       on: {
         cancel: onAdvancedcancel,
-        ok: onAdvancedSubmit,
+        ok: onAdvancedSubmit
       },
       class: "advanced-search-modal",
       scopedSlots: {
@@ -176,11 +174,11 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
             <a-button
               {...{
                 props: {
-                  type: "danger",
+                  type: "danger"
                 },
                 on: {
-                  click: onAdvancedReset,
-                },
+                  click: onAdvancedReset
+                }
               }}
             >
               重置
@@ -188,8 +186,8 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
             <a-button
               {...{
                 on: {
-                  click: onAdvancedcancel,
-                },
+                  click: onAdvancedcancel
+                }
               }}
             >
               取消
@@ -197,18 +195,18 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
             <a-button
               {...{
                 props: {
-                  type: "primary",
+                  type: "primary"
                 },
                 on: {
-                  click: onAdvancedSubmit,
-                },
+                  click: onAdvancedSubmit
+                }
               }}
             >
               确认
-            </a-button>,
+            </a-button>
           ];
-        },
-      },
+        }
+      }
     },
     [form]
   );
@@ -221,11 +219,11 @@ function renderColumnsModal(h, _vm) {
     ref: "setColumsModal",
     props: {
       option: setColumnsOpt,
-      columns: backupColumns,
+      columns: backupColumns
     },
     on: {
-      submit: setTableColumns,
-    },
+      submit: setTableColumns
+    }
   });
 }
 
@@ -238,11 +236,11 @@ function renderButton(item, h, hasDropdown, _vm) {
   if (icon) {
     iconContent = h("a-icon", {
       props: {
-        type: icon,
-      },
+        type: icon
+      }
     });
   }
-  const onClick = (e) => {
+  const onClick = e => {
     if (e) e.target.blur();
     onToobarButtonClick(code);
     if (on && on.click) {
@@ -256,12 +254,12 @@ function renderButton(item, h, hasDropdown, _vm) {
       {
         key: code,
         props: {
-          disabled,
+          disabled
         },
         on: {
           ...on,
-          click: onClick,
-        },
+          click: onClick
+        }
       },
       [iconContent, name]
     );
@@ -272,12 +270,12 @@ function renderButton(item, h, hasDropdown, _vm) {
       key: code,
       props: {
         type: item.type,
-        disabled,
+        disabled
       },
       on: {
         ...on,
-        click: onClick,
-      },
+        click: onClick
+      }
     },
     [iconContent, name]
   );
@@ -285,20 +283,20 @@ function renderButton(item, h, hasDropdown, _vm) {
 // 渲染工具栏按钮组
 function renderButtons(buttons, h, _vm) {
   return buttons
-    ? buttons.map((item) => {
+    ? buttons.map(item => {
         if (Object.prototype.toString.call(item) === "[object Array]") {
           // 数组，渲染按钮组
-          const buttonGroups = item.map((p) => renderButton(p, h, false, _vm));
+          const buttonGroups = item.map(p => renderButton(p, h, false, _vm));
           return h("a-button-group", {}, [buttonGroups]);
         } else if (item.dropdowns && item.dropdowns.length) {
-          const buttonGroups = item.dropdowns.map((p) =>
+          const buttonGroups = item.dropdowns.map(p =>
             renderButton(p, h, true, _vm)
           );
 
           const menus = h(
             "a-menu",
             {
-              slot: "overlay",
+              slot: "overlay"
             },
             [buttonGroups]
           );
@@ -306,19 +304,19 @@ function renderButtons(buttons, h, _vm) {
             "a-dropdown",
             {
               props: {
-                disabled: item.disabled,
+                disabled: item.disabled
               },
               scopedSlots: {
                 overlay: () => {
                   return menus;
-                },
-              },
+                }
+              }
             },
             [
               h("a-button", {}, [
                 item.name,
-                h("a-icon", { props: { type: "down" } }),
-              ]),
+                h("a-icon", { props: { type: "down" } })
+              ])
             ]
           );
         } else if (Object.prototype.toString.call(item) === "[object Object]") {
@@ -337,7 +335,7 @@ function renderHeadToolbar(h, _vm) {
     $refs,
     showSetColumns,
     setcolumnsConfig,
-    $slots,
+    $slots
   } = _vm;
   if (!headToolbar) {
     return false;
@@ -346,7 +344,7 @@ function renderHeadToolbar(h, _vm) {
     ref: "headToolbar",
     props: {},
     class: "head-toolbar",
-    scopedSlots: {},
+    scopedSlots: {}
   };
   // 渲染按钮
   let headButtons = "";
@@ -392,7 +390,7 @@ function renderHeadToolbar(h, _vm) {
   let setColumnsModal = "";
   if (headToolbar.tools) {
     headToolbarProps.props = {
-      ...headToolbar.tools,
+      ...headToolbar.tools
     };
     // 自定义的 setColumns
     if (headToolbar.tools.setColumns) {
@@ -405,20 +403,20 @@ function renderHeadToolbar(h, _vm) {
           circle: true,
           icon: "setting",
           shape: "circle",
-          ...buttonProps,
+          ...buttonProps
         },
         class: "tool-btn-setcolumns",
         style: { marginRight: "10px" },
         on: {
-          click: showSetColumns,
-        },
+          click: showSetColumns
+        }
       });
       if (headSearchTools) {
         headToolbarProps.scopedSlots.tools = () => {
           return h(
             "div",
             {
-              style: { display: "flex" },
+              style: { display: "flex" }
             },
             [headSearchTools, setColumnsBtn]
           );
@@ -440,7 +438,7 @@ function renderHeadToolbar(h, _vm) {
   return h(
     "div",
     {
-      class: "head-toolbar-box",
+      class: "head-toolbar-box"
     },
     [h("vxe-toolbar", headToolbarProps, []), advancedSearch, setColumnsModal]
   );
@@ -456,7 +454,7 @@ function handleColumnsData(data, columns, configProps, _vm) {
     let item = data[i];
     // 替换字段
     let obj = {
-      ...item,
+      ...item
     };
 
     for (const key in configProps) {
@@ -479,7 +477,7 @@ function handleColumnsData(data, columns, configProps, _vm) {
           : [];
       const allNotSortableFields = [
         ...configNotSortableFields,
-        ...currentNotSortableFields,
+        ...currentNotSortableFields
       ];
       if (!allNotSortableFields.includes(obj.field) && obj.sortable !== false) {
         obj.sortable = true;
@@ -488,7 +486,7 @@ function handleColumnsData(data, columns, configProps, _vm) {
     let copyColumnChildren = [];
     // 合并传入的定义
     if (copyColumns && copyColumns.length) {
-      const findIndex = copyColumns.findIndex((p) => p.field === obj.field);
+      const findIndex = copyColumns.findIndex(p => p.field === obj.field);
       if (findIndex > -1) {
         const find = copyColumns[findIndex];
         copyColumnChildren = find.children ? find.children : [];
@@ -576,14 +574,14 @@ function handleColumnsData(data, columns, configProps, _vm) {
   //处理插入指定位置的传入配置项
   if (copyColumns && copyColumns.length) {
     copyColumns = copyColumns
-      .map((item) => {
+      .map(item => {
         if (item.colIndex || item.colIndex === 0) {
           apiColumns.splice(item.colIndex, 0, item);
           return "";
         }
         return item;
       })
-      .filter((p) => p != "");
+      .filter(p => p != "");
   }
 
   let columnsData = [];
@@ -602,14 +600,14 @@ export default {
   components: {
     DataForm,
     SetColumns,
-    Modal,
+    Modal
   },
   props: {
     ...Table.props,
     columns: Array,
     pagerConfig: {
       type: [Boolean, Object],
-      default: () => {},
+      default: () => {}
     },
     proxyConfig: Object,
     toolbar: [Boolean, Object],
@@ -625,7 +623,7 @@ export default {
     tableIndex: { type: String, default: "" },
     sortable: { type: Boolean, default: false },
     keyboardSpace: { type: [Boolean, String], default: null },
-    notSortableFields: Array,
+    notSortableFields: Array
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -635,7 +633,7 @@ export default {
   watch: {
     columns(val) {
       this.setTableColumns(val);
-    },
+    }
   },
   data() {
     return {
@@ -647,7 +645,7 @@ export default {
       currentRow: {},
       hasAjaxQuery: false,
       hasCheckbox: false, //是否存在checkbox
-      oldProps: null,
+      oldProps: null
     };
   },
   computed: {
@@ -706,8 +704,8 @@ export default {
           modal: {
             props: {
               ...config.setColumns.modal.props,
-              ...modalProps,
-            },
+              ...modalProps
+            }
           },
           proxyConfig: {
             params:
@@ -718,21 +716,21 @@ export default {
                 : null,
             props: {
               ...config.setColumns.proxyConfig.props,
-              ...proxyConfigProps,
+              ...proxyConfigProps
             },
             ajax: {
               ...config.setColumns.proxyConfig.ajax,
-              ...proxyConfigAjax,
+              ...proxyConfigAjax
             },
             on: {
               ...config.setColumns.proxyConfig.on,
-              ...proxyConfigOn,
-            },
+              ...proxyConfigOn
+            }
           },
           tableConfig: {
             ...config.setColumns.tableConfig,
-            ...tableConfig,
-          },
+            ...tableConfig
+          }
         };
       } else {
         return config.setColumns;
@@ -749,8 +747,8 @@ export default {
           ...this.proxyConfig,
           props: {
             ...config.proxyConfig.props,
-            ...proxyConfigProps,
-          },
+            ...proxyConfigProps
+          }
         };
       }
     },
@@ -765,7 +763,7 @@ export default {
         proxyConfigOpt,
         height,
         // handleServerSort,
-        keyboardSpace,
+        keyboardSpace
       } = that;
       const props = {
         props: {
@@ -773,10 +771,10 @@ export default {
           ...config.props,
           ...that.$options.propsData,
           data: proxyConfigOpt ? null : this.data,
-          proxyConfig: utils.clone(proxyConfigOpt, true),
+          proxyConfig: utils.clone(proxyConfigOpt, true)
           // columns: columns,
           // loading: propsData.loading
-        },
+        }
       };
 
       if (height && utils.isString(height) && height.indexOf("calc") > -1) {
@@ -794,7 +792,7 @@ export default {
       let isKeyboardSpace =
         keyboardSpace !== null ? keyboardSpace : config.keyboardSpace;
       if (isKeyboardSpace) {
-        ons["keydown"] = (e) => {
+        ons["keydown"] = e => {
           let event = e.$event;
           if (this.hasCheckbox && event.code == "Space") {
             event.preventDefault();
@@ -807,7 +805,7 @@ export default {
 
       if (proxyConfigOpt && proxyConfigOpt.ajax && proxyConfigOpt.ajax.query) {
         that.hasAjaxQuery = true;
-        props.props.proxyConfig.ajax.query = (arr) => {
+        props.props.proxyConfig.ajax.query = arr => {
           const json = handleTableQuery(arr);
           if (json === false) {
             return false;
@@ -819,7 +817,7 @@ export default {
           return new Promise((resolve, reject) => {
             proxyConfigOpt.ajax
               .query(arr)
-              .then((res) => {
+              .then(res => {
                 resolve(res);
                 if (that.defaultSelectFristRow) {
                   that.$nextTick(() => {
@@ -831,7 +829,7 @@ export default {
                   });
                 }
               })
-              .catch((err) => {
+              .catch(err => {
                 reject(err);
               });
           });
@@ -848,7 +846,7 @@ export default {
         if (props.props.sortConfig) {
           props.props.sortConfig = {
             ...config.sortConfig,
-            ...props.props.sortConfig,
+            ...props.props.sortConfig
           };
         } else {
           props.props.sortConfig = { ...config.sortConfig };
@@ -866,7 +864,7 @@ export default {
       props.ref = "dataGrid";
       props.scopedSlots = $scopedSlots;
       return props;
-    },
+    }
   },
   created() {
     const { columns, proxyColumns, fetchColumns, proxyConfigOpt } = this;
@@ -940,7 +938,7 @@ export default {
 
       const json = {
         ...pageData,
-        ...searchData,
+        ...searchData
       };
 
       if (arr.filters.length) {
@@ -1043,9 +1041,9 @@ export default {
               : [];
           const allNotSortableFields = [
             ...configNotSortableFields,
-            ...currentNotSortableFields,
+            ...currentNotSortableFields
           ];
-          columnsData = columnsData.map((p) => {
+          columnsData = columnsData.map(p => {
             if (
               !allNotSortableFields.includes(p.field) &&
               p.sortable !== false
@@ -1064,7 +1062,7 @@ export default {
             ? { ...config.proxyColumns.props, ...proxyColumns.props }
             : config.proxyColumns.props;
         let hasCheckbox = false;
-        this.tableColumns = this.editColumnsInit(columnsData, (p) => {
+        this.tableColumns = this.editColumnsInit(columnsData, p => {
           if (!hasCheckbox && p.type == "checkbox") {
             hasCheckbox = true;
           }
@@ -1181,7 +1179,7 @@ export default {
           ? config.proxyColumns.defaultAjax
           : {};
       let params = {
-        columns,
+        columns
       };
       let queryApi = null;
       if (opt.params) {
@@ -1194,7 +1192,7 @@ export default {
         queryApi = opt.ajax.query;
       }
       if (queryApi) {
-        queryApi(params).then((res) => {
+        queryApi(params).then(res => {
           const configProps =
             opt.props && utils.isObject(opt.props)
               ? { ...config.proxyColumns.props, ...opt.props }
@@ -1213,7 +1211,7 @@ export default {
 
           let hasCheckbox = false;
 
-          this.tableColumns = this.editColumnsInit(tableColumns, (p) => {
+          this.tableColumns = this.editColumnsInit(tableColumns, p => {
             if (!hasCheckbox && p.type == "checkbox") {
               hasCheckbox = true;
             }
@@ -1264,7 +1262,7 @@ export default {
           this.onCurrentRowChange({
             row: data[index],
             rowIndex: index,
-            $rowIndex: index,
+            $rowIndex: index
           });
         }
       }
@@ -1312,7 +1310,7 @@ export default {
         params = tableProps.props.sortConfig.handleServerSortParams(params);
       }
       return params;
-    },
+    }
   },
   beforeDestroy() {},
   render(h) {
@@ -1321,7 +1319,7 @@ export default {
       headToolbar,
       setcolumnsConfig,
       height,
-      searchConfig,
+      searchConfig
     } = this;
     const nodes = [];
     if (
@@ -1343,7 +1341,7 @@ export default {
     return h(
       "div",
       {
-        class: "data-table",
+        class: "data-table"
       },
       [
         headSearchForm,
@@ -1352,23 +1350,23 @@ export default {
           "div",
           {
             style: {
-              height: tableHeight,
+              height: tableHeight
             },
             attrs: {
-              "table-index": this.tableIndex.toString(),
-            },
+              "table-index": this.tableIndex.toString()
+            }
           },
           [
             h("vxe-grid", {
               ...tableProps,
               props: {
                 ...tableProps.props,
-                columns: this.tableColumns,
-              },
-            }),
+                columns: this.tableColumns
+              }
+            })
           ]
-        ),
+        )
       ].concat(nodes)
     );
-  },
+  }
 };
