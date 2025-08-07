@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import dataFormBase from "./dataForm/test";
-// import dataFormBase from "./dataForm/base";
+// import dataFormBase from "./dataForm/test";
+import dataFormBase from "./dataForm/base";
 import dataFormAutoComplete from "./dataForm/autoComplete";
 // import dataFormBase from "./dataForm/select";
 import dataTableBase from "./dataTable/base";
@@ -60,7 +60,7 @@ export default {
   },
   data() {
     return {
-      tab: 8,
+      tab: 1,
       locale: zh_CN,
     };
   },

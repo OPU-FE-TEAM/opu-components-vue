@@ -93,7 +93,7 @@ function getData(arr) {
           id: key,
           name: `name_${pageIndex}_${key}`,
           sex: key < 3 ? 1 : 2,
-          age: key
+          age: key,
         }));
         if (arr && arr.keyword == "123") {
           list = [];
@@ -104,8 +104,8 @@ function getData(arr) {
           code: 0,
           data: {
             data: [...list],
-            total: 100
-          }
+            total: 100,
+          },
         };
         console.log(json);
         resolve(json);
@@ -121,7 +121,7 @@ function idTypeFunction() {
     arr.push(i.toString());
   }
   return {
-    data: arr
+    data: arr,
   };
 }
 idTypeFunction();
@@ -132,7 +132,7 @@ function getCheckboxData(values) {
     setTimeout(() => {
       const data = Array.from({ length: 5 }, (_, key) => ({
         id: key,
-        name: `check${key}`
+        name: `check${key}`,
       }));
       data[3].isSelected = true;
       data[2].isSelected = true;
@@ -153,8 +153,8 @@ function getSelectGroupData() {
           children: [
             { id: 11, text: "0-10岁", code: "b10" },
             { id: 12, text: "11-20岁", code: "b20" },
-            { id: 13, text: "21-30岁", code: "b30" }
-          ]
+            { id: 13, text: "21-30岁", code: "b30" },
+          ],
         },
         {
           id: 2,
@@ -164,16 +164,16 @@ function getSelectGroupData() {
           children: [
             { id: 21, text: "0-10岁", code: "g10" },
             { id: 22, text: "11-20岁", code: "g20" },
-            { id: 23, text: "21-30岁", code: "g30" }
-          ]
+            { id: 23, text: "21-30岁", code: "g30" },
+          ],
         },
         {
           id: 3,
-          text: "未知"
-        }
+          text: "未知",
+        },
       ];
       resolve({
-        data: data
+        data: data,
       });
     }, 500);
   });
@@ -194,11 +194,11 @@ function getTreeData() {
               children: [
                 {
                   value: "xihu",
-                  label: "West Lake"
-                }
-              ]
-            }
-          ]
+                  label: "West Lake",
+                },
+              ],
+            },
+          ],
         },
         {
           value: "jiangsu",
@@ -210,16 +210,16 @@ function getTreeData() {
               children: [
                 {
                   value: "zhonghuamen",
-                  label: "Zhong Hua Men"
-                }
-              ]
-            }
-          ]
-        }
+                  label: "Zhong Hua Men",
+                },
+              ],
+            },
+          ],
+        },
       ];
       resolve({
         code: 0,
-        data: data
+        data: data,
       });
     }, 500);
   });
@@ -229,7 +229,7 @@ getTreeData();
 export default {
   components: {
     // DataForm
-    modelTable
+    modelTable,
     // SelectGroup: DataForm.selectGroup
   },
   data() {
@@ -245,7 +245,7 @@ export default {
         md: 3,
         lg: 4,
         xl: 4,
-        xxl: 4
+        xxl: 4,
       },
       selectGroupOptions: [
         {
@@ -258,8 +258,8 @@ export default {
             { id: 13, text: "21-30岁", code: "b30" },
             { id: 14, text: "辣鸡", code: "b40" },
             { id: 15, text: "草割肉", code: "cgr" },
-            { id: 16, text: "牛扒", code: "cgr" }
-          ]
+            { id: 16, text: "牛扒", code: "cgr" },
+          ],
         },
         {
           id: 2,
@@ -269,13 +269,13 @@ export default {
           children: [
             { id: 21, text: "0-10岁", code: "g10" },
             { id: 22, text: "11-20岁", code: "g20" },
-            { id: 23, text: "21-30岁", code: "g30" }
-          ]
+            { id: 23, text: "21-30岁", code: "g30" },
+          ],
         },
         {
           id: 3,
-          text: "未知"
-        }
+          text: "未知",
+        },
       ],
       items: [
         {
@@ -285,12 +285,13 @@ export default {
           itemRender: {
             name: "a-modal-textarea",
             props: {
+              modalTitle: "这是一个标题",
               autoSize: {
                 maxRows: 1,
-                minRows: 1
-              }
-            }
-          }
+                minRows: 1,
+              },
+            },
+          },
         },
         // {
         //   field: "id",
@@ -498,18 +499,18 @@ export default {
                     {
                       field: "name",
                       title: "Name",
-                      width: 200
+                      width: 200,
                     },
                     {
                       field: "sex",
                       title: "Sex",
-                      width: 200
+                      width: 200,
                     },
                     {
                       field: "age",
                       title: "Age",
-                      width: 200
-                    }
+                      width: 200,
+                    },
                   ],
                   size: "mini",
                   height: 300,
@@ -518,11 +519,11 @@ export default {
                   proxyConfig: {
                     autoLoad: false,
                     ajax: {
-                      query: getData
-                    }
-                  }
-                }
-              }
+                      query: getData,
+                    },
+                  },
+                },
+              },
               // inputProps: {
               // allowClear: true
               // size: "small"
@@ -535,7 +536,7 @@ export default {
               },
               inputChange(sel) {
                 console.log("inputChange", sel);
-              }
+              },
               // showPanel(e) {
               //   if (e.target.value) {
               //     e.target.select();
@@ -544,8 +545,8 @@ export default {
               // "hide-panel"() {
               //   debugger;
               // }
-            }
-          }
+            },
+          },
         },
         // {
         //   field: "isDelete",
@@ -645,9 +646,9 @@ export default {
             on: {
               startChange: () => {
                 debugger;
-              }
-            }
-          }
+              },
+            },
+          },
         },
         // // {
         // //   field: "name1",
@@ -984,11 +985,11 @@ export default {
                 console.log("第二个时间");
                 return true;
               },
-              startDisabled: true
+              startDisabled: true,
               // showTime: { format: "HH:mm" }
-            }
-          }
-        }
+            },
+          },
+        },
         // {
         //   field: "checkInDate",
         //   title: "入住日期",
@@ -1236,7 +1237,7 @@ export default {
         //     ]
         //   }
         // }
-      ]
+      ],
     };
   },
   created() {},
@@ -1244,7 +1245,7 @@ export default {
     // this.setFieldsOptionsDefaultValues();
     this.$refs.dataForm.setData({
       checkboxGroup: [2, 3],
-      idType: "1"
+      idType: "1",
     });
   },
   methods: {
@@ -1278,7 +1279,7 @@ export default {
         aaabbbccc: "aaa666",
         pulldown: {
           id: 5,
-          name: "name_1_5"
+          name: "name_1_5",
         },
         number: 0,
         selected: 2,
@@ -1286,7 +1287,7 @@ export default {
         radioGroup: 3,
         switch: 1,
         price: [11111, 22222],
-        selectGroup: 12
+        selectGroup: 12,
       });
     },
     setItems() {
@@ -1296,13 +1297,13 @@ export default {
         itemRender: {
           name: "a-input",
           props: {
-            placeholder: "请输入名称"
-          }
-        }
+            placeholder: "请输入名称",
+          },
+        },
       });
       this.items[6].itemRender.props.dataField = "yy";
       this.items[6].itemRender.props.param = {
-        code: "yy"
+        code: "yy",
       };
       console.log(items);
       this.key = this.key + 1;
@@ -1315,8 +1316,8 @@ export default {
         // imageUpload:"http://www.vote.com/storage/images/20200806/cb27652f13eeff8ecd3e4793e0d5a4f5.jpg"
         imageUpload: [
           "http://www.vote.com/storage/images/20200806/cb27652f13eeff8ecd3e4793e0d5a4f5.jpg",
-          "http://www.vote.com/storage/images/20200806/cb27652f13eeff8ecd3e4793e0d5a4f5.jpg"
-        ]
+          "http://www.vote.com/storage/images/20200806/cb27652f13eeff8ecd3e4793e0d5a4f5.jpg",
+        ],
       });
     },
     setSelectData() {
@@ -1324,14 +1325,14 @@ export default {
         sex: [
           {
             id: 5,
-            name: "boy"
+            name: "boy",
           },
           {
             id: 6,
-            name: "girl"
-          }
+            name: "girl",
+          },
         ],
-        idType: ["a", "b", "c"]
+        idType: ["a", "b", "c"],
       });
     },
     setFieldsOptionsDefaultValues() {
@@ -1342,7 +1343,7 @@ export default {
         setTimeout(() => {
           const data = Array.from({ length: 10 }, (_, key) => ({
             id: key,
-            name: `name${key}`
+            name: `name${key}`,
           }));
           resolve(data);
         }, 500);
@@ -1378,18 +1379,18 @@ export default {
       this.$refs.dataForm.loadOptionsData(
         {
           selected: 123456,
-          checkboxGroup: 666
+          checkboxGroup: 666,
         },
         () => {
           console.log("set");
           this.setFormData();
-        }
+        },
       );
     },
     getFieldsOptions() {
       console.log(this.$refs.dataForm.getFieldsOptions());
       console.log(this.$refs.dataForm.getFieldsOptions(["checkboxGroup"]));
-    }
-  }
+    },
+  },
 };
 </script>

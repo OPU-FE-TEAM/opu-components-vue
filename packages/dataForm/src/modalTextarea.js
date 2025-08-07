@@ -3,22 +3,26 @@ import { Modal } from "../../modal";
 export default {
   name: "InputNumber",
   components: {
-    Modal
+    Modal,
   },
   props: {
     ...TextAreaProps,
     value: {
-      type: [String, Number]
-    }
+      type: [String, Number],
+    },
+    modalTitle: {
+      type: String,
+      default: "",
+    },
   },
   model: {
     prop: "value",
-    event: "update"
+    event: "update",
   },
   data() {
     return {
       visible: false,
-      modalTextareaValue: ""
+      modalTextareaValue: "",
     };
   },
   watch: {},
@@ -26,7 +30,7 @@ export default {
     modalTitle() {
       const propsData = this.$options.propsData;
       return propsData.modalTitle || "编辑";
-    }
+    },
   },
   created() {},
   mounted() {},
@@ -46,7 +50,7 @@ export default {
     },
     onModalCancel() {
       this.visible = false;
-    }
+    },
   },
   render() {
     const { $listeners } = this;
@@ -62,7 +66,7 @@ export default {
       style: { width: "100%" },
       ref: "modalTextarea",
       props: {
-        ...propsData
+        ...propsData,
       },
       on: {
         ...listeners,
@@ -75,8 +79,8 @@ export default {
         },
         pressEnter: e => {
           this.$emit("pressEnter", e);
-        }
-      }
+        },
+      },
     };
 
     return (
@@ -93,30 +97,30 @@ export default {
               value: this.visible,
               maskClosable: false,
               destroyOnClose: true,
-              width: this.modalWidth || 800
+              width: this.modalWidth || 800,
             },
             on: {
               ok: this.onModalSubmit,
-              cancel: this.onModalCancel
-            }
+              cancel: this.onModalCancel,
+            },
           }}
         >
           <a-textarea
             {...{
               props: {
                 value: this.modalTextareaValue,
-                destroyOnClose: true
+                destroyOnClose: true,
               },
               on: {
                 change: e => {
                   this.modalTextareaValue = e.target.value;
-                }
-              }
+                },
+              },
             }}
             rows={propsData.modalTextareaRows || 20}
           />
         </modal>
       </div>
     );
-  }
+  },
 };
