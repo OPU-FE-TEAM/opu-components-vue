@@ -285,7 +285,6 @@ export default {
           itemRender: {
             name: "a-modal-textarea",
             props: {
-              modalTitle: "这是一个标题",
               autoSize: {
                 maxRows: 1,
                 minRows: 1,

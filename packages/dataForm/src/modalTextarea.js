@@ -26,12 +26,7 @@ export default {
     };
   },
   watch: {},
-  computed: {
-    modalTitle() {
-      const propsData = this.$options.propsData;
-      return propsData.modalTitle || "编辑";
-    },
-  },
+  computed: {},
   created() {},
   mounted() {},
   updated() {},
@@ -93,7 +88,7 @@ export default {
           {...{
             props: {
               centered: true,
-              title: this.modalTitle,
+              title: this.modalTitle || "编辑",
               value: this.visible,
               maskClosable: false,
               destroyOnClose: true,
