@@ -25,16 +25,16 @@ function renderHeadSearch(searchConfig, h, _vm) {
     ref: "headSearchForm",
     props: {
       ...searchConfig,
-      items
+      items,
     },
     class: "head-search-form",
     style: searchConfig.style,
     on: {
       submit: onSearchSubmit,
       ...searchConfig.on,
-      buttonActionClick: onButtonActionClick
+      buttonActionClick: onButtonActionClick,
     },
-    scopedSlots: $scopedSlots
+    scopedSlots: $scopedSlots,
   });
 
   return form;
@@ -58,8 +58,8 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
         action: "submit",
         content: "查询",
         type: "primary",
-        ...submitButtonProps
-      }
+        ...submitButtonProps,
+      },
     });
   }
   // 高级查询按钮
@@ -74,8 +74,8 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
       props: {
         action: "advancedQuery",
         content: "高级查询",
-        ...advancedSearchButtonProps
-      }
+        ...advancedSearchButtonProps,
+      },
     });
   }
 
@@ -86,8 +86,8 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
       folding: false,
       itemRender: {
         name: "buttons",
-        items: actionButtons
-      }
+        items: actionButtons,
+      },
     });
   }
   let form = h("data-form", {
@@ -95,16 +95,16 @@ function renderHeadToolbarSearch(searchConfig, h, _vm) {
     props: {
       ...cloneSearchConfig,
       submitButtonProps: false,
-      items
+      items,
     },
     class: "headtoolbar-search-form",
     on: {
       submit: onSearchSubmit,
       ...cloneSearchConfig.on,
-      buttonActionClick: onButtonActionClick
+      buttonActionClick: onButtonActionClick,
     },
     style: { ...cloneSearchConfig.style },
-    scopedSlots: $scopedSlots
+    scopedSlots: $scopedSlots,
   });
 
   return form;
@@ -118,7 +118,7 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
     onAdvancedReset,
     onAdvancedcancel,
     onAdvancedSubmit,
-    $scopedSlots
+    $scopedSlots,
   } = _vm;
   const cloneSearchConfig = utils.clone(searchConfig, true);
   const items = cloneSearchConfig.items.filter(item => item.folding !== false);
@@ -137,14 +137,14 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
     props: {
       ...formProps,
       items: formItems,
-      submitButtonProps: false
+      submitButtonProps: false,
     },
     class: "advanced-search-form",
     on: {
       ...cloneSearchConfig.on,
-      submit: onSearchSubmit
+      submit: onSearchSubmit,
     },
-    scopedSlots: $scopedSlots
+    scopedSlots: $scopedSlots,
   });
 
   const modalProps =
@@ -161,11 +161,11 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
         ...modalProps,
         title: modalProps.title ? modalProps.title : "高级查询",
         value: advancedVisible,
-        showFooter: true
+        showFooter: true,
       },
       on: {
         cancel: onAdvancedcancel,
-        ok: onAdvancedSubmit
+        ok: onAdvancedSubmit,
       },
       class: "advanced-search-modal",
       scopedSlots: {
@@ -174,11 +174,11 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
             <a-button
               {...{
                 props: {
-                  type: "danger"
+                  type: "danger",
                 },
                 on: {
-                  click: onAdvancedReset
-                }
+                  click: onAdvancedReset,
+                },
               }}
             >
               重置
@@ -186,8 +186,8 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
             <a-button
               {...{
                 on: {
-                  click: onAdvancedcancel
-                }
+                  click: onAdvancedcancel,
+                },
               }}
             >
               取消
@@ -195,20 +195,20 @@ function renderAdvancedSearch(searchConfig, h, _vm) {
             <a-button
               {...{
                 props: {
-                  type: "primary"
+                  type: "primary",
                 },
                 on: {
-                  click: onAdvancedSubmit
-                }
+                  click: onAdvancedSubmit,
+                },
               }}
             >
               确认
-            </a-button>
+            </a-button>,
           ];
-        }
-      }
+        },
+      },
     },
-    [form]
+    [form],
   );
 }
 
@@ -219,11 +219,11 @@ function renderColumnsModal(h, _vm) {
     ref: "setColumsModal",
     props: {
       option: setColumnsOpt,
-      columns: backupColumns
+      columns: backupColumns,
     },
     on: {
-      submit: setTableColumns
-    }
+      submit: setTableColumns,
+    },
   });
 }
 
@@ -236,8 +236,8 @@ function renderButton(item, h, hasDropdown, _vm) {
   if (icon) {
     iconContent = h("a-icon", {
       props: {
-        type: icon
-      }
+        type: icon,
+      },
     });
   }
   const onClick = e => {
@@ -254,14 +254,14 @@ function renderButton(item, h, hasDropdown, _vm) {
       {
         key: code,
         props: {
-          disabled
+          disabled,
         },
         on: {
           ...on,
-          click: onClick
-        }
+          click: onClick,
+        },
       },
-      [iconContent, name]
+      [iconContent, name],
     );
   }
   return h(
@@ -270,14 +270,14 @@ function renderButton(item, h, hasDropdown, _vm) {
       key: code,
       props: {
         type: item.type,
-        disabled
+        disabled,
       },
       on: {
         ...on,
-        click: onClick
-      }
+        click: onClick,
+      },
     },
-    [iconContent, name]
+    [iconContent, name],
   );
 }
 // 渲染工具栏按钮组
@@ -290,34 +290,34 @@ function renderButtons(buttons, h, _vm) {
           return h("a-button-group", {}, [buttonGroups]);
         } else if (item.dropdowns && item.dropdowns.length) {
           const buttonGroups = item.dropdowns.map(p =>
-            renderButton(p, h, true, _vm)
+            renderButton(p, h, true, _vm),
           );
 
           const menus = h(
             "a-menu",
             {
-              slot: "overlay"
+              slot: "overlay",
             },
-            [buttonGroups]
+            [buttonGroups],
           );
           return h(
             "a-dropdown",
             {
               props: {
-                disabled: item.disabled
+                disabled: item.disabled,
               },
               scopedSlots: {
                 overlay: () => {
                   return menus;
-                }
-              }
+                },
+              },
             },
             [
               h("a-button", {}, [
                 item.name,
-                h("a-icon", { props: { type: "down" } })
-              ])
-            ]
+                h("a-icon", { props: { type: "down" } }),
+              ]),
+            ],
           );
         } else if (Object.prototype.toString.call(item) === "[object Object]") {
           // 对象，渲染单个按钮
@@ -335,7 +335,7 @@ function renderHeadToolbar(h, _vm) {
     $refs,
     showSetColumns,
     setcolumnsConfig,
-    $slots
+    $slots,
   } = _vm;
   if (!headToolbar) {
     return false;
@@ -344,7 +344,7 @@ function renderHeadToolbar(h, _vm) {
     ref: "headToolbar",
     props: {},
     class: "head-toolbar",
-    scopedSlots: {}
+    scopedSlots: {},
   };
   // 渲染按钮
   let headButtons = "";
@@ -390,7 +390,7 @@ function renderHeadToolbar(h, _vm) {
   let setColumnsModal = "";
   if (headToolbar.tools) {
     headToolbarProps.props = {
-      ...headToolbar.tools
+      ...headToolbar.tools,
     };
     // 自定义的 setColumns
     if (headToolbar.tools.setColumns) {
@@ -403,22 +403,22 @@ function renderHeadToolbar(h, _vm) {
           circle: true,
           icon: "setting",
           shape: "circle",
-          ...buttonProps
+          ...buttonProps,
         },
         class: "tool-btn-setcolumns",
         style: { marginRight: "10px" },
         on: {
-          click: showSetColumns
-        }
+          click: showSetColumns,
+        },
       });
       if (headSearchTools) {
         headToolbarProps.scopedSlots.tools = () => {
           return h(
             "div",
             {
-              style: { display: "flex" }
+              style: { display: "flex" },
             },
-            [headSearchTools, setColumnsBtn]
+            [headSearchTools, setColumnsBtn],
           );
         };
       } else {
@@ -438,9 +438,9 @@ function renderHeadToolbar(h, _vm) {
   return h(
     "div",
     {
-      class: "head-toolbar-box"
+      class: "head-toolbar-box",
     },
-    [h("vxe-toolbar", headToolbarProps, []), advancedSearch, setColumnsModal]
+    [h("vxe-toolbar", headToolbarProps, []), advancedSearch, setColumnsModal],
   );
 }
 
@@ -454,7 +454,7 @@ function handleColumnsData(data, columns, configProps, _vm) {
     let item = data[i];
     // 替换字段
     let obj = {
-      ...item
+      ...item,
     };
 
     for (const key in configProps) {
@@ -477,7 +477,7 @@ function handleColumnsData(data, columns, configProps, _vm) {
           : [];
       const allNotSortableFields = [
         ...configNotSortableFields,
-        ...currentNotSortableFields
+        ...currentNotSortableFields,
       ];
       if (!allNotSortableFields.includes(obj.field) && obj.sortable !== false) {
         obj.sortable = true;
@@ -503,7 +503,7 @@ function handleColumnsData(data, columns, configProps, _vm) {
         obj.children,
         copyColumnChildren,
         configProps,
-        _vm
+        _vm,
       );
     }
     if (obj.colIndex || obj.colIndex === 0) {
@@ -600,14 +600,14 @@ export default {
   components: {
     DataForm,
     SetColumns,
-    Modal
+    Modal,
   },
   props: {
     ...Table.props,
     columns: Array,
     pagerConfig: {
       type: [Boolean, Object],
-      default: () => {}
+      default: () => {},
     },
     proxyConfig: Object,
     toolbar: [Boolean, Object],
@@ -623,7 +623,7 @@ export default {
     tableIndex: { type: String, default: "" },
     sortable: { type: Boolean, default: false },
     keyboardSpace: { type: [Boolean, String], default: null },
-    notSortableFields: Array
+    notSortableFields: Array,
     // tableHeight: {
     //   type: String,
     //   default: "auto"
@@ -633,7 +633,7 @@ export default {
   watch: {
     columns(val) {
       this.setTableColumns(val);
-    }
+    },
   },
   data() {
     return {
@@ -645,7 +645,7 @@ export default {
       currentRow: {},
       hasAjaxQuery: false,
       hasCheckbox: false, //是否存在checkbox
-      oldProps: null
+      oldProps: null,
     };
   },
   computed: {
@@ -704,8 +704,8 @@ export default {
           modal: {
             props: {
               ...config.setColumns.modal.props,
-              ...modalProps
-            }
+              ...modalProps,
+            },
           },
           proxyConfig: {
             params:
@@ -716,21 +716,21 @@ export default {
                 : null,
             props: {
               ...config.setColumns.proxyConfig.props,
-              ...proxyConfigProps
+              ...proxyConfigProps,
             },
             ajax: {
               ...config.setColumns.proxyConfig.ajax,
-              ...proxyConfigAjax
+              ...proxyConfigAjax,
             },
             on: {
               ...config.setColumns.proxyConfig.on,
-              ...proxyConfigOn
-            }
+              ...proxyConfigOn,
+            },
           },
           tableConfig: {
             ...config.setColumns.tableConfig,
-            ...tableConfig
-          }
+            ...tableConfig,
+          },
         };
       } else {
         return config.setColumns;
@@ -747,8 +747,8 @@ export default {
           ...this.proxyConfig,
           props: {
             ...config.proxyConfig.props,
-            ...proxyConfigProps
-          }
+            ...proxyConfigProps,
+          },
         };
       }
     },
@@ -763,7 +763,7 @@ export default {
         proxyConfigOpt,
         height,
         // handleServerSort,
-        keyboardSpace
+        keyboardSpace,
       } = that;
       const props = {
         props: {
@@ -771,10 +771,10 @@ export default {
           ...config.props,
           ...that.$options.propsData,
           data: proxyConfigOpt ? null : this.data,
-          proxyConfig: utils.clone(proxyConfigOpt, true)
+          proxyConfig: utils.clone(proxyConfigOpt, true),
           // columns: columns,
           // loading: propsData.loading
-        }
+        },
       };
 
       if (height && utils.isString(height) && height.indexOf("calc") > -1) {
@@ -823,7 +823,7 @@ export default {
                   that.$nextTick(() => {
                     let data = utils.getObjData(
                       props.props.proxyConfig.props.result,
-                      res
+                      res,
                     );
                     this.setSelectRow(0, data);
                   });
@@ -846,7 +846,7 @@ export default {
         if (props.props.sortConfig) {
           props.props.sortConfig = {
             ...config.sortConfig,
-            ...props.props.sortConfig
+            ...props.props.sortConfig,
           };
         } else {
           props.props.sortConfig = { ...config.sortConfig };
@@ -864,7 +864,7 @@ export default {
       props.ref = "dataGrid";
       props.scopedSlots = $scopedSlots;
       return props;
-    }
+    },
   },
   created() {
     const { columns, proxyColumns, fetchColumns, proxyConfigOpt } = this;
@@ -938,7 +938,7 @@ export default {
 
       const json = {
         ...pageData,
-        ...searchData
+        ...searchData,
       };
 
       if (arr.filters.length) {
@@ -994,7 +994,7 @@ export default {
               searchConfig.advancedSearchModal.on.submit
             ) {
               let res = await searchConfig.advancedSearchModal.on.submit(
-                values
+                values,
               );
               if (res === false) return;
             }
@@ -1041,7 +1041,7 @@ export default {
               : [];
           const allNotSortableFields = [
             ...configNotSortableFields,
-            ...currentNotSortableFields
+            ...currentNotSortableFields,
           ];
           columnsData = columnsData.map(p => {
             if (
@@ -1179,7 +1179,7 @@ export default {
           ? config.proxyColumns.defaultAjax
           : {};
       let params = {
-        columns
+        columns,
       };
       let queryApi = null;
       if (opt.params) {
@@ -1202,7 +1202,7 @@ export default {
             data,
             columns,
             configProps,
-            that
+            that,
           );
           this.backupColumns = utils.clone(tableColumns);
           // this.tableColumns = tableColumns.filter(
@@ -1262,7 +1262,7 @@ export default {
           this.onCurrentRowChange({
             row: data[index],
             rowIndex: index,
-            $rowIndex: index
+            $rowIndex: index,
           });
         }
       }
@@ -1310,7 +1310,7 @@ export default {
         params = tableProps.props.sortConfig.handleServerSortParams(params);
       }
       return params;
-    }
+    },
   },
   beforeDestroy() {},
   render(h) {
@@ -1319,7 +1319,7 @@ export default {
       headToolbar,
       setcolumnsConfig,
       height,
-      searchConfig
+      searchConfig,
     } = this;
     const nodes = [];
     if (
@@ -1341,7 +1341,7 @@ export default {
     return h(
       "div",
       {
-        class: "data-table"
+        class: "data-table",
       },
       [
         headSearchForm,
@@ -1350,23 +1350,23 @@ export default {
           "div",
           {
             style: {
-              height: tableHeight
+              height: tableHeight,
             },
             attrs: {
-              "table-index": this.tableIndex.toString()
-            }
+              "table-index": this.tableIndex.toString(),
+            },
           },
           [
             h("vxe-grid", {
               ...tableProps,
               props: {
                 ...tableProps.props,
-                columns: this.tableColumns
-              }
-            })
-          ]
-        )
-      ].concat(nodes)
+                columns: this.tableColumns,
+              },
+            }),
+          ],
+        ),
+      ].concat(nodes),
     );
-  }
+  },
 };

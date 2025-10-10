@@ -82,36 +82,32 @@ moment();
 //         }, 500);
 //     });
 // }
-function getData(arr) {
-  if (arr) {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        console.log(arr);
-        const size = arr.pageSize ? arr.pageSize : 20;
-        const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
-        let list = Array.from({ length: size }, (_, key) => ({
-          id: key,
-          name: `name_${pageIndex}_${key}`,
-          sex: key < 3 ? 1 : 2,
-          age: key,
-        }));
-        if (arr && arr.keyword == "123") {
-          list = [];
-        }
-        const json = {
-          // data: [...list],
-          // total: 100
-          code: 0,
-          data: {
-            data: [...list],
-            total: 100,
-          },
-        };
-        console.log(json);
-        resolve(json);
-      }, 500);
-    });
-  }
+function getData(arr = {}) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const size = arr.pageSize ? arr.pageSize : 20;
+      const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
+      let list = Array.from({ length: size }, (_, key) => ({
+        id: key,
+        name: `name_${pageIndex}_${key}`,
+        sex: key < 3 ? 1 : 2,
+        age: key,
+      }));
+      if (arr && arr.keyword == "123") {
+        list = [];
+      }
+      const json = {
+        // data: [...list],
+        // total: 100
+        code: 0,
+        data: {
+          datas: [...list],
+          total: 100,
+        },
+      };
+      resolve(json);
+    }, 500);
+  });
 }
 getData();
 
