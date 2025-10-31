@@ -143,33 +143,37 @@ export default {
     OpuSearchSelect,
     OpuDatePicker,
     OpuTimePicker,
-    OpuAutoComplete
+    OpuAutoComplete,
   },
   props: {
     onEditOptionsLoadBefore: {
       type: Function,
-      default: null
+      default: null,
     },
     editSize: {
       type: String,
-      default: ""
+      default: "",
     },
     onOptionsLoadAfter: {
       type: Function,
-      default: null
+      default: null,
     },
     onOptionsAllLoad: {
       type: Function,
-      default: null
+      default: null,
     },
     editLine: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isCacheOption: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
+    stopPropagation: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -183,7 +187,7 @@ export default {
         "a-time-picker",
         "a-switch",
         "a-checkbox",
-        "pulldown-table"
+        "pulldown-table",
       ],
       editTypeTargetName: {
         "a-input-number": "OpuInputNumber",
@@ -191,7 +195,7 @@ export default {
         "a-search-select": "OpuSearchSelect",
         "a-auto-complete": "OpuAutoComplete",
         "a-date-picker": "OpuDatePicker",
-        "a-time-picker": "OpuTimePicker"
+        "a-time-picker": "OpuTimePicker",
       },
       componentsFocusItemTypes: [
         "a-input",
@@ -201,7 +205,7 @@ export default {
         "a-auto-complete",
         "a-date-picker",
         "a-time-picker",
-        "pulldown-table"
+        "pulldown-table",
       ],
       lineEditTypes: [
         "pulldown-table",
@@ -211,7 +215,7 @@ export default {
         "a-select",
         "a-search-select",
         "a-date-picker",
-        "a-time-picker"
+        "a-time-picker",
       ],
       enterTypes: [
         "pulldown-table",
@@ -221,7 +225,7 @@ export default {
         "a-select",
         "a-search-select",
         "a-date-picker",
-        "a-time-picker"
+        "a-time-picker",
       ],
       //enter  数组
       pressEnterItems: [],
@@ -232,7 +236,7 @@ export default {
       editDefaultOption: {},
       editFieldList: {},
       currentCell: null,
-      columnsIndexs: []
+      columnsIndexs: [],
     };
   },
   computed: {
@@ -242,7 +246,7 @@ export default {
         editSize = config.editSize;
       }
       return editSize;
-    }
+    },
   },
   mounted() {},
   methods: {
@@ -345,7 +349,7 @@ export default {
         let timeEl = document.getElementsByClassName("ant-time-picker-panel");
         //日期
         let dateEl = document.getElementsByClassName(
-          "ant-calendar-picker-container"
+          "ant-calendar-picker-container",
         );
         //下拉
         let selectEl = document.getElementsByClassName("ant-select-dropdown");
@@ -412,24 +416,24 @@ export default {
         unifyApiList,
         otherApiList,
         enterItems,
-        columnsIndexs
+        columnsIndexs,
       } = this.editColumnsRender({
         data,
         getSelectOptions,
         unifyApiList: {
           api: getSelectOptions && getSelectOptions.api,
           param: {},
-          fields: []
+          fields: [],
         },
         otherApiList: [],
         enterItems: {
           left: [],
           center: [],
-          right: []
+          right: [],
         },
         columnsIndexs: {},
         isAll,
-        filterCallback
+        filterCallback,
       });
       if (unifyApiList.fields.length > 0) {
         otherApiList = otherApiList.concat(unifyApiList);
@@ -438,7 +442,7 @@ export default {
       that.pressEnterItems = [
         ...enterItems.left,
         ...enterItems.center,
-        ...enterItems.right
+        ...enterItems.right,
       ];
       that.editApiList = otherApiList;
       // that.editFieldList = editFieldList;
@@ -461,7 +465,7 @@ export default {
       enterItems,
       columnsIndexs,
       isAll,
-      filterCallback
+      filterCallback,
     }) {
       let that = this;
       let {
@@ -470,7 +474,7 @@ export default {
         isCacheOption,
         editFieldList,
         editOptions,
-        editDefaultOption
+        editDefaultOption,
       } = that;
       let tableData = data.filter(p => {
         if (filterCallback && !filterCallback(p)) return false;
@@ -484,7 +488,7 @@ export default {
             enterItems,
             columnsIndexs,
             isAll,
-            filterCallback
+            filterCallback,
           });
           index = res.index - 1;
           enterItems = res.enterItems;
@@ -515,48 +519,58 @@ export default {
                       on: {
                         click: e => {
                           let { currentCell } = that;
-                          if (currentCell) {
-                            let {
-                              columnIndex: currentColumnIndex,
-                              rowIndex: currentRowIndex
-                            } = currentCell;
-                            let { columnIndex, rowIndex } = e;
-                            if (
-                              currentRowIndex !== undefined &&
-                              currentColumnIndex !== undefined &&
-                              columnIndex === currentColumnIndex &&
-                              rowIndex === currentRowIndex
-                            ) {
-                              e.stopPropagation();
-                              // event.preventDefault();
-                              return;
+                          if (that.stopPropagation && !that.editLine) {
+                            e.stopPropagation();
+                          } else {
+                            if (currentCell) {
+                              let {
+                                columnIndex: currentColumnIndex,
+                                rowIndex: currentRowIndex,
+                              } = currentCell;
+                              let { columnIndex, rowIndex } = e;
+                              if (
+                                currentRowIndex !== undefined &&
+                                currentColumnIndex !== undefined &&
+                                columnIndex === currentColumnIndex &&
+                                rowIndex === currentRowIndex
+                              ) {
+                                e.stopPropagation();
+                                // event.preventDefault();
+                                return;
+                              }
                             }
                           }
                         },
                         keydown: e => {
-                          e.stopPropagation();
+                          if (name !== "pulldown-table") {
+                            e.stopPropagation();
+                          }
                         },
                         keyup: debounce(async e => {
-                          if (name == "a-select" || name == "a-search-select") {
+                          if (
+                            name == "a-select" ||
+                            name == "a-search-select" ||
+                            name == "pulldown-table"
+                          ) {
                             if (itemRender.on.keyup) {
                               let res = await itemRender.on.keyup(e, event);
                               if (res === false) return;
                             }
                             if (e.keyCode == 13) {
                               let {
-                                currentCell: { rowIndex, row }
+                                currentCell: { rowIndex, row },
                               } = that;
                               that.pressEnterItem({
                                 columnIndex: index,
                                 rowIndex,
                                 row,
-                                field
+                                field,
                               });
                             }
                           }
-                        }, debounceTime)
+                        }, debounceTime),
                       },
-                      style: "display:flex;align-items:center;width:100%;"
+                      style: "display:flex;align-items:center;width:100%;",
                     }}
                   >
                     {itemRender.before && itemRender.before(event)}
@@ -564,7 +578,7 @@ export default {
                       {that.editSlotRender(name)(event)}
                     </div>
                     {itemRender.after && itemRender.after(event)}
-                  </div>
+                  </div>,
                 ];
               };
 
@@ -573,7 +587,7 @@ export default {
               let props = itemRender.props;
               if (
                 ["a-select", "a-search-select", "a-auto-complete"].includes(
-                  name
+                  name,
                 ) &&
                 props
               ) {
@@ -605,7 +619,7 @@ export default {
                     defaultField,
                     searchFields,
                     api: props.api,
-                    param: props.param
+                    param: props.param,
                   };
 
                   if (props.options) {
@@ -614,8 +628,8 @@ export default {
                         [field]: {
                           valueField,
                           labelField,
-                          childrenField
-                        }
+                          childrenField,
+                        },
                       });
                       if (o[defaultField]) {
                         editDefaultOption[field] = p.value;
@@ -636,7 +650,7 @@ export default {
                       childrenField,
                       dataField,
                       defaultField,
-                      param: props.param || {}
+                      param: props.param || {},
                     };
                     if (props.api) {
                       otherApiList.push(item);
@@ -667,7 +681,7 @@ export default {
         unifyApiList,
         otherApiList,
         enterItems,
-        columnsIndexs
+        columnsIndexs,
       };
     },
     loadOptionsData(isAll) {
@@ -692,7 +706,7 @@ export default {
           row,
           rowIndex,
           columnIndex: pressEnterItems[0].columnIndex,
-          field: pressEnterItems[0].field
+          field: pressEnterItems[0].field,
         };
         dataGrid.setCurrentRow(row);
         setTimeout(() => {
@@ -713,6 +727,7 @@ export default {
       let index = pressEnterItems.findIndex(p => p.field == field);
       let data = that.data || that.$refs.dataGrid.getData();
       if (!row) row = data[rowIndex];
+
       //换下一行
       if (index == pressEnterItems.length - 1) {
         rowIndex += 1;
@@ -724,7 +739,7 @@ export default {
             row,
             rowIndex,
             columnIndex: pressEnterItems[0].columnIndex,
-            field: pressEnterItems[0].field
+            field: pressEnterItems[0].field,
           };
           row = data[rowIndex];
           that.$refs.dataGrid.setCurrentRow(row);
@@ -739,13 +754,13 @@ export default {
           row,
           rowIndex: event.rowIndex,
           columnIndex: nextItem.columnIndex,
-          field: nextItem.field
+          field: nextItem.field,
         };
         let disabled = editSlotPropInit(
           row,
           nextItem.itemRender.props,
           "disabled",
-          nextEvent
+          nextEvent,
         );
         //如果禁用 跳转下一个
         if (disabled) {
@@ -768,7 +783,7 @@ export default {
       let newEvent = {
         ...event,
         rowIndex,
-        columnIndex: pressEnterItems[index].columnIndex
+        columnIndex: pressEnterItems[index].columnIndex,
       };
       let dataGrid = that.$refs.dataGrid;
       let data = that.data || dataGrid.getData();
@@ -783,7 +798,7 @@ export default {
             document.body.addEventListener(
               "click",
               that.onBlurEditTable,
-              false
+              false,
             );
           }, 50);
         }
@@ -837,7 +852,7 @@ export default {
               utils.getObjData(item.field, row) || "",
               props,
               name,
-              event
+              event,
             );
             return [<div class={`edit-input ${name}`}>{value}</div>];
           } else {
@@ -846,12 +861,12 @@ export default {
               size: that.editItemSize,
               ...props,
               value: utils.getObjData(field, row),
-              disabled
+              disabled,
             };
             let attr = {
               class: editSlotItemRender(itemRender.class, event),
               style: editSlotItemRender(itemRender.style, event),
-              ref: "input-" + rowIndex + "-" + field
+              ref: "input-" + rowIndex + "-" + field,
             };
 
             var optionsField, options, trueValue, falseValue;
@@ -862,7 +877,7 @@ export default {
                 if (itemRender.on.change) {
                   itemRender.on.change(e, event);
                 }
-              }
+              },
             };
 
             for (let i in itemRender.on) {
@@ -899,8 +914,8 @@ export default {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }, debounceTime)
-                  }
+                    }, debounceTime),
+                  },
                 };
                 break;
               case "a-input-number":
@@ -909,11 +924,11 @@ export default {
                   props: {
                     ...props,
                     max: editSlotPropInit(row, props, "max", event, Infinity),
-                    min: editSlotPropInit(row, props, "min", event, -Infinity)
+                    min: editSlotPropInit(row, props, "min", event, -Infinity),
                   },
                   style: {
                     width: "100%",
-                    ...attr.style
+                    ...attr.style,
                   },
                   on: {
                     ...ons,
@@ -925,8 +940,8 @@ export default {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }, debounceTime)
-                  }
+                    }, debounceTime),
+                  },
                 };
                 break;
               case "a-select":
@@ -939,7 +954,7 @@ export default {
                   options = props.optionsFilter(
                     cloneDeep(options),
                     props.value,
-                    event
+                    event,
                   );
                   delete props.optionsFilter;
                 }
@@ -960,11 +975,11 @@ export default {
                   props: {
                     showSearch: true,
                     ...props,
-                    options
+                    options,
                   },
                   style: {
                     width: "100%",
-                    ...attr.style
+                    ...attr.style,
                   },
                   on: {
                     ...ons,
@@ -974,8 +989,8 @@ export default {
                       if (itemRender.on.change) {
                         itemRender.on.change(value, option, event, pOption);
                       }
-                    }
-                  }
+                    },
+                  },
                 };
                 break;
               case "a-auto-complete":
@@ -987,7 +1002,7 @@ export default {
                   options = props.optionsFilter(
                     cloneDeep(options),
                     props.value,
-                    event
+                    event,
                   );
                   delete props.optionsFilter;
                 }
@@ -1002,11 +1017,11 @@ export default {
                   ...attr,
                   props: {
                     ...props,
-                    options
+                    options,
                   },
                   style: {
                     width: "100%",
-                    ...itemRender.style
+                    ...itemRender.style,
                   },
                   on: {
                     ...ons,
@@ -1014,7 +1029,7 @@ export default {
                       utils.setObjData(
                         field,
                         row,
-                        props.valueField ? optionRow[props.valueField] : value
+                        props.valueField ? optionRow[props.valueField] : value,
                       );
                       row.ISEDIT = true;
                       if (itemRender.on.select) {
@@ -1033,8 +1048,8 @@ export default {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }, debounceTime)
-                  }
+                    }, debounceTime),
+                  },
                 };
                 break;
               case "a-date-picker":
@@ -1047,7 +1062,7 @@ export default {
                   ...attr,
                   props: {
                     ...props,
-                    value: dateValue
+                    value: dateValue,
                   },
                   on: {
                     ...ons,
@@ -1063,8 +1078,8 @@ export default {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }, debounceTime)
-                  }
+                    }, debounceTime),
+                  },
                 };
                 break;
               case "a-time-picker":
@@ -1077,11 +1092,11 @@ export default {
                   ...attr,
                   props: {
                     ...props,
-                    value: dateTimeValue
+                    value: dateTimeValue,
                   },
                   style: {
                     width: "100%",
-                    ...attr.style
+                    ...attr.style,
                   },
                   on: {
                     ...ons,
@@ -1097,8 +1112,8 @@ export default {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }, debounceTime)
-                  }
+                    }, debounceTime),
+                  },
                 };
                 break;
               case "pulldown-table":
@@ -1126,8 +1141,8 @@ export default {
                       if (e.keyCode == 13) {
                         that.pressEnterItem(event);
                       }
-                    }, debounceTime)
-                  }
+                    }, debounceTime),
+                  },
                 };
                 break;
               case "a-switch":
@@ -1138,7 +1153,7 @@ export default {
                   ...attr,
                   props: {
                     ...props,
-                    checked: props.value == trueValue
+                    checked: props.value == trueValue,
                   },
                   on: {
                     ...ons,
@@ -1149,8 +1164,8 @@ export default {
                       if (itemRender.on.change) {
                         itemRender.on.change(e, event);
                       }
-                    }
-                  }
+                    },
+                  },
                 };
                 break;
               case "a-checkbox":
@@ -1161,7 +1176,7 @@ export default {
                   ...attr,
                   props: {
                     ...props,
-                    checked: row[field] == trueValue
+                    checked: row[field] == trueValue,
                   },
                   on: {
                     ...ons,
@@ -1172,19 +1187,19 @@ export default {
                       if (itemRender.on.change) {
                         itemRender.on.change(e, event);
                       }
-                    }
-                  }
+                    },
+                  },
                 };
                 break;
             }
             element = that.$createElement(
               that.editTypeTargetName[name] || name,
-              elementAttribute
+              elementAttribute,
             );
           }
           return [element];
         }
       };
-    }
-  }
+    },
+  },
 };
