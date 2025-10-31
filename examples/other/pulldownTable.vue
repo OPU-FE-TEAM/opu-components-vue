@@ -1,7 +1,9 @@
 <template>
   <div>
-    <data-form :items="formItems" />
+    <data-form ref="dataForm" :items="formItems" />
     <button @click="onShow">显示</button>
+    <button @click="onGetFormData">获取表单数据</button>
+
     <modal v-model="show" :width="800">
       <!-- <pulldownTable
         :table="table"
@@ -19,7 +21,8 @@
 
 <script>
 function getData(arr) {
-  return new Promise((resolve) => {
+  console.log("arr", arr);
+  return new Promise(resolve => {
     setTimeout(() => {
       const size = arr.pageSize ? arr.pageSize : 20;
       const pageIndex = arr.pageIndex ? arr.pageIndex : 1;
@@ -38,12 +41,14 @@ function getData(arr) {
           total: 100,
         },
       };
+      console.log("json", json);
       resolve(json);
     }, 500);
   });
 }
 export default {
   data() {
+    const that = this;
     return {
       table: {
         props: {
@@ -68,7 +73,7 @@ export default {
                 field: "field",
               },
               on: {
-                submitBefore: (values) => {
+                submitBefore: values => {
                   console.log(values);
                   // return false;
                 },
@@ -232,7 +237,7 @@ export default {
           },
         },
       },
-      value: "123",
+      value: "",
       show: false,
       formItems: [
         {
@@ -241,22 +246,27 @@ export default {
           itemRender: {
             name: "pulldown-table",
             props: {
-              valueField: "name",
+              valueField: "keyName",
               searchField: "keyword",
               allowInputValue: false,
               retainSearchValue: false,
-              retainSearchKeyword: true,
+              retainSearchKeyword: false,
               table: {
                 props: {
                   sortable: true,
                   sortConfig: { remote: true },
                   columns: [
                     {
+                      field: "id",
+                      title: "ID",
+                    },
+                    {
                       field: "keyName",
                       title: "Name",
                       width: 200,
                       align: "left",
                     },
+
                     {
                       field: "sex",
                       title: "Sex",
@@ -266,11 +276,11 @@ export default {
                   height: "400px",
                   highlightHoverRow: true,
                   highlightCurrentRow: true,
-                  proxyColumns: {
-                    params: {
-                      queryFlag: true,
-                    },
-                  },
+                  // proxyColumns: {
+                  //   params: {
+                  //     queryFlag: true,
+                  //   },
+                  // },
                   // setcolumnsConfig: {
                   //   proxyConfig: {
                   //     params: {
@@ -279,56 +289,62 @@ export default {
                   //   }
                   // },
                   proxyConfig: {
-                    autoLoad: true,
+                    autoLoad: false,
+                    props: {
+                      result: "data.data",
+                      total: "data.total",
+                      list: "data.data",
+                    },
                     ajax: {
-                      query: (params) => {
-                        return new Promise((resolve) => {
-                          console.log("请求数据", params);
-                          if (params.keyword == 2) {
-                            resolve({
-                              code: 0,
-                              data: {
-                                datas: [],
-                              },
-                            });
-                            return;
-                          } else if (params.keyword == 1) {
-                            resolve({
-                              code: 0,
-                              data: {
-                                datas: [
-                                  {
-                                    id: 1,
-                                    name: "aaaa",
-                                    endingQuantity: "111",
-                                    endingAvgPrice: "22",
-                                  },
-                                ],
-                              },
-                            });
-                            return;
-                          }
-                          resolve({
-                            code: 0,
-                            data: {
-                              datas: [
-                                {
-                                  id: 1,
-                                  name: "aaaa",
-                                  endingQuantity: "111",
-                                  endingAvgPrice: "22",
-                                },
-                                {
-                                  id: 2,
-                                  endingQuantity: "aaa",
-                                  endingAvgPrice: "bbb",
-                                  name: "bbbb",
-                                },
-                              ],
-                            },
-                          });
-                        });
-                      },
+                      query: getData,
+                      // query: (params) => {
+                      //   return new Promise((resolve) => {
+                      //     console.log("请求数据", params);
+                      //     if (params.keyword == 2) {
+                      //       resolve({
+                      //         code: 0,
+                      //         data: {
+                      //           datas: [],
+                      //         },
+                      //       });
+                      //       return;
+                      //     } else if (params.keyword == 1) {
+                      //       resolve({
+                      //         code: 0,
+                      //         data: {
+                      //           datas: [
+                      //             {
+                      //               id: 1,
+                      //               name: "aaaa",
+                      //               endingQuantity: "111",
+                      //               endingAvgPrice: "22",
+                      //             },
+                      //           ],
+                      //         },
+                      //       });
+                      //       return;
+                      //     }
+                      //     resolve({
+                      //       code: 0,
+                      //       data: {
+                      //         datas: [
+                      //           {
+                      //             id: 1,
+                      //             name: "aaaa",
+                      //             endingQuantity: "111",
+                      //             endingAvgPrice: "22",
+                      //           },
+                      //           {
+                      //             id: 2,
+                      //             endingQuantity: "aaa",
+                      //             endingAvgPrice: "bbb",
+                      //             name: "bbbb",
+                      //           },
+                      //         ],
+                      //       },
+                      //     });
+                      //   });
+                      // },
                     },
                   },
                 },
@@ -337,7 +353,18 @@ export default {
                 },
               },
             },
-            on: {},
+            on: {
+              change: (e, row) => {
+                const arr = {
+                  goodsId: row ? row.goodsId : "",
+                  goodsName: row ? row.keyName : "",
+                };
+                console.log("change", e, row, arr);
+                setTimeout(() => {
+                  that.$refs.dataForm.setData(arr);
+                }, 10);
+              },
+            },
           },
         },
       ],
@@ -356,7 +383,14 @@ export default {
       console.log(e);
     },
     onShow() {
-      this.show = true;
+      // this.show = true;
+      this.$refs.dataForm.setData({
+        goodsId: "123",
+        goodsName: "123",
+      });
+    },
+    onGetFormData() {
+      console.log(this.$refs.dataForm.getData());
     },
   },
 };

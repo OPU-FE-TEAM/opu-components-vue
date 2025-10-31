@@ -638,6 +638,61 @@ export default {
         // //   }
         // // },
         {
+          field: "sex",
+          title: "性别22",
+          tooltip: "一个友好的提示",
+          // hasFeedback: true,
+          // option: {
+          //   rules: [{ required: true, message: "请输入名称!" }]
+          // },
+
+          itemRender: {
+            name: "a-select",
+            enterFocus: false,
+            props: {
+              size: "small",
+              // mode: "combobox",
+              placeholder: "请选择性别",
+              // showSearch: true,
+
+              defaultField: "isSelected",
+              valueField: "id",
+              labelField: "text",
+              linkage: { name22: "code" },
+              // dataField: "aa",
+              // labelInValue: true,
+              // api:getSelectData,
+              // param: {
+              //   code: "aa"
+              // }
+              renderOptionLabel: item => {
+                return <div>aaaa {item.label}</div>;
+              },
+              options: [
+                {
+                  id: 1,
+                  text: "男",
+                  isSelected: true,
+                  code: 1245,
+                },
+                {
+                  id: 2,
+                  text: "女",
+                  isSelected: true,
+                },
+              ],
+            },
+            on: {
+              change(val, row) {
+                console.log(val, row);
+                // that.$refs.dataForm.setData({
+                //   sexName: row.label,
+                // });
+              },
+            },
+          },
+        },
+        {
           field: "cprice",
           title: "时间",
           itemRender: {
@@ -706,60 +761,7 @@ export default {
         // //     }
         // //   }
         // // },
-        // {
-        //   field: "sex",
-        //   title: "性别22",
-        //   tooltip: "一个友好的提示",
-        //   // hasFeedback: true,
-        //   // option: {
-        //   //   rules: [{ required: true, message: "请输入名称!" }]
-        //   // },
 
-        //   itemRender: {
-        //     name: "a-select",
-        //     props: {
-        //       size: "small",
-        //       // mode: "combobox",
-        //       placeholder: "请选择性别",
-        //       // showSearch: true,
-
-        //       defaultField: "isSelected",
-        //       valueField: "id",
-        //       labelField: "text",
-        //       linkage: { name22: "code" },
-        //       // dataField: "aa",
-        //       // labelInValue: true,
-        //       // api:getSelectData,
-        //       // param: {
-        //       //   code: "aa"
-        //       // }
-        //       renderOptionLabel: item => {
-        //         return <div>aaaa {item.label}</div>;
-        //       },
-        //       options: [
-        //         {
-        //           id: 1,
-        //           text: "男",
-        //           isSelected: true,
-        //           code: 1245
-        //         },
-        //         {
-        //           id: 2,
-        //           text: "女",
-        //           isSelected: true
-        //         }
-        //       ]
-        //     },
-        //     on: {
-        //       change(val, row) {
-        //         console.log(val, row);
-        //         that.$refs.dataForm.setData({
-        //           sexName: row.label
-        //         });
-        //       }
-        //     }
-        //   }
-        // },
         // {
         //   field: "selected",
         //   title: "下拉框-全局接口获取",

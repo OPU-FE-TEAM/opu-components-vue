@@ -111,9 +111,13 @@ export default {
     selectValueText() {
       const { selectValue } = this;
       let text = "";
+      // 显示上次搜索关键词为灰色
+      // if (this.retainSearchKeyword && this.searchKeyword) {
+      //   return this.searchKeyword;
+      // }
       if (selectValue && utils.isArray(selectValue)) {
         text = selectValue
-          .map((p) => p[this.labelField || this.textField])
+          .map(p => p[this.labelField || this.textField])
           .join(",");
       } else if (selectValue && utils.isObject(selectValue)) {
         text = selectValue[this.labelField || this.textField];
@@ -127,7 +131,7 @@ export default {
       let text = "";
       if (currentValue && utils.isArray(currentValue)) {
         text = currentValue
-          .map((p) => p[this.labelField || this.textField])
+          .map(p => p[this.labelField || this.textField])
           .join(",");
       } else if (currentValue && utils.isObject(currentValue)) {
         text = currentValue[this.labelField || this.textField];
@@ -138,7 +142,7 @@ export default {
     },
     pulldownExtendProps() {
       const rest = {};
-      pulldownPropKeys.forEach((key) => {
+      pulldownPropKeys.forEach(key => {
         rest[key] = this[key];
       });
       return rest;
@@ -175,7 +179,7 @@ export default {
       } = that;
       //是否存在多选  若存在  多选checkbox索引
       let columns = (table && table.props && table.props.columns) || [];
-      that.checkboxIndex = columns.findIndex((p) => p.type == "checkbox");
+      that.checkboxIndex = columns.findIndex(p => p.type == "checkbox");
       const props = {
         props: {
           highlightHoverRow: true,
@@ -354,7 +358,11 @@ export default {
 
           if (that.retainSearchKeyword) {
             params[searchField] = that.searchKeyword;
+            // 保留上次搜索关键词并选中
             that.currentValue = that.searchKeyword;
+            setTimeout(() => {
+              that.select();
+            }, 100);
           } else {
             params[searchField] = retainSearchValue ? that.selectValueText : "";
           }
@@ -581,9 +589,9 @@ export default {
                   submit: onSetColumnsSubmit,
                 },
               }),
-          ]
+          ],
         ),
-      ]
+      ],
     );
   },
 };

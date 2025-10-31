@@ -1,9 +1,14 @@
 <template>
   <div>
-    <a-button type="primary" @click="open">打开</a-button>
+    <a-button type="primary" @click="open">打开{{ visible }}</a-button>
     <a-button type="primary" @click="open1">打开1</a-button>
     <a-button type="primary" @click="open2">打开2</a-button>
-    <modal title="" v-model="visible" :width="700">
+    <modal
+      title=""
+      v-model="visible"
+      :width="700"
+      :before-hide-method="beforeHide"
+    >
       <template #title>
         <div class="title">
           <span>123</span>
@@ -83,6 +88,15 @@ export default {
     },
     open2() {
       this.visible2 = true;
+    },
+    beforeHide() {
+      console.log("beforeHide");
+      return new Promise((resolve, reject) => {
+        // setTimeout(() => {
+        //   resolve(false);
+        // }, 1000);
+        reject(new Error("test"));
+      });
     }
   }
 };
