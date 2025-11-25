@@ -134,7 +134,11 @@ const fetchItemPropsOptionsApiList = async function(
       param[DEFAULTCONFIG.getSelectOptions.loadOptionsIdField] =
         formData[field];
     }
-    return api(param);
+    if (_vm.isFilterErrorApi) {
+      return alwaysSuccessPromise(api, param);
+    } else {
+      return api(param);
+    }
   });
   Promise.all(promises)
     .then(res => {
@@ -179,17 +183,33 @@ const fetchItemPropsOptionsApiList = async function(
     .catch(() => {});
 };
 
+function alwaysSuccessPromise(api, param) {
+  return new Promise(resolve => {
+    api(param)
+      .then(res => {
+        resolve(res);
+      })
+      .catch(() => {
+        resolve();
+      });
+  });
+}
+
 function handlefieldOptionsDataField(field, json, _vm) {
   const { itemsOptions } = _vm;
-  const fieldItem = itemsOptions.find(p => p.field === field);
   let optionData = json;
-  if (fieldItem && fieldItem.itemRender && fieldItem.itemRender.props) {
-    const itemProps = fieldItem.itemRender.props;
-    const df =
-      itemProps.dataField != undefined
-        ? itemProps.dataField
-        : DEFAULTCONFIG.getSelectOptions.dataField;
-    optionData = utils.getObjData(df, json);
+  if (optionData) {
+    const fieldItem = itemsOptions.find(p => p.field === field);
+    if (fieldItem && fieldItem.itemRender && fieldItem.itemRender.props) {
+      const itemProps = fieldItem.itemRender.props;
+      const df =
+        itemProps.dataField != undefined
+          ? itemProps.dataField
+          : DEFAULTCONFIG.getSelectOptions.dataField;
+      optionData = utils.getObjData(df, json);
+    }
+  } else if (_vm.isFilterErrorApi) {
+    optionData = [];
   }
   return optionData;
 }
@@ -844,6 +864,10 @@ export default {
     autoEnterSelectInput: {
       type: [Boolean, String],
       default: "",
+    },
+    isFilterErrorApi: {
+      type: Boolean,
+      default: false,
     },
     // //是否缓存option
     // isCacheOption: {

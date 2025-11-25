@@ -24,14 +24,18 @@ const fetchItemPropsOptionsApiList = async function(_vm) {
   }
 
   let promises = list.map(p => {
-    return p.api(p.param);
+    if (_vm.isFilterErrorApi) {
+      return alwaysSuccessPromise(p.api, p.param);
+    } else {
+      return p.api(p.param);
+    }
   });
   Promise.all(promises).then(res => {
     let { editOptions, editDefaultOption, onOptionsLoadAfter } = that;
     list.forEach((item, index) => {
       let { defaultField, field, fields } = item;
       let data = res[index];
-      if (fields && fields.length) {
+      if (data && fields && fields.length) {
         fields.forEach(p => {
           const optionsData = handlefieldOptionsDataField(p, data, that);
           field = p.field;
@@ -69,6 +73,18 @@ const fetchItemPropsOptionsApiList = async function(_vm) {
   });
 };
 
+function alwaysSuccessPromise(api, param) {
+  return new Promise(resolve => {
+    api(param)
+      .then(res => {
+        resolve(res);
+      })
+      .catch(() => {
+        resolve();
+      });
+  });
+}
+
 // 驼峰转换下划线
 function toLine(name) {
   name = name.replace(/([A-Z])/g, "-$1").toLowerCase();
@@ -96,14 +112,18 @@ function dataFormat(value, props, name, event) {
 }
 
 //根据路径参数 查找对应数据
-function handlefieldOptionsDataField(item, json) {
+function handlefieldOptionsDataField(item, json, that) {
   let optionData = json;
-  if (item) {
-    const dataField =
-      item.dataField != undefined
-        ? item.dataField
-        : config.getSelectOptions.dataField;
-    optionData = utils.getObjData(dataField, json);
+  if (optionData) {
+    if (item) {
+      const dataField =
+        item.dataField != undefined
+          ? item.dataField
+          : config.getSelectOptions.dataField;
+      optionData = utils.getObjData(dataField, json);
+    }
+  } else if (that && that.isFilterErrorApi) {
+    optionData = [];
   }
   return optionData;
 }
@@ -171,6 +191,10 @@ export default {
       default: true,
     },
     stopPropagation: {
+      type: Boolean,
+      default: false,
+    },
+    isFilterErrorApi: {
       type: Boolean,
       default: false,
     },

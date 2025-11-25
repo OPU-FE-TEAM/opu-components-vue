@@ -17,6 +17,7 @@
       autoFocus="name3"
       loadOptionsIdField="id"
       titleWidth="auto"
+      isFilterErrorApi
     >
       <template slot="itemSlot" slot-scope="text, updateValue, field">
         全插槽内容:{{ text }}{{ field }}
@@ -697,6 +698,37 @@ export default {
               startChange: () => {
                 debugger;
               },
+            },
+          },
+        },
+        {
+          field: "errorSelect",
+          title: "错误下拉",
+          itemRender: {
+            name: "a-select",
+            props: {
+              valueField: "id",
+              labelField: "name",
+              api: () => {
+                return new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    reject();
+                  }, 1000);
+                });
+              },
+            },
+          },
+        },
+        {
+          field: "successSelect",
+          title: "正确下拉",
+          itemRender: {
+            name: "a-select",
+            props: {
+              valueField: "id",
+              labelField: "name",
+              dataField: "data.datas",
+              api: getData,
             },
           },
         },
