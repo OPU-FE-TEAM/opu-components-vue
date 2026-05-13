@@ -1,6 +1,6 @@
 {
   "name": "opu-components-vue",
-  "version": "1.10.149",
+  "version": "1.10.152",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -21,11 +21,11 @@
   "unpkg": "lib/opu.min.js",
   "jsdelivr": "lib/opu.min.js",
   "dependencies": {
-    "ant-design-vue": "^1.7.8",
+    "ant-design-vue": ">= 1.6.4 < 2",
     "core-js": "^3.21.1",
     "enquire.js": "^2.1.6",
     "sortablejs": "^1.14.0",
-    "vue": "^2.6.14",
+    "vue": ">= 2.6.0 < 3",
     "vxe-table": "^3.6.16",
     "vxe-table-plugin-antd": "^1.11.3",
     "xe-utils": "^3.5.4"
@@ -58,8 +58,8 @@
     "vue-template-compiler": "^2.6.14"
   },
   "peerDependencies": {
-    "vue": ">= 2.6.0 < 3",
-    "ant-design-vue": ">= 1.6.4 < 2"
+    "ant-design-vue": ">= 1.6.4 < 2",
+    "vue": ">= 2.6.0 < 3"
   },
   "keywords": [
     "opu-components",

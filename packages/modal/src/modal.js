@@ -6,37 +6,37 @@ export default {
   props: {
     ...Modal.props,
     value: {
-      type: Boolean
+      type: Boolean,
     },
     okText: {
       type: String,
-      default: "确定"
+      default: "确定",
     },
     cancelText: {
       type: String,
-      default: "取消"
+      default: "取消",
     },
     okButtonProps: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     cancelButtonProps: Object,
     confirmLoading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     showFooter: {
       type: [Boolean, String],
-      default: true
-    }
+      default: true,
+    },
   },
   model: {
     prop: "value",
-    event: "update"
+    event: "update",
   },
   data() {
     return {
-      visible: false
+      visible: false,
     };
   },
   computed: {
@@ -53,7 +53,7 @@ export default {
         cancelText,
         visible,
         confirmLoading,
-        showFooter
+        showFooter,
       } = this;
       const propsData = this.$options.propsData;
       let props = {
@@ -61,8 +61,8 @@ export default {
           className: "opu-modal",
           ...propsData,
           value: visible,
-          showFooter
-        }
+          showFooter,
+        },
       };
       props.class = "vxeModal";
       props.ref = "modal";
@@ -75,16 +75,16 @@ export default {
                 on: {
                   mousedown: () => {
                     this.$refs.hiddenInput.focus();
-                  }
+                  },
                 },
-                class: "modal-title"
+                class: "modal-title",
               }}
             >
               {($scopedSlots.title && $scopedSlots.title()) || propsData.title}
               <input class="hidden-input" ref="hiddenInput"></input>
             </div>
           );
-        }
+        },
       };
       if (showFooter && !$scopedSlots.footer) {
         okButtonProps = okButtonProps || {};
@@ -94,10 +94,10 @@ export default {
               props: {
                 type: "primary",
                 ...okButtonProps,
-                loading: confirmLoading
+                loading: confirmLoading,
               },
               style: okButtonProps.style,
-              on: { click: onSubmit }
+              on: { click: onSubmit },
             }}
           >
             {okText}
@@ -107,7 +107,7 @@ export default {
           <a-button
             {...{
               props: { ...cancelButtonProps },
-              on: { click: onCancel }
+              on: { click: onCancel },
             }}
           >
             {cancelText}
@@ -131,16 +131,16 @@ export default {
       });
       props.on = {
         ...ons,
-        hide: onHide
+        hide: onHide,
       };
 
       return props;
-    }
+    },
   },
   watch: {
     value(val) {
       this.visible = val;
-    }
+    },
   },
   created() {
     this.visible = this.value;
@@ -157,7 +157,7 @@ export default {
     },
     onSubmit() {
       this.$emit("ok");
-    }
+    },
   },
   render(h) {
     const { modalProps, visible } = this;
@@ -165,8 +165,8 @@ export default {
       ...modalProps,
       ...{
         props: { ...modalProps.props, value: visible },
-        on: { ...modalProps.on }
-      }
+        on: { ...modalProps.on },
+      },
     });
-  }
+  },
 };
