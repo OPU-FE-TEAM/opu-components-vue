@@ -45,7 +45,7 @@ function getData(arr) {
         id: key,
         name: `name_${pageIndex}_${key}`,
         checkbox: key < 3 ? true : false,
-        checkbox1: key === 5 ? true : false
+        checkbox1: key === 5 ? true : false,
       }));
       const json = {
         // data: [...list],
@@ -53,8 +53,8 @@ function getData(arr) {
         code: 0,
         data: {
           data: [...list],
-          total: 100
-        }
+          total: 100,
+        },
       };
       console.log(json);
       resolve(json);
@@ -113,7 +113,7 @@ function saveData() {
       const json = {
         code: 0,
         data: "",
-        message: "啦啦啦"
+        message: "啦啦啦",
       };
       resolve(json);
     }, 500);
@@ -129,8 +129,8 @@ function getInfo() {
           name: "张三",
           sex: 1,
           age: 20,
-          selected: "9998"
-        }
+          selected: "9998",
+        },
       };
       resolve(json);
     }, 10);
@@ -149,7 +149,7 @@ export default {
           reloadType: "query",
           props: {
             icon: "file-add",
-            name: "新增1"
+            name: "新增1",
           },
           // open: () => {
           //   console.log("打开前");
@@ -170,7 +170,7 @@ export default {
             return new Promise((resolve, reject) => {
               saveData({
                 ...values,
-                code: "aaaa"
+                code: "aaaa",
               })
                 .then(res => {
                   // 自行处理请求后
@@ -181,7 +181,7 @@ export default {
                   reject();
                 });
             });
-          }
+          },
         },
         edit: {
           modalTitle: "编辑会员",
@@ -194,7 +194,7 @@ export default {
           // },
 
           props: {
-            icon: "edit"
+            icon: "edit",
           },
           open: () => {
             console.log("打开前");
@@ -207,7 +207,7 @@ export default {
             this.aaa = 5555;
             return new Promise(resolve => {
               getInfo({
-                ...values
+                ...values,
               }).then(res => {
                 // 自行处理请求后,返回数据对象
                 console.log(res.data);
@@ -215,7 +215,7 @@ export default {
               });
             });
           },
-          submit: saveData
+          submit: saveData,
           // submit: values => {
           //   // 自行处理请求前
           //   return new Promise((resolve, reject) => {
@@ -236,7 +236,7 @@ export default {
         del: {
           props: {
             icon: "delete",
-            name: "delete"
+            name: "delete",
           },
           permission: ({ row }) => {
             if (row.id == 3) {
@@ -251,13 +251,13 @@ export default {
             // 自行处理请求前
             return new Promise(resolve => {
               saveData({
-                ...values
+                ...values,
               }).then(res => {
                 // 自行处理请求后
                 resolve(res);
               });
             });
-          }
+          },
         },
         view: {
           queryDataField: "data",
@@ -268,7 +268,7 @@ export default {
             return false;
           },
           // trigger: ["click", "button"], // click=单机行，dblclick=双击行，button 生成查看按钮
-          query: getInfo
+          query: getInfo,
           // query: values => {
           //   // 自行处理请求前
           //   return new Promise(resolve => {
@@ -280,7 +280,7 @@ export default {
           //     });
           //   });
           // }
-        }
+        },
       },
       form: {
         props: {
@@ -291,8 +291,8 @@ export default {
             {
               field: "id",
               itemRender: {
-                name: "hidden"
-              }
+                name: "hidden",
+              },
             },
             {
               field: "sex",
@@ -306,31 +306,31 @@ export default {
                   options: [
                     {
                       id: 1,
-                      text: "男"
+                      text: "男",
                     },
                     {
                       id: 2,
                       text: "女",
-                      isSelected: true
-                    }
-                  ]
-                }
-              }
+                      isSelected: true,
+                    },
+                  ],
+                },
+              },
             },
             {
               field: "name",
               title: "名称",
               filter: ["add", "edit"],
               option: {
-                rules: [{ required: true, message: "请输入!" }]
+                rules: [{ required: true, message: "请输入!" }],
               },
               itemRender: {
                 name: "a-input",
                 props: {
-                  placeholder: "请输入名称"
+                  placeholder: "请输入名称",
                   // disabled:true
-                }
-              }
+                },
+              },
             },
             {
               field: "selected",
@@ -343,35 +343,35 @@ export default {
                   mode: "multiple",
                   dataField: "bb",
                   param: {
-                    code: "bb"
-                  }
-                }
-              }
+                    code: "bb",
+                  },
+                },
+              },
             },
 
             {
               field: "age",
               title: "年龄",
               itemRender: {
-                name: "a-input-number"
-              }
+                name: "a-input-number",
+              },
             },
             {
               field: "formSlot",
-              slot: "formSlot"
+              slot: "formSlot",
             },
             {
               field: "formInputSlot",
               title: "插槽",
               itemRender: {
-                slot: "formInputSlot"
+                slot: "formInputSlot",
                 // customRender: () => {
                 //   return <a-input value={this.aaa} />;
                 // }
-              }
-            }
-          ]
-        }
+              },
+            },
+          ],
+        },
       },
       modal: {
         props: {
@@ -380,47 +380,48 @@ export default {
           // }
         },
         on: {
-          cancel() {}
-        }
+          cancel() {},
+        },
       },
       table: {
         props: {
           editConfig: { trigger: "click", mode: "cell" },
-          sortConfig: {
-            remote: false
-            // trigger: "cell",
+          "sort-config": {
+            remote: true,
+            trigger: "cell",
             // orders: ["desc", "asc", null]
           },
+          sortable: true,
           columns: [
             { type: "seq", title: "Number", width: 80 },
             {
               field: "name",
               title: "Name123",
-              sortable: true
+              sortable: true,
             },
             {
               field: "sex",
-              title: "Sex"
+              title: "Sex",
             },
             {
               field: "age",
               title: "Age",
               width: 200,
               editRender: {
-                name: "AInputNumber"
+                name: "AInputNumber",
                 // on: {
                 //   // blur: this.onTableSortBlur,
                 //   blur: e => {
                 //     console.log(e);
                 //   }
                 // }
-              }
+              },
             },
             {
               field: "id",
               title: "Action",
-              slots: { default: "rowAction" }
-            }
+              slots: { default: "rowAction" },
+            },
           ],
           headToolbar: {
             buttons: [
@@ -428,7 +429,7 @@ export default {
                 name: "新增",
                 code: "add",
                 type: "primary",
-                action: "add"
+                action: "add",
               },
               {
                 name: "同步HIS信息",
@@ -437,9 +438,9 @@ export default {
                 on: {
                   click: () => {
                     console.log(123);
-                  }
-                }
-              }
+                  },
+                },
+              },
             ],
             search: {
               layout: "inline",
@@ -454,20 +455,20 @@ export default {
               advancedSearchModal: {
                 props: {
                   width: 800,
-                  title: "高级搜索1"
+                  title: "高级搜索1",
                 },
                 on: {
                   submit: e => {
                     debugger;
                     console.log(e);
-                  }
-                }
+                  },
+                },
               },
               advancedSearchForm: {
                 props: {
                   layout: "flex",
-                  colspan: 2
-                }
+                  colspan: 2,
+                },
               },
               items: [
                 {
@@ -477,14 +478,14 @@ export default {
                     rules: [
                       {
                         required: true,
-                        message: "请输入名称"
-                      }
-                    ]
+                        message: "请输入名称",
+                      },
+                    ],
                   },
                   itemRender: {
                     name: "a-input",
-                    props: { placeholder: "请输入名称" }
-                  }
+                    props: { placeholder: "请输入名称" },
+                  },
                 },
                 {
                   field: "sex",
@@ -496,16 +497,16 @@ export default {
                         { id: 0, name: "1" },
                         { id: 1, name: "2" },
                         { id: 2, name: "3" },
-                        { id: 3, name: "4" }
-                      ]
+                        { id: 3, name: "4" },
+                      ],
                       // placeholder: "请选择性别",
                       // showSearch: true,
                       // defaultField: "isSelected",
                       // valueField: "id",
                       // labelField: "name",
                       // param: { code: "aa" }
-                    }
-                  }
+                    },
+                  },
                 },
                 {
                   field: "sex1",
@@ -518,16 +519,16 @@ export default {
                         { id: 0, name: "1" },
                         { id: 1, name: "2" },
                         { id: 2, name: "3" },
-                        { id: 3, name: "4" }
-                      ]
+                        { id: 3, name: "4" },
+                      ],
                       // placeholder: "请选择性别",
                       // showSearch: true,
                       // defaultField: "isSelected",
                       // valueField: "id",
                       // labelField: "name",
                       // param: { code: "aa" }
-                    }
-                  }
+                    },
+                  },
                 },
                 {
                   field: "age",
@@ -535,13 +536,13 @@ export default {
                   folding: true,
                   itemRender: {
                     name: "a-input-number",
-                    props: { placeholder: "请输入年龄" }
-                  }
+                    props: { placeholder: "请输入年龄" },
+                  },
                 },
                 {
                   field: "searchFormSlot",
                   slot: "searchFormSlot",
-                  folding: true
+                  folding: true,
                 },
                 {
                   colon: false,
@@ -554,9 +555,9 @@ export default {
                         props: {
                           action: "submit",
                           content: "查询",
-                          type: "primary"
-                        }
-                      }
+                          type: "primary",
+                        },
+                      },
                       // { props: { action: "reset", content: "重置" } },
                       // {
                       //   props: {
@@ -564,11 +565,11 @@ export default {
                       //     content: "高级查询"
                       //   }
                       // }
-                    ]
-                  }
-                }
-              ]
-            }
+                    ],
+                  },
+                },
+              ],
+            },
             // tools: {
             //   // import: true,
             //   // custom: true,
@@ -590,7 +591,7 @@ export default {
             props: {
               result: "data.data",
               total: "data.total",
-              list: "data.data"
+              list: "data.data",
             },
             // autoLoad: false,
 
@@ -600,14 +601,14 @@ export default {
                 console.log(values);
                 return new Promise(resolve => {
                   getData({
-                    ...values
+                    ...values,
                   }).then(res => {
                     resolve(res);
                   });
                 });
-              }
-            }
-          }
+              },
+            },
+          },
           // setcolumnsConfig: {
           //   modal: {
           //     props: {
@@ -636,9 +637,9 @@ export default {
         on: {
           "edit-closed": e => {
             console.log(e);
-          }
-        }
-      }
+          },
+        },
+      },
     };
   },
   created() {
@@ -660,8 +661,8 @@ export default {
     reload() {
       this.aaa = 456;
       this.$refs.crudTable.reloadTable();
-    }
-  }
+    },
+  },
 };
 </script>
 

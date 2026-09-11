@@ -9,6 +9,7 @@
       highlight-hover-row
       highlight-current-row
       size="small"
+      :sortConfig="{ remote: true }"
       :highlight-hover-column="true"
     >
     </DataTable>
@@ -36,13 +37,13 @@ function getData(arr) {
         children: [
           {
             id: "a1",
-            name: "cname1"
+            name: "cname1",
           },
           {
             id: "a2",
-            name: "cname2"
-          }
-        ]
+            name: "cname2",
+          },
+        ],
       }));
       const json = {
         // data: [...list],
@@ -50,8 +51,8 @@ function getData(arr) {
         code: 0,
         data: {
           data: [...list],
-          total: size
-        }
+          total: size,
+        },
       };
       console.log(json);
       resolve(json);
@@ -83,8 +84,8 @@ export default {
               title: "名称",
               itemRender: {
                 name: "a-input",
-                props: { placeholder: "请输入名称" }
-              }
+                props: { placeholder: "请输入名称" },
+              },
             },
             {
               field: "name1",
@@ -92,27 +93,27 @@ export default {
               folding: true,
               itemRender: {
                 name: "a-input",
-                props: { placeholder: "请输入名称" }
-              }
-            }
-          ]
-        }
+                props: { placeholder: "请输入名称" },
+              },
+            },
+          ],
+        },
       },
       proxyConfig: {
         props: {
           result: "data.data",
           total: "data.total",
-          list: "data.data"
+          list: "data.data",
         },
-        autoLoad: false,
+        autoLoad: true,
         ajax: {
-          query: getData
-        }
-      }
+          query: getData,
+        },
+      },
     };
   },
   created() {},
-  methods: {}
+  methods: {},
 };
 </script>
 

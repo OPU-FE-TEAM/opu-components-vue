@@ -69,13 +69,13 @@ function getData(arr) {
         children: [
           {
             id: "a1",
-            name: "cname1"
+            name: "cname1",
           },
           {
             id: "a2",
-            name: "cname2"
-          }
-        ]
+            name: "cname2",
+          },
+        ],
       }));
       const json = {
         // data: [...list],
@@ -83,8 +83,8 @@ function getData(arr) {
         code: 0,
         data: {
           data: [...list],
-          total: size
-        }
+          total: size,
+        },
       };
       resolve(json);
     }, 500);
@@ -97,7 +97,7 @@ function getColumns(arr) {
       const code = arr && arr.code ? arr.code : "";
       const list = [
         {
-          field: "name"
+          field: "name",
         },
         {
           id: "1",
@@ -110,7 +110,7 @@ function getColumns(arr) {
               title: "Name1",
               width: 100,
               align: "left",
-              show: true
+              show: true,
             },
             {
               title: "其他信息",
@@ -122,7 +122,7 @@ function getColumns(arr) {
                   title: "Rate",
                   width: 100,
                   align: "left",
-                  show: true
+                  show: true,
                 },
                 {
                   id: "1-2-2",
@@ -130,9 +130,9 @@ function getColumns(arr) {
                   title: "Age",
                   width: 100,
                   align: "left",
-                  show: true
-                }
-              ]
+                  show: true,
+                },
+              ],
             },
             {
               id: "1-3",
@@ -140,9 +140,9 @@ function getColumns(arr) {
               title: "Sex",
               width: 100,
               align: "left",
-              show: false
-            }
-          ]
+              show: false,
+            },
+          ],
         },
         {
           id: "2",
@@ -150,7 +150,7 @@ function getColumns(arr) {
           title: "Address",
           width: 100,
           align: "left",
-          show: true
+          show: true,
         },
         {
           id: "3",
@@ -158,7 +158,7 @@ function getColumns(arr) {
           title: "Area",
           width: 100,
           align: "left",
-          show: false
+          show: false,
         },
         {
           id: "4",
@@ -166,8 +166,8 @@ function getColumns(arr) {
           title: "City",
           width: 100,
           align: "left",
-          show: true
-        }
+          show: true,
+        },
       ];
       const json = {
         // data: [...list],
@@ -175,8 +175,8 @@ function getColumns(arr) {
         code: 0,
         data: {
           data: [...list],
-          total: 100
-        }
+          total: 100,
+        },
       };
       resolve(json);
     }, 500);
@@ -190,19 +190,19 @@ function getSelectData(param) {
       const data = [
         {
           id: 1,
-          name: "男1"
+          name: "男1",
         },
         {
           id: 2,
-          name: "女2"
-        }
+          name: "女2",
+        },
       ];
       const json = {
         code: 0,
         data: {
           data: data,
-          total: 100
-        }
+          total: 100,
+        },
       };
       console.log("mock: getSelectData return", json);
       resolve(json);
@@ -218,57 +218,60 @@ export default {
       tableForm: {
         data: {
           name: "",
-          sex: ""
+          sex: "",
         },
         items: [
           {
             type: "checkbox",
             title: "",
             width: 30,
-            fixed: "left"
+            fixed: "left",
           },
           {
             field: "name",
             title: "app.body.label.name",
-            itemRender: { name: "$input", props: { placeholder: "请输入名称" } }
+            itemRender: {
+              name: "$input",
+              props: { placeholder: "请输入名称" },
+            },
           },
           {
             field: "sex",
             title: "性别",
             titlePrefix: {
               message: "帮助信息！！！",
-              icon: "fa fa-info-circle"
+              icon: "fa fa-info-circle",
             },
-            itemRender: { name: "$select", options: [] }
+            itemRender: { name: "$select", options: [] },
           },
           {
             itemRender: {
               name: "$buttons",
               children: [
                 {
-                  props: { type: "submit", content: "查询", status: "primary" }
+                  props: { type: "submit", content: "查询", status: "primary" },
                 },
-                { props: { type: "reset", content: "重置" } }
-              ]
-            }
-          }
-        ]
+                { props: { type: "reset", content: "重置" } },
+              ],
+            },
+          },
+        ],
       },
       search: {
         submitButtonProps: {
-          content: "查询"
+          content: "查询",
         },
         cancelButtonProps: {
-          content: "重置"
+          content: "重置",
         },
         colspan: 2,
         style: {
-          maxWidth: "600px"
+          maxWidth: "600px",
         },
         on: {
           submit: values => {
             console.log(values);
-          }
+          },
         },
         items: [
           {
@@ -276,8 +279,8 @@ export default {
             title: "名称",
             itemRender: {
               name: "a-input",
-              props: { placeholder: "请输入名称" }
-            }
+              props: { placeholder: "请输入名称" },
+            },
           },
           {
             field: "sex",
@@ -292,9 +295,9 @@ export default {
                 valueField: "id",
                 labelField: "name",
                 dataField: "data.data",
-                param: { code: "aa" }
-              }
-            }
+                param: { code: "aa" },
+              },
+            },
           },
           {
             field: "age",
@@ -302,10 +305,10 @@ export default {
             folding: true,
             itemRender: {
               name: "a-input-number",
-              props: { placeholder: "请输入年龄" }
-            }
-          }
-        ]
+              props: { placeholder: "请输入年龄" },
+            },
+          },
+        ],
       },
       headToolbar: {
         buttons: [
@@ -317,8 +320,8 @@ export default {
             on: {
               click: () => {
                 console.log("add click");
-              }
-            }
+              },
+            },
           },
           [
             {
@@ -326,15 +329,15 @@ export default {
               key: "getCurrentRecord",
               icon: "edit",
               on: {
-                click: this.getCurrentRecord
-              }
+                click: this.getCurrentRecord,
+              },
             },
             {
               name: "作废",
               key: "del",
               icon: "delete",
-              disabled: this.delDisabled
-            }
+              disabled: this.delDisabled,
+            },
           ],
           {
             name: "更多",
@@ -346,15 +349,15 @@ export default {
                 name: "更多1",
                 code: "more1",
                 icon: "delete",
-                disabled: true
+                disabled: true,
               },
               {
                 name: "更多2",
                 code: "more2",
-                icon: "delete"
-              }
-            ]
-          }
+                icon: "delete",
+              },
+            ],
+          },
         ],
         search: {
           layout: "inline",
@@ -364,7 +367,7 @@ export default {
           // foldingLayout:"flex",
           style: { width: "500px" },
           submitButtonProps: {
-            content: "查询"
+            content: "查询",
           },
           cancelButtonProps: false,
           colspan: 2,
@@ -386,14 +389,14 @@ export default {
           advancedSearchForm: {
             props: {
               layout: "grid",
-              colspan: 2
+              colspan: 2,
             },
             on: {
               open: (advancedSearchForm, formData) => {
                 console.log(advancedSearchForm);
                 console.log(formData);
-              }
-            }
+              },
+            },
           },
           items: [
             {
@@ -401,8 +404,8 @@ export default {
               title: "名称",
               itemRender: {
                 name: "a-input",
-                props: { placeholder: "请输入名称" }
-              }
+                props: { placeholder: "请输入名称" },
+              },
             },
             {
               field: "sex",
@@ -417,9 +420,9 @@ export default {
                   valueField: "id",
                   labelField: "name",
                   dataField: "data.data",
-                  param: { code: "aa" }
-                }
-              }
+                  param: { code: "aa" },
+                },
+              },
             },
             {
               field: "age",
@@ -427,17 +430,17 @@ export default {
               folding: true,
               itemRender: {
                 name: "a-input-number",
-                props: { placeholder: "请输入年龄" }
-              }
+                props: { placeholder: "请输入年龄" },
+              },
             },
             {
               field: "key",
               title: "关键词",
               folding: false,
               itemRender: {
-                name: "a-input"
-              }
-            }
+                name: "a-input",
+              },
+            },
             // {
             //   colon: false,
             //   // titleWidth: 0,
@@ -460,7 +463,7 @@ export default {
             //     ]
             //   }
             // }
-          ]
+          ],
         },
         tools: {
           import: true,
@@ -468,8 +471,8 @@ export default {
           // setColumns: true,
           export: true,
           print: true,
-          refresh: true
-        }
+          refresh: true,
+        },
       },
       setColumns: {
         // modal: {
@@ -485,20 +488,20 @@ export default {
                 console.log(json);
                 getColumns({
                   ...json,
-                  code: "aaaa"
+                  code: "aaaa",
                 }).then(res => {
                   resolve(res);
                 });
               });
             },
-            submit: getColumns
-          }
-        }
+            submit: getColumns,
+          },
+        },
       },
 
       pagerConfig: {
         pageIndex: 0,
-        pageSize: 10
+        pageSize: 10,
         // layouts: [
         //   "PrevJump",
         //   "PrevPage",
@@ -528,12 +531,12 @@ export default {
         props: {
           result: "data.data",
           total: "data.total",
-          list: "data.data"
+          list: "data.data",
         },
         autoLoad: false,
         ajax: {
-          query: getData
-        }
+          query: getData,
+        },
       },
       proxyColumns: {
         // props: {
@@ -548,16 +551,16 @@ export default {
               console.log(json);
               getColumns({
                 ...json,
-                code: "aaaa"
+                code: "aaaa",
               }).then(res => {
                 resolve(res);
               });
             });
-          }
-        }
+          },
+        },
       },
       treeConfig: {
-        children: "children"
+        children: "children",
       },
       tableColumn: [
         {
@@ -568,9 +571,9 @@ export default {
             name: "ASelect",
             options: [
               { value: 1, label: "男" },
-              { value: 2, label: "女" }
-            ]
-          }
+              { value: 2, label: "女" },
+            ],
+          },
         },
         // { type: "checkbox", colIndex: 0, width: 60, fixed: "left" },
         // {
@@ -710,12 +713,12 @@ export default {
             on: {
               change: ({ row }) => {
                 console.log(row.checkbox);
-              }
-            }
-          }
+              },
+            },
+          },
           // slots: { default: "switch", edit: "switch" }
         },
-        { title: "操作", width: 200, slots: { default: "operate" } }
+        { title: "操作", width: 200, slots: { default: "operate" } },
       ],
       tableData: [
         {
@@ -727,13 +730,13 @@ export default {
           children: [
             {
               id: "a11",
-              name: "cname1"
+              name: "cname1",
             },
             {
               id: "a12",
-              name: "cname2"
-            }
-          ]
+              name: "cname2",
+            },
+          ],
         },
         {
           id: 2,
@@ -744,13 +747,13 @@ export default {
           children: [
             {
               id: "a21",
-              name: "cname1"
+              name: "cname1",
             },
             {
               id: "a22",
-              name: "cname2"
-            }
-          ]
+              name: "cname2",
+            },
+          ],
         },
         {
           id: 3,
@@ -759,17 +762,17 @@ export default {
           children: [
             {
               id: "a31",
-              name: "cname1"
+              name: "cname1",
             },
             {
               id: "a32",
-              name: "cname2"
-            }
-          ]
-        }
+              name: "cname2",
+            },
+          ],
+        },
       ],
       delDisabled: false,
-      currentRow: {}
+      currentRow: {},
     };
   },
   created() {
@@ -828,14 +831,14 @@ export default {
           field: "code",
           title: "Code",
           minWidth: 140,
-          editRender: { name: "AInput" }
+          editRender: { name: "AInput" },
         },
         {
           field: "checkbox",
           title: "Checkbox",
           minWidth: 140,
-          editRender: { name: "ACheckbox" }
-        }
+          editRender: { name: "ACheckbox" },
+        },
       ];
     },
     editRow(row) {
@@ -848,7 +851,7 @@ export default {
     setSearchData() {
       const grid = this.$refs.xGrid;
       grid.setSearchData({
-        name: "aaa"
+        name: "aaa",
       });
     },
     getSearchData() {
@@ -860,7 +863,7 @@ export default {
       const grid = this.$refs.xGrid;
       grid.reload({
         a: 1,
-        b: 2
+        b: 2,
       });
     },
     onCellClick(e) {
@@ -880,21 +883,21 @@ export default {
         {
           id: 1,
           name: "b1",
-          sex: 1
+          sex: 1,
         },
         {
           id: 2,
           name: "b2",
-          sex: 1
+          sex: 1,
         },
         {
           id: 3,
           name: "b3",
-          sex: 1
-        }
+          sex: 1,
+        },
       ];
-    }
-  }
+    },
+  },
 };
 </script>
 

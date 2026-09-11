@@ -940,12 +940,11 @@ export default {
         ...pageData,
         ...searchData,
       };
-
       if (arr.filters.length) {
         json.filters = arr.filters;
       }
 
-      if (arr.sort) {
+      if (this.sortConfig && this.sortConfig.remote && arr.sort) {
         json.sort = arr.sort;
       }
 
